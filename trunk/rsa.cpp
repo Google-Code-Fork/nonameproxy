@@ -2,7 +2,8 @@
 
 #include <stdio.h>
 
-RSA::RSA() {
+RSA::RSA ()
+{
         publicKeySet = false;
         privateKeySet = false;
 
@@ -14,7 +15,8 @@ RSA::RSA() {
         mpz_init2(m_prvmod, 1024);
 }
 
-RSA::~RSA() {
+RSA::~RSA ()
+{
         //public key
         mpz_clear(m_e);
         mpz_clear(m_pubmod);
@@ -23,7 +25,8 @@ RSA::~RSA() {
         mpz_clear(m_prvmod);
 }
 
-bool RSA::setPublicKey(const char* e, const char* m) {
+bool RSA::setPublicKey(const char* e, const char* m)
+{
         int32_t res;
         res  = mpz_set_str(m_e, e, 10);
         res |= mpz_set_str(m_pubmod, m, 10);
@@ -35,7 +38,8 @@ bool RSA::setPublicKey(const char* e, const char* m) {
         }
 }
 
-bool RSA::setPrivateKey(const char* d, const char* m) {
+bool RSA::setPrivateKey(const char* d, const char* m)
+{
         int32_t res;
         res  = mpz_set_str (m_d, d, 10);
         res |= mpz_set_str (m_prvmod, m, 10);
@@ -47,7 +51,8 @@ bool RSA::setPrivateKey(const char* d, const char* m) {
         }
 }
 
-bool RSA::encrypt(uint8_t* buffer, uint32_t size) {
+bool RSA::encrypt(uint8_t* buffer, uint32_t size)
+{
         if(publicKeySet) {
                 mpz_t plain, crypt;
                 mpz_init2 (plain, 1024);
@@ -72,7 +77,8 @@ bool RSA::encrypt(uint8_t* buffer, uint32_t size) {
         }
 }
 
-bool RSA::decrypt(uint8_t* buffer, uint32_t size) {
+bool RSA::decrypt(uint8_t* buffer, uint32_t size)
+{
         if(privateKeySet) {
                 mpz_t crypt, plain;
                 mpz_init2 (plain, 1024);

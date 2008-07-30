@@ -27,7 +27,7 @@ uint8_t* NetworkMessage::getBuffer () {
 
 bool NetworkMessage::getU8 (uint8_t& val)
 {
-        if (_curpos + 1 <= _size) {
+        if (_curpos + 1 > _size) {
                 return false;
         }
         memcpy (&_buffer, &val, 1);
@@ -37,7 +37,7 @@ bool NetworkMessage::getU8 (uint8_t& val)
 
 bool NetworkMessage::getU16 (uint16_t& val)
 {
-        if (_curpos + 2 <= _size) {
+        if (_curpos + 2 > _size) {
                 return false;
         }
         memcpy (&_buffer[_curpos], &val, 2);
@@ -47,7 +47,7 @@ bool NetworkMessage::getU16 (uint16_t& val)
 
 bool NetworkMessage::getU32 (uint32_t& val)
 {
-        if (_curpos + 4 <= _size) {
+        if (_curpos + 4 > _size) {
                 return false;
         }
         memcpy (&_buffer[_curpos], &val, 4);
@@ -57,7 +57,7 @@ bool NetworkMessage::getU32 (uint32_t& val)
 
 bool NetworkMessage::getN (uint8_t* dest, uint32_t n)
 {
-        if (_curpos + n <= _size) {
+        if (_curpos + n > _size) {
                 return false;
         }
         memcpy (dest, &_buffer[_curpos], n);
@@ -67,7 +67,7 @@ bool NetworkMessage::getN (uint8_t* dest, uint32_t n)
 
 bool NetworkMessage::putU8 (uint8_t val)
 {
-        if (_curpos + 1 <= _size) {
+        if (_curpos + 1 > _size) {
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 1);
@@ -77,7 +77,7 @@ bool NetworkMessage::putU8 (uint8_t val)
         
 bool NetworkMessage::putU16 (uint16_t val)
 {
-        if (_curpos + 2 <= _size) {
+        if (_curpos + 2 > _size) {
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 2);
@@ -87,7 +87,7 @@ bool NetworkMessage::putU16 (uint16_t val)
         
 bool NetworkMessage::putU32 (uint32_t val)
 {
-        if (_curpos + 4 <= _size) {
+        if (_curpos + 4 > _size) {
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 4);
@@ -97,7 +97,7 @@ bool NetworkMessage::putU32 (uint32_t val)
 
 bool NetworkMessage::putN (uint8_t* src, uint32_t n)
 {
-        if (_curpos + n <= _size) {
+        if (_curpos + n > _size) {
                 return false;
         }
         memcpy (src, &_buffer[_curpos], n);
