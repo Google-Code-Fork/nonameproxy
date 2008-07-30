@@ -16,7 +16,7 @@ class TibiaCrypt
 
                 void setRSAPublicKey (const char* e, const char* m);
                 void setRSAPrivateKey (const char* e, const char* m);
-                void setXTEAKey (uint32_t* k);
+                void setXTEAKey (const uint32_t* k);
 
                 void encrypt (NetworkMessage* msg);
                 void decrypt (NetworkMessage* msg);
