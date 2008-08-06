@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "connection.h"
 #include "tibiacrypt.h"
+#include "tibiatypes.h"
 
 class NetworkMessage
 {
@@ -14,7 +15,7 @@ class NetworkMessage
                 virtual ~NetworkMessage ();
 
                 void show ();
-        protected:
+//        protected:
                 //these functions should only be used by connection
                 //for efficient socket use
                 NetworkMessage (uint32_t size, uint8_t* buffer);
@@ -31,11 +32,17 @@ class NetworkMessage
                 bool putU8  (uint8_t  val);
                 bool putU16 (uint16_t val);
                 bool putU32 (uint32_t val);
-                bool putN   (uint8_t* src, uint32_t n);
+                bool putN   (const uint8_t* src, uint32_t n);
 
                 //all other more complex data types should be defined as
                 //class derived from TibiaMessage
                 //friend class TibiaMessage;
+                friend class TWord8;
+                friend class TWord16;
+                friend class TWord32;
+
+                friend class TString;
+                friend class TByteBuffer;
 
                 friend class Connection;
                 friend class TibiaCrypt;

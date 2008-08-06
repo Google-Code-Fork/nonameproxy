@@ -30,7 +30,7 @@ bool NetworkMessage::getU8 (uint8_t& val)
         if (_curpos + 1 > _size) {
                 return false;
         }
-        memcpy (&_buffer, &val, 1);
+        memcpy (&val, &_buffer[_curpos], 1);
         _curpos += 1;
         return true;
 }
@@ -40,7 +40,7 @@ bool NetworkMessage::getU16 (uint16_t& val)
         if (_curpos + 2 > _size) {
                 return false;
         }
-        memcpy (&_buffer[_curpos], &val, 2);
+        memcpy (&val, &_buffer[_curpos], 2);
         _curpos += 2;
         return true;
 }
@@ -50,7 +50,7 @@ bool NetworkMessage::getU32 (uint32_t& val)
         if (_curpos + 4 > _size) {
                 return false;
         }
-        memcpy (&_buffer[_curpos], &val, 4);
+        memcpy (&val, &_buffer[_curpos], 4);
         _curpos += 4;
         return true;
 }
@@ -95,12 +95,12 @@ bool NetworkMessage::putU32 (uint32_t val)
         return true;
 }
 
-bool NetworkMessage::putN (uint8_t* src, uint32_t n)
+bool NetworkMessage::putN (const uint8_t* src, uint32_t n)
 {
         if (_curpos + n > _size) {
                 return false;
         }
-        memcpy (src, &_buffer[_curpos], n);
+        memcpy (&_buffer[_curpos], src, n);
         _curpos += n;
         return true;
 }
