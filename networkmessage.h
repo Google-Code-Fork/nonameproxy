@@ -7,6 +7,7 @@
 #include "connection.h"
 #include "tibiacrypt.h"
 #include "tibiatypes.h"
+#include "messagefactory.h"
 
 class NetworkMessage
 {
@@ -15,11 +16,13 @@ class NetworkMessage
                 virtual ~NetworkMessage ();
 
                 void show ();
-//        protected:
+        protected:
                 //these functions should only be used by connection
                 //for efficient socket use
                 NetworkMessage (uint32_t size, uint8_t* buffer);
                 uint8_t* getBuffer ();
+                void setPos (uint32_t pos);
+                bool isEOF ();
 
                 //these functions provide the fundamental methods of reading
                 //and writing data to a network message all other all
@@ -46,6 +49,9 @@ class NetworkMessage
 
                 friend class Connection;
                 friend class TibiaCrypt;
+
+                friend class LSMessageFactory;
+                friend class LRMessageFactory;
         private:
                 uint8_t* _buffer;
                 uint32_t _size;

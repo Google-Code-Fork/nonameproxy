@@ -21,13 +21,29 @@ NetworkMessage::~NetworkMessage ()
         delete[] _buffer;
 }
 
-uint8_t* NetworkMessage::getBuffer () {
+uint8_t* NetworkMessage::getBuffer ()
+{
         return _buffer;
+}
+
+void NetworkMessage::setPos (uint32_t pos)
+{
+        _curpos = pos;
+}
+
+bool NetworkMessage::isEOF ()
+{
+        if (_curpos == _size) {
+                return true;
+        } else {
+                return false;
+        }
 }
 
 bool NetworkMessage::getU8 (uint8_t& val)
 {
         if (_curpos + 1 > _size) {
+                printf ("network error: couldn't read U8\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 1);
@@ -38,6 +54,7 @@ bool NetworkMessage::getU8 (uint8_t& val)
 bool NetworkMessage::getU16 (uint16_t& val)
 {
         if (_curpos + 2 > _size) {
+                printf ("network error: couldn't read U16\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 2);
@@ -48,6 +65,7 @@ bool NetworkMessage::getU16 (uint16_t& val)
 bool NetworkMessage::getU32 (uint32_t& val)
 {
         if (_curpos + 4 > _size) {
+                printf ("network error: couldn't read U32\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 4);
@@ -58,6 +76,7 @@ bool NetworkMessage::getU32 (uint32_t& val)
 bool NetworkMessage::getN (uint8_t* dest, uint32_t n)
 {
         if (_curpos + n > _size) {
+                printf ("network error: couldn't read %d bytes\n", n);
                 return false;
         }
         memcpy (dest, &_buffer[_curpos], n);
@@ -68,6 +87,7 @@ bool NetworkMessage::getN (uint8_t* dest, uint32_t n)
 bool NetworkMessage::putU8 (uint8_t val)
 {
         if (_curpos + 1 > _size) {
+                printf ("network error: couldn't write U8\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 1);
@@ -78,6 +98,7 @@ bool NetworkMessage::putU8 (uint8_t val)
 bool NetworkMessage::putU16 (uint16_t val)
 {
         if (_curpos + 2 > _size) {
+                printf ("network error: couldn't write U16\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 2);
@@ -88,6 +109,7 @@ bool NetworkMessage::putU16 (uint16_t val)
 bool NetworkMessage::putU32 (uint32_t val)
 {
         if (_curpos + 4 > _size) {
+                printf ("network error: couldn't write U32\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 4);
@@ -98,6 +120,7 @@ bool NetworkMessage::putU32 (uint32_t val)
 bool NetworkMessage::putN (const uint8_t* src, uint32_t n)
 {
         if (_curpos + n > _size) {
+                printf ("network error: couldn't write %d bytes\n", n);
                 return false;
         }
         memcpy (&_buffer[_curpos], src, n);

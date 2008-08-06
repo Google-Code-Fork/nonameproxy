@@ -34,7 +34,7 @@ uint8_t TWord8::getVal ()
 
 void TWord8::show ()
 {
-        printf ("%d", _val);
+        printf ("%u", _val);
 }
 
 //TWord16
@@ -65,7 +65,7 @@ uint16_t TWord16::getVal ()
 
 void TWord16::show ()
 {
-        printf ("%d", _val);
+        printf ("%u", _val);
 }
 //TWord32
 TWord32::TWord32 (uint32_t val)
@@ -95,7 +95,7 @@ uint32_t TWord32::getVal ()
 
 void TWord32::show ()
 {
-        printf ("%d", _val);
+        printf ("%u", _val);
 }
 
 //TString
@@ -139,7 +139,7 @@ void TString::get (NetworkMessage* msg)
 
 void TString::show ()
 {
-        printf ("%s (len = %d)", _str.c_str (), _str.length ());
+        printf ("%s (len = %u)", _str.c_str (), _str.length ());
 }
 
 //TByteBuffer
@@ -240,11 +240,11 @@ TCharacter::TCharacter (NetworkMessage* msg)
         get (msg);
 }
 
-TCharacter::TCharacter (std::string& name, std::string& pwd,
+TCharacter::TCharacter (std::string& name, std::string& world,
         uint32_t ip, uint16_t port)
 {
         _name = new TString (name);
-        _pwd = new TString (pwd);
+        _world = new TString (world);
         _ip = new TWord32 (ip);
         _port = new TWord16 (port);
 }
@@ -252,7 +252,7 @@ TCharacter::TCharacter (std::string& name, std::string& pwd,
 TCharacter::~TCharacter ()
 {
         delete _name;
-        delete _pwd;
+        delete _world;
         delete _ip;
         delete _port;
 }
@@ -260,7 +260,7 @@ TCharacter::~TCharacter ()
 void TCharacter::put (NetworkMessage* msg)
 {
         _name->put (msg);
-        _pwd->put (msg);
+        _world->put (msg);
         _ip->put (msg);
         _port->put (msg);
 }
@@ -268,7 +268,7 @@ void TCharacter::put (NetworkMessage* msg)
 void TCharacter::get (NetworkMessage* msg)
 {
         _name = new TString (msg);
-        _pwd = new TString (msg);
+        _world = new TString (msg);
         _ip = new TWord32 (msg);
         _port = new TWord16 (msg);
 }
@@ -280,7 +280,7 @@ const std::string& TCharacter::getName ()
 
 const std::string& TCharacter::getPwd ()
 {
-        return _pwd->getString ();
+        return _world->getString ();
 }
 
 uint32_t TCharacter::getIp ()
@@ -291,6 +291,14 @@ uint32_t TCharacter::getIp ()
 uint16_t TCharacter::getPort ()
 {
         return _ip->getVal ();
+}
+
+void TCharacter::show ()
+{
+        printf ("name: "); _name->show (); printf (" ");
+        printf ("world: "); _world->show (); printf (" ");
+        printf ("ip: "); _ip->show (); printf (" ");
+        printf ("port: "); _port->show (); printf (" ");
 }
 
 //TCharacterList
@@ -310,7 +318,7 @@ TCharacterList::~TCharacterList ()
         delete _nChars;
 }
 
-void TCharacterList::addChar (TCharacter& character)
+void TCharacterList::addChar (TCharacter* character)
 {
         _charlist.push_back (character);
         uint32_t tmp = _nChars->getVal ();
@@ -334,7 +342,28 @@ void TCharacterList::get (NetworkMessage* msg)
         _nChars = new TWord8 (msg);
         uint32_t n = _nChars->getVal ();
         for (uint32_t i = 0; i < n; i ++) {
-                _charlist.push_back (TCharacter (msg));
+                _charlist.push_back (new TCharacter (msg));
         }
+}
+
+void TCharacterList::put (NetworkMessage* msg)
+{
+        _nChars->put (msg);
+        for (CharList::iterator i = _charlist.begin (); i != _charlist.end ();
+                ++ i) {
+                (*i)->put (msg);
+        }
+}
+
+void TCharacterList::show ()
+{
+        printf ("\t"); _nChars->show (); printf (" characters {\n");
+        for (CharList::iterator i = _charlist.begin (); i != _charlist.end ();
+                ++ i) {
+                printf ("\t\t");
+                (*i)->show ();
+                printf ("\n");
+        }
+        printf ("\t}"); 
 }
 

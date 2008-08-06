@@ -11,15 +11,13 @@ class TibiaMessage
 {
         public:
                 virtual void put (NetworkMessage* msg);
-                virtual uint32_t type ();
+                virtual uint8_t getID ();
                 virtual void show ();
-        private:
                 virtual void get (NetworkMessage* msg);
-
 };
 
 //for message naming, L = login, G = game, S = send, R = recv
-class LSMLoginMsg : TibiaMessage
+class LSMLoginMsg : public TibiaMessage
 {
         public:
                 //note that this message reads 145 bytes from the buffer, ie it
@@ -30,7 +28,7 @@ class LSMLoginMsg : TibiaMessage
                         uint32_t* xtea, uint32_t account, std::string password);
 
                 virtual ~LSMLoginMsg ();
-                virtual uint32_t type ();
+                virtual uint8_t getID ();
                 virtual void put (NetworkMessage* msg);
                 virtual void show ();
 
@@ -43,10 +41,12 @@ class LSMLoginMsg : TibiaMessage
                 const uint32_t* getXTEA ();
                 uint32_t        getAccount ();
                 uint32_t        getPassword (); 
-        private:
+                
+                //im not exactly sure how deriving classes works, if this
+                //can go into private it should
                 virtual void get (NetworkMessage* msg);
-                uint32_t _id;
-
+        private:
+                TWord8*   _id;
                 TWord16*  _OS;
                 TWord16*  _version;
                 TWord32*  _datsig;
@@ -61,12 +61,156 @@ class LSMLoginMsg : TibiaMessage
                 TByteBuffer* _bytes;
 };
 
-class LSMessageFactory
+class LRMError : public TibiaMessage
 {
         public:
-                LSMessageFactory (NetworkMessage* msg);
-                virtual ~LSMessageFactory ();
-                TibiaMessage* getMessage ();
+                LRMError (NetworkMessage* msg);
+                LRMError (std::string msg);
+
+                virtual ~LRMError ();
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                const std::string& getMsg ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+
+                TWord8*  _id;
+                TString* _errormsg;
+};
+
+class LRMInfo : public TibiaMessage
+{
+        public:
+                LRMInfo (NetworkMessage* msg);
+                LRMInfo (std::string msg);
+
+                virtual ~LRMInfo ();
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                const std::string& getMsg ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+
+                TWord8*  _id;
+                TString* _infomsg;
+};
+
+//message of the day
+class LRMMOTD : public TibiaMessage
+{
+        public:
+                LRMMOTD (NetworkMessage* msg);
+                LRMMOTD (std::string msg);
+
+                virtual ~LRMMOTD ();
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                const std::string& getMsg ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+
+                TWord8*  _id;
+                TString* _motd;
+};
+
+class LRMCharacterList : public TibiaMessage
+{
+        public:
+                LRMCharacterList (NetworkMessage* msg);
+                //this function takes control of the TCharacterList passed to it
+                LRMCharacterList (TCharacterList* charlist, uint16_t daysprem);
+
+                virtual ~LRMCharacterList ();
+
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                TCharacterList* getCharacterList ();
+                uint16_t getDaysPrem ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+                TWord8*         _id;
+                TCharacterList* _charlist;
+                TWord16*        _daysprem;
+};
+
+class LRMPatchExe : public TibiaMessage
+{
+        public:
+                LRMPatchExe (NetworkMessage* msg);
+                LRMPatchExe ();
+
+                virtual ~LRMPatchExe ();
+
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+                TWord8* _id;
+};
+
+class LRMPatchDat : public TibiaMessage
+{
+        public:
+                LRMPatchDat (NetworkMessage* msg);
+                LRMPatchDat ();
+
+                virtual ~LRMPatchDat ();
+
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+                TWord8* _id;
+};
+
+class LRMPatchSpr : public TibiaMessage
+{
+        public:
+                LRMPatchSpr (NetworkMessage* msg);
+                LRMPatchSpr ();
+
+                virtual ~LRMPatchSpr ();
+
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+                TWord8* _id;
+};
+
+class LRMNewLoginServer : public TibiaMessage
+{
+        public:
+                LRMNewLoginServer (NetworkMessage* msg);
+                LRMNewLoginServer ();
+
+                virtual ~LRMNewLoginServer ();
+
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+                TWord8* _id;
 };
 
 #endif

@@ -16,7 +16,7 @@ void TibiaMessage::show ()
 {
 }
 
-uint32_t TibiaMessage::type ()
+uint8_t TibiaMessage::getID ()
 {
         return 0x00;
 }
@@ -24,7 +24,7 @@ uint32_t TibiaMessage::type ()
 //LSMLoginMsg
 LSMLoginMsg::LSMLoginMsg (NetworkMessage* msg)
 {
-        _id = 0x01;
+        _id = new TWord8 ((uint8_t)0x01);
         get (msg);
 }
 
@@ -32,7 +32,7 @@ LSMLoginMsg::LSMLoginMsg (uint16_t OS, uint16_t version, uint32_t datsig,
         uint32_t sprsig, uint32_t picsig, uint8_t u1, uint32_t* xtea,
         uint32_t account, std::string password)
 {
-        _id = 0x01;
+        _id = new TWord8 ((uint8_t)0x01);
 
         _OS = new TWord16 (OS);
         _version = new TWord16 (version);
@@ -51,6 +51,7 @@ LSMLoginMsg::LSMLoginMsg (uint16_t OS, uint16_t version, uint32_t datsig,
 
 LSMLoginMsg::~LSMLoginMsg ()
 {
+        delete _id;
         delete _OS; 
         delete _version; 
         delete _datsig;
@@ -63,9 +64,9 @@ LSMLoginMsg::~LSMLoginMsg ()
         delete _bytes;
 }
 
-uint32_t LSMLoginMsg::type ()
+uint8_t LSMLoginMsg::getID ()
 {
-        return _id;
+        return _id->getVal ();
 }
 
 void LSMLoginMsg::put (NetworkMessage* msg)
@@ -118,3 +119,327 @@ void LSMLoginMsg::show ()
         printf ("\tbytes: "); _bytes->show (); printf ("\n");
         printf ("}\n");
 }
+
+//LRMError
+LRMError::LRMError (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x0A);
+        get (msg);
+}
+
+LRMError::LRMError (std::string msg)
+{
+        _id = new TWord8 ((uint8_t)0x0A);
+        _errormsg = new TString (msg);
+}
+
+LRMError::~LRMError ()
+{
+        delete _id;
+        delete _errormsg;
+}
+
+uint8_t LRMError::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMError::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _errormsg->put (msg);
+}
+
+void LRMError::get (NetworkMessage* msg)
+{
+        _errormsg = new TString (msg);
+}
+
+void LRMError::show ()
+{
+        printf ("LRMError {\n");
+        printf ("\tmessage: "); _errormsg->show (); printf ("\n");
+        printf ("}\n");
+}
+
+//LRMInfo
+LRMInfo::LRMInfo (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x0B);
+        get (msg);
+}
+
+LRMInfo::LRMInfo (std::string msg)
+{
+        _id = new TWord8 ((uint8_t)0x0B);
+        _infomsg = new TString (msg);
+}
+
+LRMInfo::~LRMInfo ()
+{
+        delete _id;
+        delete _infomsg;
+}
+
+uint8_t LRMInfo::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMInfo::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _infomsg->put (msg);
+}
+
+void LRMInfo::get (NetworkMessage* msg)
+{
+        _infomsg = new TString (msg);
+}
+
+void LRMInfo::show ()
+{
+        printf ("LRMInfo {\n");
+        printf ("\tmessage: "); _infomsg->show (); printf ("\n");
+        printf ("}\n");
+}
+
+//LRMMOTD
+LRMMOTD::LRMMOTD (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x14);
+        get (msg);
+}
+
+LRMMOTD::LRMMOTD (std::string msg)
+{
+        _id = new TWord8 ((uint8_t)0x14);
+        _motd = new TString (msg);
+}
+
+LRMMOTD::~LRMMOTD ()
+{
+        delete _id;
+        delete _motd;
+}
+
+uint8_t LRMMOTD::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMMOTD::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _motd->put (msg);
+}
+
+void LRMMOTD::get (NetworkMessage* msg)
+{
+        _motd = new TString (msg);
+}
+
+void LRMMOTD::show ()
+{
+        printf ("LRMMOTD {\n");
+        printf ("\tmessage: "); _motd->show (); printf ("\n");
+        printf ("}\n");
+}
+
+//LRMCharacterList
+LRMCharacterList::LRMCharacterList (NetworkMessage* msg)
+{
+        _id = new TWord8 (0x64);
+        get (msg);
+}
+
+LRMCharacterList::LRMCharacterList (TCharacterList* charlist, uint16_t daysprem)
+{
+        _id = new TWord8 (0x64);
+        _charlist = charlist;
+        _daysprem = new TWord16 (daysprem);
+}
+
+LRMCharacterList::~LRMCharacterList ()
+{
+        delete _id;
+        delete _charlist;
+        delete _daysprem;
+}
+
+uint8_t LRMCharacterList::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMCharacterList::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _charlist->put (msg);
+        _daysprem->put (msg);
+}
+
+TCharacterList* LRMCharacterList::getCharacterList ()
+{
+        return _charlist;
+}
+
+uint16_t LRMCharacterList::getDaysPrem ()
+{
+        return _daysprem->getVal ();
+}
+
+void LRMCharacterList::get (NetworkMessage* msg)
+{
+        _charlist = new TCharacterList (msg);
+        _daysprem = new TWord16 (msg);
+}
+
+void LRMCharacterList::show ()
+{
+        printf ("LRMCharacterList {\n");
+        printf ("\tchars:\n"); _charlist->show (); printf ("\n");
+        printf ("\tdaysprem: "); _daysprem->show (); printf ("\n");
+        printf ("}\n");
+}
+
+//Patch Exe
+LRMPatchExe::LRMPatchExe (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x1E);
+}
+
+LRMPatchExe::LRMPatchExe ()
+{
+        _id = new TWord8 ((uint8_t)0x1E);
+}
+
+LRMPatchExe::~LRMPatchExe ()
+{
+        delete _id;
+}
+
+uint8_t LRMPatchExe::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMPatchExe::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void LRMPatchExe::get (NetworkMessage* msg)
+{
+}
+
+void LRMPatchExe::show ()
+{
+        printf ("LRMPatchExe {}\n");
+}
+
+//Patch Dat
+LRMPatchDat::LRMPatchDat (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x1F);
+}
+
+LRMPatchDat::LRMPatchDat ()
+{
+        _id = new TWord8 ((uint8_t)0x1F);
+}
+
+LRMPatchDat::~LRMPatchDat ()
+{
+        delete _id;
+}
+
+uint8_t LRMPatchDat::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMPatchDat::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void LRMPatchDat::get (NetworkMessage* msg)
+{
+}
+
+void LRMPatchDat::show ()
+{
+        printf ("LRMPatchDat {}\n");
+}
+
+//Patch Spr
+LRMPatchSpr::LRMPatchSpr (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x20);
+}
+
+LRMPatchSpr::LRMPatchSpr ()
+{
+        _id = new TWord8 ((uint8_t)0x20);
+}
+
+LRMPatchSpr::~LRMPatchSpr ()
+{
+        delete _id;
+}
+
+uint8_t LRMPatchSpr::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMPatchSpr::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void LRMPatchSpr::get (NetworkMessage* msg)
+{
+}
+
+void LRMPatchSpr::show ()
+{
+        printf ("LRMPatchSpr {}\n");
+}
+
+//Change Login Server
+LRMNewLoginServer::LRMNewLoginServer (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x28);
+}
+
+LRMNewLoginServer::LRMNewLoginServer ()
+{
+        _id = new TWord8 ((uint8_t)0x28);
+}
+
+LRMNewLoginServer::~LRMNewLoginServer ()
+{
+        delete _id;
+}
+
+uint8_t LRMNewLoginServer::getID ()
+{
+        return _id->getVal ();
+}
+
+void LRMNewLoginServer::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void LRMNewLoginServer::get (NetworkMessage* msg)
+{
+}
+
+void LRMNewLoginServer::show ()
+{
+        printf ("LRMNewLoginServer {}\n");
+}
+

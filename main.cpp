@@ -27,26 +27,38 @@ int main (uint32_t argc, char** argv)
 
         NetworkMessage* msg;
         
-        LSMLoginMsg* loginmsg;
+        LSMessageFactory* lsmf;
+        LRMessageFactory* lrmf;
+        TibiaMessage* tm;
 
         while (serverConn->isConnected () || clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
                         msg->show ();
-                        //for now read the header and the msg id
-                        uint8_t tmp[3];
-                        msg->getN (tmp, 3);
                         //and now lets have a little fun
-                        loginmsg = new LSMLoginMsg (msg);
-                        loginmsg->show ();
-                        crypt->setXTEAKey (loginmsg->getXTEA ());
+                        lsmf = new LSMessageFactory (msg);
+                        tm = lsmf->getMessage ();
+                        tm->show ();
+                        crypt->setXTEAKey (((LSMLoginMsg*)tm)->getXTEA ());
+                        //there should only be the one login message
+                        delete tm;
+                        while ((tm = lsmf->getMessage ()) != NULL) {
+                                tm->show ();
+                                delete tm;
+                        }
                         crypt->encrypt (msg);
                         serverConn->putMsg (msg);
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
                         msg->show ();
+                        //and some more fun
+                        lrmf = new LRMessageFactory (msg);
+                        while ((tm = lrmf->getMessage ()) != NULL) {
+                                tm->show ();
+                                delete tm;
+                        }
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
                 }
