@@ -109,7 +109,7 @@ class TCharacter
 {
         public:
                 TCharacter (NetworkMessage* msg);
-                TCharacter (std::string& name, std::string& pwd,
+                TCharacter (std::string& name, std::string& world,
                         uint32_t ip, uint16_t port);
                 virtual ~TCharacter ();
 
@@ -123,20 +123,20 @@ class TCharacter
         private:
                 void get (NetworkMessage* msg);
                 TString* _name;
-                TString* _pwd;
+                TString* _world;
                 TWord32* _ip;
                 TWord16* _port;
 };
 
 
-typedef std::list<TCharacter> CharList;
+typedef std::list<TCharacter*> CharList;
 class TCharacterList
 {
         public:
                 TCharacterList (NetworkMessage* msg);
                 TCharacterList ();
                 virtual ~TCharacterList ();
-                void addChar (TCharacter& character);
+                void addChar (TCharacter* character);
                 
                 uint32_t getNChars ();
                 const CharList& getCharList ();

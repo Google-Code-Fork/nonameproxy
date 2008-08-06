@@ -36,6 +36,7 @@ void TibiaCrypt::setXTEAKey (const uint32_t* k)
 
 void TibiaCrypt::encrypt (NetworkMessage* msg)
 {
+        msg->setPos (0);
         uint8_t* buffer = msg->getBuffer ();
         uint16_t len = *(uint16_t*)buffer + 2;
         if (len == LOGIN_RSA_LEN) {
@@ -55,10 +56,13 @@ void TibiaCrypt::decrypt (NetworkMessage* msg)
         uint16_t len = *(uint16_t*)buffer + 2;
         if (len == LOGIN_RSA_LEN) {
                 rsa->decrypt (&buffer[19], 128);
+                msg->setPos (2);
         } else if (len == GAME_RSA_LEN) {
                 rsa->decrypt (&buffer[7], 128);
+                msg->setPos (2);
         } else if ((len - 2) % 8 == 0) {
                 xtea->decrypt (&buffer[2], len - 2);
+                msg->setPos (4);
         } else {
                 printf ("decryption error\n");
         }
