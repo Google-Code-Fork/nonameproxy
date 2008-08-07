@@ -104,7 +104,7 @@ TString::TString (NetworkMessage* msg)
         get (msg);
 }
 
-TString::TString (std::string& str)
+TString::TString (const std::string& str)
 {
         _str = str;
 }
@@ -240,7 +240,7 @@ TCharacter::TCharacter (NetworkMessage* msg)
         get (msg);
 }
 
-TCharacter::TCharacter (std::string& name, std::string& world,
+TCharacter::TCharacter (const std::string& name, const std::string& world,
         uint32_t ip, uint16_t port)
 {
         _name = new TString (name);
@@ -278,7 +278,7 @@ const std::string& TCharacter::getName ()
         return _name->getString ();
 }
 
-const std::string& TCharacter::getPwd ()
+const std::string& TCharacter::getWorld ()
 {
         return _world->getString ();
 }

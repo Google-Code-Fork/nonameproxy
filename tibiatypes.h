@@ -56,7 +56,7 @@ class TString
 {
         public:
                 TString (NetworkMessage* msg);
-                TString (std::string& str);
+                TString (const std::string& str);
 
                 void put (NetworkMessage* msg);
 
@@ -109,12 +109,12 @@ class TCharacter
 {
         public:
                 TCharacter (NetworkMessage* msg);
-                TCharacter (std::string& name, std::string& world,
+                TCharacter (const std::string& name, const std::string& world,
                         uint32_t ip, uint16_t port);
                 virtual ~TCharacter ();
 
                 const std::string& getName ();
-                const std::string& getPwd ();
+                const std::string& getWorld ();
                 uint32_t getIp ();
                 uint16_t getPort ();
 

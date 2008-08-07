@@ -6,8 +6,8 @@ LDFLAGS=-lgmp
 
 all: nonameproxy
 
-nonameproxy: main.cpp messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o nonameproxy main.cpp messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o
+nonameproxy: main.cpp messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o corehooks.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o nonameproxy main.cpp messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o corehooks.o
 
 
 tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h
@@ -40,5 +40,8 @@ connection.o: connection.cpp connection.h server.h
 messagefactory.o: messagefactory.cpp messagefactory.cpp tibiamessage.h tibiatypes.h networkmessage.h
 	$(CC) -c $(CFLAGS) $(CFLAGS) messagefactory.cpp
 
+corehooks.o: corehooks.cpp corehooks.h hook.h
+	$(CC) -c $(CFLAGS) $(CFLAGS) corehooks.cpp
+
 clean:
-	rm -f nonameproxy messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o
+	rm -f corehooks.o nonameproxy messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o

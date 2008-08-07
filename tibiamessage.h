@@ -135,7 +135,7 @@ class LRMCharacterList : public TibiaMessage
                 virtual void put (NetworkMessage* msg);
                 virtual void show ();
 
-                TCharacterList* getCharacterList ();
+                TCharacterList* getCharList ();
                 uint16_t getDaysPrem ();
 
                 virtual void get (NetworkMessage* msg);
