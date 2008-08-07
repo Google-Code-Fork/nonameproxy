@@ -9,6 +9,8 @@
 #include "networkmessage.h"
 #include "connectionmanager.h"
 #include "tibiamessage.h"
+#include "hook.h"
+#include "corehooks.h"
 
 int main (uint32_t argc, char** argv)
 {
@@ -30,6 +32,8 @@ int main (uint32_t argc, char** argv)
         LSMessageFactory* lsmf;
         LRMessageFactory* lrmf;
         TibiaMessage* tm;
+        WriteHook* hook = new HWCharacterList;
+        GameState* dummy;
 
         while (serverConn->isConnected () || clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
@@ -56,6 +60,9 @@ int main (uint32_t argc, char** argv)
                         //and some more fun
                         lrmf = new LRMessageFactory (msg);
                         while ((tm = lrmf->getMessage ()) != NULL) {
+                                if (tm->getID () == 0x64) {
+                                        tm = hook->func (tm, dummy);
+                                }
                                 tm->show ();
                                 delete tm;
                         }

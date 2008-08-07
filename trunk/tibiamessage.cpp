@@ -279,7 +279,7 @@ void LRMCharacterList::put (NetworkMessage* msg)
         _daysprem->put (msg);
 }
 
-TCharacterList* LRMCharacterList::getCharacterList ()
+TCharacterList* LRMCharacterList::getCharList ()
 {
         return _charlist;
 }
