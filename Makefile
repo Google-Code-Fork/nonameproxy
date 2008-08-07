@@ -44,4 +44,4 @@ corehooks.o: corehooks.cpp corehooks.h hook.h
 	$(CC) -c $(CFLAGS) $(CFLAGS) corehooks.cpp
 
 clean:
-	rm -f corehooks.o nonameproxy messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o
+	rm -f nonameproxy *.o
