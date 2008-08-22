@@ -11,63 +11,77 @@
 #include "tibiamessage.h"
 #include "hook.h"
 #include "corehooks.h"
+#include "loginstate.h"
+#include "gamestate.h"
+#include "messagelist.h"
 
 int main (uint32_t argc, char** argv)
 {
         TibiaCrypt* crypt = new TibiaCrypt ();
         crypt->setRSAPublicKey (TIBKEY, TIBMOD);
+        //crypt->setRSAPublicKey (TIBKEY, OTMOD);
         crypt->setRSAPrivateKey (OTKEY, OTMOD);
         Server* loginServer = new Server ();
         loginServer->listenOn (1337);
         Connection* clientConn = loginServer->acceptConnection ();
         Connection* serverConn = new Connection ();
-        serverConn->connectTo ("tibia01.cipsoft.com", 7171);
+        serverConn->connectTo ("login02.tibia.com", 7171);
 
         ConnectionManager* connMgr = new ConnectionManager ();
         connMgr->addConnection (clientConn);
         connMgr->addConnection (serverConn);
 
+        LoginState* lstate = new LoginState ();
+        GameState*  gstate = new GameState (lstate);
+
         NetworkMessage* msg;
+        NetworkMessage* newmsg;
         
-        LSMessageFactory* lsmf;
-        LRMessageFactory* lrmf;
+        LSMessageList* lsml;
+        LRMessageList* lrml;
+
         TibiaMessage* tm;
         WriteHook* hook = new HWCharacterList;
-        GameState* dummy;
 
         while (serverConn->isConnected () || clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        msg->show ();
                         //and now lets have a little fun
-                        lsmf = new LSMessageFactory (msg);
-                        tm = lsmf->getMessage ();
+                        //here we pass control of the msg to lsml
+                        lsml = new LSMessageList (msg);
+                        tm = lsml->read ();
                         tm->show ();
+                        lsml->next ();
                         crypt->setXTEAKey (((LSMLoginMsg*)tm)->getXTEA ());
                         //there should only be the one login message
-                        delete tm;
-                        while ((tm = lsmf->getMessage ()) != NULL) {
+                        while (!lsml->isEnd ()) {
+                                tm = lsml->read ();
                                 tm->show ();
-                                delete tm;
+                                lsml->next ();
                         }
+                        msg = lsml->put ();
                         crypt->encrypt (msg);
                         serverConn->putMsg (msg);
+                        delete lsml;
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        msg->show ();
                         //and some more fun
-                        lrmf = new LRMessageFactory (msg);
-                        while ((tm = lrmf->getMessage ()) != NULL) {
+                        lrml = new LRMessageList (msg);
+                        while (!lrml->isEnd ()) {
+                                tm = lrml->read ();
                                 if (tm->getID () == 0x64) {
-                                        tm = hook->func (tm, dummy);
+                                        tm = hook->func (tm, gstate);
+                                        lrml->replace (tm);
                                 }
                                 tm->show ();
-                                delete tm;
+                                lrml->next ();
                         }
+                        msg = lrml->put ();
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
+                        delete lrml;
                 }
         }
 

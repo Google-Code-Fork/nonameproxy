@@ -10,8 +10,8 @@ TibiaMessage* HWCharacterList::func (TibiaMessage* tm, GameState* gs)
         CharList charlist = cl->getCharList ()->getCharList ();
         for (CharList::iterator i = charlist.begin ();
                 i != charlist.end (); ++ i) {
-                const std::string name = (*i)->getName ();
-                const std::string world = (*i)->getWorld ();
+                const std::string& name = (*i)->getName ();
+                const std::string& world = (*i)->getWorld ();
                 newChar = new TCharacter (name, world, 0x0100007F, 7331);
                 fixedCharList->addChar (newChar);
         }

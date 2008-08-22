@@ -71,6 +71,7 @@ uint8_t LSMLoginMsg::getID ()
 
 void LSMLoginMsg::put (NetworkMessage* msg)
 {
+        _id->put (msg);
         _OS->put (msg);
         _version->put (msg);
         _datsig->put (msg);
