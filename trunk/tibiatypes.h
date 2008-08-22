@@ -12,6 +12,7 @@ class TWord8
         public:
                 TWord8 (NetworkMessage* msg);
                 TWord8 (uint8_t val);
+                TWord8 (const TWord8& clone); 
 
                 void put (NetworkMessage* msg);
 
@@ -27,6 +28,7 @@ class TWord16
         public:
                 TWord16 (NetworkMessage* msg);
                 TWord16 (uint16_t val);
+                TWord16 (const TWord16& clone);
 
                 void put (NetworkMessage* msg);
 
@@ -42,6 +44,7 @@ class TWord32
         public:
                 TWord32 (NetworkMessage* msg);
                 TWord32 (uint32_t val);
+                TWord32 (const TWord32& clone);
 
                 void put (NetworkMessage* msg);
 
@@ -57,6 +60,7 @@ class TString
         public:
                 TString (NetworkMessage* msg);
                 TString (const std::string& str);
+                TString (const TString& clone);
 
                 void put (NetworkMessage* msg);
 
@@ -77,6 +81,7 @@ class TByteBuffer
         public:
                 TByteBuffer (uint32_t len, NetworkMessage* msg);
                 TByteBuffer (uint32_t len);
+                TByteBuffer (const TByteBuffer& clone);
                 virtual ~TByteBuffer ();
 
                 void put (NetworkMessage* msg);
@@ -93,6 +98,7 @@ class TXTEAKey
         public:
                 TXTEAKey (NetworkMessage* msg);
                 TXTEAKey (const uint32_t* key);
+                TXTEAKey (const TXTEAKey& clone);
                 virtual ~TXTEAKey ();
 
                 void put (NetworkMessage* msg);
@@ -111,6 +117,7 @@ class TCharacter
                 TCharacter (NetworkMessage* msg);
                 TCharacter (const std::string& name, const std::string& world,
                         uint32_t ip, uint16_t port);
+                TCharacter (const TCharacter& clone);
                 virtual ~TCharacter ();
 
                 const std::string& getName ();
@@ -135,6 +142,7 @@ class TCharacterList
         public:
                 TCharacterList (NetworkMessage* msg);
                 TCharacterList ();
+                TCharacterList (const TCharacterList& clone);
                 virtual ~TCharacterList ();
                 void addChar (TCharacter* character);
                 

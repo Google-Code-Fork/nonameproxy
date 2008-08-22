@@ -15,6 +15,11 @@ class NetworkMessage
                 NetworkMessage (uint32_t size);
                 virtual ~NetworkMessage ();
 
+                void prepRSAHeader ();
+                void prepHeader ();
+                void writeRSAHeader ();
+                void writeHeader ();
+
                 void show ();
         protected:
                 //these functions should only be used by connection
@@ -22,7 +27,10 @@ class NetworkMessage
                 NetworkMessage (uint32_t size, uint8_t* buffer);
                 uint8_t* getBuffer ();
                 void setPos (uint32_t pos);
+                bool isRSA ();
                 bool isEOF ();
+                bool isXTEAEOF ();
+                bool isRSAEOF ();
 
                 //these functions provide the fundamental methods of reading
                 //and writing data to a network message all other all

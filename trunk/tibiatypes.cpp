@@ -17,6 +17,11 @@ TWord8::TWord8 (NetworkMessage* msg)
         get (msg);
 }
 
+TWord8::TWord8 (const TWord8& clone)
+{
+        _val = clone._val;
+}
+
 void TWord8::put (NetworkMessage* msg)
 {
         msg->putU8 (_val); 
@@ -46,6 +51,11 @@ TWord16::TWord16 (uint16_t val)
 TWord16::TWord16 (NetworkMessage* msg)
 {
         get (msg);
+}
+
+TWord16::TWord16 (const TWord16& clone)
+{
+        _val = clone._val;
 }
 
 void TWord16::put (NetworkMessage* msg)
@@ -78,6 +88,11 @@ TWord32::TWord32 (NetworkMessage* msg)
         get (msg);
 }
 
+TWord32::TWord32 (const TWord32& clone)
+{
+        _val = clone._val;
+}
+
 void TWord32::put (NetworkMessage* msg)
 {
         msg->putU32 (_val); 
@@ -107,6 +122,11 @@ TString::TString (NetworkMessage* msg)
 TString::TString (const std::string& str)
 {
         _str = str;
+}
+
+TString::TString (const TString& clone)
+{
+        _str = clone._str;
 }
 
 const std::string& TString::getString ()
@@ -163,6 +183,13 @@ TByteBuffer::TByteBuffer (uint32_t len)
         }
 }
 
+TByteBuffer::TByteBuffer (const TByteBuffer& clone)
+{
+        _len = clone._len;
+        _buffer = new uint8_t[_len];
+        memcpy (_buffer, clone._buffer, _len);
+}
+
 TByteBuffer::~TByteBuffer ()
 {
         delete[] _buffer;
@@ -196,6 +223,14 @@ TXTEAKey::TXTEAKey (const uint32_t* key)
         memcpy (_keyBuffer, key, 16);
         for (uint32_t i = 0; i < 4; i ++) {
                 _key[i] = new TWord32 (key[i]);
+        }
+}
+
+TXTEAKey::TXTEAKey (const TXTEAKey& clone)
+{
+        memcpy (_keyBuffer, clone._keyBuffer, 16);
+        for (uint32_t i = 0; i < 4; i ++) {
+                _key[i] = new TWord32 (*clone._key[i]);
         }
 }
 
@@ -247,6 +282,14 @@ TCharacter::TCharacter (const std::string& name, const std::string& world,
         _world = new TString (world);
         _ip = new TWord32 (ip);
         _port = new TWord16 (port);
+}
+
+TCharacter::TCharacter (const TCharacter& clone)
+{
+        _name = new TString (*clone._name);
+        _world = new TString (*clone._world);
+        _ip = new TWord32 (*clone._ip);
+        _port = new TWord16 (*clone._port);
 }
 
 TCharacter::~TCharacter ()
@@ -313,9 +356,24 @@ TCharacterList::TCharacterList ()
         _nChars = new TWord8 ((uint8_t)0);
 }
 
+TCharacterList::TCharacterList (const TCharacterList& clone)
+{
+        _nChars = new TWord8 (*clone._nChars);
+        //first make a copy of to avoid const iterators
+        CharList tmp = clone._charlist;
+        for (CharList::iterator i = tmp.begin ();
+                i != tmp.end (); ++i) {
+                _charlist.push_back (new TCharacter (*(*i)));
+        }
+}
+
 TCharacterList::~TCharacterList ()
 {
         delete _nChars;
+        for (CharList::iterator i = _charlist.begin (); i != _charlist.end ();
+                ++ i) {
+                delete (*i);
+        }
 }
 
 void TCharacterList::addChar (TCharacter* character)

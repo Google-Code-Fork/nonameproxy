@@ -1,47 +1,53 @@
-# MAKEFILE for nonameproxy
+# Makefile for nonameproxy
 
-CC=g++
-CFLAGS=-Wall
-LDFLAGS=-lgmp
+CFLAGS  = -Wall
+CFLAGS  += -lgmp
+CFLAGS += -g
+#CFLAGS += -O2
+CC     = g++
+
+objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
+		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
+		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o
 
 all: nonameproxy
 
-nonameproxy: main.cpp messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o corehooks.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o nonameproxy main.cpp messagefactory.o tibiamessage.o tibiatypes.o tibiacrypt.o xtea.o rsa.o connectionmanager.o connection.o server.o networkmessage.o corehooks.o
+nonameproxy: $(objects)
+	$(CC) $(CFLAGS) -o nonameproxy $(objects)
 
+main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h loginstate.h \
+		messagefactory.h messagelist.h networkmessage.h rsa.h server.h tibiacrypt.h \
+		tibiamessage.h tibiatypes.h xtea.h
 
 tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) tibiamessage.cpp
 
 tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) tibiatypes.cpp
 
 tibiacrypt.o: tibiacrypt.cpp tibiacrypt.h rsa.h xtea.h networkmessage.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) tibiacrypt.cpp
 
-xtea.o: xtea.cpp xtea.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) xtea.cpp
-	
 rsa.o: rsa.cpp rsa.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) rsa.cpp
 
 connectionmanager.o: connectionmanager.cpp connectionmanager.h connection.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) connectionmanager.cpp
 
 networkmessage.o: networkmessage.cpp networkmessage.h connection.h tibiacrypt.h tibiatypes.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) networkmessage.cpp
 
 server.o: server.cpp server.h connection.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) server.cpp
 
 connection.o: connection.cpp connection.h server.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) connection.cpp
 
 messagefactory.o: messagefactory.cpp messagefactory.cpp tibiamessage.h tibiatypes.h networkmessage.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) messagefactory.cpp
 
 corehooks.o: corehooks.cpp corehooks.h hook.h
-	$(CC) -c $(CFLAGS) $(CFLAGS) corehooks.cpp
+
+loginstate.o: loginstate.cpp loginstate.h tibiatypes.h
+
+gamestate.o: gamestate.cpp gamestate.h
+
+corehooks.o: corehooks.cpp corehooks.h hook.h tibiamessage.h
+
+messagelist.o: messagelist.cpp messagelist.h 
+
+xtea.o: xtea.cpp xtea.h
 
 clean:
-	rm -f nonameproxy *.o
+	rm -f nonameproxy $(objects)

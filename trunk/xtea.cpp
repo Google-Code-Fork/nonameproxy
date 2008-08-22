@@ -1,6 +1,7 @@
 #include <string.h>
 #include "xtea.h"
 
+
 //these are almost the exact functions taken from wikipedia with the type
 //signatures changed
 void encipher(uint32_t num_rounds, uint32_t* v, uint32_t* k) {

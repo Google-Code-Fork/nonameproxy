@@ -1,37 +1,23 @@
-#include <stdio.h>
-#include <string.h>
 #include "rsa.h"
 #include "rsakeys.h"
+#include <string.h>
+#include <stdint.h>
 
-int main() {
-        char test[129] = "abcdefghijklmnopqrstuvwxyz";
-        test[128] = 0;
-        
-        RSA crypto;
-        crypto.setPublicKey (TIBKEY, OTMOD);
-        crypto.setPrivateKey (OTKEY, OTMOD);
-        printf ("%s\n", test);
+int main ()
+{
+        RSA* rsa = new RSA ();
+        rsa->setPublicKey (OTKEY, OTMOD);
+        rsa->setPrivateKey (TIBKEY, OTMOD);
 
-        //for(int i = 0; i < 128; i++) {
-        //        printf("%02X ", test[i]);
-        //}
-        //printf("\n\n");
-        crypto.encrypt((uint8_t*)test, 128);
-        //for(int i = 0; i < 128; i++) {
-        //        printf ("%02X ", test[i]);
-        //}
-        //printf ("\n\n");
-        crypto.decrypt((uint8_t*)test, 128);
-        //for(int i = 0; i < 128; i++) {
-        //        printf ("%02X ", test[i]);
-        //}
-        //printf ("\n\n");
-        
-        //for(int i = 0; i < 128; i++) {
-        //        printf("%c ", test[i]);
-        //}
-        //printf("\n");
-        printf("%s\n", test);
+        uint8_t test[128];
+        memset (test, 0, 128);
+        strcpy ((char*)test + 1, "abcdefg");
+
+        printf ("%s\n", test + 1);
+        rsa->encrypt (test, 128);
+        //printf ("%s\n", test);
+        rsa->decrypt (test, 128);
+
+        printf ("%s\n", test + 1);
         return 0;
 }
-
