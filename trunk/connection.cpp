@@ -190,7 +190,7 @@ int32_t Connection::query_fd (fd_set& readfds, fd_set& writefds,
                 //we should probably know about errors as well
                 FD_SET (connsock, &errfds);
 
-                //printf ("%d %d %d\n",
+                //printf ("quer %d %d %d %d\n", connsock,
                 //        FD_ISSET (connsock, &readfds),
                 //        FD_ISSET (connsock, &writefds),
                 //        FD_ISSET (connsock, &errfds));
@@ -202,6 +202,10 @@ int32_t Connection::query_fd (fd_set& readfds, fd_set& writefds,
 void Connection::tell_fd (fd_set& readfds, fd_set& writefds,
         fd_set& errfds)
 {
+        //printf ("tell %d %d %d %d\n", connsock,
+        //        FD_ISSET (connsock, &readfds),
+        //        FD_ISSET (connsock, &writefds),
+        //        FD_ISSET (connsock, &errfds));
         if (FD_ISSET (connsock, &readfds)) {
                 NetworkMessage* msg = _getMsg ();
                 if (msg != NULL) {

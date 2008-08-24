@@ -15,6 +15,15 @@ void HRLoginMsg::func (TibiaMessage* tm, Client* client)
 TibiaMessage* HWCharacterList::func (TibiaMessage* tm, Client* client)
 {
         LRMCharacterList* cl = (LRMCharacterList*)tm;
+
+        //first save the original login details in login state
+        LoginDetails* ld = new LoginDetails (
+                client->gstate->account->getAccount (),
+                client->gstate->account->getPassword (),
+                cl->getCharList ());
+        client->lstate->putAccountDetails (ld);
+
+        //and now make a new char list
         TCharacterList* fixedCharList = new TCharacterList ();
         TCharacter*  newChar;
         CharList charlist = cl->getCharList ()->getCharList ();
@@ -37,6 +46,15 @@ TibiaMessage* HWMOTD::func (TibiaMessage* tm, Client* client)
 {
         delete tm;
         return new LRMMOTD (std::string ("450\nLol isnt this awesome\n"));
+}
+
+void HRGameInit::func (TibiaMessage* tm, Client* client)
+{
+        GSMGameInit* gi = (GSMGameInit*)tm;
+        client->gstate->account->setAccount (gi->getAccount ());
+        client->gstate->account->setPassword (gi->getPassword ());
+        client->gstate->character->setName (gi->getName ());
+        client->crypt->setXTEAKey (gi->getXTEA ());
 }
         
 

@@ -32,15 +32,17 @@ class LRMessageFactory
                 NetworkMessage* _msg;
 };
 
-/*class GSMessageFactory
+class GSMessageFactory
 {
         public:
                 GSMessageFactory (NetworkMessage* msg);
                 virtual ~GSMessageFactory ();
 
                 TibiaMessage* getMessage ();
+        private:
+                NetworkMessage* _msg;
 };
-
+/*
 class GRMessageFactory
 {
         public:

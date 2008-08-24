@@ -24,6 +24,12 @@ class HRLoginMsg : public ReadHook
         public:
                 virtual void func (TibiaMessage* tm, Client* client);
 };
+
+class HRGameInit : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
 #endif
 
 

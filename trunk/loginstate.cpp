@@ -39,7 +39,7 @@ TCharacter* LoginDetails::getCharByName (const std::string& name)
 void LoginState::putAccountDetails (LoginDetails* details)
 {
         uint32_t key = details->getAccount ();
-        _loginrec.insert (std::pair<uint32_t, LoginDetails>(key, *details));
+        _loginrec.insert (std::pair<uint32_t, LoginDetails*>(key, details));
 }
 
 LoginDetails* LoginState::getAccountDetails (uint32_t account)
@@ -48,7 +48,7 @@ LoginDetails* LoginState::getAccountDetails (uint32_t account)
         if (i == _loginrec.end ()) {
                 return NULL;
         } else {
-                return (&((*i).second));
+                return ((*i).second);
         }
 }
         

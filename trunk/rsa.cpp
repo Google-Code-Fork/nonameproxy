@@ -89,7 +89,6 @@ bool RSA::decrypt(uint8_t* buffer, uint32_t size)
                 mpz_powm (plain, crypt, m_d, m_prvmod);
 
                 size_t count = (mpz_sizeinbase(plain, 2) + 7)/8;
-                printf ("%d\n", count);
                 memset(buffer, 0, size - count);
                 mpz_export(&buffer[size - count], NULL, 1, 1, 0, 0, plain); 
                 //mpz_export (buffer, NULL, 1, 1, 0, 0, plain);
