@@ -10,9 +10,20 @@
 class HWCharacterList : public WriteHook
 {
         public:
-                virtual TibiaMessage* func (TibiaMessage* tm, GameState* gs);
+                virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
 };
 
+class HWMOTD : public WriteHook
+{
+        public:
+                virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
+};
+
+class HRLoginMsg : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
 #endif
 
 

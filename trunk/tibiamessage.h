@@ -32,15 +32,15 @@ class LSMLoginMsg : public TibiaMessage
                 virtual void put (NetworkMessage* msg);
                 virtual void show ();
 
-                uint16_t        getOS ();
-                uint16_t        getVersion ();
-                uint32_t        getDatsig ();
-                uint32_t        getSprsig ();
-                uint32_t        getPicSig ();
-                uint8_t         getU1 ();
-                const uint32_t* getXTEA ();
-                uint32_t        getAccount ();
-                uint32_t        getPassword (); 
+                uint16_t                getOS ();
+                uint16_t                getVersion ();
+                uint32_t                getDatsig ();
+                uint32_t                getSprsig ();
+                uint32_t                getPicSig ();
+                uint8_t                 getU1 ();
+                const uint32_t*         getXTEA ();
+                uint32_t                getAccount ();
+                const std::string&       getPassword (); 
                 
                 //im not exactly sure how deriving classes works, if this
                 //can go into private it should

@@ -1,0 +1,124 @@
+#include <stdint.h>
+#include <sys/select.h>
+#include <unistd.h>
+
+#include "client.h"
+#include "rsakeys.h"
+#include "networkmessage.h"
+#include "connectionmanager.h"
+#include "tibiamessage.h"
+#include "hook.h"
+#include "corehooks.h"
+#include "hookmanager.h"
+#include "messagelist.h"
+
+#define CONN_TIMEOUT 5000
+
+Client::Client (LoginState* ls)
+{
+        lstate = ls;
+        gstate = new GameState ();
+
+        serverConn = NULL;
+        clientConn = NULL;
+        connMgr = NULL;
+
+        crypt = new TibiaCrypt ();
+        //i guess there is some redundancy having an RSA module
+        //for each client, but who cares ?
+        crypt->setRSAPublicKey (TIBKEY, TIBMOD);
+        crypt->setRSAPrivateKey (OTKEY, OTMOD);
+
+        recvHM = NULL;
+        sendHM = NULL;
+}        
+
+Client::~Client ()
+{
+        delete gstate;
+
+        delete serverConn;
+        delete clientConn;
+        delete connMgr;
+
+        delete recvHM;
+        delete sendHM;
+}
+
+bool Client::runLogin (Connection* acceptedConn)
+{
+        //first initialize the core hooks, im not going to add support for
+        //user defined login hooks. All we have to do is load the core hooks
+        sendHM = new HookManager ();
+        sendHM->addReadHook (0x01, (ReadHook*)(new HRLoginMsg));
+
+        recvHM = new HookManager ();
+        recvHM->addWriteHook (0x64, (WriteHook*)(new HWCharacterList));
+        //im only adding this hook for fun
+        recvHM->addWriteHook (0x14, (WriteHook*)(new HWMOTD));
+
+        //set up the connection
+        Connection* clientConn = acceptedConn;
+        Connection* serverConn = new Connection ();
+        //need to add support for all login servers
+        if (!serverConn->connectTo ("login02.tibia.com", 7171)) {
+                printf ("error: failed to connect to login server\n");
+                return false;
+        }
+
+        ConnectionManager* connMgr = new ConnectionManager ();
+        connMgr->addConnection (clientConn);
+        connMgr->addConnection (serverConn);
+
+        NetworkMessage* msg;
+        //This loop will only terminate after both connections have terminated
+        //Although this is less than ideal, it should work
+        while (serverConn->isConnected () || clientConn->isConnected ()) {
+                connMgr->selectConnections (125);
+                if ((msg = clientConn->getMsg ()) != NULL) {
+                        crypt->decrypt (msg);
+                        LSMessageList* lsml = new LSMessageList (msg);
+                        while (!lsml->isEnd ()) {
+                                TibiaMessage* tm = lsml->read ();
+                                sendHM->hookReadMessage (tm, this);
+                                tm = sendHM->hookWriteMessage (tm, this);
+                                lsml->replace (tm);
+                                tm->show ();
+                                lsml->next ();
+                        }
+                        msg = lsml->put ();
+                        crypt->encrypt (msg);
+                        serverConn->putMsg (msg);
+                        delete lsml;
+                }
+                if ((msg = serverConn->getMsg ()) != NULL) {
+                        crypt->decrypt (msg);
+                        LRMessageList* lrml = new LRMessageList (msg);
+                        while (!lrml->isEnd ()) {
+                                TibiaMessage* tm = lrml->read ();
+                                recvHM->hookReadMessage (tm, this);
+                                tm = recvHM->hookWriteMessage (tm, this);
+                                lrml->replace (tm);
+                                tm->show ();
+                                lrml->next ();
+                        }
+                        msg = lrml->put ();
+                        msg->show ();
+                        crypt->encrypt (msg);
+                        clientConn->putMsg (msg);
+                        delete lrml;
+                }
+        }
+
+        delete clientConn;
+        delete serverConn;
+        delete recvHM;
+        delete sendHM;
+        clientConn = NULL;
+        serverConn = NULL;
+        recvHM = NULL;
+        sendHM = NULL;
+
+        return true;
+}
+

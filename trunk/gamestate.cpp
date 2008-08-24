@@ -1,12 +1,12 @@
 #include "gamestate.h"
 
-GameState::GameState (LoginState* lstate)
+GameState::GameState ()
 {
-        _lstate = lstate;
+        account = new AccountState;
 }
 
-LoginState* GameState::getLoginState ()
+GameState::~GameState ()
 {
-        return _lstate;
+        delete account;
 }
 
