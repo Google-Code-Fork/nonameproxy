@@ -114,10 +114,8 @@ TibiaMessage* HookManager::hookWriteMessage (TibiaMessage* tm, Client* client)
 {
         uint8_t id = tm->getID ();
         if (!wHooks[id]) {
-                printf ("naw\n");
                 return tm;
         }
-        printf ("yay\n");
         return wHooks[id]->func (tm, client);
 }
 

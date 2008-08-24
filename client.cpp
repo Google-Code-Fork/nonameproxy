@@ -73,7 +73,7 @@ bool Client::runLogin (Connection* acceptedConn)
         NetworkMessage* msg;
         //This loop will only terminate after both connections have terminated
         //Although this is less than ideal, it should work
-        while (serverConn->isConnected () || clientConn->isConnected ()) {
+        while (serverConn->isConnected () && clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
@@ -107,6 +107,98 @@ bool Client::runLogin (Connection* acceptedConn)
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
                         delete lrml;
+                        break;
+                }
+        }
+
+        //this is a dodgy hack to flush the msg left over from the break statement
+        connMgr->selectConnections (125);
+
+        delete connMgr;
+        delete clientConn;
+        delete serverConn;
+        delete recvHM;
+        delete sendHM;
+        clientConn = NULL;
+        serverConn = NULL;
+        recvHM = NULL;
+        sendHM = NULL;
+
+        return true;
+}
+
+bool Client::runGame (Connection* acceptedConn)
+{
+        sendHM = new HookManager ();
+        sendHM->addReadHook (0x0A, (ReadHook*)(new HRGameInit));
+
+        recvHM = new HookManager ();
+        //set up the connection
+        Connection* clientConn = acceptedConn;
+        Connection* serverConn = new Connection ();
+
+        ConnectionManager* connMgr = new ConnectionManager ();
+        connMgr->addConnection (clientConn);
+
+        NetworkMessage* msg;
+
+        //in order to connect to the game server we need to retrieve the
+        //original ip address but in order to do that we need to first
+        //recv a packet from the client
+        while (clientConn->isConnected ()) {
+                connMgr->selectConnections (125);
+                if ((msg = clientConn->getMsg ()) != NULL) {
+                        crypt->decrypt (msg);
+                        msg->show ();
+                        GSMessageList* gsml = new GSMessageList (msg);
+                        while (!gsml->isEnd ()) {
+                                TibiaMessage* tm = gsml->read ();
+                                sendHM->hookReadMessage (tm, this);
+                                tm = sendHM->hookWriteMessage (tm, this);
+                                gsml->replace (tm);
+                                tm->show ();
+                                gsml->next ();
+                        }
+                        msg = gsml->put ();
+                        msg->show ();
+                        crypt->encrypt (msg);
+                        //now we want to send the message to the server, but
+                        //we have to connect to the server first, so well
+                        //save the message
+                        delete gsml;
+                        break;
+                }
+        }
+        LoginDetails* ld = lstate->getAccountDetails
+                        (gstate->account->getAccount());
+
+        TCharacter* connChar = ld->getCharByName
+                (gstate->character->getName ());
+
+        //and now we can finally connect
+        if (!serverConn->connectTo (connChar->getIp (), connChar->getPort ())) {
+                printf ("error: failed to connect to game server\n");
+                return false;
+        }
+
+        //and dont forget to add it to the connection manager
+        connMgr->addConnection (serverConn);
+        serverConn->putMsg (msg);
+
+        //and finally the main loop
+        while (serverConn->isConnected () || clientConn->isConnected ()) {
+                connMgr->selectConnections (125);
+                if ((msg = clientConn->getMsg ()) != NULL) {
+                        crypt->decrypt (msg);
+                        msg->show ();
+                        crypt->encrypt (msg);
+                        serverConn->putMsg (msg);
+                }
+                if ((msg = serverConn->getMsg ()) != NULL) {
+                        crypt->decrypt (msg);
+                        msg->show ();
+                        crypt->encrypt (msg);
+                        clientConn->putMsg (msg);
                 }
         }
 

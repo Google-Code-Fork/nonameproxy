@@ -21,7 +21,7 @@ class LoginDetails
                 TCharacterList* _charlist;
 };
 
-typedef std::map<uint32_t, LoginDetails> LoginRecord;
+typedef std::map<uint32_t, LoginDetails*> LoginRecord;
 
 class LoginState
 {

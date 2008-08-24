@@ -17,6 +17,12 @@ int main (uint32_t argc, char** argv)
 
         Client test (ls);
         test.runLogin (clientConn);
+        
+        Server* gameServer = new Server ();
+        gameServer->listenOn (7331);
+        clientConn = gameServer->acceptConnection ();
+
+        test.runGame (clientConn);
 
         return 0;
 }

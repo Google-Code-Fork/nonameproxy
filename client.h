@@ -17,7 +17,7 @@ class Client
                 Client (LoginState* ls);
                 virtual ~Client ();
                 bool runLogin (Connection* acceptedConn);
-                bool runGame ();
+                bool runGame (Connection* acceptedConn);
                 //these definitions are part of the Client standard and
                 //by declaring anything here you make a promise that 
                 //these classes will be initialized when client is initialized.

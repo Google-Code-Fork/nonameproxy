@@ -290,6 +290,7 @@ TCharacter::TCharacter (const TCharacter& clone)
         _world = new TString (*clone._world);
         _ip = new TWord32 (*clone._ip);
         _port = new TWord16 (*clone._port);
+        clone._port->show (); printf (" "); _port->show (); printf ("\n");
 }
 
 TCharacter::~TCharacter ()
@@ -333,7 +334,7 @@ uint32_t TCharacter::getIp ()
 
 uint16_t TCharacter::getPort ()
 {
-        return _ip->getVal ();
+        return _port->getVal ();
 }
 
 void TCharacter::show ()

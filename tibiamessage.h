@@ -40,7 +40,7 @@ class LSMLoginMsg : public TibiaMessage
                 uint8_t                 getU1 ();
                 const uint32_t*         getXTEA ();
                 uint32_t                getAccount ();
-                const std::string&       getPassword (); 
+                const std::string&      getPassword (); 
                 
                 //im not exactly sure how deriving classes works, if this
                 //can go into private it should
@@ -213,5 +213,46 @@ class LRMNewLoginServer : public TibiaMessage
                 TWord8* _id;
 };
 
+class GSMGameInit : public TibiaMessage
+{
+        public:
+                //note that this message reads 137 bytes from the buffer, ie it
+                //reads the entire rsa buffer even if they are only random bytes
+                GSMGameInit (NetworkMessage* msg);
+                GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
+                        uint32_t* xtea, uint8_t isGM, uint32_t account,
+                        std::string password, std::string name);
+
+                virtual ~GSMGameInit ();
+                virtual uint8_t getID ();
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                uint16_t                getOS ();
+                uint16_t                getVersion ();
+                uint8_t                 getU1 ();
+                const uint32_t*         getXTEA ();
+                uint8_t                 getIsGM ();
+                uint32_t                getAccount ();
+                const std::string&      getName (); 
+                const std::string&      getPassword (); 
+                
+                //im not exactly sure how deriving classes works, if this
+                //can go into private it should
+                virtual void get (NetworkMessage* msg);
+        private:
+                TWord8*   _id;
+                TWord16*  _OS;
+                TWord16*  _version;
+                TWord8*   _u1;
+                TXTEAKey* _xtea;
+                TWord8*   _isGM;
+                TWord32*  _account;
+                TString*  _name;
+                TString*  _password;
+                
+                //and somewhere to store the remaining bytes
+                TByteBuffer* _bytes;
+};
 #endif
 

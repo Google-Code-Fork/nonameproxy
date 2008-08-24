@@ -55,6 +55,14 @@ class LRMessageList : public MessageList
                 virtual NetworkMessage* put ();
 };
                 
+class GSMessageList : public MessageList
+{
+        public:
+                GSMessageList (NetworkMessage* msg);
+                GSMessageList ();
+                virtual ~GSMessageList ();
+                virtual NetworkMessage* put ();
+};
 
 #endif
 

@@ -2,8 +2,8 @@
 #define __GAME_STATE_H
 
 #include "accountstate.h"
+#include "charstate.h"
 //knock these off as the states are written
-class CharState;
 class MapState;
 class CreatureListState;
 class MessageState;

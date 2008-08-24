@@ -40,7 +40,7 @@ TibiaMessage* MessageList::read ()
 void MessageList::insert (TibiaMessage* tm)
 {
         _msglist.insert (_it, tm);
-        _it --;
+        //_it --;
 }
 
 void MessageList::replace (TibiaMessage* tm)
@@ -153,6 +153,53 @@ NetworkMessage* LRMessageList::put ()
                 (*i)->put (msg);
         }
         msg->writeHeader ();
+        return msg;
+}
+
+//GSMessageList
+GSMessageList::GSMessageList (NetworkMessage* msg)
+{
+        GSMessageFactory lrmf (msg);
+        TibiaMessage* tm;
+        while ((tm = lrmf.getMessage ()) != NULL) {
+                _msglist.push_back (tm);
+        }
+        _it = _msglist.begin ();
+}
+
+GSMessageList::GSMessageList ()
+{
+        _it = _msglist.begin ();
+}
+
+GSMessageList::~GSMessageList ()
+{
+        for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
+                delete (*_it);
+        }
+}
+
+NetworkMessage* GSMessageList::put ()
+{
+        //there are no rsa messages recvd from the login server
+        if (_msglist.size () == 0) {
+                return NULL; //we dont want to be sending empty msgs
+        }
+        NetworkMessage* msg = new NetworkMessage (MAX_MSG_SIZE);
+        
+        msg->prepHeader ();
+        MsgList::iterator i = _msglist.begin ();
+        if ((*i)->getID () == 0x0A) { //rsa init message 
+                msg->prepRSAHeader ();
+                (*i)->put (msg);
+                msg->writeRSAHeader ();
+        } else {
+                msg->prepHeader ();
+                for (i = _msglist.begin (); i != _msglist.end (); ++i) {
+                        (*i)->put (msg);
+                }
+                msg->writeHeader ();
+        }
         return msg;
 }
 

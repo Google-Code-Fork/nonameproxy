@@ -454,3 +454,113 @@ void LRMNewLoginServer::show ()
         printf ("LRMNewLoginServer {}\n");
 }
 
+//GSMGameInit
+GSMGameInit::GSMGameInit (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x0A);
+        get (msg);
+}
+
+GSMGameInit::GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
+        uint32_t* xtea, uint8_t isGM,  uint32_t account, std::string name,
+        std::string password)
+{
+        _id = new TWord8 ((uint8_t)0x0A);
+
+        _OS = new TWord16 (OS);
+        _version = new TWord16 (version);
+        _u1 = new TWord8 ((uint8_t)0);
+        _xtea = new TXTEAKey (xtea);
+        _isGM = new TWord8 (isGM);
+        _account = new TWord32 (account);
+        _name = new TString (name);
+        _password = new TString (password);
+        //the TByteBuffer (uint32_t len) constructer automatically
+        //generates a random byte buffer
+        uint32_t rem = RSA_LEN - (23 + _password->getLen ());
+        _bytes = new TByteBuffer (rem);
+}
+
+GSMGameInit::~GSMGameInit ()
+{
+        delete _id;
+        delete _OS; 
+        delete _version; 
+        delete _u1;
+        delete _xtea;
+        delete _isGM;
+        delete _password;
+        delete _account;
+        delete _name;
+        delete _bytes;
+}
+
+uint8_t GSMGameInit::getID ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMGameInit::getAccount ()
+{
+        return _account->getVal ();
+}
+
+const std::string& GSMGameInit::getPassword ()
+{
+        return _password->getString ();
+}
+
+const std::string& GSMGameInit::getName ()
+{
+        return _name->getString ();
+}
+
+void GSMGameInit::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _OS->put (msg);
+        _version->put (msg);
+        _u1->put (msg);
+        _xtea->put (msg);
+        _isGM->put (msg);
+        _account->put (msg);
+        _name->put (msg);
+        _password->put (msg);
+        _bytes->put (msg);
+}
+
+void GSMGameInit::get (NetworkMessage* msg)
+{
+        _OS = new TWord16 (msg);
+        _version = new TWord16 (msg);
+        _u1 = new TWord8 (msg);
+        _xtea = new TXTEAKey (msg);
+        _isGM = new TWord8 (msg);
+        _account = new TWord32 (msg);
+        _name = new TString (msg);
+        _password = new TString (msg);
+        //this time we just take the random bytes from the packet
+        uint32_t rem = RSA_LEN - (26 + _password->getLen () + _name->getLen ());
+        _bytes = new TByteBuffer (rem, msg);
+}
+
+const uint32_t* GSMGameInit::getXTEA ()
+{
+        return _xtea->getKey ();
+}
+        
+void GSMGameInit::show ()
+{
+        printf ("GSMGameInit {\n");
+        printf ("\tOS: "); _OS->show (); printf ("\n");
+        printf ("\tversion: "); _version->show (); printf ("\n");
+        printf ("\tu1: "); _u1->show (); printf ("\n");
+        printf ("\txtea: "); _xtea->show (); printf ("\n");
+        printf ("\tisGM: "); _isGM->show (); printf ("\n");
+        printf ("\taccount: "); _account->show (); printf ("\n");
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("\tpassword: "); _password->show (); printf ("\n");
+        printf ("\tbytes: "); _bytes->show (); printf ("\n");
+        printf ("}\n");
+}
+

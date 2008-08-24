@@ -27,7 +27,7 @@ TibiaMessage* LSMessageFactory::getMessage ()
         return NULL;
 }
 
-
+// LRMessage Factory
 LRMessageFactory::LRMessageFactory (NetworkMessage* msg)
 {
         _msg = msg;
@@ -57,6 +57,44 @@ TibiaMessage* LRMessageFactory::getMessage ()
         }
         
         printf ("Protocol error: unknown LR Message 0x%X\n", id);
+        return NULL;
+}
+
+
+// GSMessage Factory
+GSMessageFactory::GSMessageFactory (NetworkMessage* msg)
+{
+        _msg = msg;
+}
+
+GSMessageFactory::~GSMessageFactory ()
+{
+        delete _msg;
+}
+        
+TibiaMessage* GSMessageFactory::getMessage ()
+{
+        //GS has RSA and xtea messages
+        if (_msg->isRSA ()) {
+                if (_msg->isRSAEOF ()) {
+                        return NULL;
+                }
+                uint8_t id = TWord8 (_msg).getVal ();
+                if (id == 0x0A) {
+                        return (new GSMGameInit (_msg));
+                }
+                return NULL;
+        }
+
+        if (_msg->isXTEAEOF ()) {
+                return NULL;
+        }
+
+        uint8_t id = TWord8 (_msg).getVal ();
+        if (id == 0x0A) {
+                return (new GSMGameInit (_msg));
+        }
+        printf ("Protocol error: unknown GS Message 0x%X\n", id);
         return NULL;
 }
 

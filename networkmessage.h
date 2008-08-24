@@ -60,6 +60,7 @@ class NetworkMessage
 
                 friend class LSMessageFactory;
                 friend class LRMessageFactory;
+                friend class GSMessageFactory;
         private:
                 uint8_t* _buffer;
                 uint32_t _size;
