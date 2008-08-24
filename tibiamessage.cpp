@@ -69,6 +69,16 @@ uint8_t LSMLoginMsg::getID ()
         return _id->getVal ();
 }
 
+uint32_t LSMLoginMsg::getAccount ()
+{
+        return _account->getVal ();
+}
+
+const std::string& LSMLoginMsg::getPassword ()
+{
+        return _password->getString ();
+}
+
 void LSMLoginMsg::put (NetworkMessage* msg)
 {
         _id->put (msg);

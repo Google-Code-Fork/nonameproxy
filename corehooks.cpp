@@ -1,8 +1,18 @@
 #include <string>
 #include "corehooks.h"
 #include "tibiamessage.h"
+#include "gamestate.h"
+#include "client.h"
 
-TibiaMessage* HWCharacterList::func (TibiaMessage* tm, GameState* gs)
+void HRLoginMsg::func (TibiaMessage* tm, Client* client)
+{
+        LSMLoginMsg* li = (LSMLoginMsg*)tm;
+        client->gstate->account->setAccount (li->getAccount ());
+        client->gstate->account->setPassword (li->getPassword ());
+        client->crypt->setXTEAKey (li->getXTEA ());
+}
+
+TibiaMessage* HWCharacterList::func (TibiaMessage* tm, Client* client)
 {
         LRMCharacterList* cl = (LRMCharacterList*)tm;
         TCharacterList* fixedCharList = new TCharacterList ();
@@ -23,6 +33,10 @@ TibiaMessage* HWCharacterList::func (TibiaMessage* tm, GameState* gs)
         return newcl;
 }
 
-                
+TibiaMessage* HWMOTD::func (TibiaMessage* tm, Client* client)
+{
+        delete tm;
+        return new LRMMOTD (std::string ("450\nLol isnt this awesome\n"));
+}
         
 

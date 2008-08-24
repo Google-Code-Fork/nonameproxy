@@ -1,7 +1,13 @@
 #ifndef __GAME_STATE_H
 #define __GAME_STATE_H
 
-class LoginState;
+#include "accountstate.h"
+//knock these off as the states are written
+class CharState;
+class MapState;
+class CreatureListState;
+class MessageState;
+class InvetoryState;
 
 //Gamestate simply manages all the smaller states
 //note a ptr is for states if they are universal, such as login state
@@ -9,10 +15,17 @@ class LoginState;
 class GameState
 {
         public:
-                GameState (LoginState* lstate);
-                LoginState* getLoginState ();
+                GameState ();
+                virtual ~GameState ();
+
+                AccountState*           account;
+                CharState*              character;
+                MapState*               map;
+                CreatureListState*      creaturelist;
+                MessageState*           message;
+                InvetoryState*          inventory;
+                
         private:
-                LoginState* _lstate;
 };
 
 #endif

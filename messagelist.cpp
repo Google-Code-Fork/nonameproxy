@@ -40,6 +40,7 @@ TibiaMessage* MessageList::read ()
 void MessageList::insert (TibiaMessage* tm)
 {
         _msglist.insert (_it, tm);
+        _it --;
 }
 
 void MessageList::replace (TibiaMessage* tm)
@@ -54,6 +55,7 @@ void MessageList::replace (TibiaMessage* tm)
         }
         _it = _msglist.erase (_it);
         _msglist.insert (_it, tm);
+        _it --;
 } 
 
 void MessageList::add (TibiaMessage* tm)

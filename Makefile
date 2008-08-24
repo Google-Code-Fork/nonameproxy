@@ -2,13 +2,14 @@
 
 CFLAGS  = -Wall
 CFLAGS  += -lgmp
-CFLAGS += -g
+#CFLAGS += -g
 #CFLAGS += -O2
 CC     = g++
 
 objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
 		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
-		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o
+		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
+		accountstate.o
 
 all: nonameproxy
 
@@ -48,6 +49,14 @@ corehooks.o: corehooks.cpp corehooks.h hook.h tibiamessage.h
 messagelist.o: messagelist.cpp messagelist.h 
 
 xtea.o: xtea.cpp xtea.h
+
+client.o: client.cpp client.h tibiacrypt.h connection.h networkmessage.h connectionmanager.h \
+		tibiamessage.h hook.h corehooks.h hookmanager.h messagelist.h gamestate.h \
+		loginstate.h
+
+hookmanager.o: hookmanager.h hookmanager.cpp hook.h tibiamessage.h
+
+accountstate.o: accountstate.h accountstate.cpp
 
 clean:
 	rm -f nonameproxy $(objects)
