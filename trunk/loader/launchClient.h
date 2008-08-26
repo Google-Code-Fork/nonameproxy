@@ -1,11 +1,11 @@
 #ifndef LAUNCH_CLIENT_GUARD
 #define LAUNCH_CLIENT_GUARD
 
-#include <sys/types.h>
+#include <stdint.h>
 
 class ClientLauncher {
 	public:
-		pid_t launch(const char* workingDirectory, const char* name);
+		pid_t launch(const char* host, uint16_t port, bool mc, bool ot);
 };
 
 #endif
