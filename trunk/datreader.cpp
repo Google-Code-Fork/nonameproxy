@@ -4,12 +4,15 @@
 #include "datreader.h"
 #include "safefile.h"
 
+#define ID_OFFSET 100 
+
 /***************************************************
  * ThingData
  ***************************************************/
 
-ThingData::ThingData (SafeFile* datfile)
+ThingData::ThingData (SafeFile* datfile, uint16_t id)
 {
+        _id = id;
         _thingFlags = 0;
         _helpByte = 0;
         _speed = 0;
@@ -55,6 +58,259 @@ ThingData::ThingData (SafeFile* datfile)
 
         datfile->seek (2 * spritecount, SafeFile::s_from_current);
 }
+
+void ThingData::show ()
+{
+        printf ("id = %d {\n", _id);
+
+        if (isTopOrder1 ()) printf ("\tisTopOrder1\n");
+        if (isTopOrder2 ()) printf ("\tisTopOrder2\n");
+        if (isTopOrder3 ()) printf ("\tisTopOrder3\n");
+        if (isContainer ()) printf ("\tisContainer\n");
+        if (isStackable ()) printf ("\tisStackable\n");
+        if (isCorpse ()) printf ("\tisCorpse\n");
+        if (isUsable ()) printf ("\tisUsable\n");
+        if (isRune ()) printf ("\tisRune\n");
+        if (isWritable ()) printf ("\tisWritable\n");
+        if (isReadable ()) printf ("\tisReadable\n");
+        if (isFluidContainer ()) printf ("\tisFluidContainer\n");
+        if (isSplash ()) printf ("\tisSplash\n");
+        if (isBlocking ()) printf ("\tisBlocking\n");
+        if (isImmobile ()) printf ("\tisImmobile\n");
+        if (isMissileBlocking ()) printf ("\tisMissileBlocking\n");
+        if (isPathBlocking ()) printf ("\tisPathBlocking\n");
+        if (isPickupable ()) printf ("\tisPickupable\n");
+        if (isHangable ()) printf ("\tisHangable\n");
+        if (isHangableHorizontal ()) printf ("\tisHangableHorizontal\n");
+        if (isHangableVertical ()) printf ("\tisHangableVertical\n");
+        if (isRotatable ()) printf ("\tisRotatable\n");
+        if (isLightSource ()) printf ("\tisLightSource\n");
+        if (isFloorChange ()) printf ("\tisFloorChange\n");
+        if (isOffset ()) printf ("\tisOffset\n");
+        if (isRaised ()) printf ("\tisRaised\n");
+        if (isIdleAnimation ()) printf ("\tisIdleAnimation\n");
+        if (isMiniMap ()) printf ("\tisMiniMap\n");
+        if (isGround ()) printf ("\tisGround\n");
+        if (isLadder ()) printf ("\tisLadder\n");
+        if (isSewer ()) printf ("\tisSewer\n");
+        if (isRopeSpot ()) printf ("\tisRopeSpot\n");
+        if (isSwitch ()) printf ("\tisSwitch\n");
+        if (isDoor ()) printf ("\tisDoor\n");
+        if (isDoorWithLock ()) printf ("\tisDoorWithLock\n");
+        if (isStairs ()) printf ("\tisStairs\n");
+        if (isMailBox ()) printf ("\tisMailBox\n");
+        if (isDepot ()) printf ("\tisDepot\n");
+        if (isTrash ()) printf ("\tisTrash\n");
+        if (isHole ()) printf ("\tisHole\n");
+        if (isSpecialDescription ()) printf ("\tisSpecialDescription\n");
+        if (isReadOnly ()) printf ("\tisReadOnly\n");
+
+        printf ("}\n");
+}
+
+bool ThingData::isTopOrder1 () {
+        return _thingFlags & f_isTopOrder1;
+}
+
+bool ThingData::isTopOrder2 () {
+        return _thingFlags & f_isTopOrder2;
+}
+
+bool ThingData::isTopOrder3 () {
+        return _thingFlags & f_isTopOrder3;
+}
+
+bool ThingData::isContainer () {
+        return _thingFlags & f_isContainer;
+}
+
+bool ThingData::isStackable () {
+        return _thingFlags & f_isStackable;
+}
+
+bool ThingData::isCorpse () {
+        return _thingFlags & f_isCorpse;
+}
+
+bool ThingData::isUsable () {
+        return _thingFlags & f_isUsable;
+}
+
+bool ThingData::isRune () {
+        return _thingFlags & f_isRune;
+}
+
+bool ThingData::isWritable () {
+        return _thingFlags & f_isWritable;
+}
+
+bool ThingData::isReadable () {
+        return _thingFlags & f_isReadable;
+}
+
+bool ThingData::isFluidContainer () {
+        return _thingFlags & f_isFluidContainer;
+}
+
+bool ThingData::isSplash () {
+        return _thingFlags & f_isSplash;
+}
+
+bool ThingData::isBlocking () {
+        return _thingFlags & f_isBlocking;
+}
+
+bool ThingData::isImmobile () {
+        return _thingFlags & f_isImmobile;
+}
+
+bool ThingData::isMissileBlocking () {
+        return _thingFlags & f_isMissileBlocking;
+}
+
+bool ThingData::isPathBlocking () {
+        return _thingFlags & f_isPathBlocking;
+}
+
+bool ThingData::isPickupable () {
+        return _thingFlags & f_isPickupable;
+}
+
+bool ThingData::isHangable () {
+        return _thingFlags & f_isHangable;
+}
+
+bool ThingData::isHangableHorizontal () {
+        return _thingFlags & f_isHangableHorizontal;
+}
+
+bool ThingData::isHangableVertical () {
+        return _thingFlags & f_isHangableVertical;
+}
+
+bool ThingData::isRotatable () {
+        return _thingFlags & f_isRotatable;
+}
+
+bool ThingData::isLightSource () {
+        return _thingFlags & f_isLightSource;
+}
+
+bool ThingData::isFloorChange () {
+        return _thingFlags & f_isFloorChange;
+}
+
+bool ThingData::isOffset () {
+        return _thingFlags & f_isOffset;
+}
+
+bool ThingData::isRaised () {
+        return _thingFlags & f_isRaised;
+}
+
+bool ThingData::isIdleAnimation () {
+        return _thingFlags & f_isIdleAnimation;
+}
+
+bool ThingData::isMiniMap () {
+        return _thingFlags & f_isMiniMap;
+}
+
+bool ThingData::isGround () {
+        return _thingFlags & f_isGround;
+}
+
+bool ThingData::isLadder () {
+        return _helpByte == h_isLadder;
+}
+
+bool ThingData::isSewer () {
+        return _helpByte == h_isSewer;
+}
+
+bool ThingData::isRopeSpot () {
+        return _helpByte == h_isRopeSpot;
+}
+
+bool ThingData::isSwitch () {
+        return _helpByte == h_isSwitch;
+}
+
+bool ThingData::isDoor () {
+        return _helpByte == h_isDoor;
+}
+
+bool ThingData::isDoorWithLock () {
+        return _helpByte == h_isDoorWithLock;
+}
+
+bool ThingData::isStairs () {
+        return _helpByte == h_isStairs;
+}
+
+bool ThingData::isMailBox () {
+        return _helpByte == h_isMailBox;
+}
+
+bool ThingData::isDepot () {
+        return _helpByte == h_isDepot;
+}
+
+bool ThingData::isTrash () {
+        return _helpByte == h_isTrash;
+}
+
+bool ThingData::isHole () {
+        return _helpByte == h_isHole;
+}
+
+bool ThingData::isSpecialDescription () {
+        return _helpByte == h_isSpecialDescription;
+}
+
+bool ThingData::isReadOnly () {
+        return _helpByte == h_isReadOnly;
+}
+
+TWord16* ThingData::getSpeed ()
+{
+        return new TWord16 (_speed);
+}
+
+TWord16* ThingData::getWriteLimit ()
+{
+        return new TWord16 (_writeLimit);
+}
+
+TWord16* ThingData::getReadLimit ()
+{
+        return new TWord16 (_readLimit);
+}
+
+//ThingData::TItemLight* getLight ();
+//{
+//}
+
+TWord16* ThingData::getOffsetX ()
+{
+        return new TWord16 (_offsetX);
+}
+
+TWord16* ThingData::getOffsetY ()
+{
+        return new TWord16 (_offsetY);
+}
+
+TWord16* ThingData::getRaised ()
+{
+        return new TWord16 (_raised);
+}
+
+TWord16* ThingData::getMiniMap ()
+{
+        return new TWord16 (_miniMapColor);
+}
+
 
 void ThingData::parseOp (SafeFile* datfile, uint8_t op)
 {
@@ -181,12 +437,12 @@ DatReader::DatReader ()
         datfile->read (&nEffects, 2);
         datfile->read (&nMissile, 2);
 
-        uint32_t _nIds = nItems + nCreatures + nEffects + nMissile;
+        _nIds = nItems + nCreatures + nEffects + nMissile;
         
         _things = new ThingData*[_nIds];
 
         for (uint32_t i = 0; i < _nIds; i ++) {
-                _things[i] = new ThingData (datfile);
+                _things[i] = new ThingData (datfile, i + ID_OFFSET);
         }
 
         datfile->close ();
@@ -195,8 +451,29 @@ DatReader::DatReader ()
 DatReader::~DatReader ()
 {
         for (uint32_t i = 0; i < _nIds; i ++) {
-                delete _things[_nIds + 1];
+                delete _things[i];
         }
         delete[] _things;
+}
+
+ThingData* DatReader::getItemData (TWord16* itemId)
+{
+        return (getItemData (itemId->getVal ()));
+}
+        
+ThingData* DatReader::getItemData (uint16_t itemId)
+{
+        uint32_t index = itemId - ID_OFFSET;
+        if (0 <= index && index < _nIds) {
+                return _things[index];
+        } else {
+                printf ("error: item id out of range");
+                return NULL;
+        }
+}
+
+uint32_t DatReader::getNIds ()
+{
+        return _nIds;
 }
 
