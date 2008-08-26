@@ -1,7 +1,8 @@
+#include <errno.h>
+#include <stdio.h>
 #include <sys/ptrace.h>
 #include <unistd.h>
 #include <string.h>
-#include <stdio.h>
 #include "memUtil.h"
 
 #define min(x,y) ({ \
@@ -15,13 +16,21 @@ MemUtil::MemUtil(pid_t pid) {
 	p = pid;
 }
 
-void MemUtil::readMem(void* dest, u_int address, u_int n) {
+bool MemUtil::readMem(void* dest, u_int address, u_int n) {
 	u_int bufferPos = 0;
 	u_int offset = 0;
 	u_int start = address - address % 4;
 	
 	//copy the first oddlot of bytes into the buffer
-	u_int temp = ptrace(PTRACE_PEEKDATA, p, start, NULL);
+        errno = 0;
+	int temp = ptrace(PTRACE_PEEKDATA, p, start, NULL);
+        if (temp == -1) {
+                if (errno != 0) {
+                        perror ("ptrace (PEEK):");
+                        return false;
+                }
+        }
+                
 	memcpy(dest, (void*)((u_int)&temp + address - start), min(n, address - start));
 	if (address - start + n < 4) {
 		memcpy(dest, (void*)((u_int)&temp + address - start), n);
@@ -34,19 +43,34 @@ void MemUtil::readMem(void* dest, u_int address, u_int n) {
 
 	//copy the middle bulk of the data into the buffer
 	while(bufferPos < n - n % 4) {
+                errno = 0;
 		*((u_int*)((u_int)dest + bufferPos)) = ptrace(PTRACE_PEEKDATA, p, start + offset, NULL);
+                if (temp == -1) {
+                        if (errno != 0) {
+                                perror ("ptrace (PEEK):");
+                                return false;
+                        }
+                }
 		bufferPos += 4;
 		offset += 4;
 	}
 
 	//finally copy the last oddlot of data
 	if(bufferPos < n) {
+                errno = 0;
 		temp = ptrace(PTRACE_PEEKDATA, p, start + offset, NULL);
+                if (temp == -1) {
+                        if (errno != 0) {
+                                perror ("ptrace (PEEK):");
+                                return false;
+                        }
+                }
 		memcpy((void*)((u_int)dest + bufferPos), &temp, n - bufferPos);
 	}
+        return true;
 }
 
-void MemUtil::writeMem(void* source, u_int address, u_int n) {
+bool MemUtil::writeMem(const void* source, u_int address, u_int n) {
 	u_int bufferPos = 0;
 	u_int offset = 0;
 	u_int start = address - address % 4;
@@ -54,7 +78,14 @@ void MemUtil::writeMem(void* source, u_int address, u_int n) {
 	//its a bit more tricky this time because if we are
 	//writing an oddlot we have to be careful not to destroy
 	//the surounding bytes
-	u_int temp = ptrace(PTRACE_PEEKDATA, p, start, NULL);
+        errno = 0;
+	int temp = ptrace(PTRACE_PEEKDATA, p, start, NULL);
+        if (temp == -1) {
+                if (errno != 0) {
+                        perror ("ptrace (PEEK):");
+                        return false;
+                }
+        }
 	if (address - start + n < 4) {
 		memcpy((void*)((u_int)&temp + address - start), source, n);
 		bufferPos += n;
@@ -62,21 +93,41 @@ void MemUtil::writeMem(void* source, u_int address, u_int n) {
 		memcpy((void*)((u_int)&temp + address - start), source, 4 - (address - start));
 		bufferPos += 4 - (address - start);
 	}
-	ptrace(PTRACE_POKEDATA, p, start, temp);
+	if (ptrace(PTRACE_POKEDATA, p, start, temp) == -1) {
+                perror ("ptrace (POKE):");
+                return false;
+        }
+
 	offset += 4;
 
 	//copy the middle bulk of the data into the buffer
 	while(bufferPos < n - n % 4) {
-		ptrace(PTRACE_POKEDATA, p, start + offset, *((u_int*)((u_int)source + bufferPos)));
+		if (ptrace(PTRACE_POKEDATA, p, 
+                        start + offset, *((u_int*)((u_int)source + bufferPos))) == -1) 
+                { 
+                        perror ("ptrace (POKE):");
+                        return false;
+                }
 		bufferPos += 4;
 		offset += 4;
 	}
 
 	//finally copy the last oddlot of data
 	if(bufferPos < n) {
+                errno = 0;
 		temp = ptrace(PTRACE_PEEKDATA, p, start + offset, NULL);
+                if (temp == -1) {
+                        if (errno != 0) {
+                                perror ("ptrace (PEEK):");
+                                return false;
+                        }
+                }
 		memcpy(&temp, (void*)((u_int)source + bufferPos), n - bufferPos);
-		ptrace(PTRACE_POKEDATA, p, start + offset, temp);
+		if (ptrace(PTRACE_POKEDATA, p, start + offset, temp) == -1) {
+                        perror ("ptrace (POKE):");
+                        return false;
+                }
 	}
+        return true;
 }
 

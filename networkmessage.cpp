@@ -200,7 +200,7 @@ bool NetworkMessage::putN (const uint8_t* src, uint32_t n)
 }
 
 void NetworkMessage::show () {
-        uint16_t size = MIN (_size, *(uint16_t*)_buffer);
+        uint16_t size = MIN (_size, *(uint16_t*)_buffer + 2);
         for (uint32_t i = 0; i <= size / 16; i ++) {
                 for (uint32_t ii = 0; ii < 16; ii++) {
                         uint32_t p = i * 16 + ii;
