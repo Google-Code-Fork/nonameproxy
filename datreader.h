@@ -9,7 +9,8 @@ class ThingData
 {
         public:
                 //a ThingData will read itself from the dat file
-                ThingData (SafeFile* datfile);
+                ThingData (SafeFile* datfile, uint16_t id);
+                void show ();
 
                 bool isTopOrder1 ();
                 bool isTopOrder2 ();
@@ -125,6 +126,7 @@ class ThingData
                 uint16_t _offsetY;
                 uint16_t _raised;
                 uint16_t _miniMapColor;
+                uint16_t _id;
                 //i dont keep any of the sprite data
 };
         
@@ -137,11 +139,11 @@ class DatReader
                 ThingData* getItemData (TWord16* itemId);
                 ThingData* getItemData (uint16_t itemId);
 
+                uint32_t getNIds ();
+
         private:
                 ThingData** _things;
                 uint32_t _nIds;
-
-                bool _isLoaded;
 };
 
 #endif
