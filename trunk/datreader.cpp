@@ -437,7 +437,8 @@ DatReader::DatReader ()
         datfile->read (&nEffects, 2);
         datfile->read (&nMissile, 2);
 
-        _nIds = nItems + nCreatures + nEffects + nMissile;
+        _nIds = nItems + nCreatures + nEffects + nMissile - (ID_OFFSET - 1);
+
         
         _things = new ThingData*[_nIds];
 
