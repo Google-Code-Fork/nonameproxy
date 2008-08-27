@@ -564,3 +564,68 @@ void GSMGameInit::show ()
         printf ("}\n");
 }
 
+/****************************************************************
+ * GRMSelfInfo
+ ****************************************************************/
+
+GRMSelfInfo::GRMSelfInfo (NetworkMessage* msg)
+{
+        _id = new TWord8 ((uint8_t)0x0A);
+        get (msg);
+}
+
+GRMSelfInfo::GRMSelfInfo (uint32_t tibiaId, uint8_t u1, 
+                uint8_t u2, uint8_t reportErrors)
+{
+        _id = new TWord8 ((uint8_t)0x0A);
+        _tibiaId = new TWord32 (tibiaId);
+        _u1 = new TWord8 (u1);
+        _u2 = new TWord8 (u2);
+        _reportErrors = new TWord8 (reportErrors);
+}
+
+GRMSelfInfo::GRMSelfInfo (const GRMSelfInfo& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _tibiaId = new TWord32 (*clone._tibiaId);
+        _u1 = new TWord8 (*clone._u1);
+        _u2 = new TWord8 (*clone._u2);
+        _reportErrors = new TWord8 (*clone._reportErrors);
+}
+
+GRMSelfInfo::~GRMSelfInfo ()
+{
+        delete _id;
+        delete _tibiaId;
+        delete _u1;
+        delete _u2;
+        delete _reportErrors;
+}
+
+void GRMSelfInfo::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _tibiaId->put (msg);
+        _u1->put (msg);
+        _u2->put (msg);
+        _reportErrors->put (msg);
+}
+
+void GRMSelfInfo::show ()
+{
+        printf ("GSMSelfInfo {\n");
+        printf ("\ttibiaId: "); _tibiaId->show (); printf ("\n");
+        printf ("\tu1: "); _u1->show (); printf ("\n");
+        printf ("\tu2: "); _u2->show (); printf ("\n");
+        printf ("\treportErrors: "); _reportErrors->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void GRMSelfInfo::get (NetworkMessage* msg)
+{
+        _tibiaId = new TWord32 (msg);
+        _u1 = new TWord8 (msg);
+        _u2 = new TWord8 (msg);
+        _reportErrors = new TWord8 (msg);
+}
+

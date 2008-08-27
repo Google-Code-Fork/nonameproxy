@@ -16,6 +16,7 @@ class TibiaMessage
                 virtual void get (NetworkMessage* msg);
 };
 
+//TODO add clone constructors
 //for message naming, L = login, G = game, S = send, R = recv
 class LSMLoginMsg : public TibiaMessage
 {
@@ -213,6 +214,10 @@ class LRMNewLoginServer : public TibiaMessage
                 TWord8* _id;
 };
 
+/******************************************************************
+ * Game Send Messages
+ ******************************************************************/
+
 class GSMGameInit : public TibiaMessage
 {
         public:
@@ -237,8 +242,6 @@ class GSMGameInit : public TibiaMessage
                 const std::string&      getName (); 
                 const std::string&      getPassword (); 
                 
-                //im not exactly sure how deriving classes works, if this
-                //can go into private it should
                 virtual void get (NetworkMessage* msg);
         private:
                 TWord8*   _id;
@@ -254,5 +257,37 @@ class GSMGameInit : public TibiaMessage
                 //and somewhere to store the remaining bytes
                 TByteBuffer* _bytes;
 };
+
+
+/******************************************************************
+ * Game Recv Messages
+ ******************************************************************/
+
+class GRMSelfInfo : public TibiaMessage
+{
+        public:
+                GRMSelfInfo (NetworkMessage* msg);
+                GRMSelfInfo (uint32_t tibiaId, uint8_t u1, 
+                                uint8_t u2, uint8_t reportErrors);
+                GRMSelfInfo (const GRMSelfInfo& clone);
+                virtual ~GRMSelfInfo ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+
+                uint32_t getTibiaId ();
+                uint8_t  getU1 ();
+                uint8_t  getU2 ();
+                uint8_t  reportErrors ();
+
+                virtual void get (NetworkMessage* msg);
+        private:
+                TWord8*  _id;
+                TWord32* _tibiaId;
+                TWord8*  _u1;
+                TWord8*  _u2;
+                TWord8*  _reportErrors;
+};
+
 #endif
 

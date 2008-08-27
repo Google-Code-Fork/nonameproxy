@@ -287,9 +287,10 @@ TWord16* ThingData::getReadLimit ()
         return new TWord16 (_readLimit);
 }
 
-//ThingData::TItemLight* getLight ();
-//{
-//}
+TItemLight* ThingData::getLight ()
+{
+        return new TItemLight (_lightColor, _lightRadius);
+}
 
 TWord16* ThingData::getOffsetX ()
 {

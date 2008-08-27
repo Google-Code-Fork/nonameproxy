@@ -57,7 +57,7 @@ class ThingData
                 TWord16*        getSpeed ();
                 TWord16*        getWriteLimit ();
                 TWord16*        getReadLimit ();
-                //TItemLight*     getLight ();
+                TItemLight*     getLight ();
                 TWord16*        getOffsetX ();
                 TWord16*        getOffsetY ();
                 TWord16*        getRaised ();
