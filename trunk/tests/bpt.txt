@@ -1,0 +1,1750 @@
+B8 09 AF 09 0A 3C EC B8 01 32 00 00 64 5D 7D CB         .....<...2..d]}.
+7D 07 98 01 5D 11 E7 09 00 FF 98 01 54 0B 05 A4         }...].......T...
+0D 03 A9 09 00 FF 98 01 61 00 00 00 00 00 FB 00         ........a.......
+00 40 03 00 54 6F 6D 64 00 90 00 71 73 3A 73 01         .@..Tomd...qs:s.
+00 00 5A 00 00 00 00 FF 98 01 00 FF 98 01 5F 11         ..Z..........._.
+51 0B 05 CD 10 00 FF 98 01 CA 1A 5E 0B 00 FF 98         Q..........^....
+01 43 09 00 FF 98 01 00 FF 98 01 00 FF 98 01 00         .C..............
+FF 98 01 59 04 00 FF 68 04 00 FF 68 04 00 FF 68         ...Y...h...h...h
+04 00 FF 98 01 66 11 11 09 AC 10 00 FF 98 01 5E         .....f.........^
+11 10 09 8F 0D 00 FF 98 01 5E 11 10 09 00 FF 98         .........^......
+01 5E 11 10 09 9F 10 00 FF 98 01 67 11 10 09 E0         .^.........g....
+0D 1B 0D 21 0D 00 FF 98 01 CA 1A 00 FF 98 01 DE         ...!............
+09 00 FF 98 01 00 FF 98 01 9C 0F 00 FF 98 01 00         ................
+FF 98 01 59 04 00 FF 68 04 00 FF 68 04 00 FF 68         ...Y...h...h...h
+04 00 FF 98 01 C9 1A 00 FF 98 01 C9 1A 00 FF 98         ................
+01 C9 1A 00 FF 98 01 72 1B 00 FF 98 01 C9 1A 00         .......r........
+FF 98 01 CF 1A 00 FF 98 01 C9 1A 72 0B 00 FF 98         ...........r....
+01 E5 1A 00 FF 98 01 E3 1A 00 FF 98 01 C9 1A 73         ...............s
+0B 00 FF 98 01 60 04 00 FF 68 04 00 FF 68 04 00         .....`...h...h..
+FF 68 04 37 01 00 FF A3 11 60 11 74 0E 00 FF AE         .h.7.....`.t....
+11 60 11 62 0E 00 FF A3 11 60 11 3C 08 00 FF A3         .`.b.....`.<....
+11 60 11 EC 06 00 FF A3 11 60 11 1E 0E 00 FF A5         .`.......`......
+11 60 11 E8 1A 00 FF 66 03 B3 11 60 11 E0 07 00         .`.....f...`....
+FF 66 03 00 FF 66 03 4B 07 00 FF 66 03 B5 11 68         .f...f.K...f...h
+11 00 FF A3 11 6A 11 00 FF 68 04 00 FF 68 04 00         .....j...h...h..
+FF 68 04 3B 01 3D 04 00 FF 66 03 B6 11 00 FF 66         .h.;.=...f.....f
+03 B6 11 00 FF 66 03 B6 11 00 FF 66 03 B6 11 00         .....f.....f....
+FF 66 03 B6 11 00 FF 66 03 B6 11 00 FF 66 03 B7         .f.....f.....f..
+11 49 07 00 FF 66 03 00 FF 66 03 00 FF 66 03 B5         .I...f...f...f..
+11 00 FF A3 11 6A 11 00 FF 68 04 00 FF 68 04 3A         .....j...h...h.:
+04 00 FF A3 11 71 11 00 FF 66 03 00 FF 66 03 00         .....q...f...f..
+FF 66 03 00 FF 66 03 00 FF 66 03 00 FF 66 03 00         .f...f...f...f..
+FF 66 03 00 FF 66 03 4A 07 00 FF 66 03 00 FF 66         .f...f.J...f...f
+03 B5 11 62 0E 00 FF AE 11 6A 11 00 FF 68 04 00         ...b.....j...h..
+FF 68 04 3A 04 00 FF A3 11 6C 11 00 FF 66 03 00         .h.:.....l...f..
+FF 66 03 00 FF 66 03 00 FF 66 03 00 FF 66 03 00         .f...f...f...f..
+FF 66 03 41 07 00 FF 66 03 00 FF 66 03 00 FF 66         .f.A...f...f...f
+03 41 0B 00 00 FF 66 03 B5 11 00 FF A3 11 6A 11         .A....f.......j.
+00 FF 68 04 00 FF 68 04 3D 04 00 FF A3 11 6C 11         ..h...h.=.....l.
+00 FF 66 03 6A 02 00 FF 66 03 6A 02 00 FF 66 03         ..f.j...f.j...f.
+6A 02 00 FF 66 03 6A 02 00 FF 66 03 6A 02 00 FF         j...f.j...f.j...
+66 03 35 01 00 FF 66 03 00 FF 66 03 00 FF 66 03         f.5...f...f...f.
+00 FF 66 03 B5 11 00 FF 33 11 B3 11 6A 11 00 FF         ..f.....3...j...
+68 04 3D 04 00 FF A3 11 71 11 00 FF A3 11 70 11         h.=.....q.....p.
+19 04 00 FF AD 11 00 FF A9 11 00 FF A7 11 00 FF         ................
+A3 11 00 FF AE 11 00 FF 66 03 B4 11 39 01 8A 07         ........f...9...
+00 FF 66 03 B8 11 61 00 00 00 00 00 3C EC B8 01         ..f...a.....<...
+05 00 54 75 78 6F 72 64 02 81 00 4E 72 62 72 00         ..Tuxord...Nrbr.
+00 00 DE 00 00 00 00 FF 66 03 00 FF 66 03 42 0B         ........f...f.B.
+00 00 FF 66 03 B5 11 00 FF 35 11 BC 11 6E 11 00         ...f.....5...n..
+FF B0 11 6D 11 00 FF A3 11 00 FF A3 11 1E 0E 00         ...m............
+FF A3 11 0E 05 2A 0A 00 FF A3 11 0E 05 2A 0A 00         .....*.......*..
+FF A3 11 13 05 00 FF A6 11 1E 0E 00 FF AF 11 49         ...............I
+18 00 FF A3 11 8B 07 00 FF 66 03 B3 11 40 07 00         .........f...@..
+FF 66 03 00 FF 66 03 00 FF 66 03 B5 11 3D 08 00         .f...f...f...=..
+FF A3 11 00 FF B1 11 20 0E 00 FF A3 11 74 0E 00         ....... .....t..
+FF A3 11 49 18 00 FF F4 01 10 09 00 FF F4 01 10         ...I............
+09 00 FF F4 01 0F 05 00 FF 66 03 BB 11 61 00 00         .........f...a..
+00 00 00 9C 35 53 01 0C 00 52 6F 79 61 6C 2D 4C         ....5S...Royal-L
+6F 63 6B 77 69 64 02 8F 00 00 72 5E 5E 00 00 00         ockwid....r^^...
+DC 00 00 00 00 FF 66 03 B6 11 00 FF 66 03 B6 11         ......f.....f...
+00 FF 66 03 B7 11 00 FF 66 03 00 FF 66 03 4B 07         ..f.....f...f.K.
+00 FF 66 03 B9 11 00 FF 66 03 B6 11 00 FF 66 03         ..f.....f.....f.
+B6 11 00 FF 66 03 B6 11 00 FF 66 03 B6 11 25 0B         ....f.....f...%.
+00 FF F4 01 00 FF F4 01 00 FF F4 01 0F 05 70 0B         ..............p.
+00 FF 66 03 B7 11 00 FF 66 03 00 FF 66 03 40 07         ..f.....f...f.@.
+00 FF 66 03 00 FF 66 03 37 12 00 FF 66 03 31 12         ..f...f.7...f.1.
+00 FF 66 03 35 12 00 FF 66 03 00 FF 66 03 40 07         ..f.5...f...f.@.
+00 FF 66 03 00 FF 66 03 00 FF F4 01 00 FF F4 01         ..f...f.........
+00 FF F4 01 62 06 00 FF 66 03 00 FF 66 03 40 07         ....b...f...f.@.
+00 FF 66 03 00 FF 66 03 00 FF 66 03 32 12 00 FF         ..f...f...f.2...
+67 00 B3 01 00 FF 66 03 30 12 00 FF 66 03 00 FF         g.....f.0...f...
+66 03 00 FF 66 03 C6 0C 4B 07 00 FF 66 03 EA 0D         f...f...K...f...
+00 FF F4 01 00 FF F4 01 00 FF F4 01 63 06 00 FF         ............c...
+66 03 C6 0C 00 FF 66 03 00 FF 66 03 00 FF 66 03         f.....f...f...f.
+00 FF 66 03 36 12 40 07 00 FF 66 03 33 12 00 FF         ..f.6.@...f.3...
+66 03 34 12 00 FF 66 03 00 FF 66 03 00 FF 66 03         f.4...f...f...f.
+00 FF 66 03 00 FF F4 01 00 FF F4 01 00 FF F4 01         ..f.............
+0F 05 70 0B 00 FF 66 03 B4 11 D5 14 00 FF 66 03         ..p...f.......f.
+B4 11 00 FF 66 03 B4 11 00 FF 66 03 B8 11 00 FF         ....f.....f.....
+66 03 00 FF 66 03 C6 0C 59 0B C6 0C 59 0B C6 0C         f...f...Y...Y...
+1D 01 4A 07 00 FF 66 03 BA 11 41 07 00 FF 66 03         ..J...f...A...f.
+B4 11 00 FF 66 03 B4 11 00 FF 66 03 B4 11 00 FF         ....f.....f.....
+66 03 B4 11 00 FF F4 01 65 06 00 FF F4 01 0E 05         f.......e.......
+2A 0A 00 FF F4 01 16 05 00 FF A3 11 00 FF A3 11         *...............
+00 FF A3 11 62 0E 00 FF 66 03 B3 11 EB 14 00 FF         ....b...f.......
+66 03 00 FF 66 03 49 07 00 FF 66 03 B5 11 3D 08         f...f.I...f...=.
+00 FF A3 11 00 FF A5 11 1E 0E 00 FF A3 11 47 0B         ..............G.
+05 EA 10 47 18 00 FF B1 11 74 0E 00 FF C9 01 00         ...G.....t......
+FF CD 01 00 FF 99 01 0F 05 00 FF A3 11 00 FF A3         ................
+11 21 0E 00 FF AE 11 74 0E 00 FF 66 03 B3 11 ED         .!.....t...f....
+14 00 FF 66 03 41 07 00 FF 66 03 00 FF 66 03 B5         ...f.A...f...f..
+11 00 FF B0 11 49 18 00 FF B1 11 00 FF A3 11 62         .....I.........b
+0E 00 FF A3 11 4A 0B 05 00 FF CD 01 00 FF C7 01         .....J..........
+00 FF 99 01 17 05 00 FF AB 11 C9 1A 00 FF A3 11         ................
+C9 1A 00 FF A3 11 72 1B 00 FF 66 03 B3 11 C9 1A         ......r...f.....
+73 0B 00 FF 66 03 E5 1A 00 FF 66 03 E3 1A 00 FF         s...f.....f.....
+A3 11 D0 1A 00 FF A3 11 C9 1A 00 FF A3 11 C9 1A         ................
+73 0B 00 FF A3 11 72 1B 00 FF A3 11 CE 1A 00 FF         s.....r.........
+98 01 00 FF 98 01 00 FF 98 01 B8 1A 00 FF 98 01         ................
+B7 09 00 FF 98 01 B8 09 00 FF 98 01 A5 09 00 FF         ................
+98 01 39 0B 00 D4 0A 00 FF 98 01 B8 1A 00 FF 98         ..9.............
+01 A7 09 A7 09 00 FF 98 01 A7 09 00 FF 98 01 00         ................
+FF 98 01 A7 0B 0F 09 00 FF 98 01 B8 1A 00 FF A3         ................
+11 63 11 5D 11 00 FF 98 01 C3 14 00 FF 98 01 C3         .c.]............
+14 00 FF 98 01 BD 1A 00 FF 98 01 B7 1A 00 FF 98         ................
+01 B7 1A 00 FF 98 01 72 1B 00 FF 98 01 B7 1A 00         .......r........
+FF 98 01 BD 1A 00 FF 98 01 B7 1A 00 FF 98 01 B7         ................
+1A 00 FF 98 01 72 1B 00 FF 98 01 B7 1A 00 FF 98         .....r..........
+01 BB 1A 00 FF A3 11 66 11 67 11 04 FF E8 1A 05         .......f.g......
+FF AF 11 65 11 6D 0E 00 FF B0 11 63 11 60 11 46         ...e.m.....c.`.F
+0E 00 FF A3 11 67 11 68 11 0B FF A3 11 5D 11 47         .....g.h.....].G
+0E 00 FF A3 11 5F 11 0C FF B0 11 5D 11 62 0E 00         ....._.....].b..
+FF A3 11 5F 11 0C FF A3 11 63 11 5D 11 00 FF A3         ..._.....c.]....
+11 67 11 0C FF A5 11 66 11 67 11 62 0E 11 FF C3         .g.....f.g.b....
+14 00 FF C3 14 00 FF BD 1B 0B FF F4 01 00 FF F4         ................
+01 00 FF B7 1B 0B FF F4 01 C6 0C 00 FF F4 01 00         ................
+FF B7 1B 0B FF F4 01 33 10 00 FF F4 01 C6 0C 00         .......3........
+FF B7 1B 0B FF F4 01 EA 0D 00 FF F4 01 00 FF B7         ................
+1B 0B FF F4 01 C6 0C 00 FF F4 01 44 0C 00 FF B7         ...........D....
+1B 0B FF F4 01 00 FF F4 01 00 FF B7 1B 0B FF F4         ................
+01 00 FF F4 01 00 FF B7 1B 0B FF F4 01 00 FF F4         ................
+01 03 05 00 FF B7 1A 00 FF B7 1A 00 FF B7 1A 5C         ...............\
+0B 00 FF 72 1B 00 FF B7 1A 00 FF B7 1A 00 FF B7         ...r............
+1A 00 FF 72 1B 00 FF B7 1A 00 FF B7 1A 00 FF BC         ...r............
+1A 01 FF F4 01 00 FF F4 01 B8 1A 00 FF 98 01 00         ................
+FF 98 01 9C 07 00 FF 98 01 00 FF 98 01 00 FF 98         ................
+01 B8 1A 00 FF 98 01 54 0D A8 09 00 FF 98 01 21         .......T.......!
+0D A9 09 00 FF 98 01 33 0D 00 FF 98 01 62 0D A9         .......3.....b..
+09 00 FF 98 01 A7 09 A7 09 A7 09 00 FF 98 01 B8         ................
+1A 01 FF 81 04 00 FF 80 04 00 FF 80 04 00 FF 80         ................
+04 00 FF 80 04 00 FF 80 04 00 FF 80 04 00 FF 80         ................
+04 00 FF 80 04 00 FF 80 04 00 FF 80 04 00 FF 80         ................
+04 00 FF BC 13 01 FF B8 13 00 FF B9 13 00 FF B9         ................
+13 00 FF B9 13 00 FF B9 13 00 FF B9 13 00 FF B9         ................
+13 00 FF B9 13 00 FF B9 13 00 FF B9 13 00 FF B9         ................
+13 00 FF B9 13 00 FF BA 13 B7 FF 83 04 00 FF 82         ................
+04 00 FF 82 04 00 FF 82 04 00 FF 82 04 00 FF 82         ................
+04 00 FF 82 04 00 FF 82 04 00 FF 82 04 00 FF 82         ................
+04 00 FF 82 04 00 FF 82 04 00 FF BE 13 01 FF 81         ................
+04 00 FF 80 04 00 FF 9B 01 00 FF 80 04 00 FF 80         ................
+04 00 FF 80 04 00 FF 80 04 00 FF 80 04 00 FF 80         ................
+04 00 FF 80 04 00 FF 80 04 00 FF 80 04 00 FF BC         ................
+13 01 FF 81 04 00 FF 80 04 00 FF 80 04 00 FF 80         ................
+04 00 FF 80 04 00 FF 80 04 00 FF 80 04 00 FF 80         ................
+04 00 FF 80 04 00 FF 80 04 00 FF 80 04 00 FF 80         ................
+04 00 FF BC 13 FF FF FF FF FF FF FF FF ED FF 83         ................
+5D 7D CB 7D 07 0B 78 03 25 0B 78 04 EA 0D 78 05         ]}.}..x.%.x...x.
+DC 0C 78 06 68 0B 78 0A 81 0D 82 66 D7 8D 3C EC         ..x.h.x....f..<.
+B8 01 00 00 B4 16 35 00 59 6F 75 72 20 6C 61 73         ......5.Your las
+74 20 76 69 73 69 74 20 69 6E 20 54 69 62 69 61         t visit in Tibia
+3A 20 31 35 2E 20 4A 75 6C 20 32 30 30 38 20 30         : 15. Jul 2008 0
+35 3A 34 39 3A 30 38 20 43 45 53 54 2E A0 9B 00         5:49:08 CEST....
+9B 00 34 01 96 00 00 00 02 00 32 05 00 05 00 00         ..4.......2.....
+00 64 20 0D A1 0A 00 0A 32 0A 00 0A 00 0A 00 0A         .d .....2.......
+00 0A 00 01 02 03 04 05 06 07                           ..........      
+
+
+32084 32196 0
+32101 32209 7
+2016
+	Item {id = 408}
+)	Item {id = 4445}
+)	Item {id = 2535}
+)	TSkip {n: 0}
+2015
+	Item {id = 408}
+)	XItem {id = 2900xByte = 5}
+)	XItem {id = 3492xByte = 3}
+)	Item {id = 2473}
+)	TSkip {n: 0}
+2014
+	Item {id = 408}
+)	NewCreature {removeId: 0
+	TCreature {
+		_tibiaId: 1073742075
+		_name: Tom (len = 3)
+		_hp: 100
+		_direction: 0
+		_outfit: 	TCharOutfit {
+		lookType: 144
+		head: 113
+		body: 115
+		legs: 58
+		feet: 115
+		addons: 1
+}
+
+		_light: 	TCreatureLight {color: 0 raduis0}
+
+		_speed: 90
+		_skull: 0
+		_shield: 0
+}
+}
+	TSkip {n: 0}
+2013
+	Item {id = 408}
+)	TSkip {n: 0}
+2012
+	Item {id = 408}
+)	Item {id = 4447}
+)	XItem {id = 2897xByte = 5}
+)	Item {id = 4301}
+)	TSkip {n: 0}
+2011
+	Item {id = 408}
+)	Item {id = 6858}
+)	Item {id = 2910}
+)	TSkip {n: 0}
+2010
+	Item {id = 408}
+)	Item {id = 2371}
+)	TSkip {n: 0}
+2009
+	Item {id = 408}
+)	TSkip {n: 0}
+2008
+	Item {id = 408}
+)	TSkip {n: 0}
+2007
+	Item {id = 408}
+)	TSkip {n: 0}
+2006
+	Item {id = 408}
+)	Item {id = 1113}
+)	TSkip {n: 0}
+2005
+	Item {id = 1128}
+)	TSkip {n: 0}
+2004
+	Item {id = 1128}
+)	TSkip {n: 0}
+2003
+	Item {id = 1128}
+)	TSkip {n: 0}
+2002
+	Item {id = 408}
+)	Item {id = 4454}
+)	Item {id = 2321}
+)	Item {id = 4268}
+)	TSkip {n: 0}
+2001
+	Item {id = 408}
+)	Item {id = 4446}
+)	Item {id = 2320}
+)	Item {id = 3471}
+)	TSkip {n: 0}
+2000
+	Item {id = 408}
+)	Item {id = 4446}
+)	Item {id = 2320}
+)	TSkip {n: 0}
+1999
+	Item {id = 408}
+)	Item {id = 4446}
+)	Item {id = 2320}
+)	Item {id = 4255}
+)	TSkip {n: 0}
+1998
+	Item {id = 408}
+)	Item {id = 4455}
+)	Item {id = 2320}
+)	Item {id = 3552}
+)	Item {id = 3355}
+)	Item {id = 3361}
+)	TSkip {n: 0}
+1997
+	Item {id = 408}
+)	Item {id = 6858}
+)	TSkip {n: 0}
+1996
+	Item {id = 408}
+)	Item {id = 2526}
+)	TSkip {n: 0}
+1995
+	Item {id = 408}
+)	TSkip {n: 0}
+1994
+	Item {id = 408}
+)	Item {id = 3996}
+)	TSkip {n: 0}
+1993
+	Item {id = 408}
+)	TSkip {n: 0}
+1992
+	Item {id = 408}
+)	Item {id = 1113}
+)	TSkip {n: 0}
+1991
+	Item {id = 1128}
+)	TSkip {n: 0}
+1990
+	Item {id = 1128}
+)	TSkip {n: 0}
+1989
+	Item {id = 1128}
+)	TSkip {n: 0}
+1988
+	Item {id = 408}
+)	Item {id = 6857}
+)	TSkip {n: 0}
+1987
+	Item {id = 408}
+)	Item {id = 6857}
+)	TSkip {n: 0}
+1986
+	Item {id = 408}
+)	Item {id = 6857}
+)	TSkip {n: 0}
+1985
+	Item {id = 408}
+)	Item {id = 7026}
+)	TSkip {n: 0}
+1984
+	Item {id = 408}
+)	Item {id = 6857}
+)	TSkip {n: 0}
+1983
+	Item {id = 408}
+)	Item {id = 6863}
+)	TSkip {n: 0}
+1982
+	Item {id = 408}
+)	Item {id = 6857}
+)	Item {id = 2930}
+)	TSkip {n: 0}
+1981
+	Item {id = 408}
+)	Item {id = 6885}
+)	TSkip {n: 0}
+1980
+	Item {id = 408}
+)	Item {id = 6883}
+)	TSkip {n: 0}
+1979
+	Item {id = 408}
+)	Item {id = 6857}
+)	Item {id = 2931}
+)	TSkip {n: 0}
+1978
+	Item {id = 408}
+)	Item {id = 1120}
+)	TSkip {n: 0}
+1977
+	Item {id = 1128}
+)	TSkip {n: 0}
+1976
+	Item {id = 1128}
+)	TSkip {n: 0}
+1975
+	Item {id = 1128}
+)	Item {id = 311}
+)	TSkip {n: 0}
+1974
+	Item {id = 4515}
+)	Item {id = 4448}
+)	Item {id = 3700}
+)	TSkip {n: 0}
+1973
+	Item {id = 4526}
+)	Item {id = 4448}
+)	Item {id = 3682}
+)	TSkip {n: 0}
+1972
+	Item {id = 4515}
+)	Item {id = 4448}
+)	Item {id = 2108}
+)	TSkip {n: 0}
+1971
+	Item {id = 4515}
+)	Item {id = 4448}
+)	Item {id = 1772}
+)	TSkip {n: 0}
+1970
+	Item {id = 4515}
+)	Item {id = 4448}
+)	Item {id = 3614}
+)	TSkip {n: 0}
+1969
+	Item {id = 4517}
+)	Item {id = 4448}
+)	Item {id = 6888}
+)	TSkip {n: 0}
+1968
+	Item {id = 870}
+)	Item {id = 4531}
+)	Item {id = 4448}
+)	Item {id = 2016}
+)	TSkip {n: 0}
+1967
+	Item {id = 870}
+)	TSkip {n: 0}
+1966
+	Item {id = 870}
+)	Item {id = 1867}
+)	TSkip {n: 0}
+1965
+	Item {id = 870}
+)	Item {id = 4533}
+)	Item {id = 4456}
+)	TSkip {n: 0}
+1964
+	Item {id = 4515}
+)	Item {id = 4458}
+)	TSkip {n: 0}
+1963
+	Item {id = 1128}
+)	TSkip {n: 0}
+1962
+	Item {id = 1128}
+)	TSkip {n: 0}
+1961
+	Item {id = 1128}
+)	Item {id = 315}
+)	Item {id = 1085}
+)	TSkip {n: 0}
+1960
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1959
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1958
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1957
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1956
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1955
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1954
+	Item {id = 870}
+)	Item {id = 4535}
+)	Item {id = 1865}
+)	TSkip {n: 0}
+1953
+	Item {id = 870}
+)	TSkip {n: 0}
+1952
+	Item {id = 870}
+)	TSkip {n: 0}
+1951
+	Item {id = 870}
+)	Item {id = 4533}
+)	TSkip {n: 0}
+1950
+	Item {id = 4515}
+)	Item {id = 4458}
+)	TSkip {n: 0}
+1949
+	Item {id = 1128}
+)	TSkip {n: 0}
+1948
+	Item {id = 1128}
+)	Item {id = 1082}
+)	TSkip {n: 0}
+1947
+	Item {id = 4515}
+)	Item {id = 4465}
+)	TSkip {n: 0}
+1946
+	Item {id = 870}
+)	TSkip {n: 0}
+1945
+	Item {id = 870}
+)	TSkip {n: 0}
+1944
+	Item {id = 870}
+)	TSkip {n: 0}
+1943
+	Item {id = 870}
+)	TSkip {n: 0}
+1942
+	Item {id = 870}
+)	TSkip {n: 0}
+1941
+	Item {id = 870}
+)	TSkip {n: 0}
+1940
+	Item {id = 870}
+)	TSkip {n: 0}
+1939
+	Item {id = 870}
+)	Item {id = 1866}
+)	TSkip {n: 0}
+1938
+	Item {id = 870}
+)	TSkip {n: 0}
+1937
+	Item {id = 870}
+)	Item {id = 4533}
+)	Item {id = 3682}
+)	TSkip {n: 0}
+1936
+	Item {id = 4526}
+)	Item {id = 4458}
+)	TSkip {n: 0}
+1935
+	Item {id = 1128}
+)	TSkip {n: 0}
+1934
+	Item {id = 1128}
+)	Item {id = 1082}
+)	TSkip {n: 0}
+1933
+	Item {id = 4515}
+)	Item {id = 4460}
+)	TSkip {n: 0}
+1932
+	Item {id = 870}
+)	TSkip {n: 0}
+1931
+	Item {id = 870}
+)	TSkip {n: 0}
+1930
+	Item {id = 870}
+)	TSkip {n: 0}
+1929
+	Item {id = 870}
+)	TSkip {n: 0}
+1928
+	Item {id = 870}
+)	TSkip {n: 0}
+1927
+	Item {id = 870}
+)	Item {id = 1857}
+)	TSkip {n: 0}
+1926
+	Item {id = 870}
+)	TSkip {n: 0}
+1925
+	Item {id = 870}
+)	TSkip {n: 0}
+1924
+	Item {id = 870}
+)	XItem {id = 2881xByte = 0}
+)	TSkip {n: 0}
+1923
+	Item {id = 870}
+)	Item {id = 4533}
+)	TSkip {n: 0}
+1922
+	Item {id = 4515}
+)	Item {id = 4458}
+)	TSkip {n: 0}
+1921
+	Item {id = 1128}
+)	TSkip {n: 0}
+1920
+	Item {id = 1128}
+)	Item {id = 1085}
+)	TSkip {n: 0}
+1919
+	Item {id = 4515}
+)	Item {id = 4460}
+)	TSkip {n: 0}
+1918
+	Item {id = 870}
+)	Item {id = 618}
+)	TSkip {n: 0}
+1917
+	Item {id = 870}
+)	Item {id = 618}
+)	TSkip {n: 0}
+1916
+	Item {id = 870}
+)	Item {id = 618}
+)	TSkip {n: 0}
+1915
+	Item {id = 870}
+)	Item {id = 618}
+)	TSkip {n: 0}
+1914
+	Item {id = 870}
+)	Item {id = 618}
+)	TSkip {n: 0}
+1913
+	Item {id = 870}
+)	Item {id = 309}
+)	TSkip {n: 0}
+1912
+	Item {id = 870}
+)	TSkip {n: 0}
+1911
+	Item {id = 870}
+)	TSkip {n: 0}
+1910
+	Item {id = 870}
+)	TSkip {n: 0}
+1909
+	Item {id = 870}
+)	Item {id = 4533}
+)	TSkip {n: 0}
+1908
+	Item {id = 4403}
+)	Item {id = 4531}
+)	Item {id = 4458}
+)	TSkip {n: 0}
+1907
+	Item {id = 1128}
+)	Item {id = 1085}
+)	TSkip {n: 0}
+1906
+	Item {id = 4515}
+)	Item {id = 4465}
+)	TSkip {n: 0}
+1905
+	Item {id = 4515}
+)	Item {id = 4464}
+)	Item {id = 1049}
+)	TSkip {n: 0}
+1904
+	Item {id = 4525}
+)	TSkip {n: 0}
+1903
+	Item {id = 4521}
+)	TSkip {n: 0}
+1902
+	Item {id = 4519}
+)	TSkip {n: 0}
+1901
+	Item {id = 4515}
+)	TSkip {n: 0}
+1900
+	Item {id = 4526}
+)	TSkip {n: 0}
+1899
+	Item {id = 870}
+)	Item {id = 4532}
+)	Item {id = 313}
+)	Item {id = 1930}
+)	TSkip {n: 0}
+1898
+	Item {id = 870}
+)	Item {id = 4536}
+)	NewCreature {removeId: 0
+	TCreature {
+		_tibiaId: 28896316
+		_name: Tuxor (len = 5)
+		_hp: 100
+		_direction: 2
+		_outfit: 	TCharOutfit {
+		lookType: 129
+		head: 78
+		body: 114
+		legs: 98
+		feet: 114
+		addons: 0
+}
+
+		_light: 	TCreatureLight {color: 0 raduis0}
+
+		_speed: 222
+		_skull: 0
+		_shield: 0
+}
+}
+	TSkip {n: 0}
+1897
+	Item {id = 870}
+)	TSkip {n: 0}
+1896
+	Item {id = 870}
+)	XItem {id = 2882xByte = 0}
+)	TSkip {n: 0}
+1895
+	Item {id = 870}
+)	Item {id = 4533}
+)	TSkip {n: 0}
+1894
+	Item {id = 4405}
+)	Item {id = 4540}
+)	Item {id = 4462}
+)	TSkip {n: 0}
+1893
+	Item {id = 4528}
+)	Item {id = 4461}
+)	TSkip {n: 0}
+1892
+	Item {id = 4515}
+)	TSkip {n: 0}
+1891
+	Item {id = 4515}
+)	Item {id = 3614}
+)	TSkip {n: 0}
+1890
+	Item {id = 4515}
+)	Item {id = 1294}
+)	Item {id = 2602}
+)	TSkip {n: 0}
+1889
+	Item {id = 4515}
+)	Item {id = 1294}
+)	Item {id = 2602}
+)	TSkip {n: 0}
+1888
+	Item {id = 4515}
+)	Item {id = 1299}
+)	TSkip {n: 0}
+1887
+	Item {id = 4518}
+)	Item {id = 3614}
+)	TSkip {n: 0}
+1886
+	Item {id = 4527}
+)	Item {id = 6217}
+)	TSkip {n: 0}
+1885
+	Item {id = 4515}
+)	Item {id = 1931}
+)	TSkip {n: 0}
+1884
+	Item {id = 870}
+)	Item {id = 4531}
+)	Item {id = 1856}
+)	TSkip {n: 0}
+1883
+	Item {id = 870}
+)	TSkip {n: 0}
+1882
+	Item {id = 870}
+)	TSkip {n: 0}
+1881
+	Item {id = 870}
+)	Item {id = 4533}
+)	Item {id = 2109}
+)	TSkip {n: 0}
+1880
+	Item {id = 4515}
+)	TSkip {n: 0}
+1879
+	Item {id = 4529}
+)	Item {id = 3616}
+)	TSkip {n: 0}
+1878
+	Item {id = 4515}
+)	Item {id = 3700}
+)	TSkip {n: 0}
+1877
+	Item {id = 4515}
+)	Item {id = 6217}
+)	TSkip {n: 0}
+1876
+	Item {id = 500}
+)	Item {id = 2320}
+)	TSkip {n: 0}
+1875
+	Item {id = 500}
+)	Item {id = 2320}
+)	TSkip {n: 0}
+1874
+	Item {id = 500}
+)	Item {id = 1295}
+)	TSkip {n: 0}
+1873
+	Item {id = 870}
+)	Item {id = 4539}
+)	NewCreature {removeId: 0
+	TCreature {
+		_tibiaId: 22230428
+		_name: Royal-Lockwi (len = 12)
+		_hp: 100
+		_direction: 2
+		_outfit: 	TCharOutfit {
+		lookType: 143
+		head: 0
+		body: 114
+		legs: 94
+		feet: 94
+		addons: 0
+}
+
+		_light: 	TCreatureLight {color: 0 raduis0}
+
+		_speed: 220
+		_skull: 0
+		_shield: 0
+}
+}
+	TSkip {n: 0}
+1872
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1871
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1870
+	Item {id = 870}
+)	Item {id = 4535}
+)	TSkip {n: 0}
+1869
+	Item {id = 870}
+)	TSkip {n: 0}
+1868
+	Item {id = 870}
+)	Item {id = 1867}
+)	TSkip {n: 0}
+1867
+	Item {id = 870}
+)	Item {id = 4537}
+)	TSkip {n: 0}
+1866
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1865
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1864
+	Item {id = 870}
+)	Item {id = 4534}
+)	TSkip {n: 0}
+1863
+	Item {id = 870}
+)	Item {id = 4534}
+)	Item {id = 2853}
+)	TSkip {n: 0}
+1862
+	Item {id = 500}
+)	TSkip {n: 0}
+1861
+	Item {id = 500}
+)	TSkip {n: 0}
+1860
+	Item {id = 500}
+)	Item {id = 1295}
+)	Item {id = 2928}
+)	TSkip {n: 0}
+1859
+	Item {id = 870}
+)	Item {id = 4535}
+)	TSkip {n: 0}
+1858
+	Item {id = 870}
+)	TSkip {n: 0}
+1857
+	Item {id = 870}
+)	Item {id = 1856}
+)	TSkip {n: 0}
+1856
+	Item {id = 870}
+)	TSkip {n: 0}
+1855
+	Item {id = 870}
+)	Item {id = 4663}
+)	TSkip {n: 0}
+1854
+	Item {id = 870}
+)	Item {id = 4657}
+)	TSkip {n: 0}
+1853
+	Item {id = 870}
+)	Item {id = 4661}
+)	TSkip {n: 0}
+1852
+	Item {id = 870}
+)	TSkip {n: 0}
+1851
+	Item {id = 870}
+)	Item {id = 1856}
+)	TSkip {n: 0}
+1850
+	Item {id = 870}
+)	TSkip {n: 0}
+1849
+	Item {id = 870}
+)	TSkip {n: 0}
+1848
+	Item {id = 500}
+)	TSkip {n: 0}
+1847
+	Item {id = 500}
+)	TSkip {n: 0}
+1846
+	Item {id = 500}
+)	Item {id = 1634}
+)	TSkip {n: 0}
+1845
+	Item {id = 870}
+)	TSkip {n: 0}
+1844
+	Item {id = 870}
+)	Item {id = 1856}
+)	TSkip {n: 0}
+1843
+	Item {id = 870}
+)	TSkip {n: 0}
+1842
+	Item {id = 870}
+)	TSkip {n: 0}
+1841
+	Item {id = 870}
+)	Item {id = 4658}
+)	TSkip {n: 0}
+1840
+	Item {id = 103}
+)	Item {id = 435}
+)	TSkip {n: 0}
+1839
+	Item {id = 870}
+)	Item {id = 4656}
+)	TSkip {n: 0}
+1838
+	Item {id = 870}
+)	TSkip {n: 0}
+1837
+	Item {id = 870}
+)	TSkip {n: 0}
+1836
+	Item {id = 870}
+)	Item {id = 3270}
+)	Item {id = 1867}
+)	TSkip {n: 0}
+1835
+	Item {id = 870}
+)	Item {id = 3562}
+)	TSkip {n: 0}
+1834
+	Item {id = 500}
+)	TSkip {n: 0}
+1833
+	Item {id = 500}
+)	TSkip {n: 0}
+1832
+	Item {id = 500}
+)	Item {id = 1635}
+)	TSkip {n: 0}
+1831
+	Item {id = 870}
+)	Item {id = 3270}
+)	TSkip {n: 0}
+1830
+	Item {id = 870}
+)	TSkip {n: 0}
+1829
+	Item {id = 870}
+)	TSkip {n: 0}
+1828
+	Item {id = 870}
+)	TSkip {n: 0}
+1827
+	Item {id = 870}
+)	Item {id = 4662}
+)	Item {id = 1856}
+)	TSkip {n: 0}
+1826
+	Item {id = 870}
+)	Item {id = 4659}
+)	TSkip {n: 0}
+1825
+	Item {id = 870}
+)	Item {id = 4660}
+)	TSkip {n: 0}
+1824
+	Item {id = 870}
+)	TSkip {n: 0}
+1823
+	Item {id = 870}
+)	TSkip {n: 0}
+1822
+	Item {id = 870}
+)	TSkip {n: 0}
+1821
+	Item {id = 870}
+)	TSkip {n: 0}
+1820
+	Item {id = 500}
+)	TSkip {n: 0}
+1819
+	Item {id = 500}
+)	TSkip {n: 0}
+1818
+	Item {id = 500}
+)	Item {id = 1295}
+)	Item {id = 2928}
+)	TSkip {n: 0}
+1817
+	Item {id = 870}
+)	Item {id = 4532}
+)	Item {id = 5333}
+)	TSkip {n: 0}
+1816
+	Item {id = 870}
+)	Item {id = 4532}
+)	TSkip {n: 0}
+1815
+	Item {id = 870}
+)	Item {id = 4532}
+)	TSkip {n: 0}
+1814
+	Item {id = 870}
+)	Item {id = 4536}
+)	TSkip {n: 0}
+1813
+	Item {id = 870}
+)	TSkip {n: 0}
+1812
+	Item {id = 870}
+)	Item {id = 3270}
+)	Item {id = 2905}
+)	Item {id = 3270}
+)	Item {id = 2905}
+)	Item {id = 3270}
+)	Item {id = 285}
+)	Item {id = 1866}
+)	TSkip {n: 0}
+1811
+	Item {id = 870}
+)	Item {id = 4538}
+)	Item {id = 1857}
+)	TSkip {n: 0}
+1810
+	Item {id = 870}
+)	Item {id = 4532}
+)	TSkip {n: 0}
+1809
+	Item {id = 870}
+)	Item {id = 4532}
+)	TSkip {n: 0}
+1808
+	Item {id = 870}
+)	Item {id = 4532}
+)	TSkip {n: 0}
+1807
+	Item {id = 870}
+)	Item {id = 4532}
+)	TSkip {n: 0}
+1806
+	Item {id = 500}
+)	Item {id = 1637}
+)	TSkip {n: 0}
+1805
+	Item {id = 500}
+)	Item {id = 1294}
+)	Item {id = 2602}
+)	TSkip {n: 0}
+1804
+	Item {id = 500}
+)	Item {id = 1302}
+)	TSkip {n: 0}
+1803
+	Item {id = 4515}
+)	TSkip {n: 0}
+1802
+	Item {id = 4515}
+)	TSkip {n: 0}
+1801
+	Item {id = 4515}
+)	Item {id = 3682}
+)	TSkip {n: 0}
+1800
+	Item {id = 870}
+)	Item {id = 4531}
+)	Item {id = 5355}
+)	TSkip {n: 0}
+1799
+	Item {id = 870}
+)	TSkip {n: 0}
+1798
+	Item {id = 870}
+)	Item {id = 1865}
+)	TSkip {n: 0}
+1797
+	Item {id = 870}
+)	Item {id = 4533}
+)	Item {id = 2109}
+)	TSkip {n: 0}
+1796
+	Item {id = 4515}
+)	TSkip {n: 0}
+1795
+	Item {id = 4517}
+)	Item {id = 3614}
+)	TSkip {n: 0}
+1794
+	Item {id = 4515}
+)	XItem {id = 2887xByte = 5}
+)	Item {id = 4330}
+)	Item {id = 6215}
+)	TSkip {n: 0}
+1793
+	Item {id = 4529}
+)	Item {id = 3700}
+)	TSkip {n: 0}
+1792
+	Item {id = 457}
+)	TSkip {n: 0}
+1791
+	Item {id = 461}
+)	TSkip {n: 0}
+1790
+	Item {id = 409}
+)	Item {id = 1295}
+)	TSkip {n: 0}
+1789
+	Item {id = 4515}
+)	TSkip {n: 0}
+1788
+	Item {id = 4515}
+)	Item {id = 3617}
+)	TSkip {n: 0}
+1787
+	Item {id = 4526}
+)	Item {id = 3700}
+)	TSkip {n: 0}
+1786
+	Item {id = 870}
+)	Item {id = 4531}
+)	Item {id = 5357}
+)	TSkip {n: 0}
+1785
+	Item {id = 870}
+)	Item {id = 1857}
+)	TSkip {n: 0}
+1784
+	Item {id = 870}
+)	TSkip {n: 0}
+1783
+	Item {id = 870}
+)	Item {id = 4533}
+)	TSkip {n: 0}
+1782
+	Item {id = 4528}
+)	Item {id = 6217}
+)	TSkip {n: 0}
+1781
+	Item {id = 4529}
+)	TSkip {n: 0}
+1780
+	Item {id = 4515}
+)	Item {id = 3682}
+)	TSkip {n: 0}
+1779
+	Item {id = 4515}
+)	XItem {id = 2890xByte = 5}
+)	TSkip {n: 0}
+1778
+	Item {id = 461}
+)	TSkip {n: 0}
+1777
+	Item {id = 455}
+)	TSkip {n: 0}
+1776
+	Item {id = 409}
+)	Item {id = 1303}
+)	TSkip {n: 0}
+1775
+	Item {id = 4523}
+)	Item {id = 6857}
+)	TSkip {n: 0}
+1774
+	Item {id = 4515}
+)	Item {id = 6857}
+)	TSkip {n: 0}
+1773
+	Item {id = 4515}
+)	Item {id = 7026}
+)	TSkip {n: 0}
+1772
+	Item {id = 870}
+)	Item {id = 4531}
+)	Item {id = 6857}
+)	Item {id = 2931}
+)	TSkip {n: 0}
+1771
+	Item {id = 870}
+)	Item {id = 6885}
+)	TSkip {n: 0}
+1770
+	Item {id = 870}
+)	Item {id = 6883}
+)	TSkip {n: 0}
+1769
+	Item {id = 4515}
+)	Item {id = 6864}
+)	TSkip {n: 0}
+1768
+	Item {id = 4515}
+)	Item {id = 6857}
+)	TSkip {n: 0}
+1767
+	Item {id = 4515}
+)	Item {id = 6857}
+)	Item {id = 2931}
+)	TSkip {n: 0}
+1766
+	Item {id = 4515}
+)	Item {id = 7026}
+)	TSkip {n: 0}
+1765
+	Item {id = 4515}
+)	Item {id = 6862}
+)	TSkip {n: 0}
+1764
+	Item {id = 408}
+)	TSkip {n: 0}
+1763
+	Item {id = 408}
+)	TSkip {n: 0}
+1762
+	Item {id = 408}
+)	Item {id = 6840}
+)	TSkip {n: 0}
+1761
+	Item {id = 408}
+)	Item {id = 2487}
+)	TSkip {n: 0}
+1760
+	Item {id = 408}
+)	Item {id = 2488}
+)	TSkip {n: 0}
+1759
+	Item {id = 408}
+)	Item {id = 2469}
+)	TSkip {n: 0}
+1758
+	Item {id = 408}
+)	XItem {id = 2873xByte = 0}
+)	Item {id = 2772}
+)	TSkip {n: 0}
+1757
+	Item {id = 408}
+)	Item {id = 6840}
+)	TSkip {n: 0}
+1756
+	Item {id = 408}
+)	Item {id = 2471}
+)	Item {id = 2471}
+)	TSkip {n: 0}
+1755
+	Item {id = 408}
+)	Item {id = 2471}
+)	TSkip {n: 0}
+1754
+	Item {id = 408}
+)	TSkip {n: 0}
+1753
+	Item {id = 408}
+)	Item {id = 2983}
+)	Item {id = 2319}
+)	TSkip {n: 0}
+1752
+	Item {id = 408}
+)	Item {id = 6840}
+)	TSkip {n: 0}
+1751
+	Item {id = 4515}
+)	Item {id = 4451}
+)	Item {id = 4445}
+)	TSkip {n: 0}
+1750
+	Item {id = 408}
+)	Item {id = 5315}
+)	TSkip {n: 0}
+1749
+	Item {id = 408}
+)	Item {id = 5315}
+)	TSkip {n: 0}
+1748
+	Item {id = 408}
+)	Item {id = 6845}
+)	TSkip {n: 0}
+1747
+	Item {id = 408}
+)	Item {id = 6839}
+)	TSkip {n: 0}
+1746
+	Item {id = 408}
+)	Item {id = 6839}
+)	TSkip {n: 0}
+1745
+	Item {id = 408}
+)	Item {id = 7026}
+)	TSkip {n: 0}
+1744
+	Item {id = 408}
+)	Item {id = 6839}
+)	TSkip {n: 0}
+1743
+	Item {id = 408}
+)	Item {id = 6845}
+)	TSkip {n: 0}
+1742
+	Item {id = 408}
+)	Item {id = 6839}
+)	TSkip {n: 0}
+1741
+	Item {id = 408}
+)	Item {id = 6839}
+)	TSkip {n: 0}
+1740
+	Item {id = 408}
+)	Item {id = 7026}
+)	TSkip {n: 0}
+1739
+	Item {id = 408}
+)	Item {id = 6839}
+)	TSkip {n: 0}
+1738
+	Item {id = 408}
+)	Item {id = 6843}
+)	TSkip {n: 0}
+1737
+	Item {id = 4515}
+)	Item {id = 4454}
+)	Item {id = 4455}
+)	TSkip {n: 4}
+1732
+	Item {id = 6888}
+)	TSkip {n: 5}
+1726
+	Item {id = 4527}
+)	Item {id = 4453}
+)	Item {id = 3693}
+)	TSkip {n: 0}
+1725
+	Item {id = 4528}
+)	Item {id = 4451}
+)	Item {id = 4448}
+)	Item {id = 3654}
+)	TSkip {n: 0}
+1724
+	Item {id = 4515}
+)	Item {id = 4455}
+)	Item {id = 4456}
+)	TSkip {n: 11}
+1712
+	Item {id = 4515}
+)	Item {id = 4445}
+)	Item {id = 3655}
+)	TSkip {n: 0}
+1711
+	Item {id = 4515}
+)	Item {id = 4447}
+)	TSkip {n: 12}
+1698
+	Item {id = 4528}
+)	Item {id = 4445}
+)	Item {id = 3682}
+)	TSkip {n: 0}
+1697
+	Item {id = 4515}
+)	Item {id = 4447}
+)	TSkip {n: 12}
+1684
+	Item {id = 4515}
+)	Item {id = 4451}
+)	Item {id = 4445}
+)	TSkip {n: 0}
+1683
+	Item {id = 4515}
+)	Item {id = 4455}
+)	TSkip {n: 12}
+1670
+	Item {id = 4517}
+)	Item {id = 4454}
+)	Item {id = 4455}
+)	Item {id = 3682}
+)	TSkip {n: 17}
+1652
+	Item {id = 5315}
+)	TSkip {n: 0}
+1651
+	Item {id = 5315}
+)	TSkip {n: 0}
+1650
+	Item {id = 7101}
+)	TSkip {n: 11}
+1638
+	Item {id = 500}
+)	TSkip {n: 0}
+1637
+	Item {id = 500}
+)	TSkip {n: 0}
+1636
+	Item {id = 7095}
+)	TSkip {n: 11}
+1624
+	Item {id = 500}
+)	Item {id = 3270}
+)	TSkip {n: 0}
+1623
+	Item {id = 500}
+)	TSkip {n: 0}
+1622
+	Item {id = 7095}
+)	TSkip {n: 11}
+1610
+	Item {id = 500}
+)	Item {id = 4147}
+)	TSkip {n: 0}
+1609
+	Item {id = 500}
+)	Item {id = 3270}
+)	TSkip {n: 0}
+1608
+	Item {id = 7095}
+)	TSkip {n: 11}
+1596
+	Item {id = 500}
+)	Item {id = 3562}
+)	TSkip {n: 0}
+1595
+	Item {id = 500}
+)	TSkip {n: 0}
+1594
+	Item {id = 7095}
+)	TSkip {n: 11}
+1582
+	Item {id = 500}
+)	Item {id = 3270}
+)	TSkip {n: 0}
+1581
+	Item {id = 500}
+)	Item {id = 3140}
+)	TSkip {n: 0}
+1580
+	Item {id = 7095}
+)	TSkip {n: 11}
+1568
+	Item {id = 500}
+)	TSkip {n: 0}
+1567
+	Item {id = 500}
+)	TSkip {n: 0}
+1566
+	Item {id = 7095}
+)	TSkip {n: 11}
+1554
+	Item {id = 500}
+)	TSkip {n: 0}
+1553
+	Item {id = 500}
+)	TSkip {n: 0}
+1552
+	Item {id = 7095}
+)	TSkip {n: 11}
+1540
+	Item {id = 500}
+)	TSkip {n: 0}
+1539
+	Item {id = 500}
+)	Item {id = 1283}
+)	TSkip {n: 0}
+1538
+	Item {id = 6839}
+)	TSkip {n: 0}
+1537
+	Item {id = 6839}
+)	TSkip {n: 0}
+1536
+	Item {id = 6839}
+)	Item {id = 2908}
+)	TSkip {n: 0}
+1535
+	Item {id = 7026}
+)	TSkip {n: 0}
+1534
+	Item {id = 6839}
+)	TSkip {n: 0}
+1533
+	Item {id = 6839}
+)	TSkip {n: 0}
+1532
+	Item {id = 6839}
+)	TSkip {n: 0}
+1531
+	Item {id = 7026}
+)	TSkip {n: 0}
+1530
+	Item {id = 6839}
+)	TSkip {n: 0}
+1529
+	Item {id = 6839}
+)	TSkip {n: 0}
+1528
+	Item {id = 6844}
+)	TSkip {n: 1}
+1526
+	Item {id = 500}
+)	TSkip {n: 0}
+1525
+	Item {id = 500}
+)	Item {id = 6840}
+)	TSkip {n: 0}
+1524
+	Item {id = 408}
+)	TSkip {n: 0}
+1523
+	Item {id = 408}
+)	Item {id = 1948}
+)	TSkip {n: 0}
+1522
+	Item {id = 408}
+)	TSkip {n: 0}
+1521
+	Item {id = 408}
+)	TSkip {n: 0}
+1520
+	Item {id = 408}
+)	Item {id = 6840}
+)	TSkip {n: 0}
+1519
+	Item {id = 408}
+)	Item {id = 3412}
+)	Item {id = 2472}
+)	TSkip {n: 0}
+1518
+	Item {id = 408}
+)	Item {id = 3361}
+)	Item {id = 2473}
+)	TSkip {n: 0}
+1517
+	Item {id = 408}
+)	Item {id = 3379}
+)	TSkip {n: 0}
+1516
+	Item {id = 408}
+)	Item {id = 3426}
+)	Item {id = 2473}
+)	TSkip {n: 0}
+1515
+	Item {id = 408}
+)	Item {id = 2471}
+)	Item {id = 2471}
+)	Item {id = 2471}
+)	TSkip {n: 0}
+1514
+	Item {id = 408}
+)	Item {id = 6840}
+)	TSkip {n: 1}
+1512
+	Item {id = 1153}
+)	TSkip {n: 0}
+1511
+	Item {id = 1152}
+)	TSkip {n: 0}
+1510
+	Item {id = 1152}
+)	TSkip {n: 0}
+1509
+	Item {id = 1152}
+)	TSkip {n: 0}
+1508
+	Item {id = 1152}
+)	TSkip {n: 0}
+1507
+	Item {id = 1152}
+)	TSkip {n: 0}
+1506
+	Item {id = 1152}
+)	TSkip {n: 0}
+1505
+	Item {id = 1152}
+)	TSkip {n: 0}
+1504
+	Item {id = 1152}
+)	TSkip {n: 0}
+1503
+	Item {id = 1152}
+)	TSkip {n: 0}
+1502
+	Item {id = 1152}
+)	TSkip {n: 0}
+1501
+	Item {id = 1152}
+)	TSkip {n: 0}
+1500
+	Item {id = 5052}
+)	TSkip {n: 1}
+1498
+	Item {id = 5048}
+)	TSkip {n: 0}
+1497
+	Item {id = 5049}
+)	TSkip {n: 0}
+1496
+	Item {id = 5049}
+)	TSkip {n: 0}
+1495
+	Item {id = 5049}
+)	TSkip {n: 0}
+1494
+	Item {id = 5049}
+)	TSkip {n: 0}
+1493
+	Item {id = 5049}
+)	TSkip {n: 0}
+1492
+	Item {id = 5049}
+)	TSkip {n: 0}
+1491
+	Item {id = 5049}
+)	TSkip {n: 0}
+1490
+	Item {id = 5049}
+)	TSkip {n: 0}
+1489
+	Item {id = 5049}
+)	TSkip {n: 0}
+1488
+	Item {id = 5049}
+)	TSkip {n: 0}
+1487
+	Item {id = 5049}
+)	TSkip {n: 0}
+1486
+	Item {id = 5050}
+)	TSkip {n: 183}
+1302
+	Item {id = 1155}
+)	TSkip {n: 0}
+1301
+	Item {id = 1154}
+)	TSkip {n: 0}
+1300
+	Item {id = 1154}
+)	TSkip {n: 0}
+1299
+	Item {id = 1154}
+)	TSkip {n: 0}
+1298
+	Item {id = 1154}
+)	TSkip {n: 0}
+1297
+	Item {id = 1154}
+)	TSkip {n: 0}
+1296
+	Item {id = 1154}
+)	TSkip {n: 0}
+1295
+	Item {id = 1154}
+)	TSkip {n: 0}
+1294
+	Item {id = 1154}
+)	TSkip {n: 0}
+1293
+	Item {id = 1154}
+)	TSkip {n: 0}
+1292
+	Item {id = 1154}
+)	TSkip {n: 0}
+1291
+	Item {id = 1154}
+)	TSkip {n: 0}
+1290
+	Item {id = 5054}
+)	TSkip {n: 1}
+1288
+	Item {id = 1153}
+)	TSkip {n: 0}
+1287
+	Item {id = 1152}
+)	TSkip {n: 0}
+1286
+	Item {id = 411}
+)	TSkip {n: 0}
+1285
+	Item {id = 1152}
+)	TSkip {n: 0}
+1284
+	Item {id = 1152}
+)	TSkip {n: 0}
+1283
+	Item {id = 1152}
+)	TSkip {n: 0}
+1282
+	Item {id = 1152}
+)	TSkip {n: 0}
+1281
+	Item {id = 1152}
+)	TSkip {n: 0}
+1280
+	Item {id = 1152}
+)	TSkip {n: 0}
+1279
+	Item {id = 1152}
+)	TSkip {n: 0}
+1278
+	Item {id = 1152}
+)	TSkip {n: 0}
+1277
+	Item {id = 1152}
+)	TSkip {n: 0}
+1276
+	Item {id = 5052}
+)	TSkip {n: 1}
+1274
+	Item {id = 1153}
+)	TSkip {n: 0}
+1273
+	Item {id = 1152}
+)	TSkip {n: 0}
+1272
+	Item {id = 1152}
+)	TSkip {n: 0}
+1271
+	Item {id = 1152}
+)	TSkip {n: 0}
+1270
+	Item {id = 1152}
+)	TSkip {n: 0}
+1269
+	Item {id = 1152}
+)	TSkip {n: 0}
+1268
+	Item {id = 1152}
+)	TSkip {n: 0}
+1267
+	Item {id = 1152}
+)	TSkip {n: 0}
+1266
+	Item {id = 1152}
+)	TSkip {n: 0}
+1265
+	Item {id = 1152}
+)	TSkip {n: 0}
+1264
+	Item {id = 1152}
+)	TSkip {n: 0}
+1263
+	Item {id = 1152}
+)	TSkip {n: 0}
+1262
+	Item {id = 5052}
+)	TSkip {n: 255}
+1006
+	TSkip {n: 255}
+750
+	TSkip {n: 255}
+494
+	TSkip {n: 255}
+238
+	TSkip {n: 237}
+0
+Protocol error: unknown GR Message 0x83
