@@ -312,6 +312,10 @@ TWord16* ThingData::getMiniMap ()
         return new TWord16 (_miniMapColor);
 }
 
+bool ThingData::isXItem ()
+{
+       return isStackable () || isRune () || isFluidContainer () || isSplash ();
+}
 
 void ThingData::parseOp (SafeFile* datfile, uint8_t op)
 {

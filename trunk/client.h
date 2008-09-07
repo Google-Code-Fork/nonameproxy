@@ -5,6 +5,7 @@
 #include "connection.h"
 #include "gamestate.h"
 #include "loginstate.h"
+#include "datreader.h"
 
 class Connection;
 class ConnectionManager;
@@ -25,6 +26,7 @@ class Client
                 //initialized on a call to runLogin or runGame
                 LoginState*     lstate;
                 GameState*      gstate;
+                DatReader*      dat;
 
                 Connection*     serverConn;
                 Connection*     clientConn;

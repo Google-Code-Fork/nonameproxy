@@ -63,6 +63,9 @@ class ThingData
                 TWord16*        getRaised ();
                 TWord16*        getMiniMap ();
 
+                //determines if a function has an extra byte
+                bool isXItem ();
+
         private:
                 void parseOp (SafeFile* datfile, uint8_t op);
 

@@ -69,9 +69,9 @@ NetworkMessage* MessageList::put ()
 }
 
 //LSMessageList
-LSMessageList::LSMessageList (NetworkMessage* msg)
+LSMessageList::LSMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        LSMessageFactory lsmf (msg);
+        LSMessageFactory lsmf (msg, gs, dat);
         TibiaMessage* tm;
         while ((tm = lsmf.getMessage ()) != NULL) {
                 _msglist.push_back (tm);
@@ -101,7 +101,7 @@ NetworkMessage* LSMessageList::put ()
         
         //now we have to work out what type of header to use
         MsgList::iterator i = _msglist.begin ();
-        if ((*i)->getID () == 0x01) { //rsa login message 
+        if ((*i)->getId () == 0x01) { //rsa login message 
                 msg->prepRSAHeader ();
                 (*i)->put (msg);
                 msg->writeRSAHeader ();
@@ -116,9 +116,9 @@ NetworkMessage* LSMessageList::put ()
 }
 
 //LRMessageList
-LRMessageList::LRMessageList (NetworkMessage* msg)
+LRMessageList::LRMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        LRMessageFactory lrmf (msg);
+        LRMessageFactory lrmf (msg, gs, dat);
         TibiaMessage* tm;
         while ((tm = lrmf.getMessage ()) != NULL) {
                 _msglist.push_back (tm);
@@ -157,9 +157,9 @@ NetworkMessage* LRMessageList::put ()
 }
 
 //GSMessageList
-GSMessageList::GSMessageList (NetworkMessage* msg)
+GSMessageList::GSMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        GSMessageFactory lrmf (msg);
+        GSMessageFactory lrmf (msg, gs, dat);
         TibiaMessage* tm;
         while ((tm = lrmf.getMessage ()) != NULL) {
                 _msglist.push_back (tm);
@@ -189,7 +189,7 @@ NetworkMessage* GSMessageList::put ()
         
         msg->prepHeader ();
         MsgList::iterator i = _msglist.begin ();
-        if ((*i)->getID () == 0x0A) { //rsa init message 
+        if ((*i)->getId () == 0x0A) { //rsa init message 
                 msg->prepRSAHeader ();
                 (*i)->put (msg);
                 msg->writeRSAHeader ();
@@ -200,6 +200,47 @@ NetworkMessage* GSMessageList::put ()
                 }
                 msg->writeHeader ();
         }
+        return msg;
+}
+
+//GRMessageList
+GRMessageList::GRMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        GRMessageFactory lrmf (msg, gs, dat);
+        TibiaMessage* tm;
+        while ((tm = lrmf.getMessage ()) != NULL) {
+                _msglist.push_back (tm);
+        }
+        _it = _msglist.begin ();
+}
+
+GRMessageList::GRMessageList ()
+{
+        _it = _msglist.begin ();
+}
+
+GRMessageList::~GRMessageList ()
+{
+        for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
+                delete (*_it);
+        }
+}
+
+NetworkMessage* GRMessageList::put ()
+{
+        //there are no rsa messages recvd from the game server
+        if (_msglist.size () == 0) {
+                return NULL; //we dont want to be sending empty msgs
+        }
+
+        NetworkMessage* msg = new NetworkMessage (MAX_MSG_SIZE);
+        
+        msg->prepHeader ();
+        MsgList::iterator i = _msglist.begin ();
+        for (i = _msglist.begin (); i != _msglist.end (); ++i) {
+                (*i)->put (msg);
+        }
+        msg->writeHeader ();
         return msg;
 }
 

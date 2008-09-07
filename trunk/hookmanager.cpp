@@ -102,7 +102,7 @@ void HookManager::deleteWriteHook (uint64_t hid)
 
 void HookManager::hookReadMessage (TibiaMessage* tm, Client* client)
 {
-        uint8_t id = tm->getID ();
+        uint8_t id = tm->getId ();
         for (rHookList::iterator it = rHooks[id].begin ();
                 it != rHooks[id].end (); ++ it)
         {
@@ -112,7 +112,7 @@ void HookManager::hookReadMessage (TibiaMessage* tm, Client* client)
         
 TibiaMessage* HookManager::hookWriteMessage (TibiaMessage* tm, Client* client)
 {
-        uint8_t id = tm->getID ();
+        uint8_t id = tm->getId ();
         if (!wHooks[id]) {
                 return tm;
         }

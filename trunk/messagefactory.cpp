@@ -3,10 +3,15 @@
 #include "messagefactory.h"
 #include "tibiatypes.h"
 #include "tibiamessage.h"
+#include "messageids.h"
 
-LSMessageFactory::LSMessageFactory (NetworkMessage* msg)
+LSMessageFactory::LSMessageFactory (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
 {
         _msg = msg;
+        _gs = gs;
+        _dat = dat;
 }
 
 LSMessageFactory::~LSMessageFactory ()
@@ -20,17 +25,22 @@ TibiaMessage* LSMessageFactory::getMessage ()
         if (_msg->isRSAEOF ()) {
                 return NULL;
         }
-        uint8_t id = TWord8 (_msg).getVal ();
+        uint8_t id;
+        _msg->peekU8 (id);
         if (id == 0x01) {
-                return (new LSMLoginMsg (_msg));
+                return (new LSMLoginMsg (_msg, _gs, _dat));
         }
         return NULL;
 }
 
 // LRMessage Factory
-LRMessageFactory::LRMessageFactory (NetworkMessage* msg)
+LRMessageFactory::LRMessageFactory (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
 {
         _msg = msg;
+        _gs = gs;
+        _dat = dat;
 }
 
 LRMessageFactory::~LRMessageFactory ()
@@ -45,15 +55,16 @@ TibiaMessage* LRMessageFactory::getMessage ()
                 return NULL;
         }
 
-        uint8_t id = TWord8 (_msg).getVal ();
+        uint8_t id;
+        _msg->peekU8 (id);
         if (id == 0x0A) {
-                return (new LRMError (_msg));
+                return (new LRMError (_msg, _gs, _dat));
         } else if (id == 0x0B) {
-                return (new LRMInfo (_msg));
+                return (new LRMInfo (_msg, _gs, _dat));
         } else if (id == 0x14) {
-                return (new LRMMOTD (_msg));
+                return (new LRMMOTD (_msg, _gs, _dat));
         } else if (id == 0x64) {
-                return (new LRMCharacterList (_msg));
+                return (new LRMCharacterList (_msg, _gs, _dat));
         }
         
         printf ("Protocol error: unknown LR Message 0x%X\n", id);
@@ -62,9 +73,13 @@ TibiaMessage* LRMessageFactory::getMessage ()
 
 
 // GSMessage Factory
-GSMessageFactory::GSMessageFactory (NetworkMessage* msg)
+GSMessageFactory::GSMessageFactory (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
 {
         _msg = msg;
+        _gs = gs;
+        _dat = dat;
 }
 
 GSMessageFactory::~GSMessageFactory ()
@@ -79,9 +94,10 @@ TibiaMessage* GSMessageFactory::getMessage ()
                 if (_msg->isRSAEOF ()) {
                         return NULL;
                 }
-                uint8_t id = TWord8 (_msg).getVal ();
+                uint8_t id;
+                _msg->peekU8 (id);
                 if (id == 0x0A) {
-                        return (new GSMGameInit (_msg));
+                        return (new GSMGameInit (_msg, _gs, _dat));
                 }
                 return NULL;
         }
@@ -90,11 +106,58 @@ TibiaMessage* GSMessageFactory::getMessage ()
                 return NULL;
         }
 
-        uint8_t id = TWord8 (_msg).getVal ();
+        uint8_t id;
+        _msg->peekU8 (id);
         if (id == 0x0A) {
-                return (new GSMGameInit (_msg));
+                return (new GSMGameInit (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GS Message 0x%X\n", id);
         return NULL;
 }
 
+// GRMessage Factory
+GRMessageFactory::GRMessageFactory (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        _msg = msg;
+        _gs = gs;
+        _dat = dat;
+}
+
+GRMessageFactory::~GRMessageFactory ()
+{
+        delete _msg;
+}
+
+TibiaMessage* GRMessageFactory::getMessage ()
+{
+        //GR has no RSA messages
+        if (_msg->isXTEAEOF ()) {
+                return NULL;
+        }
+        uint8_t id;
+        _msg->peekU8 (id);
+        if (id == GRM_SELF_INFO_ID) {
+                return (new GRMSelfInfo (_msg, _gs, _dat));
+        } else if (id == GRM_MAP_INIT_ID) {
+                return (new GRMMapInit (_msg, _gs, _dat));
+        } else if (id == GRM_MAGIC_EFFECT_ID) {
+                return (new GRMMagicEffect (_msg, _gs, _dat));
+        } else if (id == GRM_SLOT_ITEM_ID) {
+                return (new GRMSlotItem (_msg, _gs, _dat));
+        } else if (id == GRM_GLOBAL_LIGHT_ID) {
+                return (new GRMGlobalLight (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_LIGHT_ID) {
+                return (new GRMCreatureLight (_msg, _gs, _dat));
+        } else if (id == GRM_TEXT_MSG_ID) {
+                return (new GRMTextMsg (_msg, _gs, _dat));
+        } else if (id == GRM_PLAYER_STATS_ID) {
+                return (new GRMPlayerStats (_msg, _gs, _dat));
+        } else if (id == GRM_PLAYER_SKILLS_ID) {
+                return (new GRMPlayerSkills (_msg, _gs, _dat));
+        }
+        printf ("Protocol error: unknown GR Message 0x%X\n", id);
+        return NULL;
+}
+        

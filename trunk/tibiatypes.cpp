@@ -5,6 +5,7 @@
 #include <time.h>
 #include "tibiatypes.h"
 #include "networkmessage.h"
+#include "datreader.h"
 
 //TWord8
 TWord8::TWord8 (uint8_t val)
@@ -720,9 +721,9 @@ void TXItem::get (NetworkMessage* msg)
 
 //TCreature
 
-TCreature::TCreature (NetworkMessage* msg)
+TCreature::TCreature (NetworkMessage* msg, DatReader* dat)
 {
-        get (msg);
+        get (msg, dat);
 }
 
 TCreature::TCreature (uint32_t tibiaId, const std::string name, uint8_t hp,
@@ -734,11 +735,13 @@ TCreature::TCreature (uint32_t tibiaId, const std::string name, uint8_t hp,
         _name =         new TString (name);
         _hp =           new TWord8 (hp);
         _direction =    new TWord8 (direction);
-        //_outfit =       new TOutfit (outfit);
         _light =        new TCreatureLight (light);
         _speed =        new TWord16 (speed);
         _skull =        new TWord8 (skull);
         _shield =       new TWord8 (shield);
+        
+        TOutfitFactory of;
+        _outfit =       of.cloneOutfit (outfit);
 }
 
 TCreature::TCreature (const TCreature& clone)
@@ -747,11 +750,13 @@ TCreature::TCreature (const TCreature& clone)
         _name =         new TString (*clone._name);
         _hp =           new TWord8 (*clone._hp);
         _direction =    new TWord8 (*clone._direction);
-        //_outfit =       new TOutfit (*clone._outfit);
         _light =        new TCreatureLight (*clone._light);
         _speed =        new TWord16 (*clone._speed);
         _skull =        new TWord8 (*clone._skull);
         _shield =       new TWord8 (*clone._shield);
+        
+        TOutfitFactory of;
+        _outfit =       of.cloneOutfit (*clone._outfit);
 }
 
 TCreature::~TCreature ()
@@ -760,7 +765,7 @@ TCreature::~TCreature ()
         delete _name;
         delete _hp;
         delete _direction;
-        //delete _outfit;
+        delete _outfit;
         delete _light;
         delete _speed;
         delete _skull;
@@ -779,7 +784,7 @@ void TCreature::show () const
         printf ("\t\t_name: "); _name->show (); printf ("\n");
         printf ("\t\t_hp: "); _hp->show (); printf ("\n");
         printf ("\t\t_direction: "); _direction->show (); printf ("\n");
-        //printf ("\t\t_outfit: "); _outfit->show (); printf ("\n");
+        printf ("\t\t_outfit: "); _outfit->show (); printf ("\n");
         printf ("\t\t_light: "); _light->show (); printf ("\n");
         printf ("\t\t_speed: "); _speed->show (); printf ("\n");
         printf ("\t\t_skull: "); _skull->show (); printf ("\n");
@@ -793,7 +798,7 @@ void TCreature::put (NetworkMessage* msg) const
         _name->put (msg);
         _hp->put (msg);
         _direction->put (msg);
-        //_outfit->put (msg);
+        _outfit->put (msg);
         _light->put (msg);
         _speed->put (msg);
         _skull->put (msg);
@@ -845,13 +850,16 @@ uint8_t TCreature::getShield () const
         return _shield->getVal ();
 }
 
-void TCreature::get (NetworkMessage* msg)
+void TCreature::get (NetworkMessage* msg, DatReader* dat)
 {
         _tibiaId = new TWord32 (msg); 
         _name = new TString (msg); 
         _hp = new TWord8 (msg); 
         _direction = new TWord8 (msg); 
-        //_outfit = new TOutfit (msg); 
+
+        TOutfitFactory of (msg, dat);
+        _outfit = of.getOutfit ();
+
         _light = new TCreatureLight (msg); 
         _speed = new TWord16 (msg); 
         _skull = new TWord8 (msg); 
@@ -862,9 +870,9 @@ void TCreature::get (NetworkMessage* msg)
 //Yes this could be derived from TCreature, but that makes thing complicated
 // TOldCreature
 
-TOldCreature::TOldCreature (NetworkMessage* msg)
+TOldCreature::TOldCreature (NetworkMessage* msg, DatReader* dat)
 {
-        get (msg);
+        get (msg, dat);
 }
 
 TOldCreature::TOldCreature (uint32_t tibiaId, const std::string name, 
@@ -872,17 +880,20 @@ TOldCreature::TOldCreature (uint32_t tibiaId, const std::string name,
                 const TCreatureLight& light, uint16_t speed,
                 uint8_t skull, uint8_t shield)
 {
+        _itemId = new TWord16 ((uint16_t)0x0062);
         _creature = new TCreature (tibiaId, name, hp, direction, outfit, light,
                                         speed, skull, shield);
 }
 
 TOldCreature::TOldCreature (const TOldCreature& clone)
 {
+        _itemId = new TWord16 (*clone._itemId);
         _creature = new TCreature (*clone._creature);
 }
 
 TOldCreature::~TOldCreature ()
 {
+        delete _itemId;
         delete _creature;
 }
 
@@ -900,6 +911,7 @@ void TOldCreature::show () const
 
 void TOldCreature::put (NetworkMessage* msg) const
 {
+        _itemId->put (msg);
         _creature->put (msg);
 }
 
@@ -908,15 +920,16 @@ TCreature* TOldCreature::getCreature () const
         return new TCreature (*_creature);
 }
 
-void TOldCreature::get (NetworkMessage* msg)
+void TOldCreature::get (NetworkMessage* msg, DatReader* dat)
 {
-        _creature = new TCreature (msg);
+        _itemId = new TWord16 (msg);
+        _creature = new TCreature (msg, dat);
 };
 
 // TNewCreature
-TNewCreature::TNewCreature (NetworkMessage* msg)
+TNewCreature::TNewCreature (NetworkMessage* msg, DatReader* dat)
 {
-        get (msg);
+        get (msg, dat);
 }
 
 TNewCreature::TNewCreature (uint32_t removeId, uint32_t tibiaId, 
@@ -924,6 +937,7 @@ TNewCreature::TNewCreature (uint32_t removeId, uint32_t tibiaId,
                 const TOutfit& outfit, const TCreatureLight& light, 
                 uint16_t speed, uint8_t skull, uint8_t shield)
 {
+        _itemId = new TWord16 ((uint16_t)0x0061);
         _removeId = new TWord32 (removeId);
         _creature = new TCreature (tibiaId, name, hp, direction, outfit, light,
                                         speed, skull, shield);
@@ -931,12 +945,14 @@ TNewCreature::TNewCreature (uint32_t removeId, uint32_t tibiaId,
 
 TNewCreature::TNewCreature (const TNewCreature& clone)
 {
+        _itemId = new TWord16 (*clone._itemId);
         _removeId = new TWord32 (*clone._removeId);
         _creature = new TCreature (*clone._creature);
 }
 
 TNewCreature::~TNewCreature ()
 {
+        delete _itemId;
         delete _removeId;
         delete _creature;
 }
@@ -955,6 +971,7 @@ void TNewCreature::show () const
 
 void TNewCreature::put (NetworkMessage* msg) const
 {
+        _itemId->put (msg);
         _removeId->put (msg);
         _creature->put (msg);
 }
@@ -969,10 +986,73 @@ TCreature* TNewCreature::getCreature () const
         return new TCreature (*_creature);
 }
 
-void TNewCreature::get (NetworkMessage* msg)
+void TNewCreature::get (NetworkMessage* msg, DatReader* dat)
 {
+        _itemId = new TWord16 (msg);
         _removeId = new TWord32 (msg);
-        _creature = new TCreature (msg);
+        _creature = new TCreature (msg, dat);
+};
+
+//TCreatureTurn
+TCreatureTurn::TCreatureTurn (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+TCreatureTurn::TCreatureTurn (uint32_t tibiaId, uint8_t dir)
+{
+        _itemId = new TWord16 ((uint16_t)0x0063);
+        _tibiaId = new TWord32 (tibiaId);
+        _dir = new TWord8 (dir);
+}
+
+TCreatureTurn::TCreatureTurn (const TCreatureTurn& clone)
+{
+        _itemId = new TWord16 (*clone._itemId);
+        _tibiaId = new TWord32 (*clone._tibiaId);
+        _dir = new TWord8 (*clone._dir);
+}
+
+TCreatureTurn::~TCreatureTurn ()
+{
+        delete _itemId;
+        delete _tibiaId;
+        delete _dir;
+}
+
+TThing::ThingType TCreatureTurn::getType () const
+{
+        return TThing::creatureturn;
+}
+                
+void TCreatureTurn::show () const
+{
+        printf ("\tTCreatureTurn {tibiaId: "); _tibiaId->show ();
+        printf (" dir: "); _dir->show (); printf ("}\n");
+}
+
+void TCreatureTurn::put (NetworkMessage* msg) const
+{
+        _itemId->put (msg);
+        _tibiaId->put (msg);
+        _dir->put (msg);
+}
+
+uint32_t TCreatureTurn::getTibiaId () const
+{
+        return _tibiaId->getVal ();
+}
+
+uint8_t TCreatureTurn::getDir () const
+{
+        return _dir->getVal ();
+}
+
+void TCreatureTurn::get (NetworkMessage* msg)
+{
+        _itemId = new TWord16 (msg);
+        _tibiaId = new TWord32 (msg);
+        _dir = new TWord8 (msg);
 };
 
 //TSkip
@@ -989,8 +1069,8 @@ TSkip::TSkip (uint8_t n)
 
 TSkip::TSkip (const TSkip& clone)
 {
-        _ff = new TWord8 (*clone._ff);
         _n = new TWord8 (*clone._n);
+        _ff = new TWord8 (*clone._ff);
 }
 
 TSkip::~TSkip ()
@@ -1011,8 +1091,8 @@ void TSkip::show () const
 
 void TSkip::put (NetworkMessage* msg) const
 {
-        _ff->put (msg);
         _n->put (msg);
+        _ff->put (msg);
 }
 
 uint8_t TSkip::getN () const
@@ -1022,8 +1102,71 @@ uint8_t TSkip::getN () const
 
 void TSkip::get (NetworkMessage* msg)
 {
-        _ff = new TWord8 (msg);
         _n = new TWord8 (msg);
+        _ff = new TWord8 (msg);
+}
+
+/***************************************************************************
+ * TThingFactory
+ ***************************************************************************/
+
+TThingFactory::TThingFactory (NetworkMessage* msg, DatReader* dat)
+{
+        _msg = msg;
+        _dat = dat;
+        _readable = 1;
+}
+
+TThingFactory::TThingFactory ()
+{
+        _readable = 0;
+}
+
+TThing* TThingFactory::getThing ()
+{
+        if (!_readable) {
+                printf ("error: TThingFactory not initialized to read\n");
+                return NULL;
+        }
+        uint16_t id;
+        _msg->peekU16 (id);
+
+        if (id == 0x0061) {
+                return new TNewCreature (_msg, _dat);
+        } else if (id == 0x0062) {
+                return new TOldCreature (_msg, _dat);
+        } else if (id == 0x0063) {
+                return new TCreatureTurn (_msg);
+        } else if (id >= 0xFF00) {
+                return new TSkip (_msg);
+        } else {
+                if (_dat->getItemData (id)->isXItem ()) {
+                        return new TXItem (_msg);
+                } else {
+                        return new TItem (_msg);
+                }
+        }
+}
+
+TThing* TThingFactory::cloneThing (const TThing& thing)
+{
+        TThing::ThingType tt = thing.getType ();
+        if (tt == TThing::item) {
+                return new TItem ((const TItem&)thing);
+        } else if (tt == TThing::xitem) {
+                return new TXItem ((const TXItem&)thing);
+        } else if (tt == TThing::creature) {
+                return new TCreature ((const TCreature&)thing);
+        } else if (tt == TThing::oldcreature) {
+                return new TOldCreature ((const TOldCreature&)thing);
+        } else if (tt == TThing::newcreature) {
+                return new TNewCreature ((const TNewCreature&)thing);
+        } else if (tt == TThing::skip) {
+                return new TSkip ((const TSkip&)thing);
+        } else {
+                printf ("error: unreconized ThingType %d\n", tt);
+                return NULL;
+        }
 }
 
 /**************************************************************
@@ -1031,21 +1174,23 @@ void TSkip::get (NetworkMessage* msg)
  **************************************************************/
 
 // TItemOutift
-TItemOutfit::TItemOutfit (NetworkMessage* msg)
+TItemOutfit::TItemOutfit (NetworkMessage* msg, DatReader* dat)
 {
-        get (msg);
+        get (msg, dat);
 }
 
 TItemOutfit::TItemOutfit (const TThing& item)
 {
         _lookType = new TWord16 ((uint16_t)0x0000);
-        //new Thing requires factory
+        TThingFactory tf;
+        _item = tf.cloneThing (item);
 }
 
 TItemOutfit::TItemOutfit (const TItemOutfit& clone)
 {
         _lookType = new TWord16 (*clone._lookType);
-        //factory
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
 }
 
 TItemOutfit::~TItemOutfit ()
@@ -1070,10 +1215,11 @@ void TItemOutfit::show () const
         printf ("TItemOutfit {"); _item->show (); printf ("}\n");
 }
 
-void TItemOutfit::get (NetworkMessage* msg)
+void TItemOutfit::get (NetworkMessage* msg, DatReader* dat)
 {
         _lookType = new TWord16 (msg);
-        // factory
+        TThingFactory tf (msg, dat);
+        _item = tf.getThing ();
 }
 
 //TCharOutfit
@@ -1149,5 +1295,669 @@ void TCharOutfit::get (NetworkMessage* msg)
         _legs = new TWord8 (msg);
         _feet = new TWord8 (msg);
         _addons = new TWord8 (msg);
+}
+
+/********************************************************************
+ * TOutfitFactory
+ ********************************************************************/
+
+TOutfitFactory::TOutfitFactory (NetworkMessage* msg, DatReader* dat)
+{
+        _msg = msg;
+        _dat = dat;
+        _readable = 1;
+}
+
+TOutfitFactory::TOutfitFactory ()
+{
+        _readable = 0;
+}
+
+TOutfit* TOutfitFactory::cloneOutfit (const TOutfit& clone)
+{
+        TOutfit::OutfitType ot = clone.getType ();
+        if (ot == TOutfit::itemoutfit) {
+                return new TItemOutfit((const TItemOutfit&)clone);
+        } else if (ot == TOutfit::charoutfit) {
+                return new TCharOutfit((const TCharOutfit&)clone);
+        } else {
+                printf ("error: unreconized outfit type %d\n", ot);
+                return NULL;
+        }
+}
+        
+TOutfit* TOutfitFactory::getOutfit ()
+{
+        if (!_readable) {
+                printf ("error: outfit factory is not initialized to read\n");
+                return NULL;
+        }
+        uint16_t looktype;
+        _msg->peekU16 (looktype);
+        if (looktype == 0x0000) {
+                return new TItemOutfit (_msg, _dat);
+        } else {
+                return new TCharOutfit (_msg);
+        }
+}
+
+/************************************************************************
+ * TMapDescription
+ ************************************************************************/
+
+TMapDescription::TMapDescription (const TPos& start, const TPos& end,
+                NetworkMessage* msg, DatReader* dat)
+{
+        _start = new TPos (start);
+        _cur = new TPos (start);
+        _end = new TPos (end);
+        _it = _map.begin ();
+
+        get (start, end, msg, dat);
+}
+                
+        
+TMapDescription::TMapDescription (const TPos& start, const TPos& end)
+{
+        _start = new TPos (start);
+        _cur = new TPos (start);
+        _end = new TPos (end);
+        _it = _map.begin ();
+}
+
+TMapDescription::TMapDescription (const TMapDescription& clone)
+{
+        _start = new TPos (*clone._start);
+        _cur = new TPos (*clone._start);
+        _end = new TPos (*clone._end);
+        //use _it to go through clone list, then well assign
+        //it afterwards
+        TThingFactory tf;
+
+        MapList::const_iterator i;
+        for (i = clone._map.begin (); i != clone._map.end (); ++i) {
+                _map.push_back (tf.cloneThing (*(*i)));
+        }
+        _it = _map.begin ();
+}
+
+TMapDescription::~TMapDescription ()
+{
+        delete _start;
+        delete _cur;
+        delete _end;
+
+        for (_it = _map.begin (); _it != _map.end (); ++_it) {
+                delete (*_it);
+        }
+}
+
+void TMapDescription::put (NetworkMessage* msg) const
+{
+        MapList::const_iterator i;
+        for (i = _map.begin (); i != _map.end (); ++i) {
+                (*i)->put (msg);
+        }
+}
+
+void TMapDescription::show () const
+{
+        printf ("\tTMapDescription {\n");
+        MapList::const_iterator i;
+        for (i = _map.begin (); i != _map.end (); ++i) {
+                printf ("\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("}\n");
+}
+        
+const TPos& TMapDescription::getStart () const
+{
+        return *_start;
+}
+
+const TPos& TMapDescription::getEnd () const
+{
+        return *_end;
+}
+
+
+void TMapDescription::begin ()
+{
+        _it = _map.begin ();
+}
+
+bool TMapDescription::isEnd ()
+{
+        if (_it == _map.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TMapDescription::next ()
+{
+        if (_it == _map.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TThing& TMapDescription::getThing ()
+{
+        return *(*_it);
+}
+
+void TMapDescription::insert (TThing* tm)
+{
+        _map.insert (_it, tm);
+}
+
+void TMapDescription::replace (TThing* tm)
+{
+        if (_map.size () == 0) {
+                printf ("map error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _map.end ()) {
+                printf ("map error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _map.erase (_it);
+        _map.insert (_it, tm);
+        _it --;
+} 
+
+void TMapDescription::remove ()
+{
+        _it = _map.erase (_it);
+}
+
+void TMapDescription::add (TThing* thing)
+{
+        _map.push_back (thing);
+}
+
+void TMapDescription::get (const TPos& start, const TPos& end,
+                NetworkMessage* msg, DatReader* dat)
+{
+        uint32_t nThings = (end.x () - start.x () + 1) *
+                         (end.y () - start.y () + 1) *
+                         (end.z () - start.z () + 1);
+
+        TThingFactory tf (msg, dat);
+        TThing* thing;
+        while (nThings != 0) {
+                thing = tf.getThing ();
+                if (thing->getType () == TThing::skip) {
+                        //we alway skip one byte
+                        nThings --;
+                        nThings -= ((TSkip*)thing)->getN ();
+                }
+                _map.push_back (thing);
+        }
+}
+
+/*************************************************************************
+ * TEffect
+ *************************************************************************/
+
+TEffect::TEffect (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+TEffect::TEffect (const TPos& pos, uint8_t effectId)
+{
+        _pos = new TPos (pos);
+        _effectId = new TWord8 (effectId);
+}
+
+TEffect::TEffect (const TEffect& clone)
+{
+        _pos = new TPos (*clone._pos);
+        _effectId = new TWord8 (*clone._effectId);
+}
+        
+TEffect::~TEffect ()
+{
+        delete _pos;
+        delete _effectId;
+}
+
+void TEffect::put (NetworkMessage* msg) const
+{
+        _pos->put (msg);
+        _effectId->put (msg);
+}
+
+void TEffect::show () const
+{
+        printf ("TPos {"); _pos->show ();
+        printf (", Effect:"); _effectId->show();
+        printf ("}");
+}
+
+const TPos& TEffect::getPos () const
+{
+        return *_pos;
+}
+
+uint8_t TEffect::getEffectId () const
+{
+        return _effectId->getVal ();
+}
+
+void TEffect::get (NetworkMessage* msg)
+{
+        _pos = new TPos (msg);
+        _effectId = new TWord8 (msg);
+}
+
+/*************************************************************************
+ * TTextMsg
+ *************************************************************************/
+
+TTextMsg::TTextMsg (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+TTextMsg::TTextMsg (uint8_t msgType, const std::string msg)
+{
+        _msgType = new TWord8 (msgType);
+        _msg = new TString (msg);
+}
+
+TTextMsg::TTextMsg (const TTextMsg& clone)
+{
+        _msgType = new TWord8 (*clone._msgType);
+        _msg = new TString (*clone._msg);
+}
+
+TTextMsg::~TTextMsg ()
+{
+        delete _msgType;
+        delete _msg;
+}
+
+void TTextMsg::put (NetworkMessage* msg) const
+{
+        _msgType->put (msg);
+        _msg->put (msg);
+}
+
+void TTextMsg::show () const
+{
+        printf ("TTextMsg {type: "); _msgType->show ();
+        printf ("msg: "); _msg->show ();
+        printf ("}\n");
+}
+
+uint8_t TTextMsg::getMsgType () const
+{
+        return _msgType->getVal ();
+}
+
+const std::string TTextMsg::getMsg () const
+{
+        return _msg->getString ();
+}
+
+void TTextMsg::get (NetworkMessage* msg)
+{
+        _msgType = new TWord8 (msg);
+        _msg = new TString (msg);
+}
+
+/*************************************************************************
+ * TPlayerStats
+ *************************************************************************/
+
+TPlayerStats::TPlayerStats (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+TPlayerStats::TPlayerStats (uint16_t hp,
+                        uint16_t hpmax,
+                        uint16_t capacity,
+                        uint32_t experience,
+                        uint16_t level,
+                        uint8_t levelPercent,
+                        uint16_t mana,
+                        uint16_t maxmana,
+                        uint8_t magicLevel,
+                        uint8_t magicLevelPercent,
+                        uint8_t soul,
+                        uint16_t stamina)
+{
+        _hp =                  new TWord16 (hp);
+        _hpmax =               new TWord16 (hpmax);
+        _capacity =            new TWord16 (capacity);
+        _experience =          new TWord32 (experience);
+        _level =               new TWord16 (level);
+        _levelPercent =        new TWord8 (levelPercent);
+        _mana =                new TWord16 (mana);
+        _maxmana =             new TWord16 (maxmana);
+        _magicLevel =          new TWord8 (magicLevel);
+        _magicLevelPercent =   new TWord8 (magicLevelPercent);
+        _soul =                new TWord8 (soul);
+        _stamina =             new TWord16 (stamina);
+}
+
+TPlayerStats::TPlayerStats (const TPlayerStats& clone)
+{
+        _hp =                  new TWord16 (*clone._hp);
+        _hpmax =               new TWord16 (*clone._hpmax);
+        _capacity =            new TWord16 (*clone._capacity);
+        _experience =          new TWord32 (*clone._experience);
+        _level =               new TWord16 (*clone._level);
+        _levelPercent =        new TWord8 (*clone._levelPercent);
+        _mana =                new TWord16 (*clone._mana);
+        _maxmana =             new TWord16 (*clone._maxmana);
+        _magicLevel =          new TWord8 (*clone._magicLevel);
+        _magicLevelPercent =   new TWord8 (*clone._magicLevelPercent);
+        _soul =                new TWord8 (*clone._soul);
+        _stamina =             new TWord16 (*clone._stamina);
+}
+
+TPlayerStats::~TPlayerStats ()
+{
+        delete _hp;
+        delete _hpmax;
+        delete _capacity;
+        delete _experience;
+        delete _level;
+        delete _levelPercent;
+        delete _mana;
+        delete _maxmana;
+        delete _magicLevel;
+        delete _magicLevelPercent;
+        delete _soul;
+        delete _stamina;
+}
+
+void TPlayerStats::put (NetworkMessage* msg)
+{
+        _hp->put (msg);
+        _hpmax->put (msg);
+        _capacity->put (msg);
+        _experience->put (msg);
+        _level->put (msg);
+        _levelPercent->put (msg);
+        _mana->put (msg);
+        _maxmana->put (msg);
+        _magicLevel->put (msg);
+        _magicLevelPercent->put (msg);
+        _soul->put (msg);
+        _stamina->put (msg);
+}
+
+void TPlayerStats::show ()
+{
+        printf ("TPlayerStats {\n");
+        printf ("\t\thp: "); _hp->show (); printf ("\n");
+        printf ("\t\thpmax: "); _hpmax->show (); printf ("\n");
+        printf ("\t\tcapacity: "); _capacity->show (); printf ("\n");
+        printf ("\t\texperience: "); _experience->show (); printf ("\n");
+        printf ("\t\tlevel: "); _level->show (); printf ("\n");
+        printf ("\t\tlevelPercent: "); _levelPercent->show (); printf ("\n");
+        printf ("\t\tmana: "); _mana->show (); printf ("\n");
+        printf ("\t\tmaxmana: "); _maxmana->show (); printf ("\n");
+        printf ("\t\tmagicLevel: "); _magicLevel->show (); printf ("\n");
+        printf ("\t\tmagicLevelPercent: "); _magicLevelPercent->show (); printf ("\n");
+        printf ("\t\tsoul: "); _soul->show (); printf ("\n");
+        printf ("\t\tstamina: "); _stamina->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint16_t TPlayerStats::getHp () const
+{
+        return _hp->getVal ();
+}
+
+uint16_t TPlayerStats::getHpmax () const
+{
+        return _hpmax->getVal ();
+}
+
+uint16_t TPlayerStats::getCapacity () const
+{
+        return _capacity->getVal ();
+}
+
+uint32_t TPlayerStats::getExperience () const
+{
+        return _experience->getVal ();
+}
+
+uint16_t TPlayerStats::getLevel () const
+{
+        return _level->getVal ();
+}
+
+uint8_t TPlayerStats::getLevelPercent () const
+{
+        return _levelPercent->getVal ();
+}
+
+uint16_t TPlayerStats::getMana () const
+{
+        return _mana->getVal ();
+}
+
+uint16_t TPlayerStats::getMaxmana () const
+{
+        return _maxmana->getVal ();
+}
+
+uint8_t TPlayerStats::getMagicLevel () const
+{
+        return _magicLevel->getVal ();
+}
+
+uint8_t TPlayerStats::getMagicLevelPercent () const
+{
+        return _magicLevelPercent->getVal ();
+}
+
+uint8_t TPlayerStats::getSoul () const
+{
+        return _soul->getVal ();
+}
+
+uint16_t TPlayerStats::getStamina () const
+{
+        return _stamina->getVal ();
+}
+
+void TPlayerStats::get (NetworkMessage* msg)
+{
+        _hp =                  new TWord16 (msg);
+        _hpmax =               new TWord16 (msg);
+        _capacity =            new TWord16 (msg);
+        _experience =          new TWord32 (msg);
+        _level =               new TWord16 (msg);
+        _levelPercent =        new TWord8 (msg);
+        _mana =                new TWord16 (msg);
+        _maxmana =             new TWord16 (msg);
+        _magicLevel =          new TWord8 (msg);
+        _magicLevelPercent =   new TWord8 (msg);
+        _soul =                new TWord8 (msg);
+        _stamina =             new TWord16 (msg);
+} 
+
+/*************************************************************************
+ * TPlayerSkill
+ *************************************************************************/
+
+TPlayerSkill::TPlayerSkill (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+TPlayerSkill::TPlayerSkill (uint8_t level, uint8_t percent)
+{
+        _level = new TWord8 (level);
+        _percent = new TWord8 (percent);
+}
+
+TPlayerSkill::TPlayerSkill (const TPlayerSkill& clone)
+{
+        _level = new TWord8 (*clone._level);
+        _percent = new TWord8 (*clone._percent);
+}
+
+TPlayerSkill::~TPlayerSkill ()
+{
+        delete _level;
+        delete _percent;
+}
+
+void TPlayerSkill::put (NetworkMessage* msg) const
+{
+        _level->put (msg);
+        _percent->put (msg);
+}
+
+void TPlayerSkill::show () const
+{
+        printf ("TPlayerSkill {lvl: "); _level->show ();
+        printf ("\%: "); _percent->show (); printf ("}");
+}
+        
+uint8_t TPlayerSkill::getLevel () const
+{
+        return _level->getVal ();
+}
+
+uint8_t TPlayerSkill::getPercent () const
+{
+        return _percent->getVal ();
+}
+
+void TPlayerSkill::get (NetworkMessage* msg)
+{
+        _level = new TWord8 (msg);
+        _percent = new TWord8 (msg);
+}
+
+/*************************************************************************
+ * TPlayerSkills
+ *************************************************************************/
+
+TPlayerSkills::TPlayerSkills (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+TPlayerSkills::TPlayerSkills ( const TPlayerSkill& fist,
+                        const TPlayerSkill& club,
+                        const TPlayerSkill& sword,
+                        const TPlayerSkill& axe,
+                        const TPlayerSkill& distance,
+                        const TPlayerSkill& shield,
+                        const TPlayerSkill& fishing)
+{
+        _fist =         new TPlayerSkill (fist);
+        _club =         new TPlayerSkill (club);
+        _sword =        new TPlayerSkill (sword);
+        _axe =          new TPlayerSkill (axe);
+        _distance =     new TPlayerSkill (distance);
+        _shield =       new TPlayerSkill (shield);
+        _fishing =      new TPlayerSkill (fishing);
+}
+
+TPlayerSkills::TPlayerSkills (const TPlayerSkills& clone)
+{
+        _fist =         new TPlayerSkill (*clone._fist);
+        _club =         new TPlayerSkill (*clone._club);
+        _sword =        new TPlayerSkill (*clone._sword);
+        _axe =          new TPlayerSkill (*clone._axe);
+        _distance =     new TPlayerSkill (*clone._distance);
+        _shield =       new TPlayerSkill (*clone._shield);
+        _fishing =      new TPlayerSkill (*clone._fishing);
+}
+
+TPlayerSkills::~TPlayerSkills ()
+{
+        delete _fist;
+        delete _club;
+        delete _sword;
+        delete _axe;
+        delete _distance;
+        delete _shield;
+        delete _fishing;
+}
+
+void TPlayerSkills::put (NetworkMessage* msg) const
+{
+        _fist->put (msg);
+        _club->put (msg);
+        _sword->put (msg);
+        _axe->put (msg);
+        _distance->put (msg);
+        _shield->put (msg);
+        _fishing->put (msg);
+}
+
+void TPlayerSkills::show () const
+{
+        printf ("TPlayerSkills {\n");
+        printf ("\t\tfist: "); _fist->show (); printf ("\n");
+        printf ("\t\tclub: "); _club->show (); printf ("\n");
+        printf ("\t\tsword: "); _sword->show (); printf ("\n");
+        printf ("\t\taxe: "); _axe->show (); printf ("\n");
+        printf ("\t\tdistance: "); _distance->show (); printf ("\n");
+        printf ("\t\tshield: "); _shield->show (); printf ("\n");
+        printf ("\t\tfishing: "); _fishing->show (); printf ("\n");
+}
+
+const TPlayerSkill& TPlayerSkills::getFist () const
+{
+        return *_fist;
+}
+
+const TPlayerSkill& TPlayerSkills::getClub () const
+{
+        return *_club;
+}
+
+const TPlayerSkill& TPlayerSkills::getSword () const
+{
+        return *_sword;
+}
+
+const TPlayerSkill& TPlayerSkills::getAxe () const
+{
+        return *_axe;
+}
+
+const TPlayerSkill& TPlayerSkills::getDistance () const
+{
+        return *_distance;
+}
+
+const TPlayerSkill& TPlayerSkills::getShield () const
+{
+        return *_shield;
+}
+
+const TPlayerSkill& TPlayerSkills::getFishing () const
+{
+        return *_fishing;
+}
+
+void TPlayerSkills::get (NetworkMessage* msg)
+{
+        _fist = new TPlayerSkill (msg);
+        _club = new TPlayerSkill (msg);
+        _sword = new TPlayerSkill (msg);
+        _axe = new TPlayerSkill (msg);
+        _distance = new TPlayerSkill (msg);
+        _shield = new TPlayerSkill (msg);
+        _fishing = new TPlayerSkill (msg);
 }
 
