@@ -155,6 +155,36 @@ bool NetworkMessage::getN (uint8_t* dest, uint32_t n)
         return true;
 }
 
+bool NetworkMessage::peekU8 (uint8_t& val)
+{
+        if (_curpos + 1 > _size) {
+                printf ("network error: couldn't read U8\n");
+                return false;
+        }
+        memcpy (&val, &_buffer[_curpos], 1);
+        return true;
+}
+
+bool NetworkMessage::peekU16 (uint16_t& val)
+{
+        if (_curpos + 2 > _size) {
+                printf ("network error: couldn't read U16\n");
+                return false;
+        }
+        memcpy (&val, &_buffer[_curpos], 2);
+        return true;
+}
+
+bool NetworkMessage::peekU32 (uint32_t& val)
+{
+        if (_curpos + 4 > _size) {
+                printf ("network error: couldn't read U32\n");
+                return false;
+        }
+        memcpy (&val, &_buffer[_curpos], 4);
+        return true;
+}
+
 bool NetworkMessage::putU8 (uint8_t val)
 {
         if (_curpos + 1 > _size) {

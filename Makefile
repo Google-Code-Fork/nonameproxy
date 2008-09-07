@@ -20,9 +20,9 @@ main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h login
 		messagefactory.h messagelist.h networkmessage.h rsa.h server.h tibiacrypt.h \
 		tibiamessage.h tibiatypes.h xtea.h
 
-tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h
+tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h messageids.h
 
-tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h
+tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h datreader.h
 
 tibiacrypt.o: tibiacrypt.cpp tibiacrypt.h rsa.h xtea.h networkmessage.h
 
@@ -36,7 +36,8 @@ server.o: server.cpp server.h connection.h
 
 connection.o: connection.cpp connection.h server.h
 
-messagefactory.o: messagefactory.cpp messagefactory.cpp tibiamessage.h tibiatypes.h networkmessage.h
+messagefactory.o: messagefactory.cpp messagefactory.cpp tibiamessage.h \
+		tibiatypes.h networkmessage.h messageids.h
 
 corehooks.o: corehooks.cpp corehooks.h hook.h
 
@@ -61,6 +62,7 @@ accountstate.o: accountstate.h accountstate.cpp
 charstate.o: charstate.h charstate.cpp
 
 safefile.o: safefile.cpp safefile.h
+
 datreader.o: datreader.cpp datreader.h safefile.h tibiatypes.h
 
 clean:

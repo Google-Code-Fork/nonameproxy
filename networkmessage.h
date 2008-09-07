@@ -40,6 +40,11 @@ class NetworkMessage
                 bool getU32 (uint32_t& val);
                 bool getN   (uint8_t* dest, uint32_t n);
 
+                //Peek functions are exclusively for the factories
+                bool peekU8  (uint8_t& val);
+                bool peekU16 (uint16_t& val);
+                bool peekU32 (uint32_t& val);
+
                 bool putU8  (uint8_t  val);
                 bool putU16 (uint16_t val);
                 bool putU32 (uint32_t val);
@@ -61,6 +66,10 @@ class NetworkMessage
                 friend class LSMessageFactory;
                 friend class LRMessageFactory;
                 friend class GSMessageFactory;
+                friend class GRMessageFactory;
+
+                friend class TThingFactory;
+                friend class TOutfitFactory;
         private:
                 uint8_t* _buffer;
                 uint32_t _size;

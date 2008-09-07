@@ -6,6 +6,7 @@
 #include <list>
 
 class NetworkMessage;
+class DatReader;
 
 class TWord8
 {
@@ -260,6 +261,7 @@ class TThing
                         creature,
                         oldcreature,
                         newcreature,
+                        creatureturn,
                         skip,
                 };
 
@@ -315,18 +317,16 @@ class TXItem : public TThing
 class TCreature : public TThing
 {
         public:
-                TCreature (NetworkMessage* msg);
+                TCreature (NetworkMessage* msg, DatReader* dat);
                 TCreature (uint32_t tibiaId, const std::string name, uint8_t hp,
                                 uint8_t direction, const TOutfit& outfit,
                                 const TCreatureLight& light, uint16_t speed,
                                 uint8_t skull, uint8_t shield);
                 TCreature (const TCreature& clone);
-
-                TCreature (const TItem& clone);
                 virtual ~TCreature ();
 
                 virtual ThingType getType () const;
-                
+
                 virtual void show () const;
                 virtual void put (NetworkMessage* msg) const;
 
@@ -341,7 +341,7 @@ class TCreature : public TThing
                 uint8_t                 getShield () const;
 
         private:
-                void get (NetworkMessage* msg);
+                void get (NetworkMessage* msg, DatReader* dat);
 
                 TWord32*        _tibiaId;
                 TString*        _name;
@@ -360,7 +360,7 @@ class TCreature : public TThing
 class TOldCreature : public TThing
 {
         public:
-                TOldCreature (NetworkMessage* msg);
+                TOldCreature (NetworkMessage* msg, DatReader* dat);
                 TOldCreature (uint32_t tibiaId, const std::string name, 
                                 uint8_t hp, uint8_t direction, 
                                 const TOutfit& outfit,
@@ -368,7 +368,6 @@ class TOldCreature : public TThing
                                 uint16_t speed, uint8_t skull, uint8_t shield);
 
                 TOldCreature (const TOldCreature& clone);
-                TOldCreature (const TItem& clone);
                 virtual ~TOldCreature ();
 
                 virtual ThingType getType () const;
@@ -381,15 +380,16 @@ class TOldCreature : public TThing
                 TCreature* getCreature () const;
 
         private:
-                void get (NetworkMessage* msg);
+                void get (NetworkMessage* msg, DatReader* dat);
 
+                TWord16*        _itemId;
                 TCreature*      _creature;
 };
 
 class TNewCreature : public TThing
 {
         public:
-                TNewCreature (NetworkMessage* msg);
+                TNewCreature (NetworkMessage* msg, DatReader* dat);
                 TNewCreature (uint32_t removeId, uint32_t tibiaId, 
                                 const std::string name, uint8_t hp,
                                 uint8_t direction, const TOutfit& outfit,
@@ -397,7 +397,6 @@ class TNewCreature : public TThing
                                 uint8_t skull, uint8_t shield);
 
                 TNewCreature (const TNewCreature& clone);
-                TNewCreature (const TItem& clone);
                 virtual ~TNewCreature ();
 
                 virtual ThingType getType () const;
@@ -412,12 +411,36 @@ class TNewCreature : public TThing
                 TCreature* getCreature () const;
 
         private:
-                void get (NetworkMessage* msg);
+                void get (NetworkMessage* msg, DatReader* dat);
 
+                TWord16*        _itemId;
                 TWord32*        _removeId;
                 TCreature*      _creature;
 };
 
+class TCreatureTurn : public TThing
+{
+        public:
+                TCreatureTurn (NetworkMessage* msg);
+                TCreatureTurn (uint32_t creatrueId, uint8_t dir);
+                TCreatureTurn (const TCreatureTurn& clone);
+                virtual ~TCreatureTurn ();
+
+                virtual ThingType getType () const;
+                
+                virtual void show () const;
+                virtual void put (NetworkMessage* msg) const;
+
+                uint32_t getTibiaId () const;
+                uint8_t  getDir () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord16* _itemId;
+                TWord32* _tibiaId;
+                TWord8*  _dir;
+};
 class TSkip : public TThing
 {
         public:
@@ -439,6 +462,28 @@ class TSkip : public TThing
 
                 TWord8* _ff;
                 TWord8* _n;
+};
+
+/***************************************************************************
+ * TThingFactory
+ ***************************************************************************/
+
+class TThingFactory
+{
+        public:
+                //use this constructor for reading from a network msg
+                TThingFactory (NetworkMessage* msg, DatReader* dat);
+                //this constructor is for cloning only
+                TThingFactory ();
+
+                TThing* getThing ();
+                TThing* cloneThing (const TThing& thing);
+
+        private:
+                NetworkMessage* _msg;
+                DatReader*      _dat;
+
+                bool _readable;
 };
 
 /***************************************************************************
@@ -465,7 +510,7 @@ class TOutfit
 class TItemOutfit : public TOutfit
 {
         public:
-                TItemOutfit (NetworkMessage* msg);
+                TItemOutfit (NetworkMessage* msg, DatReader* dat);
                 TItemOutfit (const TThing& item);
                 TItemOutfit (const TItemOutfit& clone);
                 virtual ~TItemOutfit ();
@@ -475,7 +520,7 @@ class TItemOutfit : public TOutfit
                 virtual void show () const;
 
         private:
-                void get (NetworkMessage* msg);
+                void get (NetworkMessage* msg, DatReader* dat);
                 
                 TWord16* _lookType;
                 TThing*  _item;
@@ -503,6 +548,270 @@ class TCharOutfit : public TOutfit
                 TWord8*  _legs;
                 TWord8*  _feet;
                 TWord8*  _addons;
+};
+
+/***************************************************************************
+ * TOutfitFactory
+ ***************************************************************************/
+
+class TOutfitFactory
+{
+        public:
+                TOutfitFactory (NetworkMessage* msg, DatReader* dat);
+                TOutfitFactory ();
+                
+                TOutfit* getOutfit ();
+                TOutfit* cloneOutfit (const TOutfit& clone);
+
+        private:
+                NetworkMessage* _msg;
+                DatReader*      _dat;
+
+                bool _readable;
+};
+
+/************************************************************************
+ * TMapDescription
+ * The Map is stored in the same way as it is presented in the packet
+ * (ie a list of tiles separated by skips). However to ease usage
+ * the start and end points of the map description are also stored
+ * the start is the three lowest coordanates, and end is the 3 largest
+ * coordanates
+ * note this class is useless as const because it relies on an internal
+ * iterator to keep track of the current tile. Therefore there are two
+ * options, clone a map list every time you need to use it (expensive)
+ * or to return no const references. I will take the later approach, but
+ * in my code i will not abuse this. If you need to change a map, clone
+ * it first.
+ ************************************************************************/
+
+typedef std::list<TThing*> MapList;
+class TMapDescription
+{
+        public:
+                TMapDescription (const TPos& start, const TPos& end,
+                                NetworkMessage* msg, DatReader* dat);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TMapDescription (const TPos& start, const TPos& end);
+                TMapDescription (const TMapDescription& clone);
+                virtual ~TMapDescription ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const TPos& getStart () const;
+                const TPos& getEnd () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current thing 
+                const TThing& getThing ();
+                //insert thing BEFORE current thing
+                void insert (TThing* thing);
+                //replace current thing
+                void replace (TThing* thing);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TThing* thing);
+
+                //TODO implement these nice functions
+                //these functions are useful if one has to make small changes to
+                //a cloned map description, keep in mind it runs in linear time
+                //const TPos& getCurPos ();
+                //uint32_t getStackPos ();
+                //goto pos, returns true if pos was found, otherwise returns 
+                //false and iterator will be left at end of map
+                //bool gotoPos (const TPos& p, uint32_t stackPos);
+
+        private:
+                void get (const TPos& start, const TPos& end
+                                , NetworkMessage* msg, DatReader* dat);
+
+                TPos* _start;
+                TPos* _end;
+                TPos* _cur;
+                MapList _map;
+                MapList::iterator _it;
+};
+
+/*************************************************************************
+ * TEffect
+ *************************************************************************/
+
+class TEffect
+{
+        public:
+                TEffect (NetworkMessage* msg);
+                TEffect (const TPos& pos, uint8_t effectId);
+                TEffect (const TEffect& clone);
+                virtual ~TEffect ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const TPos& getPos () const;
+                uint8_t getEffectId () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TPos* _pos;
+                TWord8* _effectId;
+};
+
+/*************************************************************************
+ * TTextMsg
+ *************************************************************************/
+
+class TTextMsg
+{
+        public:
+                TTextMsg (NetworkMessage* msg);
+                TTextMsg (uint8_t msgType, const std::string msg);
+                TTextMsg (const TTextMsg& clone);
+                virtual ~TTextMsg ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getMsgType () const;
+                const std::string getMsg () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord8* _msgType;
+                TString* _msg;
+};
+
+/*************************************************************************
+ * TPlayerStats
+ *************************************************************************/
+
+class TPlayerStats
+{
+        public:
+                TPlayerStats (NetworkMessage* msg);
+                TPlayerStats (uint16_t getHp,
+                                uint16_t getHpmax,
+                                uint16_t getCapacity,
+                                uint32_t getExperience,
+                                uint16_t getLevel,
+                                uint8_t getLevelPercent,
+                                uint16_t getMana,
+                                uint16_t getMaxmana,
+                                uint8_t getMagicLevel,
+                                uint8_t getMagicLevelPercent,
+                                uint8_t getSoul,
+                                uint16_t getStamina);
+
+                TPlayerStats (const TPlayerStats& clone);
+                virtual ~TPlayerStats ();
+
+                void put (NetworkMessage* msg);
+                void show ();
+
+                uint16_t getHp () const;
+                uint16_t getHpmax () const;
+                uint16_t getCapacity () const;
+                uint32_t getExperience () const;
+                uint16_t getLevel () const;
+                uint8_t getLevelPercent () const;
+                uint16_t getMana () const;
+                uint16_t getMaxmana () const;
+                uint8_t getMagicLevel () const;
+                uint8_t getMagicLevelPercent () const;
+                uint8_t getSoul () const;
+                uint16_t getStamina () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord16*        _hp;
+                TWord16*        _hpmax;
+                TWord16*        _capacity;
+                TWord32*        _experience;
+                TWord16*        _level;
+                TWord8*         _levelPercent;
+                TWord16*        _mana;
+                TWord16*        _maxmana;
+                TWord8*         _magicLevel;
+                TWord8*         _magicLevelPercent;
+                TWord8*         _soul;
+                TWord16*        _stamina;
+};
+
+/*************************************************************************
+ * TPlayerSkill
+ *************************************************************************/
+
+class TPlayerSkill
+{
+        public:
+                TPlayerSkill (NetworkMessage* msg);
+                TPlayerSkill (uint8_t level, uint8_t percent);
+                TPlayerSkill (const TPlayerSkill& clone);
+                virtual ~TPlayerSkill ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getLevel () const;
+                uint8_t getPercent () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord8* _level;
+                TWord8* _percent;
+};
+
+/*************************************************************************
+ * TPlayerSkills
+ *************************************************************************/
+
+class TPlayerSkills
+{
+        public:
+                TPlayerSkills (NetworkMessage* msg);
+                TPlayerSkills ( const TPlayerSkill& fist,
+                                const TPlayerSkill& club,
+                                const TPlayerSkill& sword,
+                                const TPlayerSkill& axe,
+                                const TPlayerSkill& distance,
+                                const TPlayerSkill& shield,
+                                const TPlayerSkill& fishing);
+
+                TPlayerSkills (const TPlayerSkills& clone);
+                virtual ~TPlayerSkills ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const TPlayerSkill& getFist () const;
+                const TPlayerSkill& getClub () const;
+                const TPlayerSkill& getSword () const;
+                const TPlayerSkill& getAxe () const;
+                const TPlayerSkill& getDistance () const;
+                const TPlayerSkill& getShield () const;
+                const TPlayerSkill& getFishing () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TPlayerSkill* _fist;
+                TPlayerSkill* _club;
+                TPlayerSkill* _sword;
+                TPlayerSkill* _axe;
+                TPlayerSkill* _distance;
+                TPlayerSkill* _shield;
+                TPlayerSkill* _fishing;
 };
 #endif
 

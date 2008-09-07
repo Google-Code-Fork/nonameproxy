@@ -7,6 +7,8 @@
 
 class NetworkMessage;
 class TibiaMessage;
+class GameState;
+class DatReader;
 
 typedef std::list<TibiaMessage*> MsgList;
 
@@ -40,7 +42,9 @@ class MessageList
 class LSMessageList : public MessageList
 {
         public:
-                LSMessageList (NetworkMessage* msg);
+                LSMessageList (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
                 LSMessageList ();
                 virtual ~LSMessageList ();
                 virtual NetworkMessage* put ();
@@ -49,7 +53,9 @@ class LSMessageList : public MessageList
 class LRMessageList : public MessageList
 {
         public:
-                LRMessageList (NetworkMessage* msg);
+                LRMessageList (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
                 LRMessageList ();
                 virtual ~LRMessageList ();
                 virtual NetworkMessage* put ();
@@ -58,9 +64,22 @@ class LRMessageList : public MessageList
 class GSMessageList : public MessageList
 {
         public:
-                GSMessageList (NetworkMessage* msg);
+                GSMessageList (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
                 GSMessageList ();
                 virtual ~GSMessageList ();
+                virtual NetworkMessage* put ();
+};
+
+class GRMessageList : public MessageList
+{
+        public:
+                GRMessageList (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMessageList ();
+                virtual ~GRMessageList ();
                 virtual NetworkMessage* put ();
 };
 

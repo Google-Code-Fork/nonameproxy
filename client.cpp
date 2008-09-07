@@ -18,6 +18,7 @@ Client::Client (LoginState* ls)
 {
         lstate = ls;
         gstate = new GameState ();
+        dat = new DatReader ();
 
         serverConn = NULL;
         clientConn = NULL;
@@ -36,6 +37,7 @@ Client::Client (LoginState* ls)
 Client::~Client ()
 {
         delete gstate;
+        delete dat;
 
         delete serverConn;
         delete clientConn;
@@ -77,7 +79,7 @@ bool Client::runLogin (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        LSMessageList* lsml = new LSMessageList (msg);
+                        LSMessageList* lsml = new LSMessageList (msg, gstate, dat);
                         while (!lsml->isEnd ()) {
                                 TibiaMessage* tm = lsml->read ();
                                 sendHM->hookReadMessage (tm, this);
@@ -93,7 +95,7 @@ bool Client::runLogin (Connection* acceptedConn)
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        LRMessageList* lrml = new LRMessageList (msg);
+                        LRMessageList* lrml = new LRMessageList (msg, gstate, dat);
                         while (!lrml->isEnd ()) {
                                 TibiaMessage* tm = lrml->read ();
                                 recvHM->hookReadMessage (tm, this);
@@ -150,7 +152,7 @@ bool Client::runGame (Connection* acceptedConn)
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
                         msg->show ();
-                        GSMessageList* gsml = new GSMessageList (msg);
+                        GSMessageList* gsml = new GSMessageList (msg, gstate, dat);
                         while (!gsml->isEnd ()) {
                                 TibiaMessage* tm = gsml->read ();
                                 sendHM->hookReadMessage (tm, this);

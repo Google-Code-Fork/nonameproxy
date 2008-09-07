@@ -1,31 +1,17 @@
 #include <stdio.h>
 #include "tibiamessage.h"
+#include "messageids.h"
 
 #define RSA_LEN 128
 
-//TibiaMessage
-void TibiaMessage::put (NetworkMessage* msg)
-{
-}
-
-void TibiaMessage::get (NetworkMessage* msg)
-{
-}
-
-void TibiaMessage::show ()
-{
-}
-
-uint8_t TibiaMessage::getID ()
-{
-        return 0x00;
-}
+#define MIN(a,b) ((a)<(b)?a:b)
 
 //LSMLoginMsg
-LSMLoginMsg::LSMLoginMsg (NetworkMessage* msg)
+LSMLoginMsg::LSMLoginMsg (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x01);
-        get (msg);
+        get (msg, gs, dat);
 }
 
 LSMLoginMsg::LSMLoginMsg (uint16_t OS, uint16_t version, uint32_t datsig,
@@ -64,7 +50,7 @@ LSMLoginMsg::~LSMLoginMsg ()
         delete _bytes;
 }
 
-uint8_t LSMLoginMsg::getID ()
+uint8_t LSMLoginMsg::getId ()
 {
         return _id->getVal ();
 }
@@ -94,8 +80,11 @@ void LSMLoginMsg::put (NetworkMessage* msg)
         _bytes->put (msg);
 }
 
-void LSMLoginMsg::get (NetworkMessage* msg)
+void LSMLoginMsg::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
         _OS = new TWord16 (msg);
         _version = new TWord16 (msg);
         _datsig = new TWord32 (msg);
@@ -132,10 +121,11 @@ void LSMLoginMsg::show ()
 }
 
 //LRMError
-LRMError::LRMError (NetworkMessage* msg)
+LRMError::LRMError (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x0A);
-        get (msg);
+        get (msg, gs, dat);
 }
 
 LRMError::LRMError (std::string msg)
@@ -150,7 +140,7 @@ LRMError::~LRMError ()
         delete _errormsg;
 }
 
-uint8_t LRMError::getID ()
+uint8_t LRMError::getId ()
 {
         return _id->getVal ();
 }
@@ -161,8 +151,11 @@ void LRMError::put (NetworkMessage* msg)
         _errormsg->put (msg);
 }
 
-void LRMError::get (NetworkMessage* msg)
+void LRMError::get (NetworkMessage* msg,
+                        GameState* gs,
+                        DatReader* dat)
 {
+        _id = new TWord8 (msg);
         _errormsg = new TString (msg);
 }
 
@@ -174,10 +167,11 @@ void LRMError::show ()
 }
 
 //LRMInfo
-LRMInfo::LRMInfo (NetworkMessage* msg)
+LRMInfo::LRMInfo (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x0B);
-        get (msg);
+        get (msg, gs, dat);
 }
 
 LRMInfo::LRMInfo (std::string msg)
@@ -192,7 +186,7 @@ LRMInfo::~LRMInfo ()
         delete _infomsg;
 }
 
-uint8_t LRMInfo::getID ()
+uint8_t LRMInfo::getId ()
 {
         return _id->getVal ();
 }
@@ -203,8 +197,11 @@ void LRMInfo::put (NetworkMessage* msg)
         _infomsg->put (msg);
 }
 
-void LRMInfo::get (NetworkMessage* msg)
+void LRMInfo::get (NetworkMessage* msg,
+                        GameState* gs,
+                        DatReader* dat)
 {
+        _id = new TWord8 (msg);
         _infomsg = new TString (msg);
 }
 
@@ -216,10 +213,9 @@ void LRMInfo::show ()
 }
 
 //LRMMOTD
-LRMMOTD::LRMMOTD (NetworkMessage* msg)
+LRMMOTD::LRMMOTD (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x14);
-        get (msg);
+        get (msg, gs, dat);
 }
 
 LRMMOTD::LRMMOTD (std::string msg)
@@ -234,7 +230,7 @@ LRMMOTD::~LRMMOTD ()
         delete _motd;
 }
 
-uint8_t LRMMOTD::getID ()
+uint8_t LRMMOTD::getId ()
 {
         return _id->getVal ();
 }
@@ -245,8 +241,11 @@ void LRMMOTD::put (NetworkMessage* msg)
         _motd->put (msg);
 }
 
-void LRMMOTD::get (NetworkMessage* msg)
+void LRMMOTD::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
         _motd = new TString (msg);
 }
 
@@ -258,10 +257,11 @@ void LRMMOTD::show ()
 }
 
 //LRMCharacterList
-LRMCharacterList::LRMCharacterList (NetworkMessage* msg)
+LRMCharacterList::LRMCharacterList (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
 {
-        _id = new TWord8 (0x64);
-        get (msg);
+        get (msg, gs, dat);
 }
 
 LRMCharacterList::LRMCharacterList (TCharacterList* charlist, uint16_t daysprem)
@@ -278,7 +278,7 @@ LRMCharacterList::~LRMCharacterList ()
         delete _daysprem;
 }
 
-uint8_t LRMCharacterList::getID ()
+uint8_t LRMCharacterList::getId ()
 {
         return _id->getVal ();
 }
@@ -300,8 +300,11 @@ uint16_t LRMCharacterList::getDaysPrem ()
         return _daysprem->getVal ();
 }
 
-void LRMCharacterList::get (NetworkMessage* msg)
+void LRMCharacterList::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
         _charlist = new TCharacterList (msg);
         _daysprem = new TWord16 (msg);
 }
@@ -315,9 +318,9 @@ void LRMCharacterList::show ()
 }
 
 //Patch Exe
-LRMPatchExe::LRMPatchExe (NetworkMessage* msg)
+LRMPatchExe::LRMPatchExe (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x1E);
+        get (msg, gs, dat);
 }
 
 LRMPatchExe::LRMPatchExe ()
@@ -330,7 +333,7 @@ LRMPatchExe::~LRMPatchExe ()
         delete _id;
 }
 
-uint8_t LRMPatchExe::getID ()
+uint8_t LRMPatchExe::getId ()
 {
         return _id->getVal ();
 }
@@ -340,8 +343,11 @@ void LRMPatchExe::put (NetworkMessage* msg)
         _id->put (msg);
 }
 
-void LRMPatchExe::get (NetworkMessage* msg)
+void LRMPatchExe::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
 }
 
 void LRMPatchExe::show ()
@@ -350,9 +356,11 @@ void LRMPatchExe::show ()
 }
 
 //Patch Dat
-LRMPatchDat::LRMPatchDat (NetworkMessage* msg)
+LRMPatchDat::LRMPatchDat (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x1F);
+        get (msg, gs, dat);
 }
 
 LRMPatchDat::LRMPatchDat ()
@@ -365,7 +373,7 @@ LRMPatchDat::~LRMPatchDat ()
         delete _id;
 }
 
-uint8_t LRMPatchDat::getID ()
+uint8_t LRMPatchDat::getId ()
 {
         return _id->getVal ();
 }
@@ -375,8 +383,11 @@ void LRMPatchDat::put (NetworkMessage* msg)
         _id->put (msg);
 }
 
-void LRMPatchDat::get (NetworkMessage* msg)
+void LRMPatchDat::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
 }
 
 void LRMPatchDat::show ()
@@ -385,9 +396,9 @@ void LRMPatchDat::show ()
 }
 
 //Patch Spr
-LRMPatchSpr::LRMPatchSpr (NetworkMessage* msg)
+LRMPatchSpr::LRMPatchSpr (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x20);
+        get (msg, gs, dat);
 }
 
 LRMPatchSpr::LRMPatchSpr ()
@@ -400,7 +411,7 @@ LRMPatchSpr::~LRMPatchSpr ()
         delete _id;
 }
 
-uint8_t LRMPatchSpr::getID ()
+uint8_t LRMPatchSpr::getId ()
 {
         return _id->getVal ();
 }
@@ -410,8 +421,11 @@ void LRMPatchSpr::put (NetworkMessage* msg)
         _id->put (msg);
 }
 
-void LRMPatchSpr::get (NetworkMessage* msg)
+void LRMPatchSpr::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
 }
 
 void LRMPatchSpr::show ()
@@ -420,9 +434,11 @@ void LRMPatchSpr::show ()
 }
 
 //Change Login Server
-LRMNewLoginServer::LRMNewLoginServer (NetworkMessage* msg)
+LRMNewLoginServer::LRMNewLoginServer (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x28);
+        get (msg, gs, dat);
 }
 
 LRMNewLoginServer::LRMNewLoginServer ()
@@ -435,7 +451,7 @@ LRMNewLoginServer::~LRMNewLoginServer ()
         delete _id;
 }
 
-uint8_t LRMNewLoginServer::getID ()
+uint8_t LRMNewLoginServer::getId ()
 {
         return _id->getVal ();
 }
@@ -445,8 +461,11 @@ void LRMNewLoginServer::put (NetworkMessage* msg)
         _id->put (msg);
 }
 
-void LRMNewLoginServer::get (NetworkMessage* msg)
+void LRMNewLoginServer::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
 }
 
 void LRMNewLoginServer::show ()
@@ -455,10 +474,9 @@ void LRMNewLoginServer::show ()
 }
 
 //GSMGameInit
-GSMGameInit::GSMGameInit (NetworkMessage* msg)
+GSMGameInit::GSMGameInit (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x0A);
-        get (msg);
+        get (msg, gs, dat);
 }
 
 GSMGameInit::GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
@@ -495,7 +513,7 @@ GSMGameInit::~GSMGameInit ()
         delete _bytes;
 }
 
-uint8_t GSMGameInit::getID ()
+uint8_t GSMGameInit::getId ()
 {
         return _id->getVal ();
 }
@@ -529,8 +547,9 @@ void GSMGameInit::put (NetworkMessage* msg)
         _bytes->put (msg);
 }
 
-void GSMGameInit::get (NetworkMessage* msg)
+void GSMGameInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
+        _id = new TWord8 (msg);
         _OS = new TWord16 (msg);
         _version = new TWord16 (msg);
         _u1 = new TWord8 (msg);
@@ -568,10 +587,11 @@ void GSMGameInit::show ()
  * GRMSelfInfo
  ****************************************************************/
 
-GRMSelfInfo::GRMSelfInfo (NetworkMessage* msg)
+GRMSelfInfo::GRMSelfInfo (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
-        _id = new TWord8 ((uint8_t)0x0A);
-        get (msg);
+        get (msg, gs, dat);
 }
 
 GRMSelfInfo::GRMSelfInfo (uint32_t tibiaId, uint8_t u1, 
@@ -602,6 +622,11 @@ GRMSelfInfo::~GRMSelfInfo ()
         delete _reportErrors;
 }
 
+uint8_t GRMSelfInfo::getId ()
+{
+        return GRM_SELF_INFO_ID;
+}
+
 void GRMSelfInfo::put (NetworkMessage* msg)
 {
         _id->put (msg);
@@ -621,11 +646,514 @@ void GRMSelfInfo::show ()
         printf ("}\n");
 }
 
-void GRMSelfInfo::get (NetworkMessage* msg)
+void GRMSelfInfo::get (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat)
 {
+        _id = new TWord8 (msg);
         _tibiaId = new TWord32 (msg);
         _u1 = new TWord8 (msg);
         _u2 = new TWord8 (msg);
         _reportErrors = new TWord8 (msg);
+}
+
+/***************************************************************
+ * GRMMapInit
+ ***************************************************************/
+GRMMapInit::GRMMapInit (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMapInit::GRMMapInit (const TPos& pos, TMapDescription* map)
+{
+        _id = new TWord8 (GRM_MAP_INIT_ID);
+        _pos = new TPos (pos);
+        _map = map;
+}
+
+GRMMapInit::GRMMapInit (const GRMMapInit& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+        _map = new TMapDescription (*clone._map);
+}
+
+GRMMapInit::~GRMMapInit ()
+{
+        delete _id;
+        delete _pos;
+        delete _map;
+}
+
+void GRMMapInit::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _map->put (msg);
+}
+
+void GRMMapInit::show ()
+{
+        printf ("GRMMapInit {\n");
+        _pos->show ();
+        _map->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMMapInit::getId ()
+{
+        return GRM_MAP_INIT_ID;
+}
+
+const TPos& GRMMapInit::getPos ()
+{
+        return *_pos;
+}
+
+TMapDescription& GRMMapInit::getMap ()
+{
+        return *_map;
+}
+
+void GRMMapInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+        int minz;
+        int maxz;
+        if (_pos->z () <= 7) {
+                //we are above ground
+                minz = 0;
+                maxz = 7;
+        } else {
+                //under ground
+                minz = _pos->z () - 2;
+                maxz = MIN (_pos->z () + 2, 15);
+        }
+                
+        TPos start (_pos->x () - 9, _pos->y () - 7, minz);
+        TPos end (_pos->x () + 8, _pos->y () + 6, maxz);
+
+        _map = new TMapDescription (start, end, msg, dat);
+}
+
+/***************************************************************
+ * GRMSlotItem
+ ***************************************************************/
+
+GRMSlotItem::GRMSlotItem (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMSlotItem::GRMSlotItem (uint8_t slot, const TThing& thing)
+{
+        _id = new TWord8 ((uint8_t)GRM_SLOT_ITEM_ID);
+        _slot = new TWord8 (slot);
+        
+        TThingFactory tf;
+        _thing = tf.cloneThing (thing);
+}
+        
+GRMSlotItem::GRMSlotItem (const GRMSlotItem& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _slot = new TWord8 (*clone._slot);
+        
+        TThingFactory tf;
+        _thing = tf.cloneThing (*clone._thing);
+}
+        
+GRMSlotItem::~GRMSlotItem ()
+{
+        delete _id;
+        delete _slot;
+        delete _thing;
+}
+
+void GRMSlotItem::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _slot->put (msg);
+        _thing->put (msg);
+}
+
+void GRMSlotItem::show ()
+{
+        printf ("GRMSlotItem {Slot: "); _slot->show ();
+        printf (" "); _thing->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMSlotItem::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMSlotItem::getSlot ()
+{
+        return _slot->getVal ();
+}
+
+const TThing& GRMSlotItem::getItem ()
+{
+        return *_thing;
+}
+
+void GRMSlotItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _slot = new TWord8 (msg);
+
+        TThingFactory tf (msg, dat);
+        _thing = tf.getThing ();
+}
+
+/***************************************************************
+ * TMagicEffect
+ ***************************************************************/
+
+GRMMagicEffect::GRMMagicEffect (NetworkMessage* msg, GameState* gs,
+                                DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMagicEffect::GRMMagicEffect (const TEffect& effect)
+{
+        _id = new TWord8 ((uint8_t)GRM_MAGIC_EFFECT_ID);
+        _effect = new TEffect (effect);
+}
+
+GRMMagicEffect::GRMMagicEffect (const GRMMagicEffect& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _effect = new TEffect (*clone._effect);
+}
+        
+GRMMagicEffect::~GRMMagicEffect ()
+{
+        delete _id;
+        delete _effect;
+}
+
+void GRMMagicEffect::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _effect->put (msg);
+}
+
+void GRMMagicEffect::show ()
+{
+        printf ("TEffect {\n");
+        _effect->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMMagicEffect::getId ()
+{
+        return _id->getVal ();
+}
+
+const TEffect& GRMMagicEffect::getEffect () const
+{
+        return *_effect;
+}
+
+void GRMMagicEffect::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _effect = new TEffect (msg);
+}
+        
+/***************************************************************
+ * GRMGlobalLight
+ ***************************************************************/
+
+GRMGlobalLight::GRMGlobalLight (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMGlobalLight::GRMGlobalLight (const TCreatureLight& light)
+{
+        _id = new TWord8 ((uint8_t)GRM_GLOBAL_LIGHT_ID);
+        _light = new TCreatureLight (light);
+}
+
+GRMGlobalLight::GRMGlobalLight (const GRMGlobalLight& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _light = new TCreatureLight (*clone._light);
+}
+
+GRMGlobalLight::~GRMGlobalLight ()
+{
+        delete _id;
+        delete _light;
+}
+
+void GRMGlobalLight::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _light->put (msg);
+}
+
+void GRMGlobalLight::show ()
+{
+        printf ("GRMGlobalLight {"); _light->show (); printf ("}\n");
+}
+
+uint8_t GRMGlobalLight::getId ()
+{
+        return _id->getVal ();
+}
+
+const TCreatureLight& GRMGlobalLight::getLight ()
+{
+        return *_light;
+}
+
+void GRMGlobalLight::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _light = new TCreatureLight (msg);
+}
+
+/***************************************************************
+ * GRMCreatureLight
+ ***************************************************************/
+
+GRMCreatureLight::GRMCreatureLight (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureLight::GRMCreatureLight (uint32_t tibiaId, const TCreatureLight& light)
+{
+        _id = new TWord8 ((uint8_t)GRM_GLOBAL_LIGHT_ID);
+        _tibiaId = new TWord32 (tibiaId);
+        _light = new TCreatureLight (light);
+}
+
+GRMCreatureLight::GRMCreatureLight (const GRMCreatureLight& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _tibiaId = new TWord32 (*clone._tibiaId);
+        _light = new TCreatureLight (*clone._light);
+}
+
+GRMCreatureLight::~GRMCreatureLight ()
+{
+        delete _id;
+        delete _tibiaId;
+        delete _light;
+}
+
+void GRMCreatureLight::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _tibiaId->put (msg);
+        _light->put (msg);
+}
+
+void GRMCreatureLight::show ()
+{
+        printf ("GRMCreatureLight {id: "); _tibiaId->show ();
+        printf (", "); _light->show (); printf ("}\n");
+}
+
+uint8_t GRMCreatureLight::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMCreatureLight::getTibiaId ()
+{
+        return _tibiaId->getVal ();
+}
+
+const TCreatureLight& GRMCreatureLight::getLight ()
+{
+        return *_light;
+}
+
+void GRMCreatureLight::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _tibiaId = new TWord32 (msg);
+        _light = new TCreatureLight (msg);
+}
+
+/***************************************************************
+ * GRMTextMsg
+ ***************************************************************/
+
+GRMTextMsg::GRMTextMsg (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMTextMsg::GRMTextMsg (const TTextMsg& msg)
+{
+        _id = new TWord8 ((uint8_t)GRM_TEXT_MSG_ID);
+        _msg = new TTextMsg (msg);
+}
+
+GRMTextMsg::GRMTextMsg (const GRMTextMsg& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _msg = new TTextMsg (*clone._msg);
+}
+
+GRMTextMsg::~GRMTextMsg ()
+{
+        delete _id;
+        delete _msg;
+}
+
+void GRMTextMsg::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _msg->put (msg);
+}
+
+void GRMTextMsg::show ()
+{
+        printf ("GRMTextMsg {"); _msg->show (); printf ("}\n");
+}
+
+uint8_t GRMTextMsg::getId ()
+{
+        return _id->getVal ();
+}
+
+const TTextMsg& GRMTextMsg::getLight ()
+{
+        return *_msg;
+}
+
+void GRMTextMsg::get (NetworkMessage* msg, GameState* gs,
+                  DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _msg = new TTextMsg (msg);
+}
+
+/***************************************************************
+ * GRMPlayerStats
+ ***************************************************************/
+
+GRMPlayerStats::GRMPlayerStats (NetworkMessage* msg, GameState* gs,
+                                DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMPlayerStats::GRMPlayerStats (const TPlayerStats& stats)
+{
+        _id = new TWord8 (GRM_PLAYER_STATS_ID);
+        _stats = new TPlayerStats (stats);
+}
+
+GRMPlayerStats::GRMPlayerStats (const GRMPlayerStats& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _stats = new TPlayerStats (*clone._stats);
+}
+
+GRMPlayerStats::~GRMPlayerStats ()
+{
+        delete _id;
+        delete _stats;
+}
+
+void GRMPlayerStats::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _stats->put (msg);
+}
+
+void GRMPlayerStats::show ()
+{
+        printf ("GRMSPlayerStats {"); _stats->show (); printf ("}\n");
+}
+
+uint8_t GRMPlayerStats::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPlayerStats& GRMPlayerStats::getStats ()
+{
+        return * _stats;
+}
+
+void GRMPlayerStats::get (NetworkMessage* msg, GameState* gs,
+                          DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _stats = new TPlayerStats (msg);
+}
+
+/***************************************************************
+ * GRMPlayerSkills
+ ***************************************************************/
+
+GRMPlayerSkills::GRMPlayerSkills (NetworkMessage* msg, GameState* gs,
+                                DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMPlayerSkills::GRMPlayerSkills (const TPlayerSkills& skills)
+{
+        _id = new TWord8 (GRM_PLAYER_SKILLS_ID);
+        _skills = new TPlayerSkills (skills);
+}
+
+GRMPlayerSkills::GRMPlayerSkills (const GRMPlayerSkills& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _skills = new TPlayerSkills (*clone._skills);
+}
+
+GRMPlayerSkills::~GRMPlayerSkills ()
+{
+        delete _id;
+        delete _skills;
+}
+
+void GRMPlayerSkills::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _skills->put (msg);
+}
+
+void GRMPlayerSkills::show ()
+{
+        printf ("GRMSPlayerSkills {"); _skills->show (); printf ("}\n");
+}
+
+uint8_t GRMPlayerSkills::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPlayerSkills& GRMPlayerSkills::getSkills ()
+{
+        return * _skills;
+}
+
+void GRMPlayerSkills::get (NetworkMessage* msg, GameState* gs,
+                          DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _skills = new TPlayerSkills (msg);
 }
 
