@@ -44,7 +44,7 @@ void NetworkMessage::writeRSAHeader ()
 
 void NetworkMessage::writeHeader ()
 {
-        uint16_t plainSize = _curpos - 4;
+        uint16_t plainSize = _curpos - 2;
         //once we have the plain size we must add random bytes for XTEA
         //a bit of a hack, roof to nearest 8
         struct timeval tv;
@@ -57,7 +57,7 @@ void NetworkMessage::writeHeader ()
         }
         //finally we can calculate the the length of the 
         //encrypted packet
-        uint16_t cryptSize = _curpos - 4;
+        uint16_t cryptSize = _curpos - 2;
         memcpy (_buffer, &cryptSize, 2);
         memcpy (&_buffer[2], &plainSize, 2);
 }
