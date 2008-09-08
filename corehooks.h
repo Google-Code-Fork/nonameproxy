@@ -30,6 +30,56 @@ class HRGameInit : public ReadHook
         public:
                 virtual void func (TibiaMessage* tm, Client* client);
 };
-#endif
 
+
+/**********************************************************************
+ * Protocol hooks
+ **********************************************************************/
+
+
+/**********************************************************************
+ * Game Recv 
+ **********************************************************************/
+
+class GRHSelfInfo : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHSlotItem : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHMagicEffect : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHTextMsg : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHGlobalLight : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHCreatureLight : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHPlayerSkills : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHMapInit : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+#endif
 
