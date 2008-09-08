@@ -44,14 +44,14 @@ void NetworkMessage::writeRSAHeader ()
 
 void NetworkMessage::writeHeader ()
 {
-        uint16_t plainSize = _curpos - 2;
-        //once we have the plain size we must add random bytes for XTEA
-        //a bit of a hack, roof to nearest 8
+        uint16_t plainSize = _curpos - 4;
         struct timeval tv;
         gettimeofday (&tv, NULL);
         srand (tv.tv_usec);
+        //once we have the plain size we must add random bytes for XTEA
         //calculate how many random bytes
-        uint32_t r = (8 - plainSize % 8) % 8;
+        //a bit of a hack, roof to nearest 8
+        uint32_t r = (8 - (plainSize + 2) % 8) % 8;
         for (uint32_t i = 0; i < r; i ++) {
                 putU8 (rand ());
         }

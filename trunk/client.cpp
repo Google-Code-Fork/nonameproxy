@@ -94,7 +94,9 @@ bool Client::runLogin (Connection* acceptedConn)
                         delete lsml;
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
+                        msg->show ();
                         crypt->decrypt (msg);
+                        msg->show ();
                         LRMessageList* lrml = new LRMessageList (msg, gstate, dat);
                         while (!lrml->isEnd ()) {
                                 TibiaMessage* tm = lrml->read ();
@@ -107,6 +109,7 @@ bool Client::runLogin (Connection* acceptedConn)
                         msg = lrml->put ();
                         msg->show ();
                         crypt->encrypt (msg);
+                        msg->show ();
                         clientConn->putMsg (msg);
                         delete lrml;
                         break;
