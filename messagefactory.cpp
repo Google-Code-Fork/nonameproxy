@@ -146,6 +146,8 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMMagicEffect (_msg, _gs, _dat));
         } else if (id == GRM_SLOT_ITEM_ID) {
                 return (new GRMSlotItem (_msg, _gs, _dat));
+        } else if (id == GRM_SLOT_CLEAR_ID) {
+                return (new GRMSlotClear (_msg, _gs, _dat));
         } else if (id == GRM_GLOBAL_LIGHT_ID) {
                 return (new GRMGlobalLight (_msg, _gs, _dat));
         } else if (id == GRM_CREATURE_LIGHT_ID) {
@@ -156,6 +158,16 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMPlayerStats (_msg, _gs, _dat));
         } else if (id == GRM_PLAYER_SKILLS_ID) {
                 return (new GRMPlayerSkills (_msg, _gs, _dat));
+        } else if (id == GRM_OPEN_CONTAINER_ID) {
+                return (new GRMOpenContainer (_msg, _gs, _dat));
+        } else if (id == GRM_CLOSE_CONTAINER_ID) {
+                return (new GRMCloseContainer (_msg, _gs, _dat));
+        } else if (id == GRM_CONT_ADD_ID) {
+                return (new GRMContainerAdd (_msg, _gs, _dat));
+        } else if (id == GRM_CONT_UPDATE_ID) {
+                return (new GRMContainerUpdate (_msg, _gs, _dat));
+        } else if (id == GRM_CONT_REMOVE_ID) {
+                return (new GRMContainerRemove (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GR Message 0x%X\n", id);
         return NULL;

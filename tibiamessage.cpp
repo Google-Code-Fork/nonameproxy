@@ -812,6 +812,62 @@ void GRMSlotItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 }
 
 /***************************************************************
+ * GRMSlotClear
+ ***************************************************************/
+
+GRMSlotClear::GRMSlotClear (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMSlotClear::GRMSlotClear (uint8_t slot)
+{
+        _id = new TWord8 ((uint8_t)GRM_SLOT_CLEAR_ID);
+        _slot = new TWord8 (slot);
+}
+        
+GRMSlotClear::GRMSlotClear (const GRMSlotClear& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _slot = new TWord8 (*clone._slot);
+}
+        
+GRMSlotClear::~GRMSlotClear ()
+{
+        delete _id;
+        delete _slot;
+}
+
+void GRMSlotClear::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _slot->put (msg);
+}
+
+void GRMSlotClear::show ()
+{
+        printf ("GRMSlotClear {Slot: "); _slot->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMSlotClear::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMSlotClear::getSlot ()
+{
+        return _slot->getVal ();
+}
+
+void GRMSlotClear::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _slot = new TWord8 (msg);
+}
+
+/***************************************************************
  * TMagicEffect
  ***************************************************************/
 
@@ -1155,5 +1211,369 @@ void GRMPlayerSkills::get (NetworkMessage* msg, GameState* gs,
 {
         _id = new TWord8 (msg);
         _skills = new TPlayerSkills (msg);
+}
+
+/***************************************************************
+ * OpenContainer
+ ***************************************************************/
+GRMOpenContainer::GRMOpenContainer (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMOpenContainer::GRMOpenContainer (uint8_t cid, const TContainer& container)
+{
+        _id = new TWord8 ((uint8_t)GRM_OPEN_CONTAINER_ID);
+        _cid = new TWord8 (cid);
+        _container = new TContainer (container);
+}
+
+GRMOpenContainer::GRMOpenContainer (const GRMOpenContainer& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _cid = new TWord8 (*clone._cid);
+        _container = new TContainer (*clone._container);
+}
+
+GRMOpenContainer::~GRMOpenContainer ()
+{
+        delete _id;
+        delete _cid;
+        delete _container;
+}
+
+void GRMOpenContainer::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _cid->put (msg);
+        _container->put (msg);
+}
+
+void GRMOpenContainer::show ()
+{
+        printf ("GRMOpenContainer {\n");
+        printf ("\tcid: "); _cid->show (); printf ("\n");
+        _container->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMOpenContainer::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMOpenContainer::getCid ()
+{
+        return _cid->getVal ();
+}
+
+TContainer& GRMOpenContainer::getContainer ()
+{
+        return *_container;
+}
+
+void GRMOpenContainer::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _cid = new TWord8 (msg);
+        _container = new TContainer (msg, dat);
+}
+
+/***************************************************************
+ * CloseContainer
+ ***************************************************************/
+GRMCloseContainer::GRMCloseContainer (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCloseContainer::GRMCloseContainer (uint8_t cid)
+{
+        _id = new TWord8 ((uint8_t)GRM_CLOSE_CONTAINER_ID);
+        _cid = new TWord8 (cid);
+}
+
+GRMCloseContainer::GRMCloseContainer (const GRMCloseContainer& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _cid = new TWord8 (*clone._cid);
+}
+
+GRMCloseContainer::~GRMCloseContainer ()
+{
+        delete _id;
+        delete _cid;
+}
+
+void GRMCloseContainer::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _cid->put (msg);
+}
+
+void GRMCloseContainer::show ()
+{
+        printf ("GRMCloseContainer {\n");
+        printf ("\tcid: "); _cid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMCloseContainer::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMCloseContainer::getCid ()
+{
+        return _cid->getVal ();
+}
+
+void GRMCloseContainer::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _cid = new TWord8 (msg);
+}
+
+/***************************************************************
+ * ContainerAdd
+ ***************************************************************/
+GRMContainerAdd::GRMContainerAdd (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMContainerAdd::GRMContainerAdd (uint8_t cid, const TThing& item)
+{
+        _id = new TWord8 ((uint8_t)GRM_CONT_ADD_ID);
+        _cid = new TWord8 (cid);
+
+        TThingFactory tf;
+        _item = tf.cloneThing (item);
+}
+
+GRMContainerAdd::GRMContainerAdd (const GRMContainerAdd& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _cid = new TWord8 (*clone._cid);
+
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
+}
+
+GRMContainerAdd::~GRMContainerAdd ()
+{
+        delete _id;
+        delete _cid;
+        delete _item;
+}
+
+void GRMContainerAdd::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _cid->put (msg);
+        _item->put (msg);
+}
+
+void GRMContainerAdd::show ()
+{
+        printf ("GRMContainerAdd {\n");
+        printf ("\tcid: "); _cid->show (); printf ("\n");
+        _item->show ();
+        printf ("\n}\n");
+}
+
+uint8_t GRMContainerAdd::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMContainerAdd::getCid ()
+{
+        return _cid->getVal ();
+}
+
+const TThing& GRMContainerAdd::getItem ()
+{
+        return *_item;
+}
+
+void GRMContainerAdd::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _cid = new TWord8 (msg);
+
+        TThingFactory tf (msg, dat);
+        _item = tf.getThing ();
+}
+
+/***************************************************************
+ * ContainerUpdate
+ ***************************************************************/
+GRMContainerUpdate::GRMContainerUpdate (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMContainerUpdate::GRMContainerUpdate (uint8_t cid, uint8_t slot,
+                                        const TThing& item)
+{
+        _id = new TWord8 ((uint8_t)GRM_CONT_UPDATE_ID);
+        _cid = new TWord8 (cid);
+        _slot = new TWord8 (slot);
+
+        TThingFactory tf;
+        _item = tf.cloneThing (item);
+}
+
+GRMContainerUpdate::GRMContainerUpdate (const GRMContainerUpdate& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _cid = new TWord8 (*clone._cid);
+        _slot = new TWord8 (*clone._slot);
+
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
+}
+
+GRMContainerUpdate::~GRMContainerUpdate ()
+{
+        delete _id;
+        delete _cid;
+        delete _slot;
+        delete _item;
+}
+
+void GRMContainerUpdate::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _cid->put (msg);
+        _slot->put (msg);
+        _item->put (msg);
+}
+
+void GRMContainerUpdate::show ()
+{
+        printf ("GRMContainerUpdate {\n");
+        printf ("\tcid: "); _cid->show (); printf ("\n");
+        printf ("\tslot: "); _slot->show (); printf ("\n");
+        _item->show ();
+        printf ("\n}\n");
+}
+
+uint8_t GRMContainerUpdate::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMContainerUpdate::getCid ()
+{
+        return _cid->getVal ();
+}
+
+uint8_t GRMContainerUpdate::getSlot ()
+{
+        return _slot->getVal ();
+}
+
+const TThing& GRMContainerUpdate::getItem ()
+{
+        return *_item;
+}
+
+void GRMContainerUpdate::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _cid = new TWord8 (msg);
+        _slot = new TWord8 (msg);
+
+        TThingFactory tf (msg, dat);
+        _item = tf.getThing ();
+}
+
+
+/***************************************************************
+ * ContainerRemove
+ ***************************************************************/
+GRMContainerRemove::GRMContainerRemove (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMContainerRemove::GRMContainerRemove (uint8_t cid, uint8_t slot)
+{
+        _id = new TWord8 ((uint8_t)GRM_CONT_REMOVE_ID);
+        _cid = new TWord8 (cid);
+        _slot = new TWord8 (slot);
+}
+
+GRMContainerRemove::GRMContainerRemove (const GRMContainerRemove& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _cid = new TWord8 (*clone._cid);
+        _slot = new TWord8 (*clone._slot);
+}
+
+GRMContainerRemove::~GRMContainerRemove ()
+{
+        delete _id;
+        delete _cid;
+        delete _slot;
+}
+
+void GRMContainerRemove::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _cid->put (msg);
+        _slot->put (msg);
+}
+
+void GRMContainerRemove::show ()
+{
+        printf ("GRMContainerRemove {\n");
+        printf ("\tcid: "); _cid->show (); printf ("\n");
+        printf ("\tslot: "); _slot->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMContainerRemove::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMContainerRemove::getCid ()
+{
+        return _cid->getVal ();
+}
+
+uint8_t GRMContainerRemove::getSlot ()
+{
+        return _slot->getVal ();
+}
+
+void GRMContainerRemove::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _cid = new TWord8 (msg);
+        _slot = new TWord8 (msg);
 }
 
