@@ -10,6 +10,11 @@ void AccountState::setPassword (const std::string& password)
         _password = password;
 }
 
+void AccountState::setName (const std::string& name)
+{
+        _name = name;
+}
+
 uint32_t AccountState::getAccount ()
 {
         return _account;
@@ -18,5 +23,10 @@ uint32_t AccountState::getAccount ()
 const std::string& AccountState::getPassword ()
 {
         return _password;
+}
+
+const std::string& AccountState::getName ()
+{
+        return _name;
 }
 

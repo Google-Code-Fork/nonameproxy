@@ -368,6 +368,32 @@ class GRMSlotItem : public TibiaMessage
 };
 
 /***************************************************************
+ * GRMSlotClear
+ ***************************************************************/
+
+class GRMSlotClear : public TibiaMessage
+{
+        public:
+                GRMSlotClear (NetworkMessage* msg, GameState* gs,
+                              DatReader* dat);
+                GRMSlotClear (uint8_t slot);
+                GRMSlotClear (const GRMSlotClear& clone);
+                virtual ~GRMSlotClear ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getSlot ();
+
+                virtual void get (NetworkMessage* msg, GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TWord8* _slot;
+};
+
+/***************************************************************
  * GRMMagicEffect
  ***************************************************************/
 
@@ -560,5 +586,163 @@ class GRMMapInit : public TibiaMessage
                 TMapDescription* _map;
 };
 
+/***************************************************************
+ * ContainerMessages
+ ***************************************************************/
+/***************************************************************
+ * OpenContainer
+ ***************************************************************/
+class GRMOpenContainer : public TibiaMessage
+{
+        public:
+                GRMOpenContainer (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMOpenContainer (uint8_t cid, const TContainer& container);
+                GRMOpenContainer (const GRMOpenContainer& clone);
+
+                virtual ~GRMOpenContainer ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getCid ();
+                TContainer& getContainer ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord8* _cid;
+                TContainer* _container;
+};
+
+/***************************************************************
+ * CloseContainer
+ ***************************************************************/
+class GRMCloseContainer : public TibiaMessage
+{
+        public:
+                GRMCloseContainer (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCloseContainer (uint8_t cid);
+                GRMCloseContainer (const GRMCloseContainer& clone);
+
+                virtual ~GRMCloseContainer ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getCid ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord8* _cid;
+};
+
+/***************************************************************
+ * ContainerAdd
+ ***************************************************************/
+class GRMContainerAdd : public TibiaMessage
+{
+        public:
+                GRMContainerAdd (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMContainerAdd (uint8_t cid, const TThing& item);
+                GRMContainerAdd (const GRMContainerAdd& clone);
+
+                virtual ~GRMContainerAdd ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getCid ();
+                const TThing& getItem ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord8* _cid;
+                TThing* _item;
+};
+
+/***************************************************************
+ * ContainerUpdate
+ ***************************************************************/
+class GRMContainerUpdate : public TibiaMessage
+{
+        public:
+                GRMContainerUpdate (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMContainerUpdate (uint8_t cid, uint8_t slot,
+                                        const TThing& item);
+                GRMContainerUpdate (const GRMContainerUpdate& clone);
+
+                virtual ~GRMContainerUpdate ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getCid ();
+                uint8_t getSlot ();
+                const TThing& getItem ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord8* _cid;
+                TWord8* _slot;
+                TThing* _item;
+};
+
+/***************************************************************
+ * ContainerRemove
+ ***************************************************************/
+class GRMContainerRemove : public TibiaMessage
+{
+        public:
+                GRMContainerRemove (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMContainerRemove (uint8_t cid, uint8_t slot);
+                GRMContainerRemove (const GRMContainerRemove& clone);
+
+                virtual ~GRMContainerRemove ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getCid ();
+                uint8_t getSlot ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord8* _cid;
+                TWord8* _slot;
+};
 #endif
 

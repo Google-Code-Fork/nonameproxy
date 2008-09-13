@@ -1961,3 +1961,202 @@ void TPlayerSkills::get (NetworkMessage* msg)
         _fishing = new TPlayerSkill (msg);
 }
 
+/************************************************************************
+ * TContainer
+ ************************************************************************/
+
+TContainer::TContainer (NetworkMessage* msg, DatReader* dat)
+{
+        get (msg, dat);
+        _it = _items.begin ();
+}
+
+
+TContainer::TContainer (const TThing& item, const std::string& name,
+                        uint8_t capacity, uint8_t hasParent)
+{
+        
+        TThingFactory tf;
+        _item = tf.cloneThing (item);
+        _name = new TString (name);
+        _capacity = new TWord8 (capacity);
+        _hasParent = new TWord8 (hasParent);
+        _nItems = new TWord8 ((uint8_t)0);
+        _it = _items.begin ();
+}
+        
+TContainer::TContainer (const TContainer& clone)
+{
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
+
+        _name = new TString (*clone._name);
+        _capacity = new TWord8 (*clone._capacity);
+        _hasParent = new TWord8 (*clone._hasParent);
+        _nItems = new TWord8 (*clone._nItems);
+
+        ContainerList::const_iterator i;
+        for (i = clone._items.begin (); i != clone._items.end (); ++ i) {
+                _items.push_back (tf.cloneThing (**i));
+        }
+
+        _it = _items.begin ();
+}
+        
+TContainer::~TContainer ()
+{
+        delete _item;
+        delete _name;
+        delete _capacity;
+        delete _hasParent;
+        delete _nItems;
+
+        for (_it = _items.begin (); _it != _items.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TContainer::put (NetworkMessage* msg) const
+{
+        _item->put (msg);
+        _name->put (msg);
+        _capacity->put (msg);
+        _hasParent->put (msg);
+        _nItems->put (msg);
+
+        ContainerList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TContainer::show () const
+{
+        printf ("\tTContainer {\n");
+        printf ("\t\titem: "); _item->show (); printf ("\n");
+        printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t\tcapacity: "); _capacity->show (); printf ("\n");
+        printf ("\t\thasParent: "); _hasParent->show (); printf ("\n");
+        printf ("\t\tnItems: "); _nItems->show (); printf ("\n");
+
+        printf ("\t\tItems:\n");
+
+        ContainerList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+const TThing& TContainer::getItem () const
+{
+        return *_item;
+}
+
+const std::string& TContainer::getName () const
+{
+        return _name->getString () ;
+}
+
+uint8_t TContainer::getCapacity () const
+{
+        return _capacity->getVal ();
+}
+
+uint8_t TContainer::getHasParent () const
+{
+        return _hasParent->getVal ();
+}
+
+uint8_t TContainer::getNItems () const
+{
+        return _nItems->getVal ();
+}
+
+void TContainer::begin ()
+{
+        _it = _items.begin ();
+}
+
+bool TContainer::isEnd ()
+{
+        if (_it == _items.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TContainer::next ()
+{
+        if (_it == _items.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TThing& TContainer::getThing ()
+{
+        return *(*_it);
+}
+
+void TContainer::insert (TThing* tm)
+{
+        _items.insert (_it, tm);
+        uint8_t tmp = _nItems->getVal ();
+        delete _nItems;
+        _nItems = new TWord8 (tmp + 1);
+}
+
+void TContainer::replace (TThing* tm)
+{
+        if (_items.size () == 0) {
+                printf ("map error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _items.end ()) {
+                printf ("map error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _items.erase (_it);
+        _items.insert (_it, tm);
+        _it --;
+} 
+
+void TContainer::remove ()
+{
+        _it = _items.erase (_it);
+        uint8_t tmp = _nItems->getVal ();
+        delete _nItems;
+        _nItems = new TWord8 (tmp - 1);
+}
+
+void TContainer::add (TThing* thing)
+{
+        _items.push_back (thing);
+        uint8_t tmp = _nItems->getVal ();
+        delete _nItems;
+        _nItems = new TWord8 (tmp + 1);
+}
+
+void TContainer::get (NetworkMessage* msg, DatReader* dat)
+{
+        TThingFactory tf (msg, dat);
+        _item = tf.getThing ();
+
+        _name = new TString (msg);
+        _capacity = new TWord8 (msg);
+        _hasParent = new TWord8 (msg);
+        _nItems = new TWord8 (msg);
+
+        uint32_t n = _nItems->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _items.push_back (tf.getThing ());
+        }
+
+        _it = _items.begin ();
+}
+

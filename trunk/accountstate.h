@@ -11,9 +11,13 @@ class AccountState
 
                 uint32_t                getAccount ();
                 const std::string&      getPassword ();
+                void setName (const std::string& name);
+                const std::string& getName ();
+
         private:
                 uint32_t        _account;
                 std::string     _password;
+                std::string     _name;
 };
 #endif
 

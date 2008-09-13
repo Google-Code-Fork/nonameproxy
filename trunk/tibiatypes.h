@@ -813,5 +813,65 @@ class TPlayerSkills
                 TPlayerSkill* _shield;
                 TPlayerSkill* _fishing;
 };
+
+/************************************************************************
+ * TContainer
+ * TContainer has the same problem as TMapDescription in that it uses
+ * an internal iterator to keep track of the current item, meaning that
+ * functions like begin () which moves the iterator to the begining of the
+ * list can not be const, even though it does not really modify any
+ * data.
+ ************************************************************************/
+
+typedef std::list<TThing*> ContainerList;
+class TContainer
+{
+        public:
+                TContainer (NetworkMessage* msg, DatReader* dat);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TContainer (const TThing& item, const std::string& name,
+                                uint8_t capacity, uint8_t hasParent);
+                TContainer (const TContainer& clone);
+                virtual ~TContainer ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const TThing& getItem () const;
+                const std::string& getName () const;
+                uint8_t getCapacity () const;
+                uint8_t getHasParent () const;
+                uint8_t getNItems () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current thing 
+                const TThing& getThing ();
+                //insert thing BEFORE current thing
+                void insert (TThing* thing);
+                //replace current thing
+                void replace (TThing* thing);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TThing* thing);
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TThing* _item;
+                TString* _name;
+                TWord8* _capacity;
+                TWord8* _hasParent;
+                TWord8* _nItems;
+                ContainerList _items;
+                ContainerList::iterator _it;
+};
+
 #endif
 

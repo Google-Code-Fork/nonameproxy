@@ -178,7 +178,7 @@ bool Client::runGame (Connection* acceptedConn)
                         (gstate->account->getAccount());
 
         TCharacter* connChar = ld->getCharByName
-                (gstate->character->getName ());
+                (gstate->account->getName ());
 
         //and now we can finally connect
         if (!serverConn->connectTo (connChar->getIp (), connChar->getPort ())) {

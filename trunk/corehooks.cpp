@@ -53,7 +53,7 @@ void HRGameInit::func (TibiaMessage* tm, Client* client)
         GSMGameInit* gi = (GSMGameInit*)tm;
         client->gstate->account->setAccount (gi->getAccount ());
         client->gstate->account->setPassword (gi->getPassword ());
-        client->gstate->character->setName (gi->getName ());
+        client->gstate->account->setName (gi->getName ());
         client->crypt->setXTEAKey (gi->getXTEA ());
 }
         
