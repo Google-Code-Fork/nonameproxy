@@ -168,6 +168,10 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMContainerUpdate (_msg, _gs, _dat));
         } else if (id == GRM_CONT_REMOVE_ID) {
                 return (new GRMContainerRemove (_msg, _gs, _dat));
+        } else if (id == GRM_OPEN_SELF_TRADE_ID) {
+                return (new GRMOpenSelfTrade (_msg, _gs, _dat));
+        } else if (id == GRM_OPEN_PLAYER_TRADE_ID) {
+                return (new GRMOpenPlayerTrade (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GR Message 0x%X\n", id);
         return NULL;
