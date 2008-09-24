@@ -699,6 +699,76 @@ class GRMMapWest : public TibiaMessage
 };
 
 /***************************************************************
+ * GRMMapUp
+ ***************************************************************/
+class GRMMapUp : public TibiaMessage
+{
+        public:
+                GRMMapUp (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //use this constructor for no map
+                GRMMapUp ();
+                //note this function takes control of map
+                GRMMapUp (TMapDescription* map);
+                GRMMapUp (const GRMMapUp& clone);
+                virtual ~GRMMapUp ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                //warning not all floor change messages have maps, ask
+                //first or be segfaulted
+                bool hasMap ();
+                TMapDescription& getMap ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                bool _hasmap;
+
+                TWord8* _id;
+                TMapDescription* _map;
+};
+
+/***************************************************************
+ * GRMMapDown
+ ***************************************************************/
+class GRMMapDown : public TibiaMessage
+{
+        public:
+                GRMMapDown (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //use this constructor for no map
+                GRMMapDown ();
+                //note this function takes control of map
+                GRMMapDown (TMapDescription* map);
+                GRMMapDown (const GRMMapDown& clone);
+                virtual ~GRMMapDown ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                //warning not all floor change messages have maps, ask
+                //first or be segfaulted
+                bool hasMap ();
+                TMapDescription& getMap ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                bool _hasmap;
+
+                TWord8* _id;
+                TMapDescription* _map;
+};
+
+/***************************************************************
  * GRMCreatureMove
  ***************************************************************/
 

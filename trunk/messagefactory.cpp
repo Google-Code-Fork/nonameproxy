@@ -137,7 +137,11 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return NULL;
         }
         uint8_t id;
+
         _msg->peekU8 (id);
+        uint32_t tmp = id;
+        printf ("GRM 0x%X\n", tmp);
+        
         if (id == GRM_SELF_INFO_ID) {
                 return (new GRMSelfInfo (_msg, _gs, _dat));
         } else if (id == GRM_MAP_INIT_ID) {
@@ -150,6 +154,10 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMMapSouth (_msg, _gs, _dat));
         } else if (id == GRM_MAP_WEST_ID) {
                 return (new GRMMapWest (_msg, _gs, _dat));
+        } else if (id == GRM_MAP_UP_ID) {
+                return (new GRMMapUp (_msg, _gs, _dat));
+        } else if (id == GRM_MAP_DOWN_ID) {
+                return (new GRMMapDown (_msg, _gs, _dat));
         } else if (id == GRM_CREATURE_MOVE_ID) {
                 return (new GRMCreatureMove (_msg, _gs, _dat));
         } else if (id == GRM_MAGIC_EFFECT_ID) {

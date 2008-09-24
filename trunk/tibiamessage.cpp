@@ -4,6 +4,8 @@
 #include "messageids.h"
 
 #define RSA_LEN 128
+//TODO check this really is the max floor
+#define MAX_FLOOR 15
 
 #define MIN(a,b) ((a)<(b)?a:b)
 
@@ -730,7 +732,7 @@ void GRMMapInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
         } else {
                 //under ground
                 minz = _pos->z () - 2;
-                maxz = MIN (_pos->z () + 2, 15);
+                maxz = MIN (_pos->z () + 2, MAX_FLOOR);
         }
                 
         TPos start (_pos->x () - 9, _pos->y () - 7, minz);
@@ -801,7 +803,7 @@ void GRMMapNorth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
         } else {
                 //under ground
                 minz = pos.z - 2;
-                maxz = MIN (pos.z + 2, 15);
+                maxz = MIN (pos.z + 2, MAX_FLOOR);
         }
                 
         TPos start (pos.x - 8, pos.y - 6, minz);
@@ -1021,6 +1023,204 @@ void GRMMapWest::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
         TPos end (pos.x - 8, pos.y + 7, maxz);
 
         _map = new TMapDescription (start, end, msg, dat);
+}
+
+/***************************************************************
+ * GRMMapUp
+ ***************************************************************/
+GRMMapUp::GRMMapUp (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMapUp::GRMMapUp ()
+{
+        _id = new TWord8 (GRM_MAP_UP_ID);
+        _map = NULL;
+        _hasmap = false;
+}
+
+GRMMapUp::GRMMapUp (TMapDescription* map)
+{
+        _id = new TWord8 (GRM_MAP_DOWN_ID);
+        _map = map;
+        _hasmap = true;
+}
+
+GRMMapUp::GRMMapUp (const GRMMapUp& clone)
+{
+        _id = new TWord8 (*clone._id);
+
+        _hasmap = clone._hasmap;
+        if (_hasmap) {
+                _map = new TMapDescription (*clone._map);
+        } else {
+                _map = NULL;
+        }
+}
+
+GRMMapUp::~GRMMapUp ()
+{
+        delete _id;
+        //not actually necessary, as delete checks for NULL
+        if (_hasmap) {
+                delete _map;
+        }
+}
+
+void GRMMapUp::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        if (_hasmap) {
+                _map->put (msg);
+        }
+}
+
+void GRMMapUp::show ()
+{
+        printf ("GRMMapUp {\n");
+        if (_hasmap) {
+                _map->show ();
+        }
+        printf ("}\n");
+}
+
+uint8_t GRMMapUp::getId ()
+{
+        return _id->getVal ();
+}
+
+TMapDescription& GRMMapUp::getMap ()
+{
+        if (!_hasmap) {
+                printf ("GRMMapUp: i told you to ask if i have a map first, now\
+                         you segfault\n");
+        }
+        return *_map;
+}
+
+void GRMMapUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        Pos pos = gs->map->getCurPos ();
+        uint32_t minz;
+        uint32_t maxz;
+        if (pos.z == 8) {
+                //we have come from underground and have 6 & 7
+                minz = 0;
+                maxz = 5;
+                
+                TPos start (pos.x - 8, pos.y - 6, minz);
+                TPos end (pos.x + 9, pos.y + 7, maxz);
+                _map = new TMapDescription (start, end, msg, dat);
+        } else if (pos.z > 8){
+                //we are under ground and need the floor above us
+                minz = pos.z - 2;
+                maxz = minz;
+
+                TPos start (pos.x - 8, pos.y - 6, minz);
+                TPos end (pos.x + 9, pos.y + 7, maxz);
+                _map = new TMapDescription (start, end, msg, dat);
+        }
+}
+
+/***************************************************************
+ * GRMMapDown
+ ***************************************************************/
+GRMMapDown::GRMMapDown (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMapDown::GRMMapDown ()
+{
+        _id = new TWord8 (GRM_MAP_DOWN_ID);
+        _map = NULL;
+        _hasmap = false;
+}
+
+GRMMapDown::GRMMapDown (TMapDescription* map)
+{
+        _id = new TWord8 (GRM_MAP_DOWN_ID);
+        _map = map;
+        _hasmap = true;
+}
+
+GRMMapDown::GRMMapDown (const GRMMapDown& clone)
+{
+        _id = new TWord8 (*clone._id);
+
+        _hasmap = clone._hasmap;
+        if (_hasmap) {
+                _map = new TMapDescription (*clone._map);
+        } else {
+                _map = NULL;
+        }
+}
+
+GRMMapDown::~GRMMapDown ()
+{
+        delete _id;
+        //not actually necessary, as delete checks for NULL
+        if (_hasmap) {
+                delete _map;
+        }
+}
+
+void GRMMapDown::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        if (_hasmap) {
+                _map->put (msg);
+        }
+}
+
+void GRMMapDown::show ()
+{
+        printf ("GRMMapDown {\n");
+        if (_hasmap) {
+                _map->show ();
+        }
+        printf ("}\n");
+}
+
+uint8_t GRMMapDown::getId ()
+{
+        return _id->getVal ();
+}
+
+TMapDescription& GRMMapDown::getMap ()
+{
+        if (!_hasmap) {
+                printf ("GRMMapDown: i told you to ask if i have a map first, now\
+                         you segfault\n");
+        }
+        return *_map;
+}
+
+void GRMMapDown::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        Pos pos = gs->map->getCurPos ();
+        uint32_t minz;
+        uint32_t maxz;
+        if (pos.z == 7) {
+                //we are about to go underground and have 6 & 7
+                minz = 8;
+                maxz = 10;
+                
+                TPos start (pos.x - 8, pos.y - 6, minz);
+                TPos end (pos.x + 9, pos.y + 7, maxz);
+                _map = new TMapDescription (start, end, msg, dat);
+        } else if (pos.z > 8){
+                //we are under ground and need the below above us
+                minz = MIN (pos.z + 2, MAX_FLOOR);
+                maxz = minz;
+
+                TPos start (pos.x - 8, pos.y - 6, minz);
+                TPos end (pos.x + 9, pos.y + 7, maxz);
+                _map = new TMapDescription (start, end, msg, dat);
+        }
 }
 
 /***************************************************************
