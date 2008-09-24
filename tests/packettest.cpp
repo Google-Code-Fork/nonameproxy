@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "testpacket.h"
 #include "networkmessage.h"
 #include "messagelist.h"
 #include "datreader.h"
