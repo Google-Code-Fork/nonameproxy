@@ -308,6 +308,174 @@ class GSMGameInit : public TibiaMessage
  * Game Recv Messages
  ******************************************************************/
 
+/***************************************************************
+ * GMAction
+ ***************************************************************/
+
+class GRMGMAction : public TibiaMessage
+{
+        public:
+                GRMGMAction (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMGMAction (uint8_t* actions);
+                GRMGMAction (const GRMGMAction& clone);
+                virtual ~GRMGMAction ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getAction (uint32_t n);
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TWord8* _dump[32];
+};
+
+/***************************************************************
+ * Error
+ ***************************************************************/
+
+class GRMError : public TibiaMessage
+{
+        public:
+                GRMError (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMError (const std::string& msg);
+                GRMError (const GRMError& clone);
+                virtual ~GRMError ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const std::string& getMsg ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TString* _msg;
+};
+
+/***************************************************************
+ * FYI
+ ***************************************************************/
+
+class GRMFYI : public TibiaMessage
+{
+        public:
+                GRMFYI (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMFYI (const std::string& msg);
+                GRMFYI (const GRMFYI& clone);
+                virtual ~GRMFYI ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const std::string& getMsg ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TString* _msg;
+};
+
+/***************************************************************
+ * Queue
+ ***************************************************************/
+
+class GRMQueue : public TibiaMessage
+{
+        public:
+                GRMQueue (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMQueue (const std::string& msg, uint8_t time);
+                GRMQueue (const GRMQueue& clone);
+                virtual ~GRMQueue ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const std::string& getMsg ();
+                uint8_t getTime ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TString* _msg;
+                TWord8*  _time;
+};
+
+/***************************************************************
+ * Ping
+ ***************************************************************/
+
+class GRMPing : public TibiaMessage
+{
+        public:
+                GRMPing (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMPing ();
+                GRMPing (const GRMPing& clone);
+                virtual ~GRMPing ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+};
+
+/***************************************************************
+ * LoginWindow
+ ***************************************************************/
+
+class GRMLoginWindow : public TibiaMessage
+{
+        public:
+                GRMLoginWindow (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMLoginWindow ();
+                GRMLoginWindow (const GRMLoginWindow& clone);
+                virtual ~GRMLoginWindow ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+};
+
+/***************************************************************
+ * GRMSelfInfo
+ ***************************************************************/
+
 class GRMSelfInfo : public TibiaMessage
 {
         public:

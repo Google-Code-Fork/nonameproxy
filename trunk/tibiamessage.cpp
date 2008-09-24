@@ -476,7 +476,340 @@ void LRMNewLoginServer::show ()
         printf ("LRMNewLoginServer {}\n");
 }
 
-//GSMGameInit
+/***************************************************************
+ * Game Recv Messages
+ ***************************************************************/
+/***************************************************************
+ * GMActions
+ ***************************************************************/
+
+GRMGMAction::GRMGMAction (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMGMAction::GRMGMAction (uint8_t* actions)
+{
+        _id = new TWord8 ((uint8_t)GRM_GM_ACTION_ID);
+        for (uint32_t i = 0; i < 32; i ++) {
+                _dump[i] = new TWord8 (actions[i]);
+        }
+}
+
+GRMGMAction::GRMGMAction (const GRMGMAction& clone)
+{
+        _id = new TWord8 (*clone._id);
+        for (uint32_t i = 0; i < 32; i ++) {
+                _dump[i] = new TWord8 (*clone._dump[i]);
+        }
+}
+        
+GRMGMAction::~GRMGMAction ()
+{
+        delete _id;
+        for (uint32_t i = 0; i < 32; i ++) {
+                delete _dump[i];
+        }
+}
+
+void GRMGMAction::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        for (uint32_t i = 0; i < 32; i ++) {
+                _dump[i]->put (msg);
+        }
+}
+
+void GRMGMAction::show ()
+{
+        printf ("GRMGMAction {");
+        for (uint32_t i = 0; i < 32; i ++) {
+                _dump[i]->show ();
+                printf (" ");
+        }
+        printf ("}\n");
+}
+
+uint8_t GRMGMAction::getId ()
+{
+        return _id->getVal ();
+}
+
+void GRMGMAction::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        for (uint32_t i = 0; i < 32; i ++) {
+                _dump[i] = new TWord8 (msg);
+        }
+}
+
+/***************************************************************
+ * Error
+ ***************************************************************/
+
+GRMError::GRMError (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMError::GRMError (const std::string& msg)
+{
+        _id = new TWord8 ((uint8_t)GRM_ERROR_ID);
+        _msg = new TString (msg);
+}
+
+GRMError::GRMError (const GRMError& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _msg = new TString (*clone._msg);
+}
+        
+GRMError::~GRMError ()
+{
+        delete _id;
+        delete _msg;
+}
+
+void GRMError::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _msg->put (msg);
+}
+
+void GRMError::show ()
+{
+        printf ("GRMError {"); _msg->show (); printf ("}\n");
+}
+
+uint8_t GRMError::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GRMError::getMsg ()
+{
+        return _msg->getString ();
+}
+
+void GRMError::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _msg = new TString (msg);
+}
+
+/***************************************************************
+ * FYI
+ ***************************************************************/
+
+GRMFYI::GRMFYI (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMFYI::GRMFYI (const std::string& msg)
+{
+        _id = new TWord8 ((uint8_t)GRM_FYI_ID);
+        _msg = new TString (msg);
+}
+
+GRMFYI::GRMFYI (const GRMFYI& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _msg = new TString (*clone._msg);
+}
+        
+GRMFYI::~GRMFYI ()
+{
+        delete _id;
+        delete _msg;
+}
+
+void GRMFYI::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _msg->put (msg);
+}
+
+void GRMFYI::show ()
+{
+        printf ("GRMFYI {"); _msg->show (); printf ("}\n");
+}
+
+uint8_t GRMFYI::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GRMFYI::getMsg ()
+{
+        return _msg->getString ();
+}
+
+void GRMFYI::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _msg = new TString (msg);
+}
+
+/***************************************************************
+ * Queue
+ ***************************************************************/
+
+GRMQueue::GRMQueue (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMQueue::GRMQueue (const std::string& msg, uint8_t time)
+{
+        _id = new TWord8 ((uint8_t)GRM_QUEUE_ID);
+        _msg = new TString (msg);
+        _time = new TWord8 (time);
+}
+
+GRMQueue::GRMQueue (const GRMQueue& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _msg = new TString (*clone._msg);
+        _time = new TWord8 (*clone._time);
+}
+        
+GRMQueue::~GRMQueue ()
+{
+        delete _id;
+        delete _msg;
+        delete _time;
+}
+
+void GRMQueue::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _msg->put (msg);
+        _time->put (msg);
+}
+
+void GRMQueue::show ()
+{
+        printf ("GRMQueue {\n"); 
+        printf ("msg: "); _msg->show (); printf ("\n");
+        printf ("time: "); _time->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMQueue::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GRMQueue::getMsg ()
+{
+        return _msg->getString ();
+}
+
+uint8_t GRMQueue::getTime ()
+{
+        return _time->getVal ();
+}
+
+void GRMQueue::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _msg = new TString (msg);
+        _time = new TWord8 (msg);
+}
+
+/***************************************************************
+ * Ping
+ ***************************************************************/
+
+GRMPing::GRMPing (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMPing::GRMPing ()
+{
+        _id = new TWord8 ((uint8_t)GRM_PING_ID);
+}
+
+GRMPing::GRMPing (const GRMPing& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GRMPing::~GRMPing ()
+{
+        delete _id;
+}
+
+void GRMPing::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GRMPing::show ()
+{
+        printf ("GRMPing {}\n");
+}
+
+uint8_t GRMPing::getId ()
+{
+        return _id->getVal ();
+}
+
+void GRMPing::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * LoginWindow
+ ***************************************************************/
+
+GRMLoginWindow::GRMLoginWindow (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMLoginWindow::GRMLoginWindow ()
+{
+        _id = new TWord8 ((uint8_t)GRM_LOGIN_WINDOW_ID);
+}
+
+GRMLoginWindow::GRMLoginWindow (const GRMLoginWindow& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GRMLoginWindow::~GRMLoginWindow ()
+{
+        delete _id;
+}
+
+void GRMLoginWindow::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GRMLoginWindow::show ()
+{
+        printf ("GRMLoginWindow {}\n");
+}
+
+uint8_t GRMLoginWindow::getId ()
+{
+        return _id->getVal ();
+}
+
+void GRMLoginWindow::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * GSMGameInit
+ ********************************************************************/
+
 GSMGameInit::GSMGameInit (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         get (msg, gs, dat);

@@ -139,11 +139,23 @@ TibiaMessage* GRMessageFactory::getMessage ()
         uint8_t id;
 
         _msg->peekU8 (id);
-        uint32_t tmp = id;
-        printf ("GRM 0x%X\n", tmp);
+        //uint32_t tmp = id;
+        //printf ("GRM 0x%X\n", tmp);
         
         if (id == GRM_SELF_INFO_ID) {
                 return (new GRMSelfInfo (_msg, _gs, _dat));
+        } else if (id == GRM_GM_ACTION_ID) {
+                return (new GRMGMAction (_msg, _gs, _dat));
+        } else if (id == GRM_ERROR_ID) {
+                return (new GRMError (_msg, _gs, _dat));
+        } else if (id == GRM_FYI_ID) {
+                return (new GRMFYI (_msg, _gs, _dat));
+        } else if (id == GRM_QUEUE_ID) {
+                return (new GRMQueue (_msg, _gs, _dat));
+        } else if (id == GRM_PING_ID) {
+                return (new GRMPing (_msg, _gs, _dat));
+        } else if (id == GRM_LOGIN_WINDOW_ID) {
+                return (new GRMLoginWindow (_msg, _gs, _dat));
         } else if (id == GRM_MAP_INIT_ID) {
                 return (new GRMMapInit (_msg, _gs, _dat));
         } else if (id == GRM_MAP_NORTH_ID) {
