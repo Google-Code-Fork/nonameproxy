@@ -5,8 +5,7 @@
 #include "networkmessage.h"
 #include "messagelist.h"
 #include "datreader.h"
-
-class GameState;
+#include "gamestate.h"
 
 //load a packet into a buffer and return its size
 int loadpacket (uint8_t** buffer_ptr)
@@ -40,7 +39,9 @@ int loadpacket (uint8_t** buffer_ptr)
 int main (int argc, char** argv)
 {
         DatReader* dat = new DatReader ();
-        GameState* gs = NULL;
+        GameState* gs = new GameState ();
+        Pos pos (100,100,7); //ground floor
+        gs->map->setCurPos (pos);
 
         int packetn = 1;
         while (1) {

@@ -4,6 +4,7 @@ GameState::GameState ()
 {
         account = new AccountState;
         character = new CharState;
+        map = new MapState;
 }
 
 GameState::~GameState ()

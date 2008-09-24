@@ -81,5 +81,25 @@ class GRHMapInit : public ReadHook
         virtual void func (TibiaMessage* tm, Client* client);
 };
 
+class GRHMapNorth : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHMapEast : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHMapSouth : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHMapWest : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
 #endif
 
