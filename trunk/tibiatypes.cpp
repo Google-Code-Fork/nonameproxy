@@ -2160,3 +2160,197 @@ void TContainer::get (NetworkMessage* msg, DatReader* dat)
         _it = _items.begin ();
 }
 
+/************************************************************************
+ * TTradeContainer
+ ************************************************************************/
+
+TTradeContainer::TTradeContainer (NetworkMessage* msg, DatReader* dat)
+{
+        get (msg, dat);
+        _it = _items.begin ();
+}
+
+
+TTradeContainer::TTradeContainer (const std::string& name, uint8_t capacity)
+{
+        //TODO change constant when item lookup complete
+        _item = new TItem ((uint16_t)0x0B25);
+        _name = new TString (name);
+        _capacity = new TWord8 (capacity);
+        _hasParent = new TWord8 ((uint8_t)0);
+        _nItems = new TWord8 ((uint8_t)0);
+        _it = _items.begin ();
+}
+        
+TTradeContainer::TTradeContainer (const TTradeContainer& clone)
+{
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
+
+        _name = new TString (*clone._name);
+        _capacity = new TWord8 (*clone._capacity);
+        _hasParent = new TWord8 (*clone._hasParent);
+        _nItems = new TWord8 (*clone._nItems);
+
+        ContainerList::const_iterator i;
+        for (i = clone._items.begin (); i != clone._items.end (); ++ i) {
+                _items.push_back (tf.cloneThing (**i));
+        }
+
+        _it = _items.begin ();
+}
+        
+TTradeContainer::~TTradeContainer ()
+{
+        delete _item;
+        delete _name;
+        delete _capacity;
+        delete _hasParent;
+        delete _nItems;
+
+        for (_it = _items.begin (); _it != _items.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TTradeContainer::put (NetworkMessage* msg) const
+{
+        _name->put (msg);
+        _nItems->put (msg);
+
+        ContainerList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TTradeContainer::show () const
+{
+        printf ("\tTTradeContainer {\n");
+        printf ("\t\titem: "); _item->show (); printf ("\n");
+        printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t\tcapacity: "); _capacity->show (); printf ("\n");
+        printf ("\t\thasParent: "); _hasParent->show (); printf ("\n");
+        printf ("\t\tnItems: "); _nItems->show (); printf ("\n");
+
+        printf ("\t\tItems:\n");
+
+        ContainerList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+const TThing& TTradeContainer::getItem () const
+{
+        return *_item;
+}
+
+const std::string& TTradeContainer::getName () const
+{
+        return _name->getString () ;
+}
+
+uint8_t TTradeContainer::getCapacity () const
+{
+        return _capacity->getVal ();
+}
+
+uint8_t TTradeContainer::getHasParent () const
+{
+        return _hasParent->getVal ();
+}
+
+uint8_t TTradeContainer::getNItems () const
+{
+        return _nItems->getVal ();
+}
+
+void TTradeContainer::begin ()
+{
+        _it = _items.begin ();
+}
+
+bool TTradeContainer::isEnd ()
+{
+        if (_it == _items.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TTradeContainer::next ()
+{
+        if (_it == _items.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TThing& TTradeContainer::getThing ()
+{
+        return *(*_it);
+}
+
+void TTradeContainer::insert (TThing* tm)
+{
+        _items.insert (_it, tm);
+        uint8_t tmp = _nItems->getVal ();
+        delete _nItems;
+        _nItems = new TWord8 (tmp + 1);
+}
+
+void TTradeContainer::replace (TThing* tm)
+{
+        if (_items.size () == 0) {
+                printf ("map error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _items.end ()) {
+                printf ("map error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _items.erase (_it);
+        _items.insert (_it, tm);
+        _it --;
+} 
+
+void TTradeContainer::remove ()
+{
+        _it = _items.erase (_it);
+        uint8_t tmp = _nItems->getVal ();
+        delete _nItems;
+        _nItems = new TWord8 (tmp - 1);
+}
+
+void TTradeContainer::add (TThing* thing)
+{
+        _items.push_back (thing);
+        uint8_t tmp = _nItems->getVal ();
+        delete _nItems;
+        _nItems = new TWord8 (tmp + 1);
+}
+
+void TTradeContainer::get (NetworkMessage* msg, DatReader* dat)
+{
+        //TODO replace with item lookup
+        _item = new TItem ((uint16_t)0x0B25);
+        _name = new TString (msg);
+        _capacity = new TWord8 (msg);
+        _hasParent = new TWord8 ((uint8_t)0);
+        _nItems = new TWord8 (*_capacity);
+
+        TThingFactory tf (msg, dat);
+        uint32_t n = _nItems->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _items.push_back (tf.getThing ());
+        }
+
+        _it = _items.begin ();
+}
+

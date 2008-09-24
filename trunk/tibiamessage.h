@@ -744,5 +744,64 @@ class GRMContainerRemove : public TibiaMessage
                 TWord8* _cid;
                 TWord8* _slot;
 };
+
+/***************************************************************
+ * OpenSelfTrade - your trade window
+ ***************************************************************/
+class GRMOpenSelfTrade : public TibiaMessage
+{
+        public:
+                GRMOpenSelfTrade (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMOpenSelfTrade (const TTradeContainer& container);
+                GRMOpenSelfTrade (const GRMOpenSelfTrade& clone);
+
+                virtual ~GRMOpenSelfTrade ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TTradeContainer& getTradeContainer ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TTradeContainer* _container;
+};
+
+/***************************************************************
+ * OpenPlayerTrade - other players trade window
+ ***************************************************************/
+class GRMOpenPlayerTrade : public TibiaMessage
+{
+        public:
+                GRMOpenPlayerTrade (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMOpenPlayerTrade (const TTradeContainer& container);
+                GRMOpenPlayerTrade (const GRMOpenPlayerTrade& clone);
+
+                virtual ~GRMOpenPlayerTrade ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TTradeContainer& getTradeContainer ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TTradeContainer* _container;
+};
+
 #endif
 

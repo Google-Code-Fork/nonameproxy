@@ -1577,3 +1577,121 @@ void GRMContainerRemove::get (NetworkMessage* msg,
         _slot = new TWord8 (msg);
 }
 
+/***************************************************************
+ * OpenSelfTrade
+ ***************************************************************/
+GRMOpenSelfTrade::GRMOpenSelfTrade (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMOpenSelfTrade::GRMOpenSelfTrade (const TTradeContainer& container)
+{
+        _id = new TWord8 ((uint8_t)GRM_OPEN_SELF_TRADE_ID);
+        _container = new TTradeContainer (container);
+}
+
+GRMOpenSelfTrade::GRMOpenSelfTrade (const GRMOpenSelfTrade& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _container = new TTradeContainer (*clone._container);
+}
+
+GRMOpenSelfTrade::~GRMOpenSelfTrade ()
+{
+        delete _id;
+        delete _container;
+}
+
+void GRMOpenSelfTrade::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _container->put (msg);
+}
+
+void GRMOpenSelfTrade::show ()
+{
+        printf ("GRMOpenSelfTrade {\n");
+        _container->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMOpenSelfTrade::getId ()
+{
+        return _id->getVal ();
+}
+
+TTradeContainer& GRMOpenSelfTrade::getTradeContainer ()
+{
+        return *_container;
+}
+
+void GRMOpenSelfTrade::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _container = new TTradeContainer (msg, dat);
+}
+
+/***************************************************************
+ * OpenPlayerTrade
+ ***************************************************************/
+GRMOpenPlayerTrade::GRMOpenPlayerTrade (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMOpenPlayerTrade::GRMOpenPlayerTrade (const TTradeContainer& container)
+{
+        _id = new TWord8 ((uint8_t)GRM_OPEN_PLAYER_TRADE_ID);
+        _container = new TTradeContainer (container);
+}
+
+GRMOpenPlayerTrade::GRMOpenPlayerTrade (const GRMOpenPlayerTrade& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _container = new TTradeContainer (*clone._container);
+}
+
+GRMOpenPlayerTrade::~GRMOpenPlayerTrade ()
+{
+        delete _id;
+        delete _container;
+}
+
+void GRMOpenPlayerTrade::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _container->put (msg);
+}
+
+void GRMOpenPlayerTrade::show ()
+{
+        printf ("GRMOpenPlayerTrade {\n");
+        _container->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMOpenPlayerTrade::getId ()
+{
+        return _id->getVal ();
+}
+
+TTradeContainer& GRMOpenPlayerTrade::getTradeContainer ()
+{
+        return *_container;
+}
+
+void GRMOpenPlayerTrade::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _container = new TTradeContainer (msg, dat);
+}
+

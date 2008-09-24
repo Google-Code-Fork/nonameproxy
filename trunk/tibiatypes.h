@@ -873,5 +873,60 @@ class TContainer
                 ContainerList::iterator _it;
 };
 
+/************************************************************************
+ * TTradeContainer
+ * A TTradeContainer has all the same functionality of a TContainer
+ * but it reads and writes to a network message as a trade contianer
+ ************************************************************************/
+
+typedef std::list<TThing*> ContainerList;
+class TTradeContainer
+{
+        public:
+                TTradeContainer (NetworkMessage* msg, DatReader* dat);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TTradeContainer (const std::string& name, uint8_t capacity);
+                TTradeContainer (const TTradeContainer& clone);
+                virtual ~TTradeContainer ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const TThing& getItem () const;
+                const std::string& getName () const;
+                uint8_t getCapacity () const;
+                uint8_t getHasParent () const;
+                uint8_t getNItems () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current thing 
+                const TThing& getThing ();
+                //insert thing BEFORE current thing
+                void insert (TThing* thing);
+                //replace current thing
+                void replace (TThing* thing);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TThing* thing);
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TThing* _item;
+                TString* _name;
+                TWord8* _capacity;
+                TWord8* _hasParent;
+                TWord8* _nItems;
+                ContainerList _items;
+                ContainerList::iterator _it;
+};
+
 #endif
 
