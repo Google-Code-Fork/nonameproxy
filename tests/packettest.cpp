@@ -40,7 +40,7 @@ int main (int argc, char** argv)
 {
         DatReader* dat = new DatReader ();
         GameState* gs = new GameState ();
-        Pos pos (100,100,7); //ground floor
+        Pos pos (100,100,6); //above floor
         gs->map->setCurPos (pos);
 
         int packetn = 1;
