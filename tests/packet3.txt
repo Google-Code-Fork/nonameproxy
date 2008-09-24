@@ -22,3 +22,18 @@ DD 74                                                   .t
 08 00 01 00 1E 00 00 00 00 00                           ping
 08 00 01 00 28 00 00 00 00 00                           login window
 
+10 00 0A 00 69 01 00 01 00 01 98 01 00 FF 00 00         set tile 1
+00 00
+10 00 08 00 69 01 00 01 00 01 01 FF 00 00 00 00         set tile 2
+00 00
+
+18 00 0F 00 6C 68 7D CA 7D 07 01 6A 68 7D CC 7D         remove/add thing
+07 6E 0B 11 5B 81 4B BE 44 70
+
+10 00 0E 00 6B 4F 7D EA 7D 07 01 63 00 3C EC B8         creature turn
+01 03
+
+38 00 36 00 8C 8D 7A 01 40 00 83 26 7D ED 7D 07         creature hp, magic effect
+01 84 26 7D ED 7D 07 B4 01 00 34 6A 26 7D ED 7D         animate txt, tile add
+07 49 0B 05 8C 8D 7A 01 40 00 A3 A1 0A 00 0B 41         creature hp, cancel attack
+0A 00 0A 00 0A 00 0A 5E 0A 00                           player skills

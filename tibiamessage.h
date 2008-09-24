@@ -937,6 +937,129 @@ class GRMMapDown : public TibiaMessage
 };
 
 /***************************************************************
+ * GRMTileSet
+ ***************************************************************/
+class GRMTileSet : public TibiaMessage
+{
+        public:
+                GRMTileSet (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //note this function takes control of map
+                GRMTileSet (const TPos& pos, TMapDescription* map);
+                GRMTileSet (const GRMTileSet& clone);
+                virtual ~GRMTileSet ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TPos& getPos ();
+                TMapDescription& getMap ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TPos* _pos;
+                TMapDescription* _map;
+};
+
+/***************************************************************
+ * GRMTileAdd
+ ***************************************************************/
+
+class GRMTileAdd : public TibiaMessage
+{
+        public:
+                GRMTileAdd (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMTileAdd (const TPos& pos, const TThing& thing);
+                GRMTileAdd (const GRMTileAdd& clone);
+                virtual ~GRMTileAdd ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TPos& getPos ();
+                const TThing& getThing ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+        private:
+                TWord8* _id;
+                TPos*   _pos;
+                TThing* _thing;
+};
+
+/***************************************************************
+ * GRMTileUpdate
+ ***************************************************************/
+
+class GRMTileUpdate : public TibiaMessage
+{
+        public:
+                GRMTileUpdate (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMTileUpdate (const TPos& pos, uint8_t stackpos, 
+                                const TThing& thing);
+                GRMTileUpdate (const GRMTileUpdate& clone);
+                virtual ~GRMTileUpdate ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TPos& getPos ();
+                uint8_t getStackPos ();
+                const TThing& getThing ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+        private:
+                TWord8* _id;
+                TPos*   _pos;
+                TWord8* _stackpos;
+                TThing* _thing;
+};
+
+/***************************************************************
+ * GRMTileRemove
+ ***************************************************************/
+
+class GRMTileRemove : public TibiaMessage
+{
+        public:
+                GRMTileRemove (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMTileRemove (const TPos& pos, uint8_t stackpos);
+                GRMTileRemove (const GRMTileRemove& clone);
+                virtual ~GRMTileRemove ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TPos& getPos ();
+                uint8_t getStackPos ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+        private:
+                TWord8* _id;
+                TPos*   _pos;
+                TWord8* _stackpos;
+};
+
+/***************************************************************
  * GRMCreatureMove
  ***************************************************************/
 
@@ -1210,6 +1333,261 @@ class GRMCloseTrade : public TibiaMessage
 
         private:
                 TWord8* _id;
+};
+
+/***************************************************************
+ * CreatureMessages
+ ***************************************************************/
+/***************************************************************
+ * CreatureSquare
+ ***************************************************************/
+
+class GRMCreatureSquare : public TibiaMessage
+{
+        public:
+                GRMCreatureSquare (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCreatureSquare (uint32_t creatureid, uint8_t color);
+                GRMCreatureSquare (const GRMCreatureSquare& clone);
+
+                virtual ~GRMCreatureSquare ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+                uint8_t  getColor ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord32* _creatureid;
+                TWord8* _color;
+};
+
+/***************************************************************
+ * CreatureHealth
+ ***************************************************************/
+
+class GRMCreatureHealth : public TibiaMessage
+{
+        public:
+                GRMCreatureHealth (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCreatureHealth (uint32_t creatureid, uint8_t hp);
+                GRMCreatureHealth (const GRMCreatureHealth& clone);
+
+                virtual ~GRMCreatureHealth ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+                uint8_t  getHp ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord32* _creatureid;
+                TWord8* _hp;
+};
+
+/***************************************************************
+ * CreatureOutfit
+ ***************************************************************/
+
+class GRMCreatureOutfit : public TibiaMessage
+{
+        public:
+                GRMCreatureOutfit (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCreatureOutfit (uint32_t creatureid, const TOutfit& outfit);
+                GRMCreatureOutfit (const GRMCreatureOutfit& clone);
+
+                virtual ~GRMCreatureOutfit ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+                const TOutfit& getOutfit ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord32* _creatureid;
+                TOutfit* _outfit;
+};
+
+/***************************************************************
+ * CreatureSpeed
+ ***************************************************************/
+
+class GRMCreatureSpeed : public TibiaMessage
+{
+        public:
+                GRMCreatureSpeed (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCreatureSpeed (uint32_t creatureid, uint8_t speed);
+                GRMCreatureSpeed (const GRMCreatureSpeed& clone);
+
+                virtual ~GRMCreatureSpeed ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+                uint8_t  getSpeed ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord32* _creatureid;
+                TWord8* _speed;
+};
+
+/***************************************************************
+ * CreatureSkull
+ ***************************************************************/
+
+class GRMCreatureSkull : public TibiaMessage
+{
+        public:
+                GRMCreatureSkull (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCreatureSkull (uint32_t creatureid, uint8_t skull);
+                GRMCreatureSkull (const GRMCreatureSkull& clone);
+
+                virtual ~GRMCreatureSkull ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+                uint8_t  getSkull ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord32* _creatureid;
+                TWord8* _skull;
+};
+
+/***************************************************************
+ * CreatureShield
+ ***************************************************************/
+
+class GRMCreatureShield : public TibiaMessage
+{
+        public:
+                GRMCreatureShield (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCreatureShield (uint32_t creatureid, uint8_t shield);
+                GRMCreatureShield (const GRMCreatureShield& clone);
+
+                virtual ~GRMCreatureShield ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+                uint8_t  getShield ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TWord32* _creatureid;
+                TWord8* _shield;
+};
+
+/***************************************************************
+ * AnimatedText
+ ***************************************************************/
+
+class GRMAnimatedText : public TibiaMessage
+{
+        public:
+                GRMAnimatedText (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMAnimatedText (const TPos& pos, uint8_t color,
+                                 const std::string& msg);
+                GRMAnimatedText (const GRMAnimatedText& text);
+
+                virtual ~GRMAnimatedText ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getColor ();
+                const TPos& getPos ();
+                const std::string& getText ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+                TPos* _pos;
+                TWord8* _color;
+                TString* _text;
+};
+
+/***************************************************************
+ * PlayerCancelAttack
+ ***************************************************************/
+
+class GRMPlayerCancelAttack : public TibiaMessage
+{
+        public:
+                GRMPlayerCancelAttack (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMPlayerCancelAttack ();
+                GRMPlayerCancelAttack (const GRMPlayerCancelAttack& clone);
+                virtual ~GRMPlayerCancelAttack ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
 };
 
 #endif

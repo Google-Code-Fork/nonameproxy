@@ -9,6 +9,9 @@
 #include "tibiatypes.h"
 #include "messagefactory.h"
 
+//testing puposes
+#include "tibiamessage.h"
+
 class NetworkMessage
 {
         public:
@@ -70,6 +73,10 @@ class NetworkMessage
 
                 friend class TThingFactory;
                 friend class TOutfitFactory;
+
+                //this is for testing only
+                friend class GRMTileUpdate;
+
         private:
                 uint8_t* _buffer;
                 uint32_t _size;

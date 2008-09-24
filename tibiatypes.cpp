@@ -1496,6 +1496,9 @@ void TMapDescription::get (const TPos& start, const TPos& end,
                         nThings -= ((TSkip*)thing)->getN ();
                 }
                 _map.push_back (thing);
+                if (nThings < 0) {
+                        printf ("map: wrong number of tiles\n");
+                }
         }
 }
 

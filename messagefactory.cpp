@@ -139,8 +139,8 @@ TibiaMessage* GRMessageFactory::getMessage ()
         uint8_t id;
 
         _msg->peekU8 (id);
-        //uint32_t tmp = id;
-        //printf ("GRM 0x%X\n", tmp);
+        uint32_t tmp = id;
+        printf ("GRM 0x%X\n", tmp);
         
         if (id == GRM_SELF_INFO_ID) {
                 return (new GRMSelfInfo (_msg, _gs, _dat));
@@ -170,6 +170,14 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMMapUp (_msg, _gs, _dat));
         } else if (id == GRM_MAP_DOWN_ID) {
                 return (new GRMMapDown (_msg, _gs, _dat));
+        } else if (id == GRM_TILE_SET_ID) {
+                return (new GRMTileSet (_msg, _gs, _dat));
+        } else if (id == GRM_TILE_ADD_ID) {
+                return (new GRMTileAdd (_msg, _gs, _dat));
+        } else if (id == GRM_TILE_UPDATE_ID) {
+                return (new GRMTileUpdate (_msg, _gs, _dat));
+        } else if (id == GRM_TILE_REMOVE_ID) {
+                return (new GRMTileRemove (_msg, _gs, _dat));
         } else if (id == GRM_CREATURE_MOVE_ID) {
                 return (new GRMCreatureMove (_msg, _gs, _dat));
         } else if (id == GRM_MAGIC_EFFECT_ID) {
@@ -180,14 +188,28 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMSlotClear (_msg, _gs, _dat));
         } else if (id == GRM_GLOBAL_LIGHT_ID) {
                 return (new GRMGlobalLight (_msg, _gs, _dat));
+        } else if (id == GRM_ANIMATED_TEXT_ID) {
+                return (new GRMAnimatedText (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_SQUARE_ID) {
+                return (new GRMCreatureSquare (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_HEALTH_ID) {
+                return (new GRMCreatureHealth (_msg, _gs, _dat));
         } else if (id == GRM_CREATURE_LIGHT_ID) {
                 return (new GRMCreatureLight (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_SPEED_ID) {
+                return (new GRMCreatureSpeed (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_SKULL_ID) {
+                return (new GRMCreatureSkull (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_SHIELD_ID) {
+                return (new GRMCreatureShield (_msg, _gs, _dat));
         } else if (id == GRM_TEXT_MSG_ID) {
                 return (new GRMTextMsg (_msg, _gs, _dat));
         } else if (id == GRM_PLAYER_STATS_ID) {
                 return (new GRMPlayerStats (_msg, _gs, _dat));
         } else if (id == GRM_PLAYER_SKILLS_ID) {
                 return (new GRMPlayerSkills (_msg, _gs, _dat));
+        } else if (id == GRM_PLAYER_CANCEL_ATTACK_ID) {
+                return (new GRMPlayerCancelAttack (_msg, _gs, _dat));
         } else if (id == GRM_OPEN_CONTAINER_ID) {
                 return (new GRMOpenContainer (_msg, _gs, _dat));
         } else if (id == GRM_CLOSE_CONTAINER_ID) {

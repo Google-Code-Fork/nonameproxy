@@ -3,6 +3,10 @@
 #include "gamestate.h"
 #include "messageids.h"
 
+//only for testing
+#include "networkmessage.h"
+//
+
 #define RSA_LEN 128
 //TODO check this really is the max floor
 #define MAX_FLOOR 15
@@ -1557,6 +1561,321 @@ void GRMMapDown::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 }
 
 /***************************************************************
+ * GRMTileSet
+ ***************************************************************/
+GRMTileSet::GRMTileSet (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMTileSet::GRMTileSet (const TPos& pos, TMapDescription* map)
+{
+        _id = new TWord8 (GRM_TILE_SET_ID);
+        _pos = new TPos (pos);
+        _map = map;
+}
+
+GRMTileSet::GRMTileSet (const GRMTileSet& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+        _map = new TMapDescription (*clone._map);
+}
+
+GRMTileSet::~GRMTileSet ()
+{
+        delete _id;
+        delete _pos;
+        delete _map;
+}
+
+void GRMTileSet::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _map->put (msg);
+}
+
+void GRMTileSet::show ()
+{
+        printf ("GRMTileSet {\n");
+        _pos->show ();
+        _map->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMTileSet::getId ()
+{
+        return GRM_MAP_INIT_ID;
+}
+
+const TPos& GRMTileSet::getPos ()
+{
+        return *_pos;
+}
+
+TMapDescription& GRMTileSet::getMap ()
+{
+        return *_map;
+}
+
+void GRMTileSet::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+        //this is a bit annoying, if we get an item 0xFF01 we clear the tile
+        //else we read a whole tile description
+        _map = new TMapDescription (*_pos, *_pos);
+
+        TThingFactory tf (msg, dat);
+        TThing* thing = tf.getThing ();
+        while (thing->getType () != TThing::skip) {
+                _map->add (thing);
+                thing = tf.getThing ();
+        }
+        _map->add (thing);
+}
+
+/***************************************************************
+ * GRMTileAdd
+ ***************************************************************/
+
+GRMTileAdd::GRMTileAdd (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMTileAdd::GRMTileAdd (const TPos& pos, const TThing& thing)
+{
+        _id = new TWord8 ((uint8_t)GRM_TILE_ADD_ID);
+        _pos = new TPos (pos);
+
+        TThingFactory tf;
+        _thing = tf.cloneThing (thing);
+}
+
+GRMTileAdd::GRMTileAdd (const GRMTileAdd& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+
+        TThingFactory tf;
+        _thing = tf.cloneThing (*clone._thing);
+}
+        
+GRMTileAdd::~GRMTileAdd ()
+{
+        delete _id;
+        delete _pos;
+        delete _thing;
+}
+
+void GRMTileAdd::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _thing->put (msg);
+}
+
+void GRMTileAdd::show ()
+{
+        printf ("GRMTileAdd {\n");
+        printf ("\tpos: "); _pos->show (); printf ("\n");
+        printf ("\tthing: "); _thing->show (); printf ("\n}\n");
+}
+
+uint8_t GRMTileAdd::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GRMTileAdd::getPos ()
+{
+        return *_pos;
+}
+
+const TThing& GRMTileAdd::getThing ()
+{
+        return *_thing;
+}
+
+void GRMTileAdd::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+
+        TThingFactory tf (msg, dat);
+        _thing = tf.getThing ();
+}
+
+/***************************************************************
+ * GRMTileUpdate
+ ***************************************************************/
+
+GRMTileUpdate::GRMTileUpdate (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMTileUpdate::GRMTileUpdate (const TPos& pos, uint8_t stackpos,
+                                const TThing& thing)
+{
+        _id = new TWord8 ((uint8_t)GRM_TILE_UPDATE_ID);
+        _pos = new TPos (pos);
+        _stackpos = new TWord8 (stackpos);
+
+        TThingFactory tf;
+        _thing = tf.cloneThing (thing);
+}
+
+GRMTileUpdate::GRMTileUpdate (const GRMTileUpdate& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+        _stackpos = new TWord8 (*clone._stackpos);
+
+        TThingFactory tf;
+        _thing = tf.cloneThing (*clone._thing);
+}
+        
+GRMTileUpdate::~GRMTileUpdate ()
+{
+        delete _id;
+        delete _pos;
+        delete _stackpos;
+        delete _thing;
+}
+
+void GRMTileUpdate::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _stackpos->put (msg);
+        _thing->put (msg);
+}
+
+void GRMTileUpdate::show ()
+{
+        printf ("GRMTileUpdate {\n");
+        printf ("\tpos: "); _pos->show (); printf ("\n");
+        printf ("\tstackpos: "); _stackpos->show (); printf ("\n");
+        printf ("\tthing: "); _thing->show (); printf ("\n}\n");
+}
+
+uint8_t GRMTileUpdate::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GRMTileUpdate::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GRMTileUpdate::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+const TThing& GRMTileUpdate::getThing ()
+{
+        return *_thing;
+}
+
+void GRMTileUpdate::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+        _stackpos = new TWord8 (msg);
+
+        //in yact new/old creature are handled as creature turns. I dont thing
+        //that tibia would actually use non-creature turn items for turns, this
+        //is to catch the segfault if they do
+        uint16_t test;
+        msg->peekU16 (test);
+        if (test == 0x0061 || test == 0x0062) {
+                printf ("TileUpdate: new/old creature used as creature turn\n");
+        }
+        //
+
+        TThingFactory tf (msg, dat);
+        _thing = tf.getThing ();
+}
+
+/***************************************************************
+ * GRMTileRemove
+ ***************************************************************/
+
+GRMTileRemove::GRMTileRemove (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMTileRemove::GRMTileRemove (const TPos& pos, uint8_t stackpos)
+{
+        _id = new TWord8 ((uint8_t)GRM_TILE_REMOVE_ID);
+        _pos = new TPos (pos);
+        _stackpos = new TWord8 (stackpos);
+}
+
+GRMTileRemove::GRMTileRemove (const GRMTileRemove& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+        _stackpos = new TWord8 (*clone._stackpos);
+}
+        
+GRMTileRemove::~GRMTileRemove ()
+{
+        delete _id;
+        delete _pos;
+        delete _stackpos;
+}
+
+void GRMTileRemove::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _stackpos->put (msg);
+}
+
+void GRMTileRemove::show ()
+{
+        printf ("GRMTileRemove {\n");
+        printf ("\tpos: "); _pos->show (); printf ("\n");
+        printf ("\tstack: "); _stackpos->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMTileRemove::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GRMTileRemove::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GRMTileRemove::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+void GRMTileRemove::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+        _stackpos = new TWord8 (msg);
+}
+
+/***************************************************************
  * GRMCreatureMove
  ***************************************************************/
 
@@ -2636,6 +2955,565 @@ uint8_t GRMCloseTrade::getId ()
 void GRMCloseTrade::get (NetworkMessage* msg,
                                 GameState* gs, 
                                 DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+
+/***************************************************************
+ * CreatureMessages
+ ***************************************************************/
+/***************************************************************
+ * CreatureSquare
+ ***************************************************************/
+GRMCreatureSquare::GRMCreatureSquare (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureSquare::GRMCreatureSquare (uint32_t creatureid, uint8_t color)
+{
+        _id = new TWord8 ((uint8_t)GRM_CREATURE_SQUARE_ID);
+        _creatureid = new TWord32 (creatureid);
+        _color = new TWord8 (color);
+}
+
+GRMCreatureSquare::GRMCreatureSquare (const GRMCreatureSquare& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+        _color = new TWord8 (*clone._color);
+}
+
+GRMCreatureSquare::~GRMCreatureSquare ()
+{
+        delete _id;
+        delete _creatureid;
+        delete _color;
+}
+
+void GRMCreatureSquare::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+        _color->put (msg);
+}
+
+void GRMCreatureSquare::show ()
+{
+        printf ("GRMCreatureSquare {\n");
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("\tcolor: "); _color->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMCreatureSquare::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMCreatureSquare::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+uint8_t GRMCreatureSquare::getColor ()
+{
+        return _color->getVal ();
+}
+
+void GRMCreatureSquare::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+        _color = new TWord8 (msg);
+}
+
+/***************************************************************
+ * CreatureOutfit
+ ***************************************************************/
+GRMCreatureOutfit::GRMCreatureOutfit (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureOutfit::GRMCreatureOutfit (uint32_t creatureid, const TOutfit& outfit)
+{
+        _id = new TWord8 ((uint8_t)GRM_CREATURE_OUTFIT_ID);
+        _creatureid = new TWord32 (creatureid);
+
+        TOutfitFactory of;
+        _outfit = of.cloneOutfit (outfit);
+}
+
+GRMCreatureOutfit::GRMCreatureOutfit (const GRMCreatureOutfit& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+        
+        TOutfitFactory of;
+        _outfit = of.cloneOutfit (*clone._outfit);
+}
+
+GRMCreatureOutfit::~GRMCreatureOutfit ()
+{
+        delete _id;
+        delete _creatureid;
+        delete _outfit;
+}
+
+void GRMCreatureOutfit::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+        _outfit->put (msg);
+}
+
+void GRMCreatureOutfit::show ()
+{
+        printf ("GRMCreatureOutfit {\n");
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("\toutfit: "); _outfit->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMCreatureOutfit::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMCreatureOutfit::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+const TOutfit& GRMCreatureOutfit::getOutfit ()
+{
+        return *_outfit;
+}
+
+void GRMCreatureOutfit::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+
+        TOutfitFactory of (msg, dat);
+        _outfit = of.getOutfit ();
+}
+
+/***************************************************************
+ * CreatureHealth
+ ***************************************************************/
+GRMCreatureHealth::GRMCreatureHealth (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureHealth::GRMCreatureHealth (uint32_t creatureid, uint8_t hp)
+{
+        _id = new TWord8 ((uint8_t)GRM_CREATURE_HEALTH_ID);
+        _creatureid = new TWord32 (creatureid);
+        _hp = new TWord8 (hp);
+}
+
+GRMCreatureHealth::GRMCreatureHealth (const GRMCreatureHealth& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+        _hp = new TWord8 (*clone._hp);
+}
+
+GRMCreatureHealth::~GRMCreatureHealth ()
+{
+        delete _id;
+        delete _creatureid;
+        delete _hp;
+}
+
+void GRMCreatureHealth::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+        _hp->put (msg);
+}
+
+void GRMCreatureHealth::show ()
+{
+        printf ("GRMCreatureHealth {\n");
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("\thp: "); _hp->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMCreatureHealth::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMCreatureHealth::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+uint8_t GRMCreatureHealth::getHp ()
+{
+        return _hp->getVal ();
+}
+
+void GRMCreatureHealth::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+        _hp = new TWord8 (msg);
+}
+
+/***************************************************************
+ * CreatureSpeed
+ ***************************************************************/
+GRMCreatureSpeed::GRMCreatureSpeed (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureSpeed::GRMCreatureSpeed (uint32_t creatureid, uint8_t speed)
+{
+        _id = new TWord8 ((uint8_t)GRM_CREATURE_SPEED_ID);
+        _creatureid = new TWord32 (creatureid);
+        _speed = new TWord8 (speed);
+}
+
+GRMCreatureSpeed::GRMCreatureSpeed (const GRMCreatureSpeed& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+        _speed = new TWord8 (*clone._speed);
+}
+
+GRMCreatureSpeed::~GRMCreatureSpeed ()
+{
+        delete _id;
+        delete _creatureid;
+        delete _speed;
+}
+
+void GRMCreatureSpeed::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+        _speed->put (msg);
+}
+
+void GRMCreatureSpeed::show ()
+{
+        printf ("GRMCreatureSpeed {\n");
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("\tspeed: "); _speed->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMCreatureSpeed::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMCreatureSpeed::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+uint8_t GRMCreatureSpeed::getSpeed ()
+{
+        return _speed->getVal ();
+}
+
+void GRMCreatureSpeed::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+        _speed = new TWord8 (msg);
+}
+
+/***************************************************************
+ * CreatureSkull
+ ***************************************************************/
+GRMCreatureSkull::GRMCreatureSkull (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureSkull::GRMCreatureSkull (uint32_t creatureid, uint8_t skull)
+{
+        _id = new TWord8 ((uint8_t)GRM_CREATURE_SKULL_ID);
+        _creatureid = new TWord32 (creatureid);
+        _skull = new TWord8 (skull);
+}
+
+GRMCreatureSkull::GRMCreatureSkull (const GRMCreatureSkull& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+        _skull = new TWord8 (*clone._skull);
+}
+
+GRMCreatureSkull::~GRMCreatureSkull ()
+{
+        delete _id;
+        delete _creatureid;
+        delete _skull;
+}
+
+void GRMCreatureSkull::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+        _skull->put (msg);
+}
+
+void GRMCreatureSkull::show ()
+{
+        printf ("GRMCreatureSkull {\n");
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("\tskull: "); _skull->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMCreatureSkull::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMCreatureSkull::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+uint8_t GRMCreatureSkull::getSkull ()
+{
+        return _skull->getVal ();
+}
+
+void GRMCreatureSkull::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+        _skull = new TWord8 (msg);
+}
+
+/***************************************************************
+ * CreatureShield
+ ***************************************************************/
+GRMCreatureShield::GRMCreatureShield (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureShield::GRMCreatureShield (uint32_t creatureid, uint8_t shield)
+{
+        _id = new TWord8 ((uint8_t)GRM_CREATURE_SHIELD_ID);
+        _creatureid = new TWord32 (creatureid);
+        _shield = new TWord8 (shield);
+}
+
+GRMCreatureShield::GRMCreatureShield (const GRMCreatureShield& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+        _shield = new TWord8 (*clone._shield);
+}
+
+GRMCreatureShield::~GRMCreatureShield ()
+{
+        delete _id;
+        delete _creatureid;
+        delete _shield;
+}
+
+void GRMCreatureShield::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+        _shield->put (msg);
+}
+
+void GRMCreatureShield::show ()
+{
+        printf ("GRMCreatureShield {\n");
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("\tshield: "); _shield->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMCreatureShield::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMCreatureShield::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+uint8_t GRMCreatureShield::getShield ()
+{
+        return _shield->getVal ();
+}
+
+void GRMCreatureShield::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+        _shield = new TWord8 (msg);
+}
+
+/***************************************************************
+ * AnimatedText
+ ***************************************************************/
+GRMAnimatedText::GRMAnimatedText (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMAnimatedText::GRMAnimatedText (const TPos& pos, uint8_t color,
+                                  const std::string& text)
+{
+        _id = new TWord8 ((uint8_t)GRM_ANIMATED_TEXT_ID);
+        _pos = new TPos (pos);
+        _color = new TWord8 (color);
+        _text = new TString (text);
+}
+
+GRMAnimatedText::GRMAnimatedText (const GRMAnimatedText& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+        _color = new TWord8 (*clone._color);
+        _text = new TString (*clone._text);
+}
+
+GRMAnimatedText::~GRMAnimatedText ()
+{
+        delete _id;
+        delete _pos;
+        delete _color;
+        delete _text;
+}
+
+void GRMAnimatedText::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _color->put (msg);
+        _text->put (msg);
+}
+
+void GRMAnimatedText::show ()
+{
+        printf ("GRMAnimatedText {\n");
+        printf ("\tpos: "); _pos->show (); printf ("\n");
+        printf ("\tcolor: "); _color->show (); printf ("\n");
+        printf ("\ttext: "); _text->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMAnimatedText::getId ()
+{
+        return _id->getVal ();
+}
+
+
+uint8_t GRMAnimatedText::getColor ()
+{
+        return _color->getVal ();
+}
+
+const TPos& GRMAnimatedText::getPos ()
+{
+        return *_pos;
+}
+
+const std::string& GRMAnimatedText::getText ()
+{
+        return _text->getString ();
+}
+
+void GRMAnimatedText::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+        _color = new TWord8 (msg);
+        _text = new TString (msg);
+}
+
+/***************************************************************
+ * PlayerCancelAttack
+ ***************************************************************/
+
+GRMPlayerCancelAttack::GRMPlayerCancelAttack (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMPlayerCancelAttack::GRMPlayerCancelAttack ()
+{
+        _id = new TWord8 ((uint8_t)GRM_PLAYER_CANCEL_ATTACK_ID);
+}
+
+GRMPlayerCancelAttack::GRMPlayerCancelAttack (const GRMPlayerCancelAttack& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GRMPlayerCancelAttack::~GRMPlayerCancelAttack ()
+{
+        delete _id;
+}
+
+void GRMPlayerCancelAttack::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GRMPlayerCancelAttack::show ()
+{
+        printf ("GRMPlayerCancelAttack {}\n");
+}
+
+uint8_t GRMPlayerCancelAttack::getId ()
+{
+        return _id->getVal ();
+}
+
+void GRMPlayerCancelAttack::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
 {
         _id = new TWord8 (msg);
 }
