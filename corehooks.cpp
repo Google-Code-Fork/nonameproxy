@@ -56,5 +56,116 @@ void HRGameInit::func (TibiaMessage* tm, Client* client)
         client->gstate->account->setName (gi->getName ());
         client->crypt->setXTEAKey (gi->getXTEA ());
 }
-        
 
+/**********************************************************************
+ * Protocol hooks
+ **********************************************************************/
+
+
+/**********************************************************************
+ * Game Recv 
+ **********************************************************************/
+ 
+/**********************************************************************
+ * GRHSelfInfo 
+ **********************************************************************/
+void GRHSelfInfo::func (TibiaMessage* tm, Client* client)
+{
+}
+
+/**********************************************************************
+ * GRHSlotItem 
+ **********************************************************************/
+void GRHSlotItem::func (TibiaMessage* tm, Client* client)
+{
+}
+
+/**********************************************************************
+ * GRHMagicEffect 
+ **********************************************************************/
+void GRHMagicEffect::func (TibiaMessage* tm, Client* client)
+{
+}
+
+/**********************************************************************
+ * GRHTextMsg 
+ **********************************************************************/
+void GRHTextMsg::func (TibiaMessage* tm, Client* client)
+{
+}
+
+/**********************************************************************
+ * GRHGlobalLight 
+ **********************************************************************/
+void GRHGlobalLight::func (TibiaMessage* tm, Client* client)
+{
+}
+
+/**********************************************************************
+ * GRHCreatureLight 
+ **********************************************************************/
+void GRHCreatureLight::func (TibiaMessage* tm, Client* client)
+{
+}
+
+/**********************************************************************
+ * GRHPlayerSkills 
+ **********************************************************************/
+void GRHPlayerSkills::func (TibiaMessage* tm, Client* client)
+{
+}
+
+/**********************************************************************
+ * GRHMapInit 
+ **********************************************************************/
+void GRHMapInit::func (TibiaMessage* tm, Client* client)
+{
+        Pos pos = client->gstate->map->getCurPos ();
+        const TPos& initPos = ((GRMMapInit*)tm)->getPos ();
+        pos.x = initPos.x ();
+        pos.y = initPos.y ();
+        pos.z = initPos.z ();
+        client->gstate->map->setCurPos (pos);
+}
+
+/**********************************************************************
+ * GRHMapNorth 
+ **********************************************************************/
+void GRHMapNorth::func (TibiaMessage* tm, Client* client)
+{
+        Pos pos = client->gstate->map->getCurPos ();
+        pos.y --;
+        client->gstate->map->setCurPos (pos);
+}
+
+/**********************************************************************
+ * GRHMapEast 
+ **********************************************************************/
+void GRHMapEast::func (TibiaMessage* tm, Client* client)
+{
+        Pos pos = client->gstate->map->getCurPos ();
+        pos.x ++;
+        client->gstate->map->setCurPos (pos);
+}
+
+/**********************************************************************
+ * GRHMapSouth 
+ **********************************************************************/
+void GRHMapSouth::func (TibiaMessage* tm, Client* client)
+{
+        Pos pos = client->gstate->map->getCurPos ();
+        pos.y ++;
+        client->gstate->map->setCurPos (pos);
+}
+
+/**********************************************************************
+ * GRHMapWest 
+ **********************************************************************/
+void GRHMapWest::func (TibiaMessage* tm, Client* client)
+{
+        Pos pos = client->gstate->map->getCurPos ();
+        pos.x --;
+        client->gstate->map->setCurPos (pos);
+}
+
+        

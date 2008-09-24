@@ -587,6 +587,151 @@ class GRMMapInit : public TibiaMessage
 };
 
 /***************************************************************
+ * GRMMapNorth
+ ***************************************************************/
+class GRMMapNorth : public TibiaMessage
+{
+        public:
+                GRMMapNorth (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //note this function takes control of map
+                GRMMapNorth (TMapDescription* map);
+                GRMMapNorth (const GRMMapNorth& clone);
+                virtual ~GRMMapNorth ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TMapDescription& getMap ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TMapDescription* _map;
+};
+
+/***************************************************************
+ * GRMMapEast
+ ***************************************************************/
+class GRMMapEast : public TibiaMessage
+{
+        public:
+                GRMMapEast (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //note this function takes control of map
+                GRMMapEast (TMapDescription* map);
+                GRMMapEast (const GRMMapEast& clone);
+                virtual ~GRMMapEast ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TMapDescription& getMap ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TMapDescription* _map;
+};
+
+/***************************************************************
+ * GRMMapSouth
+ ***************************************************************/
+class GRMMapSouth : public TibiaMessage
+{
+        public:
+                GRMMapSouth (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //note this function takes control of map
+                GRMMapSouth (TMapDescription* map);
+                GRMMapSouth (const GRMMapSouth& clone);
+                virtual ~GRMMapSouth ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TMapDescription& getMap ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TMapDescription* _map;
+};
+
+/***************************************************************
+ * GRMMapWest
+ ***************************************************************/
+class GRMMapWest : public TibiaMessage
+{
+        public:
+                GRMMapWest (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //note this function takes control of map
+                GRMMapWest (TMapDescription* map);
+                GRMMapWest (const GRMMapWest& clone);
+                virtual ~GRMMapWest ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TMapDescription& getMap ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TMapDescription* _map;
+};
+
+/***************************************************************
+ * GRMCreatureMove
+ ***************************************************************/
+
+class GRMCreatureMove : public TibiaMessage
+{
+        public:
+                GRMCreatureMove (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCreatureMove (const TPos& from, uint8_t stackpos,
+                                        const TPos& to);
+                GRMCreatureMove (const GRMCreatureMove& clone);
+                virtual ~GRMCreatureMove ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TPos& getFrom ();
+                const TPos& getTo ();
+                uint8_t getStackPos ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+        private:
+                TWord8* _id;
+                TPos*   _from;
+                TWord8* _stackpos;
+                TPos*   _to;
+};
+
+/***************************************************************
  * ContainerMessages
  ***************************************************************/
 /***************************************************************

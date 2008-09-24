@@ -142,6 +142,16 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMSelfInfo (_msg, _gs, _dat));
         } else if (id == GRM_MAP_INIT_ID) {
                 return (new GRMMapInit (_msg, _gs, _dat));
+        } else if (id == GRM_MAP_NORTH_ID) {
+                return (new GRMMapNorth (_msg, _gs, _dat));
+        } else if (id == GRM_MAP_EAST_ID) {
+                return (new GRMMapEast (_msg, _gs, _dat));
+        } else if (id == GRM_MAP_SOUTH_ID) {
+                return (new GRMMapSouth (_msg, _gs, _dat));
+        } else if (id == GRM_MAP_WEST_ID) {
+                return (new GRMMapWest (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_MOVE_ID) {
+                return (new GRMCreatureMove (_msg, _gs, _dat));
         } else if (id == GRM_MAGIC_EFFECT_ID) {
                 return (new GRMMagicEffect (_msg, _gs, _dat));
         } else if (id == GRM_SLOT_ITEM_ID) {

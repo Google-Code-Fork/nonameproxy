@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "tibiamessage.h"
+#include "gamestate.h"
 #include "messageids.h"
 
 #define RSA_LEN 128
@@ -720,8 +721,8 @@ void GRMMapInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
         _pos = new TPos (msg);
-        int minz;
-        int maxz;
+        uint32_t minz;
+        uint32_t maxz;
         if (_pos->z () <= 7) {
                 //we are above ground
                 minz = 0;
@@ -736,6 +737,370 @@ void GRMMapInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
         TPos end (_pos->x () + 8, _pos->y () + 6, maxz);
 
         _map = new TMapDescription (start, end, msg, dat);
+}
+
+/***************************************************************
+ * GRMMapNorth
+ ***************************************************************/
+GRMMapNorth::GRMMapNorth (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMapNorth::GRMMapNorth (TMapDescription* map)
+{
+        _id = new TWord8 (GRM_MAP_NORTH_ID);
+        _map = map;
+}
+
+GRMMapNorth::GRMMapNorth (const GRMMapNorth& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _map = new TMapDescription (*clone._map);
+}
+
+GRMMapNorth::~GRMMapNorth ()
+{
+        delete _id;
+        delete _map;
+}
+
+void GRMMapNorth::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _map->put (msg);
+}
+
+void GRMMapNorth::show ()
+{
+        printf ("GRMMapNorth {\n");
+        _map->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMMapNorth::getId ()
+{
+        return _id->getVal ();
+}
+
+TMapDescription& GRMMapNorth::getMap ()
+{
+        return *_map;
+}
+
+void GRMMapNorth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        Pos pos = gs->map->getCurPos ();
+        uint32_t minz;
+        uint32_t maxz;
+        if (pos.z <= 7) {
+                //we are above ground
+                minz = 0;
+                maxz = 7;
+        } else {
+                //under ground
+                minz = pos.z - 2;
+                maxz = MIN (pos.z + 2, 15);
+        }
+                
+        TPos start (pos.x - 8, pos.y - 6, minz);
+        TPos end (pos.x + 9, pos.y - 6, maxz);
+
+        _map = new TMapDescription (start, end, msg, dat);
+}
+
+/***************************************************************
+ * GRMMapEast
+ ***************************************************************/
+GRMMapEast::GRMMapEast (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMapEast::GRMMapEast (TMapDescription* map)
+{
+        _id = new TWord8 (GRM_MAP_EAST_ID);
+        _map = map;
+}
+
+GRMMapEast::GRMMapEast (const GRMMapEast& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _map = new TMapDescription (*clone._map);
+}
+
+GRMMapEast::~GRMMapEast ()
+{
+        delete _id;
+        delete _map;
+}
+
+void GRMMapEast::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _map->put (msg);
+}
+
+void GRMMapEast::show ()
+{
+        printf ("GRMMapEast {\n");
+        _map->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMMapEast::getId ()
+{
+        return _id->getVal ();
+}
+
+TMapDescription& GRMMapEast::getMap ()
+{
+        return *_map;
+}
+
+void GRMMapEast::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        Pos pos = gs->map->getCurPos ();
+        uint32_t minz;
+        uint32_t maxz;
+        if (pos.z <= 7) {
+                //we are above ground
+                minz = 0;
+                maxz = 7;
+        } else {
+                //under ground
+                minz = pos.z - 2;
+                maxz = MIN (pos.z + 2, 15);
+        }
+                
+        TPos start (pos.x + 9, pos.y - 6, minz);
+        TPos end (pos.x + 9, pos.y + 7, maxz);
+
+        _map = new TMapDescription (start, end, msg, dat);
+}
+
+/***************************************************************
+ * GRMMapSouth
+ ***************************************************************/
+GRMMapSouth::GRMMapSouth (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMapSouth::GRMMapSouth (TMapDescription* map)
+{
+        _id = new TWord8 (GRM_MAP_SOUTH_ID);
+        _map = map;
+}
+
+GRMMapSouth::GRMMapSouth (const GRMMapSouth& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _map = new TMapDescription (*clone._map);
+}
+
+GRMMapSouth::~GRMMapSouth ()
+{
+        delete _id;
+        delete _map;
+}
+
+void GRMMapSouth::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _map->put (msg);
+}
+
+void GRMMapSouth::show ()
+{
+        printf ("GRMMapSouth {\n");
+        _map->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMMapSouth::getId ()
+{
+        return _id->getVal ();
+}
+
+TMapDescription& GRMMapSouth::getMap ()
+{
+        return *_map;
+}
+
+void GRMMapSouth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        Pos pos = gs->map->getCurPos ();
+        uint32_t minz;
+        uint32_t maxz;
+        if (pos.z <= 7) {
+                //we are above ground
+                minz = 0;
+                maxz = 7;
+        } else {
+                //under ground
+                minz = pos.z - 2;
+                maxz = MIN (pos.z + 2, 15);
+        }
+                
+        TPos start (pos.x - 8, pos.y + 7, minz);
+        TPos end (pos.x + 9, pos.y + 7, maxz);
+
+        _map = new TMapDescription (start, end, msg, dat);
+}
+
+/***************************************************************
+ * GRMMapWest
+ ***************************************************************/
+GRMMapWest::GRMMapWest (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMapWest::GRMMapWest (TMapDescription* map)
+{
+        _id = new TWord8 (GRM_MAP_WEST_ID);
+        _map = map;
+}
+
+GRMMapWest::GRMMapWest (const GRMMapWest& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _map = new TMapDescription (*clone._map);
+}
+
+GRMMapWest::~GRMMapWest ()
+{
+        delete _id;
+        delete _map;
+}
+
+void GRMMapWest::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _map->put (msg);
+}
+
+void GRMMapWest::show ()
+{
+        printf ("GRMMapWest {\n");
+        _map->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMMapWest::getId ()
+{
+        return _id->getVal ();
+}
+
+TMapDescription& GRMMapWest::getMap ()
+{
+        return *_map;
+}
+
+void GRMMapWest::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        Pos pos = gs->map->getCurPos ();
+        uint32_t minz;
+        uint32_t maxz;
+        if (pos.z <= 7) {
+                //we are above ground
+                minz = 0;
+                maxz = 7;
+        } else {
+                //under ground
+                minz = pos.z - 2;
+                maxz = MIN (pos.z + 2, 15);
+        }
+                
+        TPos start (pos.x - 8, pos.y - 6, minz);
+        TPos end (pos.x - 8, pos.y + 7, maxz);
+
+        _map = new TMapDescription (start, end, msg, dat);
+}
+
+/***************************************************************
+ * GRMCreatureMove
+ ***************************************************************/
+
+GRMCreatureMove::GRMCreatureMove (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCreatureMove::GRMCreatureMove (const TPos& from, uint8_t stackpos,
+                                        const TPos& to)
+{
+        _id = new TWord8 ((uint8_t)GRM_CREATURE_MOVE_ID);
+        _from = new TPos (from);
+        _stackpos =  new TWord8 (stackpos);
+        _to = new TPos (to);
+}
+
+GRMCreatureMove::GRMCreatureMove (const GRMCreatureMove& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _from = new TPos (*clone._from);
+        _stackpos =  new TWord8 (*clone._stackpos);
+        _to = new TPos (*clone._to);
+}
+        
+GRMCreatureMove::~GRMCreatureMove ()
+{
+        delete _id;
+        delete _from;
+        delete _stackpos;
+        delete _to;
+}
+
+void GRMCreatureMove::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _from->put (msg);
+        _stackpos->put (msg);
+        _to->put (msg);
+}
+
+void GRMCreatureMove::show ()
+{
+        printf ("GRMCreatureMove {\n");
+        printf ("\tfrom: "); _from->show (); printf ("\n");
+        printf ("\tstackpos: "); _stackpos->show (); printf ("\n");
+        printf ("\tto: "); _to->show (); printf ("\n");
+}
+
+uint8_t GRMCreatureMove::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GRMCreatureMove::getFrom ()
+{
+        return *_from;
+}
+
+const TPos& GRMCreatureMove::getTo ()
+{
+        return *_to;
+}
+
+uint8_t GRMCreatureMove::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+void GRMCreatureMove::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _from = new TPos (msg);
+        _stackpos =  new TWord8 (msg);
+        _to = new TPos (msg);
 }
 
 /***************************************************************

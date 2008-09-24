@@ -3,8 +3,8 @@
 
 #include "accountstate.h"
 #include "charstate.h"
+#include "mapstate.h"
 //knock these off as the states are written
-class MapState;
 class CreatureListState;
 class MessageState;
 class InvetoryState;
