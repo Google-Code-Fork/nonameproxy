@@ -1695,3 +1695,50 @@ void GRMOpenPlayerTrade::get (NetworkMessage* msg,
         _container = new TTradeContainer (msg, dat);
 }
 
+/***************************************************************
+ * CloseTrade
+ ***************************************************************/
+GRMCloseTrade::GRMCloseTrade (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMCloseTrade::GRMCloseTrade ()
+{
+        _id = new TWord8 ((uint8_t)GRM_CLOSE_TRADE_ID);
+}
+
+GRMCloseTrade::GRMCloseTrade (const GRMCloseTrade& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+
+GRMCloseTrade::~GRMCloseTrade ()
+{
+        delete _id;
+}
+
+void GRMCloseTrade::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GRMCloseTrade::show ()
+{
+        printf ("GRMCloseTrade {}\n");
+}
+
+uint8_t GRMCloseTrade::getId ()
+{
+        return _id->getVal ();
+}
+
+void GRMCloseTrade::get (NetworkMessage* msg,
+                                GameState* gs, 
+                                DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+

@@ -803,5 +803,31 @@ class GRMOpenPlayerTrade : public TibiaMessage
                 TTradeContainer* _container;
 };
 
+/***************************************************************
+ * CloseTrade - other players trade window
+ ***************************************************************/
+class GRMCloseTrade : public TibiaMessage
+{
+        public:
+                GRMCloseTrade (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMCloseTrade ();
+                GRMCloseTrade (const GRMCloseTrade& clone);
+
+                virtual ~GRMCloseTrade ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                        GameState* gs, 
+                                        DatReader* dat);
+
+        private:
+                TWord8* _id;
+};
+
 #endif
 
