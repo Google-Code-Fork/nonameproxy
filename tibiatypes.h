@@ -1233,5 +1233,76 @@ class TSubQuestList
                 SubQuestList::iterator _it;
 };
 
+/************************************************************************
+ * TChannel
+ ************************************************************************/
+
+class TChannel
+{
+        public:
+                TChannel (NetworkMessage* msg);
+                TChannel (uint16_t channelid, const std::string& name);
+                TChannel (const TChannel& clone);
+                virtual ~TChannel ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint16_t getChannelId () const;
+                const std::string& getName () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord16* _channelid;
+                TString* _name;
+};
+
+/************************************************************************
+ * TChannelList
+ ************************************************************************/
+
+typedef std::list<TChannel*> ChannelList;
+
+class TChannelList
+{
+        public:
+                TChannelList (NetworkMessage* msg);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TChannelList (uint8_t nchannels);
+                TChannelList (const TChannelList& clone);
+                virtual ~TChannelList ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getNChannels () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current channel
+                const TChannel& getChannel ();
+                //insert thing BEFORE current thing
+                void insert (TChannel* channel);
+                //replace current thing
+                void replace (TChannel* channel);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TChannel* channel);
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord8* _nchannels;
+                ChannelList _channels;
+                ChannelList::iterator _it;
+};
+
 #endif
 

@@ -643,6 +643,81 @@ class GRMGlobalLight : public TibiaMessage
 };
 
 /***************************************************************
+ * GRMTextWindow
+ ***************************************************************/
+
+class GRMTextWindow : public TibiaMessage
+{
+        public:
+                GRMTextWindow (NetworkMessage* msg, GameState* gs,
+                              DatReader* dat);
+                GRMTextWindow (uint32_t           windowid,
+                               const TThing&      item,
+                               uint16_t           maxlen,
+                               const std::string& text,
+                               const std::string& writer,
+                               const std::string& date);
+
+                GRMTextWindow (const GRMTextWindow& clone);
+                virtual ~GRMTextWindow ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t                getWindowId ();
+                const TThing&           getItem ();
+                uint16_t                getMaxLen ();
+                const std::string&      getText ();
+                const std::string&      getWriter ();
+                const std::string&      getDate ();
+
+                virtual void get (NetworkMessage* msg, GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*         _id;
+                TWord32*        _windowid;
+                TThing*         _item;
+                TWord16*        _maxlen;
+                TString*        _text;
+                TString*        _writer;
+                TString*        _date;
+};
+
+/***************************************************************
+ * GRMTextHouse
+ ***************************************************************/
+
+class GRMTextHouse : public TibiaMessage
+{
+        public:
+                GRMTextHouse (NetworkMessage* msg, GameState* gs,
+                              DatReader* dat);
+                GRMTextHouse ( uint8_t            u1,
+                               uint32_t           windowId,
+                               const std::string& text);
+
+                GRMTextHouse (const GRMTextHouse& clone);
+                virtual ~GRMTextHouse ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t                 getU1 ();
+                uint32_t                getWindowId ();
+                const std::string&      getText ();
+
+                virtual void get (NetworkMessage* msg, GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*         _id;
+                TWord8*         _u1;
+                TWord32*        _windowid;
+                TString*        _text;
+};
+
+/***************************************************************
  * GRMCreatureLight
  ***************************************************************/
 
@@ -1973,5 +2048,290 @@ class GRMSubQuestList : public TibiaMessage
                 TWord16* _questid;
                 TSubQuestList* _subquestlist;
 };
+
+/***************************************************************
+ * ChannelList
+ ***************************************************************/
+
+class GRMChannelList : public TibiaMessage
+{
+        public:
+                GRMChannelList (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //This constructor takes control of questlist
+                GRMChannelList (TChannelList* questlist);
+                GRMChannelList (const GRMChannelList& clone);
+                virtual ~GRMChannelList ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint16_t getQuestId ();
+                TChannelList& getChannelList();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+
+                TChannelList* _channellist;
+};
+
+/***************************************************************
+ * ChannelOpen
+ ***************************************************************/
+
+class GRMChannelOpen : public TibiaMessage
+{
+        public:
+                GRMChannelOpen (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelOpen (uint16_t channelid, const std::string& name);
+                GRMChannelOpen (const GRMChannelOpen& clone);
+                virtual ~GRMChannelOpen ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint16_t getChannelId ();
+                const std::string& getName ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TWord16* _channelid;
+                TString* _name;
+};
+
+/***************************************************************
+ * ChannelPlayer
+ ***************************************************************/
+
+class GRMChannelPlayer : public TibiaMessage
+{
+        public:
+                GRMChannelPlayer (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelPlayer (const std::string& name);
+                GRMChannelPlayer (const GRMChannelPlayer& clone);
+                virtual ~GRMChannelPlayer ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const std::string& getName ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TString* _name;
+};
+
+/***************************************************************
+ * ChannelRuleOpen
+ ***************************************************************/
+
+class GRMChannelRuleOpen : public TibiaMessage
+{
+        public:
+                GRMChannelRuleOpen (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelRuleOpen (uint16_t channelid);
+                GRMChannelRuleOpen (const GRMChannelRuleOpen& clone);
+                virtual ~GRMChannelRuleOpen ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint16_t getChannelId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TWord16* _channelid;
+};
+
+/***************************************************************
+ * ChannelRuleU1
+ ***************************************************************/
+
+class GRMChannelRuleU1 : public TibiaMessage
+{
+        public:
+                GRMChannelRuleU1 (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelRuleU1 (const std::string& string);
+                GRMChannelRuleU1 (const GRMChannelRuleU1& clone);
+                virtual ~GRMChannelRuleU1 ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const std::string& getString ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TString* _string;
+};
+
+/***************************************************************
+ * ChannelRuleU2
+ ***************************************************************/
+
+class GRMChannelRuleU2 : public TibiaMessage
+{
+        public:
+                GRMChannelRuleU2 (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelRuleU2 (const std::string& string);
+                GRMChannelRuleU2 (const GRMChannelRuleU2& clone);
+                virtual ~GRMChannelRuleU2 ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const std::string& getString ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TString* _string;
+};
+
+/***************************************************************
+ * ChannelRuleU3
+ ***************************************************************/
+
+class GRMChannelRuleU3 : public TibiaMessage
+{
+        public:
+                GRMChannelRuleU3 (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelRuleU3 ();
+                GRMChannelRuleU3 (const GRMChannelRuleU3& clone);
+                virtual ~GRMChannelRuleU3 ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+};
+
+/***************************************************************
+ * ChannelChat
+ ***************************************************************/
+
+class GRMChannelChat : public TibiaMessage
+{
+        public:
+                GRMChannelChat (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelChat (uint16_t channelid, const std::string& name);
+                GRMChannelChat (const GRMChannelChat& clone);
+                virtual ~GRMChannelChat ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint16_t getChannelId ();
+                const std::string& getName ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TWord16* _channelid;
+                TString* _name;
+};
+
+/***************************************************************
+ * ChannelClose
+ ***************************************************************/
+
+class GRMChannelClose : public TibiaMessage
+{
+        public:
+                GRMChannelClose (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMChannelClose (uint16_t channelid);
+                GRMChannelClose (const GRMChannelClose& clone);
+                virtual ~GRMChannelClose ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint16_t getChannelId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TWord16* _channelid;
+};
+
+/***************************************************************
+ * PlayerCancelWalk
+ ***************************************************************/
+
+class GRMPlayerCancelWalk : public TibiaMessage
+{
+        public:
+                GRMPlayerCancelWalk (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMPlayerCancelWalk (uint8_t direction);
+                GRMPlayerCancelWalk (const GRMPlayerCancelWalk& clone);
+                virtual ~GRMPlayerCancelWalk ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getDirection ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TWord8* _direction;
+};
+
 #endif
 
