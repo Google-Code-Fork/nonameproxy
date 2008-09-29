@@ -879,7 +879,7 @@ class TContainer
  * but it reads and writes to a network message as a trade contianer
  ************************************************************************/
 
-typedef std::list<TThing*> ContainerList;
+//typedef std::list<TThing*> ContainerList;
 class TTradeContainer
 {
         public:
@@ -926,6 +926,311 @@ class TTradeContainer
                 TWord8* _nItems;
                 ContainerList _items;
                 ContainerList::iterator _it;
+};
+
+/************************************************************************
+ * TShopItem
+ * items sold by npcs
+ * note that the extra byte (xbyte) is always present
+ * if item is a TXItem xbyte will be added automatically
+ * if item is a TItem then xbyte will be used
+ ************************************************************************/
+
+class TShopItem
+{
+        public:
+                TShopItem (NetworkMessage* msg, DatReader* dat);
+                TShopItem (const TThing& item, uint8_t xbyte, 
+                                const std::string& name, uint32_t buyprice,
+                                uint32_t sellprice);
+                TShopItem (const TShopItem& clone);
+                virtual ~TShopItem ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const TThing& getItem () const;
+                uint8_t getXByte () const;
+                const std::string& getName () const;
+                uint32_t getBuyPrice () const;
+                uint32_t getSellPrice () const;
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TThing* _item;
+                TWord8* _xbyte;
+                TString* _name;
+                TWord32* _buyprice;
+                TWord32* _sellprice;
+};
+
+/************************************************************************
+ * TShopList
+ * Contains a list of shopitems
+ ************************************************************************/
+
+typedef std::list<TShopItem*> ShopList;
+
+class TShopList
+{
+        public:
+                TShopList (NetworkMessage* msg, DatReader* dat);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TShopList (uint8_t nitems);
+                TShopList (const TShopList& clone);
+                virtual ~TShopList ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getNItems () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current shopitem
+                const TShopItem& getShopItem ();
+                //insert thing BEFORE current thing
+                void insert (TShopItem* shopitem);
+                //replace current thing
+                void replace (TShopItem* shopitem);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TShopItem* shopitem);
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TWord8* _nitems;
+                ShopList _items;
+                ShopList::iterator _it;
+};
+
+/************************************************************************
+ * TOutfitSelection
+ ************************************************************************/
+
+class TOutfitSelection
+{
+        public:
+                TOutfitSelection (NetworkMessage* msg);
+                TOutfitSelection (uint16_t looktype, const std::string& name,
+                                        uint8_t addons);
+                TOutfitSelection (const TOutfitSelection& clone);
+                virtual ~TOutfitSelection ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint16_t getLookType () const;
+                const std::string& getName () const;
+                uint8_t getAddons () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord16* _looktype;
+                TString* _name;
+                TWord8*  _addons;
+};
+
+/************************************************************************
+ * TOutfitList
+ * Contains a list of outfit selections
+ ************************************************************************/
+
+typedef std::list<TOutfitSelection*> OutfitList;
+
+class TOutfitList
+{
+        public:
+                TOutfitList (NetworkMessage* msg);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TOutfitList (uint8_t nitems);
+                TOutfitList (const TOutfitList& clone);
+                virtual ~TOutfitList ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getNItems () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current shopitem
+                const TOutfitSelection& getOutfitSelection ();
+                //insert thing BEFORE current thing
+                void insert (TOutfitSelection* outfit);
+                //replace current thing
+                void replace (TOutfitSelection* outfit);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TOutfitSelection* outfit);
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord8* _nitems;
+                OutfitList _outfits;
+                OutfitList::iterator _it;
+};
+
+/************************************************************************
+ * TQuest
+ ************************************************************************/
+
+class TQuest
+{
+        public:
+                TQuest (NetworkMessage* msg);
+                TQuest (uint16_t questid, const std::string& name,
+                                uint8_t state);
+                TQuest (const TQuest& clone);
+                virtual ~TQuest ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint16_t getQuestId () const;
+                const std::string& getName () const;
+                uint8_t getState () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord16* _questid;
+                TString* _name;
+                TWord8*  _state;
+};
+
+/************************************************************************
+ * TQuestList
+ ************************************************************************/
+
+typedef std::list<TQuest*> QuestList;
+
+class TQuestList
+{
+        public:
+                TQuestList (NetworkMessage* msg);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TQuestList (uint16_t nquests);
+                TQuestList (const TQuestList& clone);
+                virtual ~TQuestList ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint16_t getNQuests () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current shopitem
+                const TQuest& getOutfitSelection ();
+                //insert thing BEFORE current thing
+                void insert (TQuest* quest);
+                //replace current thing
+                void replace (TQuest* quest);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TQuest* quest);
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord16* _nquests;
+                QuestList _quests;
+                QuestList::iterator _it;
+};
+
+/************************************************************************
+ * TSubQuest
+ ************************************************************************/
+
+class TSubQuest
+{
+        public:
+                TSubQuest (NetworkMessage* msg);
+                TSubQuest (const std::string& name, 
+                           const std::string& description);
+                TSubQuest (const TSubQuest& clone);
+                virtual ~TSubQuest ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const std::string& getName () const;
+                const std::string& getDescription () const;
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TString* _name;
+                TString* _description;
+};
+
+/************************************************************************
+ * TSubQuestList
+ ************************************************************************/
+
+typedef std::list<TSubQuest*> SubQuestList;
+
+class TSubQuestList
+{
+        public:
+                TSubQuestList (NetworkMessage* msg);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TSubQuestList (uint8_t nsubquests);
+                TSubQuestList (const TSubQuestList& clone);
+                virtual ~TSubQuestList ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getNSubQuests () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current shopitem
+                const TSubQuest& getSubQuest ();
+                //insert thing BEFORE current thing
+                void insert (TSubQuest* subquest);
+                //replace current thing
+                void replace (TSubQuest* subquest);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TSubQuest* subquest);
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord8* _nsubquests;
+                SubQuestList _subquests;
+                SubQuestList::iterator _it;
 };
 
 #endif

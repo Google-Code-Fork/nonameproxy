@@ -2357,3 +2357,906 @@ void TTradeContainer::get (NetworkMessage* msg, DatReader* dat)
         _it = _items.begin ();
 }
 
+
+/************************************************************************
+ * TShopItem
+ ************************************************************************/
+
+TShopItem::TShopItem (NetworkMessage* msg, DatReader* dat)
+{
+        get (msg, dat);
+}
+
+
+TShopItem::TShopItem (const TThing& item, uint8_t xbyte, 
+        const std::string& name, uint32_t buyprice, uint32_t sellprice)
+{
+        TThingFactory tf;
+        _item = tf.cloneThing (item);
+
+        if (_item->getType () == TThing::xitem) {
+                _xbyte = new TWord8 (((TXItem*)_item)->getXByte ());
+        } else {
+                _xbyte = new TWord8 (xbyte);
+        }
+
+        _name = new TString (name);
+        _buyprice = new TWord32 (buyprice);
+        _sellprice = new TWord32 (sellprice);
+}
+        
+TShopItem::TShopItem (const TShopItem& clone)
+{
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
+
+        _xbyte = new TWord8 (*clone._xbyte);
+        _name = new TString (*clone._name);
+        _buyprice = new TWord32 (*clone._buyprice);
+        _sellprice = new TWord32 (*clone._sellprice);
+}
+        
+TShopItem::~TShopItem ()
+{
+        delete _item;
+        delete _xbyte;
+        delete _name;
+        delete _buyprice;
+        delete _sellprice;
+}
+        
+
+void TShopItem::put (NetworkMessage* msg) const
+{
+        _item->put (msg);
+        if (_item->getType () != TThing::xitem) {
+                _xbyte->put (msg);
+        }
+        _name->put (msg);
+        _buyprice->put (msg);
+        _sellprice->put (msg);
+}
+        
+void TShopItem::show () const
+{
+        printf ("\tTShopItem {\n");
+        printf ("\t\titem: "); _item->show (); printf ("\n");
+        printf ("\t\txbyte: "); _xbyte->show (); printf ("\n");
+        printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t\tbuyprice: "); _buyprice->show (); printf ("\n");
+        printf ("\t\tsellprice: "); _sellprice->show (); printf ("\n");
+        printf ("\t}\n");
+}
+
+const TThing& TShopItem::getItem () const
+{
+        return *_item;
+}
+
+uint8_t TShopItem::getXByte () const
+{
+        return _xbyte->getVal ();
+}
+
+const std::string& TShopItem::getName () const
+{
+        return _name->getString () ;
+}
+
+uint32_t TShopItem::getBuyPrice () const
+{
+        return _buyprice->getVal ();
+}
+
+uint32_t TShopItem::getSellPrice () const
+{
+        return _sellprice->getVal ();
+}
+
+void TShopItem::get (NetworkMessage* msg, DatReader* dat)
+{
+        TThingFactory tf (msg, dat);
+        _item = tf.getThing ();
+
+        if (_item->getType () == TThing::xitem) {
+                _xbyte = new TWord8 (((TXItem*)_item)->getXByte ());
+        } else {
+                _xbyte = new TWord8 (msg);
+        }
+
+        _name = new TString (msg);
+        _buyprice = new TWord32 (msg);
+        _sellprice = new TWord32 (msg);
+}
+
+/************************************************************************
+ * TShopList
+ ************************************************************************/
+
+TShopList::TShopList (NetworkMessage* msg, DatReader* dat)
+{
+        get (msg, dat);
+        _it = _items.begin ();
+}
+
+
+TShopList::TShopList (uint8_t nitems)
+{
+        _nitems = new TWord8 ((uint8_t)0);
+        _it = _items.begin ();
+}
+        
+TShopList::TShopList (const TShopList& clone)
+{
+        _nitems = new TWord8 (*clone._nitems);
+
+        ShopList::const_iterator i;
+        for (i = clone._items.begin (); i != clone._items.end (); ++ i) {
+                _items.push_back (new TShopItem (**i));
+        }
+
+        _it = _items.begin ();
+}
+        
+TShopList::~TShopList ()
+{
+        delete _nitems;
+
+        for (_it = _items.begin (); _it != _items.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TShopList::put (NetworkMessage* msg) const
+{
+        _nitems->put (msg);
+
+        ShopList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TShopList::show () const
+{
+        printf ("\tTShopList {\n");
+        printf ("\t\tnitems: "); _nitems->show (); printf ("\n");
+
+        printf ("\t\tShopItems:\n");
+
+        ShopList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+uint8_t TShopList::getNItems () const
+{
+        return _nitems->getVal ();
+}
+
+void TShopList::begin ()
+{
+        _it = _items.begin ();
+}
+
+bool TShopList::isEnd ()
+{
+        if (_it == _items.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TShopList::next ()
+{
+        if (_it == _items.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TShopItem& TShopList::getShopItem ()
+{
+        return *(*_it);
+}
+
+void TShopList::insert (TShopItem* shopitem)
+{
+        _items.insert (_it, shopitem);
+        uint8_t tmp = _nitems->getVal ();
+        delete _nitems;
+        _nitems = new TWord8 (tmp + 1);
+}
+
+void TShopList::replace (TShopItem* shopitem)
+{
+        if (_items.size () == 0) {
+                printf ("shoplist error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _items.end ()) {
+                printf ("shoplist error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _items.erase (_it);
+        _items.insert (_it, shopitem);
+        _it --;
+} 
+
+void TShopList::remove ()
+{
+        _it = _items.erase (_it);
+        uint8_t tmp = _nitems->getVal ();
+        delete _nitems;
+        _nitems = new TWord8 (tmp - 1);
+}
+
+void TShopList::add (TShopItem* shopitem)
+{
+        _items.push_back (shopitem);
+        uint8_t tmp = _nitems->getVal ();
+        delete _nitems;
+        _nitems = new TWord8 (tmp + 1);
+}
+
+void TShopList::get (NetworkMessage* msg, DatReader* dat)
+{
+        _nitems = new TWord8 (msg);
+
+        uint32_t n = _nitems->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _items.push_back (new TShopItem (msg, dat));
+        }
+
+        _it = _items.begin ();
+}
+
+/************************************************************************
+ * TOutfitSelection
+ ************************************************************************/
+
+TOutfitSelection::TOutfitSelection (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+
+TOutfitSelection::TOutfitSelection (uint16_t looktype, const std::string& name,
+                                        uint8_t addons)
+{
+        _looktype = new TWord16 (looktype);
+        _name = new TString (name);
+        _addons = new TWord8 (addons);
+}
+        
+TOutfitSelection::TOutfitSelection (const TOutfitSelection& clone)
+{
+        _looktype = new TWord16 (*clone._looktype);
+        _name = new TString (*clone._name);
+        _addons = new TWord8 (*clone._addons);
+}
+        
+TOutfitSelection::~TOutfitSelection ()
+{
+        delete _looktype;
+        delete _name;
+        delete _addons;
+}
+
+void TOutfitSelection::put (NetworkMessage* msg) const
+{
+        _looktype->put (msg);
+        _name->put (msg);
+        _addons->put (msg);
+}
+        
+void TOutfitSelection::show () const
+{
+        printf ("\tTOutfitSelection {\n");
+        printf ("\t\tlooktype: "); _looktype->show (); printf ("\n");
+        printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t\taddons: "); _addons->show (); printf ("\n");
+        printf ("\t}\n");
+}
+
+uint16_t TOutfitSelection::getLookType () const
+{
+        return _looktype->getVal ();
+}
+
+const std::string& TOutfitSelection::getName () const
+{
+        return _name->getString () ;
+}
+
+uint8_t TOutfitSelection::getAddons () const
+{
+        return _addons->getVal ();
+}
+
+void TOutfitSelection::get (NetworkMessage* msg)
+{
+        _looktype = new TWord16 (msg);
+        _name = new TString (msg);
+        _addons = new TWord8 (msg);
+}
+
+/************************************************************************
+ * TOutfitList
+ ************************************************************************/
+
+TOutfitList::TOutfitList (NetworkMessage* msg)
+{
+        get (msg);
+        _it = _outfits.begin ();
+}
+
+
+TOutfitList::TOutfitList (uint8_t nitems)
+{
+        _nitems = new TWord8 ((uint8_t)0);
+        _it = _outfits.begin ();
+}
+        
+TOutfitList::TOutfitList (const TOutfitList& clone)
+{
+        _nitems = new TWord8 (*clone._nitems);
+
+        OutfitList::const_iterator i;
+        for (i = clone._outfits.begin (); i != clone._outfits.end (); ++ i) {
+                _outfits.push_back (new TOutfitSelection (**i));
+        }
+
+        _it = _outfits.begin ();
+}
+        
+TOutfitList::~TOutfitList ()
+{
+        delete _nitems;
+
+        for (_it = _outfits.begin (); _it != _outfits.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TOutfitList::put (NetworkMessage* msg) const
+{
+        _nitems->put (msg);
+
+        OutfitList::const_iterator i;
+        for (i = _outfits.begin (); i != _outfits.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TOutfitList::show () const
+{
+        printf ("\tTOutfitList {\n");
+        printf ("\t\tnitems: "); _nitems->show (); printf ("\n");
+
+        printf ("\t\tOutfits:\n");
+
+        OutfitList::const_iterator i;
+        for (i = _outfits.begin (); i != _outfits.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+uint8_t TOutfitList::getNItems () const
+{
+        return _nitems->getVal ();
+}
+
+void TOutfitList::begin ()
+{
+        _it = _outfits.begin ();
+}
+
+bool TOutfitList::isEnd ()
+{
+        if (_it == _outfits.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TOutfitList::next ()
+{
+        if (_it == _outfits.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TOutfitSelection& TOutfitList::getOutfitSelection ()
+{
+        return *(*_it);
+}
+
+void TOutfitList::insert (TOutfitSelection* outfit)
+{
+        _outfits.insert (_it, outfit);
+        uint8_t tmp = _nitems->getVal ();
+        delete _nitems;
+        _nitems = new TWord8 (tmp + 1);
+}
+
+void TOutfitList::replace (TOutfitSelection* outfit)
+{
+        if (_outfits.size () == 0) {
+                printf ("outfitlist error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _outfits.end ()) {
+                printf ("outfitlist error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _outfits.erase (_it);
+        _outfits.insert (_it, outfit);
+        _it --;
+} 
+
+void TOutfitList::remove ()
+{
+        _it = _outfits.erase (_it);
+        uint8_t tmp = _nitems->getVal ();
+        delete _nitems;
+        _nitems = new TWord8 (tmp - 1);
+}
+
+void TOutfitList::add (TOutfitSelection* outfit)
+{
+        _outfits.push_back (outfit);
+        uint8_t tmp = _nitems->getVal ();
+        delete _nitems;
+        _nitems = new TWord8 (tmp + 1);
+}
+
+void TOutfitList::get (NetworkMessage* msg)
+{
+        _nitems = new TWord8 (msg);
+
+        uint32_t n = _nitems->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _outfits.push_back (new TOutfitSelection (msg));
+        }
+
+        _it = _outfits.begin ();
+}
+
+
+/************************************************************************
+ * TQuest
+ ************************************************************************/
+
+TQuest::TQuest (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+
+TQuest::TQuest (uint16_t questid, const std::string& name,
+                                        uint8_t state)
+{
+        _questid = new TWord16 (questid);
+        _name = new TString (name);
+        _state = new TWord8 (state);
+}
+        
+TQuest::TQuest (const TQuest& clone)
+{
+        _questid = new TWord16 (*clone._questid);
+        _name = new TString (*clone._name);
+        _state = new TWord8 (*clone._state);
+}
+        
+TQuest::~TQuest ()
+{
+        delete _questid;
+        delete _name;
+        delete _state;
+}
+
+void TQuest::put (NetworkMessage* msg) const
+{
+        _questid->put (msg);
+        _name->put (msg);
+        _state->put (msg);
+}
+        
+void TQuest::show () const
+{
+        printf ("\tTQuest {\n");
+        printf ("\t\tquestid: "); _questid->show (); printf ("\n");
+        printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t\tstate: "); _state->show (); printf ("\n");
+        printf ("\t}\n");
+}
+
+uint16_t TQuest::getQuestId () const
+{
+        return _questid->getVal ();
+}
+
+const std::string& TQuest::getName () const
+{
+        return _name->getString () ;
+}
+
+uint8_t TQuest::getState () const
+{
+        return _state->getVal ();
+}
+
+void TQuest::get (NetworkMessage* msg)
+{
+        _questid = new TWord16 (msg);
+        _name = new TString (msg);
+        _state = new TWord8 (msg);
+}
+
+/************************************************************************
+ * TQuestList
+ ************************************************************************/
+
+TQuestList::TQuestList (NetworkMessage* msg)
+{
+        get (msg);
+        _it = _quests.begin ();
+}
+
+
+TQuestList::TQuestList (uint16_t nquests)
+{
+        _nquests = new TWord16 ((uint16_t)0);
+        _it = _quests.begin ();
+}
+        
+TQuestList::TQuestList (const TQuestList& clone)
+{
+        _nquests = new TWord16 (*clone._nquests);
+
+        QuestList::const_iterator i;
+        for (i = clone._quests.begin (); i != clone._quests.end (); ++ i) {
+                _quests.push_back (new TQuest (**i));
+        }
+
+        _it = _quests.begin ();
+}
+        
+TQuestList::~TQuestList ()
+{
+        delete _nquests;
+
+        for (_it = _quests.begin (); _it != _quests.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TQuestList::put (NetworkMessage* msg) const
+{
+        _nquests->put (msg);
+
+        QuestList::const_iterator i;
+        for (i = _quests.begin (); i != _quests.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TQuestList::show () const
+{
+        printf ("\tTQuestList {\n");
+        printf ("\t\tnquests: "); _nquests->show (); printf ("\n");
+
+        printf ("\t\tOutfits:\n");
+
+        QuestList::const_iterator i;
+        for (i = _quests.begin (); i != _quests.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+uint16_t TQuestList::getNQuests () const
+{
+        return _nquests->getVal ();
+}
+
+void TQuestList::begin ()
+{
+        _it = _quests.begin ();
+}
+
+bool TQuestList::isEnd ()
+{
+        if (_it == _quests.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TQuestList::next ()
+{
+        if (_it == _quests.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TQuest& TQuestList::getOutfitSelection ()
+{
+        return *(*_it);
+}
+
+void TQuestList::insert (TQuest* quest)
+{
+        _quests.insert (_it, quest);
+        uint16_t tmp = _nquests->getVal ();
+        delete _nquests;
+        _nquests = new TWord16 (tmp + 1);
+}
+
+void TQuestList::replace (TQuest* quest)
+{
+        if (_quests.size () == 0) {
+                printf ("questlist error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _quests.end ()) {
+                printf ("questlist error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _quests.erase (_it);
+        _quests.insert (_it, quest);
+        _it --;
+} 
+
+void TQuestList::remove ()
+{
+        _it = _quests.erase (_it);
+        uint16_t tmp = _nquests->getVal ();
+        delete _nquests;
+        _nquests = new TWord16 (tmp - 1);
+}
+
+void TQuestList::add (TQuest* quest)
+{
+        _quests.push_back (quest);
+        uint16_t tmp = _nquests->getVal ();
+        delete _nquests;
+        _nquests = new TWord16 (tmp + 1);
+}
+
+void TQuestList::get (NetworkMessage* msg)
+{
+        _nquests = new TWord16 (msg);
+
+        uint32_t n = _nquests->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _quests.push_back (new TQuest (msg));
+        }
+
+        _it = _quests.begin ();
+}
+
+/************************************************************************
+ * TSubQuest
+ ************************************************************************/
+
+TSubQuest::TSubQuest (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+
+TSubQuest::TSubQuest (const std::string& description, const std::string& name)
+{
+        _name = new TString (name);
+        _description = new TString (description);
+}
+        
+TSubQuest::TSubQuest (const TSubQuest& clone)
+{
+        _name = new TString (*clone._name);
+        _description = new TString (*clone._description);
+}
+        
+TSubQuest::~TSubQuest ()
+{
+        delete _name;
+        delete _description;
+}
+
+void TSubQuest::put (NetworkMessage* msg) const
+{
+        _name->put (msg);
+        _description->put (msg);
+}
+        
+void TSubQuest::show () const
+{
+        printf ("\tTSubQuest {\n");
+        printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t\tdescription: "); _description->show (); printf ("\n");
+        printf ("\t}\n");
+}
+
+const std::string& TSubQuest::getName () const
+{
+        return _name->getString () ;
+}
+
+const std::string& TSubQuest::getDescription () const
+{
+        return _description->getString ();
+}
+
+void TSubQuest::get (NetworkMessage* msg)
+{
+        _name = new TString (msg);
+        _description = new TString (msg);
+}
+
+/************************************************************************
+ * TSubQuestList
+ ************************************************************************/
+
+TSubQuestList::TSubQuestList (NetworkMessage* msg)
+{
+        get (msg);
+        _it = _subquests.begin ();
+}
+
+
+TSubQuestList::TSubQuestList (uint8_t nsubquests)
+{
+        _nsubquests = new TWord8 ((uint8_t)0);
+        _it = _subquests.begin ();
+}
+        
+TSubQuestList::TSubQuestList (const TSubQuestList& clone)
+{
+        _nsubquests = new TWord8 (*clone._nsubquests);
+
+        SubQuestList::const_iterator i;
+        for (i = clone._subquests.begin (); i != clone._subquests.end (); ++ i) {
+                _subquests.push_back (new TSubQuest (**i));
+        }
+
+        _it = _subquests.begin ();
+}
+        
+TSubQuestList::~TSubQuestList ()
+{
+        delete _nsubquests;
+
+        for (_it = _subquests.begin (); _it != _subquests.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TSubQuestList::put (NetworkMessage* msg) const
+{
+        _nsubquests->put (msg);
+
+        SubQuestList::const_iterator i;
+        for (i = _subquests.begin (); i != _subquests.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TSubQuestList::show () const
+{
+        printf ("\tTSubQuestList {\n");
+        printf ("\t\tnsubquests: "); _nsubquests->show (); printf ("\n");
+
+        printf ("\t\tOutfits:\n");
+
+        SubQuestList::const_iterator i;
+        for (i = _subquests.begin (); i != _subquests.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+uint8_t TSubQuestList::getNSubQuests () const
+{
+        return _nsubquests->getVal ();
+}
+
+void TSubQuestList::begin ()
+{
+        _it = _subquests.begin ();
+}
+
+bool TSubQuestList::isEnd ()
+{
+        if (_it == _subquests.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TSubQuestList::next ()
+{
+        if (_it == _subquests.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TSubQuest& TSubQuestList::getSubQuest ()
+{
+        return *(*_it);
+}
+
+void TSubQuestList::insert (TSubQuest* subquest)
+{
+        _subquests.insert (_it, subquest);
+        uint8_t tmp = _nsubquests->getVal ();
+        delete _nsubquests;
+        _nsubquests = new TWord8 (tmp + 1);
+}
+
+void TSubQuestList::replace (TSubQuest* subquest)
+{
+        if (_subquests.size () == 0) {
+                printf ("subquestlist error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _subquests.end ()) {
+                printf ("subquestlist error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _subquests.erase (_it);
+        _subquests.insert (_it, subquest);
+        _it --;
+} 
+
+void TSubQuestList::remove ()
+{
+        _it = _subquests.erase (_it);
+        uint8_t tmp = _nsubquests->getVal ();
+        delete _nsubquests;
+        _nsubquests = new TWord8 (tmp - 1);
+}
+
+void TSubQuestList::add (TSubQuest* subquest)
+{
+        _subquests.push_back (subquest);
+        uint8_t tmp = _nsubquests->getVal ();
+        delete _nsubquests;
+        _nsubquests = new TWord8 (tmp + 1);
+}
+
+void TSubQuestList::get (NetworkMessage* msg)
+{
+        _nsubquests = new TWord8 (msg);
+
+        uint32_t n = _nsubquests->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _subquests.push_back (new TSubQuest (msg));
+        }
+
+        _it = _subquests.begin ();
+}
+
