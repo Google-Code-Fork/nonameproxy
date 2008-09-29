@@ -3260,3 +3260,209 @@ void TSubQuestList::get (NetworkMessage* msg)
         _it = _subquests.begin ();
 }
 
+/************************************************************************
+ * TChannel
+ ************************************************************************/
+
+TChannel::TChannel (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+
+TChannel::TChannel (uint16_t channelid, const std::string& name)
+{
+        _channelid = new TWord16 (channelid);
+        _name = new TString (name);
+}
+        
+TChannel::TChannel (const TChannel& clone)
+{
+        _channelid = new TWord16 (*clone._channelid);
+        _name = new TString (*clone._name);
+}
+        
+TChannel::~TChannel ()
+{
+        delete _channelid;
+        delete _name;
+}
+
+void TChannel::put (NetworkMessage* msg) const
+{
+        _channelid->put (msg);
+        _name->put (msg);
+}
+        
+void TChannel::show () const
+{
+        printf ("\tTChannel {\n");
+        printf ("\t\tchannelid: "); _channelid->show (); printf ("\n");
+        printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t}\n");
+}
+
+uint16_t TChannel::getChannelId () const
+{
+        return _channelid->getVal ();
+}
+
+const std::string& TChannel::getName () const
+{
+        return _name->getString () ;
+}
+
+void TChannel::get (NetworkMessage* msg)
+{
+        _channelid = new TWord16 (msg);
+        _name = new TString (msg);
+}
+
+/************************************************************************
+ * TChannelList
+ ************************************************************************/
+
+TChannelList::TChannelList (NetworkMessage* msg)
+{
+        get (msg);
+        _it = _channels.begin ();
+}
+
+
+TChannelList::TChannelList (uint8_t nchannels)
+{
+        _nchannels = new TWord8 ((uint8_t)0);
+        _it = _channels.begin ();
+}
+        
+TChannelList::TChannelList (const TChannelList& clone)
+{
+        _nchannels = new TWord8 (*clone._nchannels);
+
+        ChannelList::const_iterator i;
+        for (i = clone._channels.begin (); i != clone._channels.end (); ++ i) {
+                _channels.push_back (new TChannel (**i));
+        }
+
+        _it = _channels.begin ();
+}
+        
+TChannelList::~TChannelList ()
+{
+        delete _nchannels;
+
+        for (_it = _channels.begin (); _it != _channels.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TChannelList::put (NetworkMessage* msg) const
+{
+        _nchannels->put (msg);
+
+        ChannelList::const_iterator i;
+        for (i = _channels.begin (); i != _channels.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TChannelList::show () const
+{
+        printf ("\tTChannelList {\n");
+        printf ("\t\tnchannels: "); _nchannels->show (); printf ("\n");
+
+        printf ("\t\tChannels:\n");
+
+        ChannelList::const_iterator i;
+        for (i = _channels.begin (); i != _channels.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+uint8_t TChannelList::getNChannels () const
+{
+        return _nchannels->getVal ();
+}
+
+void TChannelList::begin ()
+{
+        _it = _channels.begin ();
+}
+
+bool TChannelList::isEnd ()
+{
+        if (_it == _channels.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TChannelList::next ()
+{
+        if (_it == _channels.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TChannel& TChannelList::getChannel ()
+{
+        return *(*_it);
+}
+
+void TChannelList::insert (TChannel* channel)
+{
+        _channels.insert (_it, channel);
+        uint8_t tmp = _nchannels->getVal ();
+        delete _nchannels;
+        _nchannels = new TWord8 (tmp + 1);
+}
+
+void TChannelList::replace (TChannel* channel)
+{
+        if (_channels.size () == 0) {
+                printf ("channellist error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _channels.end ()) {
+                printf ("channellist error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _channels.erase (_it);
+        _channels.insert (_it, channel);
+        _it --;
+} 
+
+void TChannelList::remove ()
+{
+        _it = _channels.erase (_it);
+        uint8_t tmp = _nchannels->getVal ();
+        delete _nchannels;
+        _nchannels = new TWord8 (tmp - 1);
+}
+
+void TChannelList::add (TChannel* channel)
+{
+        _channels.push_back (channel);
+        uint8_t tmp = _nchannels->getVal ();
+        delete _nchannels;
+        _nchannels = new TWord8 (tmp + 1);
+}
+
+void TChannelList::get (NetworkMessage* msg)
+{
+        _nchannels = new TWord8 (msg);
+
+        uint32_t n = _nchannels->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _channels.push_back (new TChannel (msg));
+        }
+
+        _it = _channels.begin ();
+}
+

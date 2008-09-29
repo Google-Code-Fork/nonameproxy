@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "tibiamessage.h"
 #include "gamestate.h"
-#include "messageids.h"
+#include "enums.h"
 
 //only for testing
 #include "networkmessage.h"
@@ -4350,5 +4350,795 @@ void GRMSubQuestList::get (NetworkMessage* msg, GameState* gs,
         _id = new TWord8 (msg);
         _questid = new TWord16 (msg);
         _subquestlist = new TSubQuestList (msg);
+}
+
+/***************************************************************
+ * GRMChannelOpen
+ ***************************************************************/
+
+GRMChannelOpen::GRMChannelOpen (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelOpen::GRMChannelOpen (uint16_t channelid, const std::string& name)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_OPEN_ID);
+        _channelid = new TWord16 (channelid);
+        _name = new TString (name);
+}
+        
+GRMChannelOpen::GRMChannelOpen (const GRMChannelOpen& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _channelid = new TWord16 (*clone._channelid);
+        _name = new TString (*clone._name);
+}
+        
+GRMChannelOpen::~GRMChannelOpen ()
+{
+        delete _id;
+        delete _channelid;
+        delete _name;
+}
+
+void GRMChannelOpen::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _channelid->put (msg);
+        _name->put (msg);
+}
+
+void GRMChannelOpen::show ()
+{
+        printf ("GRMChannelOpen {"); 
+        printf ("\tchannelid: "); _channelid->show (); printf ("\n");
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMChannelOpen::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GRMChannelOpen::getChannelId ()
+{
+        return _channelid->getVal ();
+}
+
+const std::string& GRMChannelOpen::getName ()
+{
+        return _name->getString ();
+}
+
+void GRMChannelOpen::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _channelid = new TWord16 (msg);
+        _name= new TString (msg);
+}
+
+/***************************************************************
+ * GRMChannelPlayer
+ ***************************************************************/
+
+GRMChannelPlayer::GRMChannelPlayer (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelPlayer::GRMChannelPlayer (const std::string& name)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_PLAYER_ID);
+        _name = new TString (name);
+}
+        
+GRMChannelPlayer::GRMChannelPlayer (const GRMChannelPlayer& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _name = new TString (*clone._name);
+}
+        
+GRMChannelPlayer::~GRMChannelPlayer ()
+{
+        delete _id;
+        delete _name;
+}
+
+void GRMChannelPlayer::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _name->put (msg);
+}
+
+void GRMChannelPlayer::show ()
+{
+        printf ("GRMChannelPlayer {"); 
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMChannelPlayer::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GRMChannelPlayer::getName ()
+{
+        return _name->getString ();
+}
+
+void GRMChannelPlayer::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _name= new TString (msg);
+}
+
+/***************************************************************
+ * GRMChannelRuleOpen
+ ***************************************************************/
+
+GRMChannelRuleOpen::GRMChannelRuleOpen (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelRuleOpen::GRMChannelRuleOpen (uint16_t channelid)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_RULE_OPEN_ID);
+        _channelid = new TWord16 (channelid);
+}
+        
+GRMChannelRuleOpen::GRMChannelRuleOpen (const GRMChannelRuleOpen& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _channelid = new TWord16 (*clone._channelid);
+}
+        
+GRMChannelRuleOpen::~GRMChannelRuleOpen ()
+{
+        delete _id;
+        delete _channelid;
+}
+
+void GRMChannelRuleOpen::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _channelid->put (msg);
+}
+
+void GRMChannelRuleOpen::show ()
+{
+        printf ("GRMChannelRuleOpen {"); 
+        printf ("\tchannelid: "); _channelid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMChannelRuleOpen::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GRMChannelRuleOpen::getChannelId ()
+{
+        return _channelid->getVal ();
+}
+
+void GRMChannelRuleOpen::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _channelid = new TWord16 (msg);
+}
+
+/***************************************************************
+ * GRMChannelRuleU1
+ ***************************************************************/
+
+GRMChannelRuleU1::GRMChannelRuleU1 (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelRuleU1::GRMChannelRuleU1 (const std::string& string)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_RULE_U1_ID);
+        _string = new TString (string);
+}
+        
+GRMChannelRuleU1::GRMChannelRuleU1 (const GRMChannelRuleU1& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _string = new TString (*clone._string);
+}
+        
+GRMChannelRuleU1::~GRMChannelRuleU1 ()
+{
+        delete _id;
+        delete _string;
+}
+
+void GRMChannelRuleU1::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _string->put (msg);
+}
+
+void GRMChannelRuleU1::show ()
+{
+        printf ("GRMChannelRuleU1 {"); 
+        printf ("\tstring: "); _string->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMChannelRuleU1::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GRMChannelRuleU1::getString ()
+{
+        return _string->getString ();
+}
+
+void GRMChannelRuleU1::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _string= new TString (msg);
+}
+
+/***************************************************************
+ * GRMChannelRuleU2
+ ***************************************************************/
+
+GRMChannelRuleU2::GRMChannelRuleU2 (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelRuleU2::GRMChannelRuleU2 (const std::string& string)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_RULE_U2_ID);
+        _string = new TString (string);
+}
+        
+GRMChannelRuleU2::GRMChannelRuleU2 (const GRMChannelRuleU2& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _string = new TString (*clone._string);
+}
+        
+GRMChannelRuleU2::~GRMChannelRuleU2 ()
+{
+        delete _id;
+        delete _string;
+}
+
+void GRMChannelRuleU2::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _string->put (msg);
+}
+
+void GRMChannelRuleU2::show ()
+{
+        printf ("GRMChannelRuleU2 {"); 
+        printf ("\tstring: "); _string->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMChannelRuleU2::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GRMChannelRuleU2::getString ()
+{
+        return _string->getString ();
+}
+
+void GRMChannelRuleU2::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _string= new TString (msg);
+}
+
+/***************************************************************
+ * GRMChannelRuleU3
+ ***************************************************************/
+
+GRMChannelRuleU3::GRMChannelRuleU3 (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelRuleU3::GRMChannelRuleU3 ()
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_RULE_U3_ID);
+}
+        
+GRMChannelRuleU3::GRMChannelRuleU3 (const GRMChannelRuleU3& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GRMChannelRuleU3::~GRMChannelRuleU3 ()
+{
+        delete _id;
+}
+
+void GRMChannelRuleU3::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GRMChannelRuleU3::show ()
+{
+        printf ("GRMChannelRuleU3 {"); 
+        printf ("}\n");
+}
+
+uint8_t GRMChannelRuleU3::getId ()
+{
+        return _id->getVal ();
+}
+
+void GRMChannelRuleU3::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * GRMChannelChat
+ ***************************************************************/
+
+GRMChannelChat::GRMChannelChat (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelChat::GRMChannelChat (uint16_t channelid, const std::string& name)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_CHAT_ID);
+        _channelid = new TWord16 (channelid);
+        _name = new TString (name);
+}
+        
+GRMChannelChat::GRMChannelChat (const GRMChannelChat& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _channelid = new TWord16 (*clone._channelid);
+        _name = new TString (*clone._name);
+}
+        
+GRMChannelChat::~GRMChannelChat ()
+{
+        delete _id;
+        delete _channelid;
+        delete _name;
+}
+
+void GRMChannelChat::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _channelid->put (msg);
+        _name->put (msg);
+}
+
+void GRMChannelChat::show ()
+{
+        printf ("GRMChannelChat {"); 
+        printf ("\tchannelid: "); _channelid->show (); printf ("\n");
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMChannelChat::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GRMChannelChat::getChannelId ()
+{
+        return _channelid->getVal ();
+}
+
+const std::string& GRMChannelChat::getName ()
+{
+        return _name->getString ();
+}
+
+void GRMChannelChat::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _channelid = new TWord16 (msg);
+        _name= new TString (msg);
+}
+
+/***************************************************************
+ * GRMChannelClose
+ ***************************************************************/
+
+GRMChannelClose::GRMChannelClose (NetworkMessage* msg, GameState* gs,
+              DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelClose::GRMChannelClose (uint16_t channelid)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_CLOSE_ID);
+        _channelid = new TWord16 (channelid);
+}
+        
+GRMChannelClose::GRMChannelClose (const GRMChannelClose& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _channelid = new TWord16 (*clone._channelid);
+}
+        
+GRMChannelClose::~GRMChannelClose ()
+{
+        delete _id;
+        delete _channelid;
+}
+
+void GRMChannelClose::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _channelid->put (msg);
+}
+
+void GRMChannelClose::show ()
+{
+        printf ("GRMChannelClose {"); 
+        printf ("\tchannelid: "); _channelid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMChannelClose::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GRMChannelClose::getChannelId ()
+{
+        return _channelid->getVal ();
+}
+
+void GRMChannelClose::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _channelid = new TWord16 (msg);
+}
+
+/***************************************************************
+ * PlayerCancelWalk
+ ***************************************************************/
+
+GRMPlayerCancelWalk::GRMPlayerCancelWalk (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMPlayerCancelWalk::GRMPlayerCancelWalk (uint8_t direction)
+{
+        _id = new TWord8 ((uint8_t)GRM_PLAYER_CANCEL_WALK_ID);
+        _direction = new TWord8 (direction);
+}
+
+GRMPlayerCancelWalk::GRMPlayerCancelWalk (const GRMPlayerCancelWalk& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _direction = new TWord8 (*clone._direction);
+}
+        
+GRMPlayerCancelWalk::~GRMPlayerCancelWalk ()
+{
+        delete _id;
+        delete _direction;
+}
+
+void GRMPlayerCancelWalk::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _direction->put (msg);
+}
+
+void GRMPlayerCancelWalk::show ()
+{
+        printf ("GRMPlayerCancelWalk {\n"); 
+        printf ("\tdirection: "); _direction->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMPlayerCancelWalk::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMPlayerCancelWalk::getDirection ()
+{
+        return _direction->getVal ();
+}
+
+void GRMPlayerCancelWalk::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _direction = new TWord8 (msg);
+}
+
+/***************************************************************
+ * GRMTextWindow
+ ***************************************************************/
+
+GRMTextWindow::GRMTextWindow (NetworkMessage* msg, GameState* gs,
+                                DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMTextWindow::GRMTextWindow ( uint32_t           windowid,
+                               const TThing&      item,
+                               uint16_t           maxlen,
+                               const std::string& text,
+                               const std::string& writer,
+                               const std::string& date)
+{
+        _id =           new TWord8 ((uint8_t)GRM_TEXT_WINDOW_ID);
+        _windowid =     new TWord32 (windowid);
+
+        TThingFactory tf;
+        _item = tf.cloneThing (item);
+
+        _maxlen =       new TWord16 (maxlen);
+        _text =         new TString (text);
+        _writer =       new TString (writer);
+        _date =         new TString (date);
+}
+        
+GRMTextWindow::GRMTextWindow (const GRMTextWindow& clone)
+{
+        _id =           new TWord8 (*clone._id);
+        _windowid =     new TWord32 (*clone._windowid);
+
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
+
+        _maxlen =       new TWord16 (*clone._maxlen);
+        _text =         new TString (*clone._text);
+        _writer =       new TString (*clone._writer);
+        _date =         new TString (*clone._date);
+}
+
+GRMTextWindow::~GRMTextWindow ()
+{
+        delete _id;
+        delete _windowid;
+        delete _item;
+        delete _maxlen;
+        delete _text;
+        delete _writer;
+        delete _date;
+}
+
+void GRMTextWindow::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _windowid->put (msg);
+        _item->put (msg);
+        _maxlen->put (msg);
+        _text->put (msg);
+        _writer->put (msg);
+        _date->put (msg);
+}
+
+void GRMTextWindow::show ()
+{
+        printf ("TextWindw {\n");
+        printf ("\tid: "); _id->show (); printf ("\n");
+        printf ("\twindowid: "); _windowid->show (); printf ("\n");
+        printf ("\titem: "); _item->show (); printf ("\n");
+        printf ("\tmaxlen: "); _maxlen->show (); printf ("\n");
+        printf ("\ttext: "); _text->show (); printf ("\n");
+        printf ("\twriter: "); _writer->show (); printf ("\n");
+        printf ("\tdate: "); _date->show (); printf ("\n");
+}
+
+uint8_t GRMTextWindow::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMTextWindow::getWindowId ()
+{
+        return _windowid->getVal ();
+}
+
+const TThing& GRMTextWindow::getItem ()
+{
+        return *_item;
+}
+
+uint16_t GRMTextWindow::getMaxLen ()
+{
+        return _maxlen->getVal ();
+}
+
+const std::string& GRMTextWindow::getText ()
+{
+        return _text->getString ();
+}
+
+const std::string& GRMTextWindow::getWriter ()
+{
+        return _writer->getString ();
+}
+
+const std::string& GRMTextWindow::getDate ()
+{
+        return _date->getString ();
+}
+
+void GRMTextWindow::get (NetworkMessage* msg, GameState* gs,
+                        DatReader* dat)
+{
+        _id =           new TWord8 (msg);
+        _windowid =     new TWord32 (msg);
+
+        TThingFactory tf (msg, dat);
+        _item = tf.getThing ();
+
+        _maxlen =       new TWord16 (msg);
+        _text =         new TString (msg);
+        _writer =       new TString (msg);
+        _date =         new TString (msg);
+}
+
+
+/***************************************************************
+ * GRMTextHouse
+ ***************************************************************/
+
+GRMTextHouse::GRMTextHouse (NetworkMessage* msg, GameState* gs,
+                                DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMTextHouse::GRMTextHouse ( uint8_t            u1,
+                             uint32_t           windowid,
+                             const std::string& text)
+{
+        _id =           new TWord8 ((uint8_t)GRM_TEXT_HOUSE_ID);
+        _u1 =           new TWord8 (u1);
+        _windowid =     new TWord32 (windowid);
+        _text =         new TString (text);
+}
+        
+GRMTextHouse::GRMTextHouse (const GRMTextHouse& clone)
+{
+        _id =           new TWord8 (*clone._id);
+        _u1 =           new TWord8 (*clone._u1);
+        _windowid =     new TWord32 (*clone._windowid);
+        _text =         new TString (*clone._text);
+}
+
+GRMTextHouse::~GRMTextHouse ()
+{
+        delete _id;
+        delete _u1;
+        delete _windowid;
+        delete _text;
+}
+
+void GRMTextHouse::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _u1->put (msg);
+        _windowid->put (msg);
+        _text->put (msg);
+}
+
+void GRMTextHouse::show ()
+{
+        printf ("TextWindw {\n");
+        printf ("\tid: "); _id->show (); printf ("\n");
+        printf ("\tu1: "); _u1->show (); printf ("\n");
+        printf ("\twindowid: "); _windowid->show (); printf ("\n");
+        printf ("\ttext: "); _text->show (); printf ("\n");
+}
+
+uint8_t GRMTextHouse::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMTextHouse::getU1 ()
+{
+        return _u1->getVal ();
+}
+
+uint32_t GRMTextHouse::getWindowId ()
+{
+        return _windowid->getVal ();
+}
+
+const std::string& GRMTextHouse::getText ()
+{
+        return _text->getString ();
+}
+void GRMTextHouse::get (NetworkMessage* msg, GameState* gs,
+                        DatReader* dat)
+{
+        _id =           new TWord8 (msg);
+        _u1 =           new TWord8 (msg);
+        _windowid =     new TWord32 (msg);
+        _text =         new TString (msg);
+}
+
+/***************************************************************
+ * ChannelList
+ ***************************************************************/
+
+GRMChannelList::GRMChannelList (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMChannelList::GRMChannelList (TChannelList* channellist)
+{
+        _id = new TWord8 ((uint8_t)GRM_CHANNEL_LIST_ID);
+        _channellist = channellist;
+}
+
+GRMChannelList::GRMChannelList (const GRMChannelList& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _channellist = new TChannelList (*clone._channellist);
+}
+        
+GRMChannelList::~GRMChannelList ()
+{
+        delete _id;
+        delete _channellist;
+}
+
+void GRMChannelList::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _channellist->put (msg);
+}
+
+void GRMChannelList::show ()
+{
+        printf ("GRMChannelList {\n");
+        _channellist->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMChannelList::getId ()
+{
+        return _id->getVal ();
+}
+
+TChannelList& GRMChannelList::getChannelList ()
+{
+        return *_channellist;
+}
+
+void GRMChannelList::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _channellist = new TChannelList (msg);
 }
 

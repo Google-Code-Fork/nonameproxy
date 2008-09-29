@@ -3,7 +3,7 @@
 #include "messagefactory.h"
 #include "tibiatypes.h"
 #include "tibiamessage.h"
-#include "messageids.h"
+#include "enums.h"
 
 LSMessageFactory::LSMessageFactory (NetworkMessage* msg,
                                         GameState* gs,
@@ -252,6 +252,30 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMQuestList (_msg, _gs, _dat));
         } else if (id == GRM_SUB_QUEST_LIST_ID) {
                 return (new GRMSubQuestList (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_LIST_ID) {
+                return (new GRMChannelList (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_OPEN_ID) {
+                return (new GRMChannelOpen (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_PLAYER_ID) {
+                return (new GRMChannelPlayer (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_RULE_OPEN_ID) {
+                return (new GRMChannelRuleOpen (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_RULE_U1_ID) {
+                return (new GRMChannelRuleU1 (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_RULE_U2_ID) {
+                return (new GRMChannelRuleU2 (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_RULE_U3_ID) {
+                return (new GRMChannelRuleU3 (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_CHAT_ID) {
+                return (new GRMChannelChat (_msg, _gs, _dat));
+        } else if (id == GRM_CHANNEL_CLOSE_ID) {
+                return (new GRMChannelClose (_msg, _gs, _dat));
+        } else if (id == GRM_PLAYER_CANCEL_WALK_ID) {
+                return (new GRMPlayerCancelWalk (_msg, _gs, _dat));
+        } else if (id == GRM_TEXT_WINDOW_ID) {
+                return (new GRMTextWindow (_msg, _gs, _dat));
+        } else if (id == GRM_TEXT_HOUSE_ID) {
+                return (new GRMTextHouse (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GR Message 0x%X\n", id);
         return NULL;
