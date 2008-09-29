@@ -6,6 +6,7 @@
 #include "tibiatypes.h"
 #include "networkmessage.h"
 #include "datreader.h"
+#include "enums.h"
 
 //TWord8
 TWord8::TWord8 (uint8_t val)
@@ -3466,3 +3467,492 @@ void TChannelList::get (NetworkMessage* msg)
         _it = _channels.begin ();
 }
 
+/***************************************************************************
+ * TSpeak
+ ***************************************************************************/
+ 
+TSpeak::TSpeak (NetworkMessage* msg)
+{
+        get (msg);
+}
+
+TSpeak::TSpeak (uint32_t                u1, 
+                const std::string&      name,
+                uint16_t                level, 
+                uint8_t                 type)
+{
+        _u1 =   new TWord32 (u1);
+        _name = new TString (name);
+        _level =  new TWord16 (level);
+        _type = new TWord8 (type);
+}
+
+TSpeak::TSpeak (const TSpeak& clone)
+{
+        _u1 =   new TWord32 (*clone._u1);
+        _name = new TString (*clone._name);
+        _level =  new TWord16 (*clone._level);
+        _type = new TWord8 (*clone._type);
+}
+
+TSpeak::~TSpeak ()
+{
+        delete _u1;
+        delete _name;
+        delete _level;
+        delete _type;
+}
+
+uint32_t TSpeak::getU1 () const
+{
+        return _u1->getVal ();
+}
+
+const std::string& TSpeak::getName () const
+{
+        return _name->getString ();
+}
+
+uint16_t TSpeak::getLevel () const
+{
+        return _level->getVal ();
+}
+
+uint8_t TSpeak::getType () const
+{
+        return _type->getVal ();
+}
+
+void TSpeak::put (NetworkMessage* msg) const
+{
+        _u1->put (msg);
+        _name->put (msg);
+        _level->put (msg);
+        _type->put (msg);
+} 
+
+void TSpeak::get (NetworkMessage* msg)
+{
+        _u1 =   new TWord32 (msg);
+        _name = new TString (msg);
+        _level =  new TWord16 (msg);
+        _type = new TWord8 (msg);
+} 
+
+/***************************************************************************
+ * TPublicSpeak
+ ***************************************************************************/
+
+TPublicSpeak::TPublicSpeak (NetworkMessage* msg) : TSpeak (msg)
+{
+        get (msg);
+}
+
+TPublicSpeak::TPublicSpeak (uint32_t                    u1, 
+                            const std::string&          name,
+                            uint16_t                    level, 
+                            uint8_t                     type,
+                            const TPos&                 pos,  
+                            const std::string&          msg)
+: TSpeak (u1, name, level, type)
+{
+        
+        _pos = new TPos (pos);
+        _msg = new TString (msg);
+}
+
+TPublicSpeak::TPublicSpeak (const TPublicSpeak& clone) : TSpeak (clone)
+{
+        _pos = new TPos (*clone._pos);
+        _msg = new TString (*clone._msg);
+}
+
+TPublicSpeak::~TPublicSpeak ()
+{
+        delete _pos;
+        delete _msg;
+}
+
+const TPos& TPublicSpeak::getPos () const
+{
+        return *_pos;
+}
+
+const std::string& TPublicSpeak::getMsg () const
+{
+        return _msg->getString ();
+}
+
+TSpeak::SpeakType TPublicSpeak::getSpeakType () const
+{
+        return TSpeak::pub;
+}
+
+void TPublicSpeak::put (NetworkMessage* msg) const
+{
+        TSpeak::put (msg);
+
+        _pos->put (msg);
+        _msg->put (msg);
+}
+
+void TPublicSpeak::get (NetworkMessage* msg)
+{
+        //note TSpeaks constructor has already called TSpeak::get ()
+        _pos = new TPos (msg);
+        _msg = new TString (msg);
+}
+
+/***************************************************************************
+ * TChannelSpeak
+ ***************************************************************************/
+
+TChannelSpeak::TChannelSpeak (NetworkMessage* msg) : TSpeak (msg)
+{
+        get (msg);
+}
+
+TChannelSpeak::TChannelSpeak (uint32_t                    u1, 
+                              const std::string&          name,
+                              uint16_t                    level, 
+                              uint8_t                     type,
+                              uint16_t                    channelid,
+                              const std::string&          msg)
+: TSpeak (u1, name, level, type)
+{
+        
+        _channelid = new TWord16 (channelid);
+        _msg = new TString (msg);
+}
+
+TChannelSpeak::TChannelSpeak (const TChannelSpeak& clone) : TSpeak (clone)
+{
+        _channelid = new TWord16 (*clone._channelid);
+        _msg = new TString (*clone._msg);
+}
+
+TChannelSpeak::~TChannelSpeak ()
+{
+        delete _channelid;
+        delete _msg;
+}
+
+uint16_t TChannelSpeak::getChannelId () const
+{
+        return _channelid->getVal ();
+}
+
+const std::string& TChannelSpeak::getMsg () const
+{
+        return _msg->getString ();
+}
+
+TSpeak::SpeakType TChannelSpeak::getSpeakType () const
+{
+        return TSpeak::channel;
+}
+
+void TChannelSpeak::put (NetworkMessage* msg) const
+{
+        TSpeak::put (msg);
+
+        _channelid->put (msg);
+        _msg->put (msg);
+}
+
+void TChannelSpeak::get (NetworkMessage* msg)
+{
+        //note TSpeaks constructor has already called TSpeak::get ()
+        _channelid = new TWord16 (msg);
+        _msg = new TString (msg);
+}
+
+/***************************************************************************
+ * TPrivateSpeak
+ ***************************************************************************/
+
+TPrivateSpeak::TPrivateSpeak (NetworkMessage* msg) : TSpeak (msg)
+{
+        get (msg);
+}
+
+TPrivateSpeak::TPrivateSpeak (uint32_t                    u1, 
+                              const std::string&          name,
+                              uint16_t                    level, 
+                              uint8_t                     type,
+                              const std::string&          msg)
+: TSpeak (u1, name, level, type)
+{
+        
+        _msg = new TString (msg);
+}
+
+TPrivateSpeak::TPrivateSpeak (const TPrivateSpeak& clone) : TSpeak (clone)
+{
+        _msg = new TString (*clone._msg);
+}
+
+TPrivateSpeak::~TPrivateSpeak ()
+{
+        delete _msg;
+}
+
+const std::string& TPrivateSpeak::getMsg () const
+{
+        return _msg->getString ();
+}
+
+TSpeak::SpeakType TPrivateSpeak::getSpeakType () const
+{
+        return TSpeak::priv;
+}
+
+void TPrivateSpeak::put (NetworkMessage* msg) const
+{
+        TSpeak::put (msg);
+
+        _msg->put (msg);
+}
+
+void TPrivateSpeak::get (NetworkMessage* msg)
+{
+        //note TSpeaks constructor has already called TSpeak::get ()
+        _msg = new TString (msg);
+}
+
+/***************************************************************************
+ * TRuleNumberSpeak
+ ***************************************************************************/
+
+TRuleNumberSpeak::TRuleNumberSpeak (NetworkMessage* msg) : TSpeak (msg)
+{
+        get (msg);
+}
+
+TRuleNumberSpeak::TRuleNumberSpeak (uint32_t                    u1, 
+                              const std::string&          name,
+                              uint16_t                    level, 
+                              uint8_t                     type,
+                              uint32_t                    rulenumber,
+                              const std::string&          msg)
+: TSpeak (u1, name, level, type)
+{
+        
+        _rulenumber = new TWord32 (rulenumber);
+        _msg = new TString (msg);
+}
+
+TRuleNumberSpeak::TRuleNumberSpeak (const TRuleNumberSpeak& clone) : TSpeak (clone)
+{
+        _rulenumber = new TWord32 (*clone._rulenumber);
+        _msg = new TString (*clone._msg);
+}
+
+TRuleNumberSpeak::~TRuleNumberSpeak ()
+{
+        delete _rulenumber;
+        delete _msg;
+}
+
+uint32_t TRuleNumberSpeak::getRuleNumber () const
+{
+        return _rulenumber->getVal ();
+}
+
+const std::string& TRuleNumberSpeak::getMsg () const
+{
+        return _msg->getString ();
+}
+
+TSpeak::SpeakType TRuleNumberSpeak::getSpeakType () const
+{
+        return TSpeak::channel;
+}
+
+void TRuleNumberSpeak::put (NetworkMessage* msg) const
+{
+        TSpeak::put (msg);
+
+        _rulenumber->put (msg);
+        _msg->put (msg);
+}
+
+void TRuleNumberSpeak::get (NetworkMessage* msg)
+{
+        //note TSpeaks constructor has already called TSpeak::get ()
+        _rulenumber = new TWord32 (msg);
+        _msg = new TString (msg);
+}
+
+/***************************************************************************
+ * TRuleSpeak
+ ***************************************************************************/
+
+TRuleSpeak::TRuleSpeak (NetworkMessage* msg) : TSpeak (msg)
+{
+        get (msg);
+}
+
+TRuleSpeak::TRuleSpeak (uint32_t                    u1, 
+                              const std::string&          name,
+                              uint16_t                    level, 
+                              uint8_t                     type,
+                              const std::string&          msg)
+: TSpeak (u1, name, level, type)
+{
+        
+        _msg = new TString (msg);
+}
+
+TRuleSpeak::TRuleSpeak (const TRuleSpeak& clone) : TSpeak (clone)
+{
+        _msg = new TString (*clone._msg);
+}
+
+TRuleSpeak::~TRuleSpeak ()
+{
+        delete _msg;
+}
+
+const std::string& TRuleSpeak::getMsg () const
+{
+        return _msg->getString ();
+}
+
+TSpeak::SpeakType TRuleSpeak::getSpeakType () const
+{
+        return TSpeak::priv;
+}
+
+void TRuleSpeak::put (NetworkMessage* msg) const
+{
+        TSpeak::put (msg);
+
+        _msg->put (msg);
+}
+
+void TRuleSpeak::get (NetworkMessage* msg)
+{
+        //note TSpeaks constructor has already called TSpeak::get ()
+        _msg = new TString (msg);
+}
+
+/***************************************************************************
+ * TSpeakFactory
+ ***************************************************************************/
+
+TSpeakFactory::TSpeakFactory (NetworkMessage* msg)
+{
+        _msg = msg;
+        _readable = true;
+}
+
+TSpeakFactory::TSpeakFactory ()
+{
+        _readable = false;
+}
+                
+TSpeak* TSpeakFactory::getSpeak ()
+{
+        if (!_readable) {
+                printf ("error: TSpeakFactory not initialized to read\n");
+                return NULL;
+        }
+        //get the message type
+        uint32_t oldpos = _msg->getPos ();
+        TWord32 unk (_msg);
+        TString name (_msg);
+        TWord16 level (_msg);
+        uint8_t type = TWord8 (_msg).getVal ();
+        _msg->setPos (oldpos);
+
+        switch (type)
+        {
+                case SPEAK_SAY:
+                case SPEAK_WHISPER:
+                case SPEAK_YELL:
+                case SPEAK_MONSTER_SAY:
+                case SPEAK_MONSTER_YELL:
+                case SPEAK_PRIVATE_NP:
+                case SPEAK_PRIVATE_PN:
+                {
+                        return new TPublicSpeak (_msg);
+                }
+
+                case SPEAK_CHANNEL_R1:
+                case SPEAK_CHANNEL_R2:
+                case SPEAK_CHANNEL_O:
+                case SPEAK_CHANNEL_Y:
+                {
+                        return new TChannelSpeak (_msg);
+                }
+                case SPEAK_PRIVATE:
+                case SPEAK_BROADCAST:
+                case SPEAK_PRIVATE_RED:
+                {
+                        return new TPrivateSpeak (_msg);
+                }
+                //case SPEAK_CHANNEL_UNK6:
+                {
+                        return new TRuleNumberSpeak (_msg);
+                }
+                case SPEAK_CHANNEL_UNK7:
+                case SPEAK_CHANNEL_UNK8:
+                {
+                        return new TRuleSpeak (_msg);
+                        break;
+                }
+                default:
+                {
+                        uint32_t tmp = type;
+                        printf ("TSpeakFactory: unknown speak type %d\n", tmp);
+                }
+        }
+}
+TSpeak* TSpeakFactory::cloneSpeak (const TSpeak& clone)
+{
+        uint8_t type = clone.getType ();
+        switch (type)
+        {
+                case SPEAK_SAY:
+                case SPEAK_WHISPER:
+                case SPEAK_YELL:
+                case SPEAK_MONSTER_SAY:
+                case SPEAK_MONSTER_YELL:
+                case SPEAK_PRIVATE_NP:
+                case SPEAK_PRIVATE_PN:
+                {
+                        return new TPublicSpeak (_msg);
+                }
+
+                case SPEAK_CHANNEL_R1:
+                case SPEAK_CHANNEL_R2:
+                case SPEAK_CHANNEL_O:
+                case SPEAK_CHANNEL_Y:
+                {
+                        return new TChannelSpeak (_msg);
+                }
+                case SPEAK_PRIVATE:
+                case SPEAK_BROADCAST:
+                case SPEAK_PRIVATE_RED:
+                {
+                        return new TPrivateSpeak (_msg);
+                }
+                //case SPEAK_CHANNEL_UNK6:
+                {
+                        return new TRuleNumberSpeak (_msg);
+                }
+                case SPEAK_CHANNEL_UNK7:
+                case SPEAK_CHANNEL_UNK8:
+                {
+                        return new TRuleSpeak (_msg);
+                        break;
+                }
+                default:
+                {
+                        uint32_t tmp = type;
+                        printf ("TSpeakFactory: unknown speak type %d\n", tmp);
+                }
+        }
+}
+        

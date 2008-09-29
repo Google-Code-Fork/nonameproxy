@@ -140,7 +140,7 @@ TibiaMessage* GRMessageFactory::getMessage ()
 
         _msg->peekU8 (id);
         //uint32_t tmp = id;
-        //printf ("GRM 0x%X\n", tmp);
+        //printf ("GRM 0x%d\n", _msg->getPos ());
         
         if (id == GRM_SELF_INFO_ID) {
                 return (new GRMSelfInfo (_msg, _gs, _dat));
@@ -276,6 +276,8 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMTextWindow (_msg, _gs, _dat));
         } else if (id == GRM_TEXT_HOUSE_ID) {
                 return (new GRMTextHouse (_msg, _gs, _dat));
+        } else if (id == GRM_SPEAK_ID) {
+                return (new GRMSpeak (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GR Message 0x%X\n", id);
         return NULL;

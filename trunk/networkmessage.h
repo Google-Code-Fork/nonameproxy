@@ -29,7 +29,10 @@ class NetworkMessage
                 //for efficient socket use
                 NetworkMessage (uint32_t size, uint8_t* buffer);
                 uint8_t* getBuffer ();
+
                 void setPos (uint32_t pos);
+                uint32_t getPos ();
+
                 bool isRSA ();
                 bool isEOF ();
                 bool isXTEAEOF ();
@@ -73,6 +76,7 @@ class NetworkMessage
 
                 friend class TThingFactory;
                 friend class TOutfitFactory;
+                friend class TSpeakFactory;
 
                 //this is for testing only
                 friend class GRMTileUpdate;

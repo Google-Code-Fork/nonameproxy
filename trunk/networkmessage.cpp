@@ -72,6 +72,11 @@ void NetworkMessage::setPos (uint32_t pos)
         _curpos = pos;
 }
 
+uint32_t NetworkMessage::getPos ()
+{
+        return _curpos;
+}
+
 bool NetworkMessage::isRSA ()
 {
         uint16_t size = *(uint16_t*)_buffer;

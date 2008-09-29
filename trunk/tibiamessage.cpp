@@ -5142,3 +5142,65 @@ void GRMChannelList::get (NetworkMessage* msg, GameState* gs,
         _channellist = new TChannelList (msg);
 }
 
+/***************************************************************
+ * Speak
+ ***************************************************************/
+
+GRMSpeak::GRMSpeak (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMSpeak::GRMSpeak (const TSpeak& speak)
+{
+        _id = new TWord8 ((uint8_t)GRM_SPEAK_ID);
+        
+        TSpeakFactory sf;
+        _speak = sf.cloneSpeak (speak);
+}
+
+GRMSpeak::GRMSpeak (const GRMSpeak& clone)
+{
+        _id = new TWord8 (*clone._id);
+
+        TSpeakFactory sf;
+        _speak = sf.cloneSpeak (*clone._speak);
+}
+        
+GRMSpeak::~GRMSpeak ()
+{
+        delete _id;
+        delete _speak;
+}
+
+void GRMSpeak::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _speak->put (msg);
+}
+
+void GRMSpeak::show ()
+{
+        printf ("GRMSpeak {\n");
+        printf ("\t"); _speak->show (); printf ("\n}\n");
+}
+
+uint8_t GRMSpeak::getId ()
+{
+        return _id->getVal ();
+}
+
+const TSpeak& GRMSpeak::getSpeak ()
+{
+        return *_speak;
+}
+
+void GRMSpeak::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        
+        TSpeakFactory sf (msg);
+        _speak = sf.getSpeak ();
+}
+
