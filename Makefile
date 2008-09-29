@@ -22,7 +22,7 @@ main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h login
 
 tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h enums.h
 
-tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h datreader.h
+tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h datreader.h enums.h
 
 tibiacrypt.o: tibiacrypt.cpp tibiacrypt.h rsa.h xtea.h networkmessage.h
 

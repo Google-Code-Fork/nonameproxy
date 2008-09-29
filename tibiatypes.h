@@ -570,6 +570,232 @@ class TOutfitFactory
                 bool _readable;
 };
 
+/***************************************************************************
+ * TSpeak
+ * This is a fun one, tibia has 17 different speak types. Many of these are
+ * very similar, and there are only 5 distinct message formats. The solution
+ * will be as follows:
+ * One base class with
+ *      Unkown32
+ *      name
+ *      level
+ *      type
+ * as these are common to all speaks
+ * 5 classes will be derived from this taking care of extra information
+ ***************************************************************************/
+ 
+class TSpeak
+{
+        public:
+                enum SpeakType
+                {
+                        pub,
+                        channel,
+                        priv,
+                        rule_num,
+                        rule_text,
+                };
+
+                TSpeak (NetworkMessage* msg);
+                TSpeak (uint32_t                u1, 
+                        const std::string&      name,
+                        uint16_t                level, 
+                        uint8_t                 type);
+
+                TSpeak (const TSpeak& clone);
+                virtual ~TSpeak ();
+
+                uint32_t           getU1 () const;
+                const std::string& getName () const;
+                uint16_t           getLevel () const;
+                uint8_t            getType () const;
+                
+                virtual SpeakType getSpeakType () const = 0;
+                virtual void put (NetworkMessage* msg) const = 0;
+                virtual void show () const {}; //show might not be implemented
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord32* _u1;
+                TString* _name;
+                TWord16* _level;
+                TWord8*  _type;
+};
+
+/***************************************************************************
+ * TPublicSpeak
+ ***************************************************************************/
+
+class TPublicSpeak : public TSpeak
+{
+        public:
+                TPublicSpeak (NetworkMessage* msg);
+                TPublicSpeak (uint32_t                  u1, 
+                              const std::string&        name,
+                              uint16_t                  level, 
+                              uint8_t                   type,
+                              const TPos&               pos,  
+                              const std::string&        msg);
+
+                TPublicSpeak (const TPublicSpeak& clone);
+                virtual ~TPublicSpeak ();
+
+                const TPos&             getPos () const;
+                const std::string&      getMsg () const;
+
+                virtual SpeakType getSpeakType () const;
+                virtual void put (NetworkMessage* msg) const;
+                virtual void show () const {};
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TPos*    _pos;
+                TString* _msg;
+};
+
+/***************************************************************************
+ * TChannelSpeak
+ ***************************************************************************/
+
+class TChannelSpeak : public TSpeak
+{
+        public:
+                TChannelSpeak (NetworkMessage* msg);
+                TChannelSpeak (uint32_t                  u1, 
+                              const std::string&        name,
+                              uint16_t                  level, 
+                              uint8_t                   type,
+                              uint16_t                  channelid,
+                              const std::string&        msg);
+
+                TChannelSpeak (const TChannelSpeak& clone);
+                virtual ~TChannelSpeak ();
+
+                uint16_t                getChannelId () const;
+                const std::string&      getMsg () const;
+
+                virtual SpeakType getSpeakType () const;
+                virtual void put (NetworkMessage* msg) const;
+                virtual void show () const {};
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord16* _channelid;
+                TString* _msg;
+};
+
+/***************************************************************************
+ * TPrivateSpeak
+ ***************************************************************************/
+
+class TPrivateSpeak : public TSpeak
+{
+        public:
+                TPrivateSpeak (NetworkMessage* msg);
+                TPrivateSpeak (uint32_t                  u1, 
+                               const std::string&        name,
+                               uint16_t                  level, 
+                               uint8_t                   type,
+                               const std::string&        msg);
+
+                TPrivateSpeak (const TPrivateSpeak& clone);
+                virtual ~TPrivateSpeak ();
+
+                const std::string&      getMsg () const;
+
+                virtual SpeakType getSpeakType () const;
+                virtual void put (NetworkMessage* msg) const;
+                virtual void show () const {};
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TString* _msg;
+};
+
+/***************************************************************************
+ * TRuleNumberSpeak
+ ***************************************************************************/
+
+class TRuleNumberSpeak : public TSpeak
+{
+        public:
+                TRuleNumberSpeak (NetworkMessage* msg);
+                TRuleNumberSpeak (uint32_t                 u1, 
+                               const std::string&       name,
+                               uint16_t                 level, 
+                               uint8_t                  type,
+                               uint32_t                 rulenumber,
+                               const std::string&       msg);
+
+                TRuleNumberSpeak (const TRuleNumberSpeak& clone);
+                virtual ~TRuleNumberSpeak ();
+
+                uint32_t                getRuleNumber () const;
+                const std::string&      getMsg () const;
+
+                virtual SpeakType getSpeakType () const;
+                virtual void put (NetworkMessage* msg) const;
+                virtual void show () const {};
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord32* _rulenumber;
+                TString* _msg;
+};
+
+/***************************************************************************
+ * TRuleSpeak
+ ***************************************************************************/
+
+class TRuleSpeak : public TSpeak
+{
+        public:
+                TRuleSpeak (NetworkMessage* msg);
+                TRuleSpeak (uint32_t                 u1, 
+                               const std::string&       name,
+                               uint16_t                 level, 
+                               uint8_t                  type,
+                               const std::string&       msg);
+
+                TRuleSpeak (const TRuleSpeak& clone);
+                virtual ~TRuleSpeak ();
+
+                const std::string&      getMsg () const;
+
+                virtual TSpeak::SpeakType getSpeakType () const;
+                virtual void put (NetworkMessage* msg) const;
+                virtual void show () const {};
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TString* _msg;
+};
+
+/***************************************************************************
+ * TSpeakFactory
+ ***************************************************************************/
+
+class TSpeakFactory
+{
+        public:
+                TSpeakFactory (NetworkMessage* msg);
+                TSpeakFactory ();
+                
+                TSpeak* getSpeak ();
+                TSpeak* cloneSpeak (const TSpeak& clone);
+
+        private:
+                NetworkMessage* _msg;
+
+                bool _readable;
+};
+
 /************************************************************************
  * TMapDescription
  * The Map is stored in the same way as it is presented in the packet

@@ -2333,5 +2333,33 @@ class GRMPlayerCancelWalk : public TibiaMessage
                 TWord8* _direction;
 };
 
+/***************************************************************
+ * Speak
+ ***************************************************************/
+
+class GRMSpeak : public TibiaMessage
+{
+        public:
+                GRMSpeak (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMSpeak (const TSpeak& speak);
+                GRMSpeak (const GRMSpeak& clone);
+                virtual ~GRMSpeak ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TSpeak& getSpeak ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TSpeak* _speak;
+};
+
 #endif
 

@@ -134,6 +134,11 @@ bool Client::runLogin (Connection* acceptedConn)
 
 bool Client::runGame (Connection* acceptedConn)
 {
+        /* TEMP GAME STATE */
+        Pos pos (100,100,6); //above floor
+        gstate->map->setCurPos (pos);
+        /* TEMP GAME STATE */
+
         sendHM = new HookManager ();
         sendHM->addReadHook (0x0A, (ReadHook*)(new HRGameInit));
 
@@ -200,10 +205,20 @@ bool Client::runGame (Connection* acceptedConn)
                         serverConn->putMsg (msg);
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
+
                         crypt->decrypt (msg);
+
+                        printf ("init\n");
+                        msg->show ();
+
+                        GRMessageList* grml = new GRMessageList (msg, gstate, dat);
+                        msg = grml->put ();
+
+                        printf ("remade\n");
                         msg->show ();
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
+                        printf ("\n\n");
                 }
         }
 
