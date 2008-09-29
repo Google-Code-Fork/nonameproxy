@@ -2094,34 +2094,39 @@ GRMMagicEffect::GRMMagicEffect (NetworkMessage* msg, GameState* gs,
         get (msg, gs, dat);
 }
 
-GRMMagicEffect::GRMMagicEffect (const TEffect& effect)
+GRMMagicEffect::GRMMagicEffect (const TPos& pos, uint8_t effect)
 {
         _id = new TWord8 ((uint8_t)GRM_MAGIC_EFFECT_ID);
-        _effect = new TEffect (effect);
+        _pos = new TPos (pos);
+        _effect = new TWord8 (effect);
 }
 
 GRMMagicEffect::GRMMagicEffect (const GRMMagicEffect& clone)
 {
         _id = new TWord8 (*clone._id);
-        _effect = new TEffect (*clone._effect);
+        _pos = new TPos (*clone._pos);
+        _effect = new TWord8 (*clone._effect);
 }
         
 GRMMagicEffect::~GRMMagicEffect ()
 {
         delete _id;
+        delete _pos;
         delete _effect;
 }
 
 void GRMMagicEffect::put (NetworkMessage* msg)
 {
         _id->put (msg);
+        _pos->put (msg);
         _effect->put (msg);
 }
 
 void GRMMagicEffect::show ()
 {
         printf ("TEffect {\n");
-        _effect->show ();
+        printf ("\tpos: "); _pos->show (); printf ("\n");
+        printf ("\teffect: "); _effect->show (); printf ("\n");
         printf ("}\n");
 }
 
@@ -2130,15 +2135,21 @@ uint8_t GRMMagicEffect::getId ()
         return _id->getVal ();
 }
 
-const TEffect& GRMMagicEffect::getEffect () const
+uint8_t GRMMagicEffect::getEffect () const
 {
-        return *_effect;
+        return _effect->getVal ();
+}
+
+const TPos& GRMMagicEffect::getPos () const
+{
+        return *_pos;
 }
 
 void GRMMagicEffect::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
-        _effect = new TEffect (msg);
+        _pos = new TPos (msg);
+        _effect = new TWord8 (msg);
 }
         
 /***************************************************************
@@ -3516,5 +3527,828 @@ void GRMPlayerCancelAttack::get (NetworkMessage* msg, GameState* gs,
                                         DatReader* dat)
 {
         _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * ShopTrade
+ ***************************************************************/
+
+GRMShopTrade::GRMShopTrade (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMShopTrade::GRMShopTrade (TShopList* shoplist)
+{
+        _id = new TWord8 ((uint8_t)GRM_SHOP_TRADE_ID);
+        _shoplist = shoplist;
+}
+
+GRMShopTrade::GRMShopTrade (const GRMShopTrade& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _shoplist = new TShopList (*clone._shoplist);
+}
+        
+GRMShopTrade::~GRMShopTrade ()
+{
+        delete _id;
+        delete _shoplist;
+}
+
+void GRMShopTrade::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _shoplist->put (msg);
+}
+
+void GRMShopTrade::show ()
+{
+        printf ("GRMShopTrade {\n");
+        _shoplist->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMShopTrade::getId ()
+{
+        return _id->getVal ();
+}
+
+TShopList& GRMShopTrade::getShopList ()
+{
+        return *_shoplist;
+}
+
+void GRMShopTrade::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _shoplist = new TShopList (msg, dat);
+}
+
+/***************************************************************
+ * ShopGold
+ ***************************************************************/
+
+GRMShopGold::GRMShopGold (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMShopGold::GRMShopGold (uint32_t ngold)
+{
+        _id = new TWord8 ((uint8_t)GRM_SHOP_GOLD_ID);
+        _ngold = new TWord32 (ngold);
+}
+
+GRMShopGold::GRMShopGold (const GRMShopGold& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _ngold = new TWord32 (*clone._ngold);
+}
+        
+GRMShopGold::~GRMShopGold ()
+{
+        delete _id;
+        delete _ngold;
+}
+
+void GRMShopGold::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _ngold->put (msg);
+}
+
+void GRMShopGold::show ()
+{
+        printf ("GRMShopGold {gold: "); _ngold->show (); printf ("}\n");
+}
+
+uint8_t GRMShopGold::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMShopGold::getNGold ()
+{
+        return _ngold->getVal ();
+}
+
+void GRMShopGold::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _ngold = new TWord32 (msg);
+}
+
+/***************************************************************
+ * ShopClose
+ ***************************************************************/
+
+GRMShopClose::GRMShopClose (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMShopClose::GRMShopClose ()
+{
+        _id = new TWord8 ((uint8_t)GRM_SHOP_CLOSE_ID);
+}
+
+GRMShopClose::GRMShopClose (const GRMShopClose& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GRMShopClose::~GRMShopClose ()
+{
+        delete _id;
+}
+
+void GRMShopClose::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GRMShopClose::show ()
+{
+        printf ("GRMShopClose {}\n");
+}
+
+uint8_t GRMShopClose::getId ()
+{
+        return _id->getVal ();
+}
+
+void GRMShopClose::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * TShootEffect
+ ***************************************************************/
+
+GRMShootEffect::GRMShootEffect (NetworkMessage* msg, GameState* gs,
+                                DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMShootEffect::GRMShootEffect (const TPos& start, const TPos& end,
+                                uint8_t effect)
+{
+        _id = new TWord8 ((uint8_t)GRM_SHOOT_EFFECT_ID);
+        _start = new TPos (start);
+        _end = new TPos (end);
+        _effect = new TWord8 (effect);
+}
+
+GRMShootEffect::GRMShootEffect (const GRMShootEffect& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _start = new TPos (*clone._start);
+        _end = new TPos (*clone._end);
+        _effect = new TWord8 (*clone._effect);
+}
+        
+GRMShootEffect::~GRMShootEffect ()
+{
+        delete _id;
+        delete _start;
+        delete _end;
+        delete _effect;
+}
+
+void GRMShootEffect::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _start->put (msg);
+        _end->put (msg);
+        _effect->put (msg);
+}
+
+void GRMShootEffect::show ()
+{
+        printf ("TShootEffect {\n");
+        printf ("\tstart: "); _start->show (); printf ("\n");
+        printf ("\tend: "); _end->show (); printf ("\n");
+        printf ("\teffect: "); _effect->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMShootEffect::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMShootEffect::getEffect () const
+{
+        return _effect->getVal ();
+}
+
+const TPos& GRMShootEffect::getStart () const
+{
+        return *_start;
+}
+
+const TPos& GRMShootEffect::getEnd () const
+{
+        return *_end;
+}
+
+void GRMShootEffect::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _start = new TPos (msg);
+        _end = new TPos (msg);
+        _effect = new TWord8 (msg);
+}
+
+/***************************************************************
+ * PlayerIcons
+ ***************************************************************/
+
+GRMPlayerIcons::GRMPlayerIcons (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMPlayerIcons::GRMPlayerIcons (uint16_t icons)
+{
+        _id = new TWord8 ((uint8_t)GRM_SHOP_GOLD_ID);
+        _icons = new TWord16 (icons);
+}
+
+GRMPlayerIcons::GRMPlayerIcons (const GRMPlayerIcons& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _icons = new TWord16 (*clone._icons);
+}
+        
+GRMPlayerIcons::~GRMPlayerIcons ()
+{
+        delete _id;
+        delete _icons;
+}
+
+void GRMPlayerIcons::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _icons->put (msg);
+}
+
+void GRMPlayerIcons::show ()
+{
+        printf ("GRMPlayerIcons {icons: "); _icons->show (); printf ("}\n");
+}
+
+uint8_t GRMPlayerIcons::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GRMPlayerIcons::getIcons ()
+{
+        return _icons->getVal ();
+}
+
+void GRMPlayerIcons::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _icons = new TWord16 (msg);
+}
+
+/***************************************************************
+ * OutfitWindow
+ ***************************************************************/
+
+GRMOutfitWindow::GRMOutfitWindow (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMOutfitWindow::GRMOutfitWindow (const TOutfit& self, TOutfitList* outfits)
+{
+        _id = new TWord8 ((uint8_t)GRM_OUTFIT_WINDOW_ID);
+
+        TOutfitFactory of;
+        _self = of.cloneOutfit (self);
+        _outfits = outfits;
+}
+
+GRMOutfitWindow::GRMOutfitWindow (const GRMOutfitWindow& clone)
+{
+        _id = new TWord8 (*clone._id);
+
+        TOutfitFactory of;
+        _self = of.cloneOutfit (*clone._self);
+        _outfits = new TOutfitList (*clone._outfits);
+}
+        
+GRMOutfitWindow::~GRMOutfitWindow ()
+{
+        delete _id;
+        delete _self;
+        delete _outfits;
+}
+
+void GRMOutfitWindow::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _self->put (msg);
+        _outfits->put (msg);
+}
+
+void GRMOutfitWindow::show ()
+{
+        printf ("GRMOutfitWindow {\n");
+        printf ("\tself outfit: "); _self->show (); printf ("}\n");
+        printf ("\toutfit list: "); _outfits->show (); printf ("}\n");
+}
+
+uint8_t GRMOutfitWindow::getId ()
+{
+        return _id->getVal ();
+}
+
+const TOutfit& GRMOutfitWindow::getSelf ()
+{
+        return *_self;
+}
+
+TOutfitList& GRMOutfitWindow::getOutfits ()
+{
+        return *_outfits;
+}
+
+void GRMOutfitWindow::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        
+        TOutfitFactory of (msg, dat);
+        _self = of.getOutfit ();
+        _outfits = new TOutfitList (msg);
+}
+
+/***************************************************************
+ * VipInit
+ ***************************************************************/
+
+GRMVipInit::GRMVipInit (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMVipInit::GRMVipInit (uint32_t creatureid, const std::string& name,
+                                uint8_t online)
+{
+        _id = new TWord8 ((uint8_t)GRM_VIP_INIT_ID);
+        _creatureid = new TWord32 (creatureid);
+        _name = new TString (name);
+        _online = new TWord8 (online);
+}
+
+GRMVipInit::GRMVipInit (const GRMVipInit& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+        _name = new TString (*clone._name);
+        _online = new TWord8 (*clone._online);
+}
+        
+GRMVipInit::~GRMVipInit ()
+{
+        delete _id;
+        delete _creatureid;
+        delete _name;
+        delete _online;
+}
+
+void GRMVipInit::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+        _name->put (msg);
+        _online->put (msg);
+}
+
+void GRMVipInit::show ()
+{
+        printf ("GRMVipInit {\n"); 
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("\tonline: "); _online->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMVipInit::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMVipInit::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+const std::string& GRMVipInit::getName ()
+{
+        return _name->getString ();
+}
+
+uint8_t GRMVipInit::getOnline ()
+{
+        return _online->getVal ();
+}
+
+void GRMVipInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+        _name = new TString (msg);
+        _online = new TWord8 (msg);
+}
+
+/***************************************************************
+ * VipLogin
+ ***************************************************************/
+
+GRMVipLogin::GRMVipLogin (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMVipLogin::GRMVipLogin (uint32_t creatureid)
+{
+        _id = new TWord8 ((uint8_t)GRM_VIP_LOGIN_ID);
+        _creatureid = new TWord32 (creatureid);
+}
+
+GRMVipLogin::GRMVipLogin (const GRMVipLogin& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+}
+        
+GRMVipLogin::~GRMVipLogin ()
+{
+        delete _id;
+        delete _creatureid;
+}
+
+void GRMVipLogin::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+}
+
+void GRMVipLogin::show ()
+{
+        printf ("GRMVipLogin {\n"); 
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMVipLogin::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMVipLogin::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+void GRMVipLogin::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * VipLogout
+ ***************************************************************/
+
+GRMVipLogout::GRMVipLogout (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMVipLogout::GRMVipLogout (uint32_t creatureid)
+{
+        _id = new TWord8 ((uint8_t)GRM_VIP_LOGOUT_ID);
+        _creatureid = new TWord32 (creatureid);
+}
+
+GRMVipLogout::GRMVipLogout (const GRMVipLogout& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+}
+        
+GRMVipLogout::~GRMVipLogout ()
+{
+        delete _id;
+        delete _creatureid;
+}
+
+void GRMVipLogout::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+}
+
+void GRMVipLogout::show ()
+{
+        printf ("GRMVipLogout {\n"); 
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMVipLogout::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GRMVipLogout::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+void GRMVipLogout::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * ShowTutorial
+ ***************************************************************/
+
+GRMShowTutorial::GRMShowTutorial (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMShowTutorial::GRMShowTutorial (uint8_t tutorialid)
+{
+        _id = new TWord8 ((uint8_t)GRM_SHOW_TUTORIAL_ID);
+        _tutorialid = new TWord8 (tutorialid);
+}
+
+GRMShowTutorial::GRMShowTutorial (const GRMShowTutorial& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _tutorialid = new TWord8 (*clone._tutorialid);
+}
+        
+GRMShowTutorial::~GRMShowTutorial ()
+{
+        delete _id;
+        delete _tutorialid;
+}
+
+void GRMShowTutorial::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _tutorialid->put (msg);
+}
+
+void GRMShowTutorial::show ()
+{
+        printf ("GRMShowTutorial {\n"); 
+        printf ("\ttutorialid: "); _tutorialid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMShowTutorial::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GRMShowTutorial::getTutorialId ()
+{
+        return _tutorialid->getVal ();
+}
+
+void GRMShowTutorial::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _tutorialid = new TWord8 (msg);
+}
+
+/***************************************************************
+ * MiniMapMark
+ ***************************************************************/
+
+GRMMiniMapMark::GRMMiniMapMark (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMMiniMapMark::GRMMiniMapMark (const TPos& pos, uint8_t icon,
+                                const std::string& description)
+{
+        _id = new TWord8 ((uint8_t)GRM_MINI_MAP_MARK_ID);
+        _pos = new TPos (pos);
+        _icon = new TWord8 (icon);
+        _description = new TString (description);
+}
+
+GRMMiniMapMark::GRMMiniMapMark (const GRMMiniMapMark& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+        _icon = new TWord8 (*clone._icon);
+        _description = new TString (*clone._description);
+}
+        
+GRMMiniMapMark::~GRMMiniMapMark ()
+{
+        delete _id;
+        delete _pos;
+        delete _icon;
+        delete _description;
+}
+
+void GRMMiniMapMark::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _icon->put (msg);
+        _description->put (msg);
+}
+
+void GRMMiniMapMark::show ()
+{
+        printf ("GRMMiniMapMark {\n"); 
+        printf ("\tpos: "); _pos->show (); printf ("\n");
+        printf ("\ticon: "); _icon->show (); printf ("\n");
+        printf ("\tdescription: "); _description->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GRMMiniMapMark::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GRMMiniMapMark::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GRMMiniMapMark::getIcon ()
+{
+        return _icon->getVal ();
+}
+
+const std::string& GRMMiniMapMark::getDescription ()
+{
+        return _description->getString ();
+}
+
+void GRMMiniMapMark::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+        _icon = new TWord8 (msg);
+        _description = new TString (msg);
+}
+
+/***************************************************************
+ * QuestList
+ ***************************************************************/
+
+GRMQuestList::GRMQuestList (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMQuestList::GRMQuestList (TQuestList* questlist)
+{
+        _id = new TWord8 ((uint8_t)GRM_QUEST_LIST_ID);
+        _questlist = questlist;
+}
+
+GRMQuestList::GRMQuestList (const GRMQuestList& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _questlist = new TQuestList (*clone._questlist);
+}
+        
+GRMQuestList::~GRMQuestList ()
+{
+        delete _id;
+        delete _questlist;
+}
+
+void GRMQuestList::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _questlist->put (msg);
+}
+
+void GRMQuestList::show ()
+{
+        printf ("GRMQuestList {\n");
+        _questlist->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMQuestList::getId ()
+{
+        return _id->getVal ();
+}
+
+TQuestList& GRMQuestList::getQuestList ()
+{
+        return *_questlist;
+}
+
+void GRMQuestList::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _questlist = new TQuestList (msg);
+}
+
+/***************************************************************
+ * SubQuestList
+ ***************************************************************/
+
+GRMSubQuestList::GRMSubQuestList (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GRMSubQuestList::GRMSubQuestList (uint16_t questid, TSubQuestList* subquestlist)
+{
+        _id = new TWord8 ((uint8_t)GRM_SUB_QUEST_LIST_ID);
+        _questid = new TWord16 (questid);
+        _subquestlist = subquestlist;
+}
+
+GRMSubQuestList::GRMSubQuestList (const GRMSubQuestList& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _questid = new TWord16 (*clone._questid);
+        _subquestlist = new TSubQuestList (*clone._subquestlist);
+}
+        
+GRMSubQuestList::~GRMSubQuestList ()
+{
+        delete _id;
+        delete _questid;
+        delete _subquestlist;
+}
+
+void GRMSubQuestList::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _questid->put (msg);
+        _subquestlist->put (msg);
+}
+
+void GRMSubQuestList::show ()
+{
+        printf ("GRMSubQuestList {\n");
+        printf ("\tquestid: "); _questid->show (); printf ("\n");
+        _subquestlist->show ();
+        printf ("}\n");
+}
+
+uint8_t GRMSubQuestList::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GRMSubQuestList::getQuestId ()
+{
+        return _questid->getVal ();
+}
+
+TSubQuestList& GRMSubQuestList::getSubQuestList ()
+{
+        return *_subquestlist;
+}
+
+void GRMSubQuestList::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _questid = new TWord16 (msg);
+        _subquestlist = new TSubQuestList (msg);
 }
 

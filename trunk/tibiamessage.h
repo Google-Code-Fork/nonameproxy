@@ -570,7 +570,7 @@ class GRMMagicEffect : public TibiaMessage
         public:
                 GRMMagicEffect (NetworkMessage* msg, GameState* gs,
                               DatReader* dat);
-                GRMMagicEffect (const TEffect& effect);
+                GRMMagicEffect (const TPos& pos, uint8_t effect);
                 GRMMagicEffect (const GRMMagicEffect& clone);
                 virtual ~GRMMagicEffect ();
 
@@ -578,13 +578,15 @@ class GRMMagicEffect : public TibiaMessage
                 virtual void show ();
                 virtual uint8_t getId ();
 
-                const TEffect& getEffect () const;
+                uint8_t getEffect () const;
+                const TPos& getPos () const;
 
                 virtual void get (NetworkMessage* msg, GameState* gs,
                                   DatReader* dat);
         private:
                 TWord8* _id;
-                TEffect* _effect;
+                TPos* _pos;
+                TWord8* _effect;
 };
         
 /***************************************************************
@@ -1590,5 +1592,386 @@ class GRMPlayerCancelAttack : public TibiaMessage
                 TWord8*  _id;
 };
 
+/***************************************************************
+ * ShopTrade
+ ***************************************************************/
+
+class GRMShopTrade : public TibiaMessage
+{
+        public:
+                GRMShopTrade (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //This constructor takes control of shoplist
+                GRMShopTrade (TShopList* shoplist);
+                GRMShopTrade (const GRMShopTrade& clone);
+                virtual ~GRMShopTrade ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TShopList& getShopList ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TShopList* _shoplist;
+};
+
+/***************************************************************
+ * ShopGold
+ ***************************************************************/
+
+class GRMShopGold : public TibiaMessage
+{
+        public:
+                GRMShopGold (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMShopGold (uint32_t ngold);
+                GRMShopGold (const GRMShopGold& clone);
+                virtual ~GRMShopGold ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getNGold ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TWord32* _ngold;
+};
+
+/***************************************************************
+ * ShopClose
+ ***************************************************************/
+
+class GRMShopClose : public TibiaMessage
+{
+        public:
+                GRMShopClose (NetworkMessage* msg,
+                                        GameState* gs,
+                                        DatReader* dat);
+                GRMShopClose ();
+                GRMShopClose (const GRMShopClose& clone);
+                virtual ~GRMShopClose ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+};
+
+/***************************************************************
+ * GRMShootEffect
+ ***************************************************************/
+
+class GRMShootEffect : public TibiaMessage
+{
+        public:
+                GRMShootEffect (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat);
+                GRMShootEffect (const TPos& start, const TPos& end,
+                                        uint8_t effect);
+                GRMShootEffect (const GRMShootEffect& clone);
+                virtual ~GRMShootEffect ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getEffect () const;
+                const TPos& getStart () const;
+                const TPos& getEnd () const;
+
+                virtual void get (NetworkMessage* msg, GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TPos* _start;
+                TPos* _end;
+                TWord8* _effect;
+};
+        
+/***************************************************************
+ * PlayerIcons
+ ***************************************************************/
+
+class GRMPlayerIcons : public TibiaMessage
+{
+        public:
+                GRMPlayerIcons (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMPlayerIcons (uint16_t icons);
+                GRMPlayerIcons (const GRMPlayerIcons& clone);
+                virtual ~GRMPlayerIcons ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint16_t getIcons ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TWord16* _icons;
+};
+
+/***************************************************************
+ * OutfitWindow
+ ***************************************************************/
+
+class GRMOutfitWindow : public TibiaMessage
+{
+        public:
+                GRMOutfitWindow (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMOutfitWindow (const TOutfit& self, TOutfitList* outfits);
+                GRMOutfitWindow (const GRMOutfitWindow& clone);
+                virtual ~GRMOutfitWindow ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TOutfit& getSelf ();
+                TOutfitList& getOutfits ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TOutfit* _self;
+                TOutfitList* _outfits;
+};
+
+/***************************************************************
+ * VipInit
+ ***************************************************************/
+
+class GRMVipInit : public TibiaMessage
+{
+        public:
+                GRMVipInit (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMVipInit (uint32_t creatureid, const std::string& name,
+                                uint8_t online);
+                GRMVipInit (const GRMVipInit& clone);
+                virtual ~GRMVipInit ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+                const std::string& getName ();
+                uint8_t getOnline ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TWord32* _creatureid;
+                TString* _name;
+                TWord8*  _online;
+};
+
+/***************************************************************
+ * VipLogin
+ ***************************************************************/
+
+class GRMVipLogin : public TibiaMessage
+{
+        public:
+                GRMVipLogin (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMVipLogin (uint32_t creatureid);
+                GRMVipLogin (const GRMVipLogin& clone);
+                virtual ~GRMVipLogin ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TWord32* _creatureid;
+};
+
+/***************************************************************
+ * VipLogout
+ ***************************************************************/
+
+class GRMVipLogout : public TibiaMessage
+{
+        public:
+                GRMVipLogout (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMVipLogout (uint32_t creatureid);
+                GRMVipLogout (const GRMVipLogout& clone);
+                virtual ~GRMVipLogout ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint32_t getCreatureId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TWord32* _creatureid;
+};
+
+/***************************************************************
+ * ShowTutorial
+ ***************************************************************/
+
+class GRMShowTutorial : public TibiaMessage
+{
+        public:
+                GRMShowTutorial (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMShowTutorial (uint8_t tutorialid);
+                GRMShowTutorial (const GRMShowTutorial& clone);
+                virtual ~GRMShowTutorial ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint8_t getTutorialId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TWord8* _tutorialid;
+};
+
+/***************************************************************
+ * MiniMapMark
+ ***************************************************************/
+
+class GRMMiniMapMark : public TibiaMessage
+{
+        public:
+                GRMMiniMapMark (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GRMMiniMapMark (const TPos& pos, uint8_t icon, 
+                                        const std::string& description);
+                GRMMiniMapMark (const GRMMiniMapMark& clone);
+                virtual ~GRMMiniMapMark ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TPos& getPos ();
+                uint8_t getIcon ();
+                const std::string& getDescription ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8*  _id;
+                TPos*    _pos;
+                TWord8*  _icon;
+                TString* _description;
+};
+
+/***************************************************************
+ * QuestList
+ ***************************************************************/
+
+class GRMQuestList : public TibiaMessage
+{
+        public:
+                GRMQuestList (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //This constructor takes control of questlist
+                GRMQuestList (TQuestList* questlist);
+                GRMQuestList (const GRMQuestList& clone);
+                virtual ~GRMQuestList ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TQuestList& getQuestList ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TQuestList* _questlist;
+};
+
+/***************************************************************
+ * SubQuestList
+ ***************************************************************/
+
+class GRMSubQuestList : public TibiaMessage
+{
+        public:
+                GRMSubQuestList (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                //This constructor takes control of questlist
+                GRMSubQuestList (uint16_t questid, TSubQuestList* questlist);
+                GRMSubQuestList (const GRMSubQuestList& clone);
+                virtual ~GRMSubQuestList ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                uint16_t getQuestId ();
+                TSubQuestList& getSubQuestList ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+
+                TWord16* _questid;
+                TSubQuestList* _subquestlist;
+};
 #endif
 

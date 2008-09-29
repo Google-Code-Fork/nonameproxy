@@ -139,8 +139,8 @@ TibiaMessage* GRMessageFactory::getMessage ()
         uint8_t id;
 
         _msg->peekU8 (id);
-        uint32_t tmp = id;
-        printf ("GRM 0x%X\n", tmp);
+        //uint32_t tmp = id;
+        //printf ("GRM 0x%X\n", tmp);
         
         if (id == GRM_SELF_INFO_ID) {
                 return (new GRMSelfInfo (_msg, _gs, _dat));
@@ -182,6 +182,8 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMCreatureMove (_msg, _gs, _dat));
         } else if (id == GRM_MAGIC_EFFECT_ID) {
                 return (new GRMMagicEffect (_msg, _gs, _dat));
+        } else if (id == GRM_SHOOT_EFFECT_ID) {
+                return (new GRMShootEffect (_msg, _gs, _dat));
         } else if (id == GRM_SLOT_ITEM_ID) {
                 return (new GRMSlotItem (_msg, _gs, _dat));
         } else if (id == GRM_SLOT_CLEAR_ID) {
@@ -208,6 +210,8 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMPlayerStats (_msg, _gs, _dat));
         } else if (id == GRM_PLAYER_SKILLS_ID) {
                 return (new GRMPlayerSkills (_msg, _gs, _dat));
+        } else if (id == GRM_PLAYER_ICONS_ID) {
+                return (new GRMPlayerIcons (_msg, _gs, _dat));
         } else if (id == GRM_PLAYER_CANCEL_ATTACK_ID) {
                 return (new GRMPlayerCancelAttack (_msg, _gs, _dat));
         } else if (id == GRM_OPEN_CONTAINER_ID) {
@@ -226,6 +230,28 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMOpenPlayerTrade (_msg, _gs, _dat));
         } else if (id == GRM_CLOSE_TRADE_ID) {
                 return (new GRMCloseTrade (_msg, _gs, _dat));
+        } else if (id == GRM_SHOP_TRADE_ID) {
+                return (new GRMShopTrade (_msg, _gs, _dat));
+        } else if (id == GRM_SHOP_GOLD_ID) {
+                return (new GRMShopGold (_msg, _gs, _dat));
+        } else if (id == GRM_SHOP_CLOSE_ID) {
+                return (new GRMShopClose (_msg, _gs, _dat));
+        } else if (id == GRM_OUTFIT_WINDOW_ID) {
+                return (new GRMOutfitWindow (_msg, _gs, _dat));
+        } else if (id == GRM_VIP_INIT_ID) {
+                return (new GRMVipInit (_msg, _gs, _dat));
+        } else if (id == GRM_VIP_LOGIN_ID) {
+                return (new GRMVipLogin (_msg, _gs, _dat));
+        } else if (id == GRM_VIP_LOGOUT_ID) {
+                return (new GRMVipLogout (_msg, _gs, _dat));
+        } else if (id == GRM_SHOW_TUTORIAL_ID) {
+                return (new GRMShowTutorial (_msg, _gs, _dat));
+        } else if (id == GRM_MINI_MAP_MARK_ID) {
+                return (new GRMMiniMapMark (_msg, _gs, _dat));
+        } else if (id == GRM_QUEST_LIST_ID) {
+                return (new GRMQuestList (_msg, _gs, _dat));
+        } else if (id == GRM_SUB_QUEST_LIST_ID) {
+                return (new GRMSubQuestList (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GR Message 0x%X\n", id);
         return NULL;

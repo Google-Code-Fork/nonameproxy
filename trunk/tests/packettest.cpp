@@ -12,11 +12,13 @@ int loadpacket (uint8_t** buffer_ptr)
 {
         uint32_t s1 = 0, s2 = 0;
         //read the size
-        scanf ("%X", &s1);
-        scanf ("%X", &s2);
+        if (scanf ("%X", &s1) == EOF) return 0;
+        if (scanf ("%X", &s2) == EOF) {
+                printf ("Mal formed packet\n");
+                return 0;
+        }
 
         uint32_t size = 2 + s1 + s2 * 256 ;
-        printf ("size: %d\n", size);
 
         *buffer_ptr = new uint8_t[size];
         (*buffer_ptr)[0] = s1;
@@ -25,7 +27,10 @@ int loadpacket (uint8_t** buffer_ptr)
         uint32_t i;
         for (i = 2; i < size; i ++) {
                 uint32_t tmp;
-                scanf ("%X", &tmp);
+                if (scanf ("%X", &tmp) == EOF) {
+                        printf ("Mal formed packet\n");
+                        return 0;
+                }
                 (*buffer_ptr)[i] = tmp;
                 if (i % 16 == 15) {
                         while (getchar () != '\n');
@@ -45,9 +50,12 @@ int main (int argc, char** argv)
 
         int packetn = 1;
         while (1) {
-                printf ("testing packet %d\n", packetn);
                 uint8_t* inpacket;
                 int packet_size = loadpacket (&inpacket);
+                if (packet_size == 0) {
+                        break;
+                }
+                printf ("testing packet %d, size = %d\n", packetn, packet_size);
                 uint8_t* outpacket = new uint8_t[packet_size];
                 uint8_t* tmp = new uint8_t[packet_size];
                 memcpy (tmp, inpacket, packet_size);
@@ -55,7 +63,7 @@ int main (int argc, char** argv)
                 NetworkMessage* inmsg = new NetworkMessage (packet_size, tmp);
                 inmsg->setPos (4);
                 inmsg->show ();
-                printf ("\n\n");
+                printf ("\n");
 
                 GRMessageList ml (inmsg, gs, dat);
 
@@ -74,7 +82,9 @@ int main (int argc, char** argv)
                         }
                 }
                 if (!nerrors) {
-                        printf ("yay packet %d\n", packetn);
+                        printf ("yay packet %d\n\n", packetn);
+                } else {
+                        break;
                 }
                 packetn ++;
                 delete inpacket;
