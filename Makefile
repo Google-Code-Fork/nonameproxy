@@ -1,6 +1,6 @@
 # Makefile for nonameproxy
 
-#CPPFLAGS = -Wall -02
+#CPPFLAGS = -Wall -O2
 CPPFLAGS = -Wall -g -O0
 CC     = g++
 

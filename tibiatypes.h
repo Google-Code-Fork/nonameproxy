@@ -567,6 +567,8 @@ class TThingFactory
                 TThing* getThing ();
                 TThing* cloneThing (const TThing& thing);
 
+                void deleteThing (TThing* thing);
+
         private:
                 NetworkMessage* _msg;
                 DatReader*      _dat;
@@ -650,6 +652,8 @@ class TOutfitFactory
                 
                 TOutfit* getOutfit ();
                 TOutfit* cloneOutfit (const TOutfit& clone);
+
+                void deleteOutfit (TOutfit* Outfit);
 
         private:
                 NetworkMessage* _msg;
@@ -877,6 +881,7 @@ class TSpeakFactory
                 
                 TSpeak* getSpeak ();
                 TSpeak* cloneSpeak (const TSpeak& clone);
+                void deleteSpeak (TSpeak* speak);
 
         private:
                 NetworkMessage* _msg;
