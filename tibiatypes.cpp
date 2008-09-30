@@ -720,18 +720,168 @@ void TXItem::get (NetworkMessage* msg)
         _xByte = new TWord8 (msg);
 }
 
-//TCreature
+//TOldCreature
 
-TCreature::TCreature (NetworkMessage* msg, DatReader* dat)
+TOldCreature::TOldCreature (NetworkMessage* msg, DatReader* dat)
 {
         get (msg, dat);
 }
 
-TCreature::TCreature (uint32_t tibiaId, const std::string name, uint8_t hp,
+TOldCreature::TOldCreature (uint32_t tibiaId, uint8_t hp,
                 uint8_t direction, const TOutfit& outfit,
                 const TCreatureLight& light, uint16_t speed,
                 uint8_t skull, uint8_t shield)
 {
+        _itemId =       new TWord16 ((uint16_t)0x6200);
+        _tibiaId =      new TWord32 (tibiaId);
+        _hp =           new TWord8 (hp);
+        _direction =    new TWord8 (direction);
+        _light =        new TCreatureLight (light);
+        _speed =        new TWord16 (speed);
+        _skull =        new TWord8 (skull);
+        _shield =       new TWord8 (shield);
+        
+        TOutfitFactory of;
+        _outfit =       of.cloneOutfit (outfit);
+}
+
+TOldCreature::TOldCreature (const TOldCreature& clone)
+{
+        _itemId =       new TWord16 (*clone._itemId);
+        _tibiaId =      new TWord32 (*clone._tibiaId);
+        _hp =           new TWord8 (*clone._hp);
+        _direction =    new TWord8 (*clone._direction);
+        _light =        new TCreatureLight (*clone._light);
+        _speed =        new TWord16 (*clone._speed);
+        _skull =        new TWord8 (*clone._skull);
+        _shield =       new TWord8 (*clone._shield);
+        
+        TOutfitFactory of;
+        _outfit =       of.cloneOutfit (*clone._outfit);
+}
+
+TOldCreature::~TOldCreature ()
+{
+        delete _itemId;
+        delete _tibiaId;
+        delete _hp;
+        delete _direction;
+        delete _outfit;
+        delete _light;
+        delete _speed;
+        delete _skull;
+        delete _shield;
+}
+
+TThing::ThingType TOldCreature::getType () const
+{
+        return TThing::oldcreature;
+}
+                
+void TOldCreature::show () const
+{
+        printf ("\tTOldCreature {\n");
+        printf ("\t\t_tibiaId: "); _tibiaId->show (); printf ("\n");
+        printf ("\t\t_hp: "); _hp->show (); printf ("\n");
+        printf ("\t\t_direction: "); _direction->show (); printf ("\n");
+        printf ("\t\t_outfit: "); _outfit->show (); printf ("\n");
+        printf ("\t\t_light: "); _light->show (); printf ("\n");
+        printf ("\t\t_speed: "); _speed->show (); printf ("\n");
+        printf ("\t\t_skull: "); _skull->show (); printf ("\n");
+        printf ("\t\t_shield: "); _shield->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void TOldCreature::put (NetworkMessage* msg) const
+{
+        _itemId->put (msg);
+        _tibiaId->put (msg);
+        _hp->put (msg);
+        _direction->put (msg);
+        _outfit->put (msg);
+        _light->put (msg);
+        _speed->put (msg);
+        _skull->put (msg);
+        _shield->put (msg);
+}
+
+uint16_t TOldCreature::getItemId () const
+{
+        return _itemId->getVal ();
+}
+
+uint32_t TOldCreature::getTibiaId () const
+{
+        return _tibiaId->getVal ();
+}
+
+uint8_t TOldCreature::getHp () const
+{
+        return _hp->getVal ();
+}
+
+uint8_t TOldCreature::getDirection () const
+{
+        return _direction->getVal ();
+}
+
+const TOutfit& TOldCreature::getOutfit () const
+{
+        return *_outfit;
+}
+
+const TCreatureLight& TOldCreature::getCreatureLight () const
+{
+        return *_light;
+}
+
+uint16_t TOldCreature::getSpeed () const
+{
+        return _speed->getVal ();
+}
+
+uint8_t TOldCreature::getSkull () const
+{
+        return _skull->getVal ();
+}
+
+uint8_t TOldCreature::getShield () const
+{
+        return _shield->getVal ();
+}
+
+void TOldCreature::get (NetworkMessage* msg, DatReader* dat)
+{
+        _itemId = new TWord16 (msg);
+        _tibiaId = new TWord32 (msg); 
+        _hp = new TWord8 (msg); 
+        _direction = new TWord8 (msg); 
+
+        TOutfitFactory of (msg, dat);
+        _outfit = of.getOutfit ();
+
+        _light = new TCreatureLight (msg); 
+        _speed = new TWord16 (msg); 
+        _skull = new TWord8 (msg); 
+        _shield = new TWord8 (msg); 
+
+}
+
+//TNewCreature
+
+TNewCreature::TNewCreature (NetworkMessage* msg, DatReader* dat)
+{
+        get (msg, dat);
+}
+
+TNewCreature::TNewCreature (uint32_t removeId, uint32_t tibiaId,
+                const std::string& name, uint8_t hp,
+                uint8_t direction, const TOutfit& outfit,
+                const TCreatureLight& light, uint16_t speed,
+                uint8_t skull, uint8_t shield)
+{
+        _itemId =       new TWord16 ((uint16_t)0x0061);
+        _removeId =     new TWord32 (removeId);
         _tibiaId =      new TWord32 (tibiaId);
         _name =         new TString (name);
         _hp =           new TWord8 (hp);
@@ -745,8 +895,10 @@ TCreature::TCreature (uint32_t tibiaId, const std::string name, uint8_t hp,
         _outfit =       of.cloneOutfit (outfit);
 }
 
-TCreature::TCreature (const TCreature& clone)
+TNewCreature::TNewCreature (const TNewCreature& clone)
 {
+        _itemId =       new TWord16 (*clone._itemId);
+        _removeId =     new TWord32 (*clone._removeId);
         _tibiaId =      new TWord32 (*clone._tibiaId);
         _name =         new TString (*clone._name);
         _hp =           new TWord8 (*clone._hp);
@@ -760,8 +912,10 @@ TCreature::TCreature (const TCreature& clone)
         _outfit =       of.cloneOutfit (*clone._outfit);
 }
 
-TCreature::~TCreature ()
+TNewCreature::~TNewCreature ()
 {
+        delete _itemId;
+        delete _removeId;
         delete _tibiaId;
         delete _name;
         delete _hp;
@@ -773,14 +927,15 @@ TCreature::~TCreature ()
         delete _shield;
 }
 
-TThing::ThingType TCreature::getType () const
+TThing::ThingType TNewCreature::getType () const
 {
-        return TThing::creature;
+        return TThing::newcreature;
 }
                 
-void TCreature::show () const
+void TNewCreature::show () const
 {
-        printf ("\tTCreature {\n");
+        printf ("\tTNewCreature {\n");
+        printf ("\t\t_removeId: "); _removeId->show (); printf ("\n");
         printf ("\t\t_tibiaId: "); _tibiaId->show (); printf ("\n");
         printf ("\t\t_name: "); _name->show (); printf ("\n");
         printf ("\t\t_hp: "); _hp->show (); printf ("\n");
@@ -793,8 +948,10 @@ void TCreature::show () const
         printf ("}\n");
 }
 
-void TCreature::put (NetworkMessage* msg) const
+void TNewCreature::put (NetworkMessage* msg) const
 {
+        _itemId->put (msg);
+        _removeId->put (msg);
         _tibiaId->put (msg);
         _name->put (msg);
         _hp->put (msg);
@@ -806,55 +963,67 @@ void TCreature::put (NetworkMessage* msg) const
         _shield->put (msg);
 }
 
-uint32_t TCreature::getTibiaId () const
+uint16_t TNewCreature::getItemId () const
+{
+        return _itemId->getVal ();
+}
+
+uint32_t TNewCreature::getRemoveId () const
+{
+        return _removeId->getVal ();
+}
+
+uint32_t TNewCreature::getTibiaId () const
 {
         return _tibiaId->getVal ();
 }
 
-const std::string& TCreature::getName () const
+const std::string& TNewCreature::getName () const
 {
         return _name->getString ();
 }
 
-uint8_t TCreature::getHp () const
+uint8_t TNewCreature::getHp () const
 {
         return _hp->getVal ();
 }
 
-uint8_t TCreature::getDirection () const
+uint8_t TNewCreature::getDirection () const
 {
         return _direction->getVal ();
 }
 
-const TOutfit& TCreature::getOutfit () const
+const TOutfit& TNewCreature::getOutfit () const
 {
         return *_outfit;
 }
 
-const TCreatureLight& TCreature::getCreatureLight () const
+const TCreatureLight& TNewCreature::getCreatureLight () const
 {
         return *_light;
 }
 
-uint16_t TCreature::getSpeed () const
+uint16_t TNewCreature::getSpeed () const
 {
         return _speed->getVal ();
 }
 
-uint8_t TCreature::getSkull () const
+uint8_t TNewCreature::getSkull () const
 {
         return _skull->getVal ();
 }
 
-uint8_t TCreature::getShield () const
+uint8_t TNewCreature::getShield () const
 {
         return _shield->getVal ();
 }
 
-void TCreature::get (NetworkMessage* msg, DatReader* dat)
+void TNewCreature::get (NetworkMessage* msg, DatReader* dat)
 {
+        _itemId = new TWord16 (msg);
+        _removeId = new TWord32 (msg); 
         _tibiaId = new TWord32 (msg); 
-        _name = new TString (msg); 
+        _name = new TString (msg);
         _hp = new TWord8 (msg); 
         _direction = new TWord8 (msg); 
 
@@ -870,7 +1039,7 @@ void TCreature::get (NetworkMessage* msg, DatReader* dat)
 
 //Yes this could be derived from TCreature, but that makes thing complicated
 // TOldCreature
-
+/*
 TOldCreature::TOldCreature (NetworkMessage* msg, DatReader* dat)
 {
         get (msg, dat);
@@ -993,7 +1162,7 @@ void TNewCreature::get (NetworkMessage* msg, DatReader* dat)
         _removeId = new TWord32 (msg);
         _creature = new TCreature (msg, dat);
 };
-
+*/
 //TCreatureTurn
 TCreatureTurn::TCreatureTurn (NetworkMessage* msg)
 {
@@ -1156,8 +1325,6 @@ TThing* TThingFactory::cloneThing (const TThing& thing)
                 return new TItem ((const TItem&)thing);
         } else if (tt == TThing::xitem) {
                 return new TXItem ((const TXItem&)thing);
-        } else if (tt == TThing::creature) {
-                return new TCreature ((const TCreature&)thing);
         } else if (tt == TThing::oldcreature) {
                 return new TOldCreature ((const TOldCreature&)thing);
         } else if (tt == TThing::newcreature) {
@@ -1829,7 +1996,7 @@ void TPlayerSkill::put (NetworkMessage* msg) const
 void TPlayerSkill::show () const
 {
         printf ("TPlayerSkill {lvl: "); _level->show ();
-        printf ("\%: "); _percent->show (); printf ("}");
+        printf ("percent: "); _percent->show (); printf ("}");
 }
         
 uint8_t TPlayerSkill::getLevel () const
@@ -3892,7 +4059,7 @@ TSpeak* TSpeakFactory::getSpeak ()
                 {
                         return new TPrivateSpeak (_msg);
                 }
-                //case SPEAK_CHANNEL_UNK6:
+                /*case SPEAK_CHANNEL_UNK6:
                 {
                         return new TRuleNumberSpeak (_msg);
                 }
@@ -3901,11 +4068,12 @@ TSpeak* TSpeakFactory::getSpeak ()
                 {
                         return new TRuleSpeak (_msg);
                         break;
-                }
+                }*/
                 default:
                 {
                         uint32_t tmp = type;
                         printf ("TSpeakFactory: unknown speak type %d\n", tmp);
+                        return NULL;
                 }
         }
 }
@@ -3938,7 +4106,7 @@ TSpeak* TSpeakFactory::cloneSpeak (const TSpeak& clone)
                 {
                         return new TPrivateSpeak (_msg);
                 }
-                //case SPEAK_CHANNEL_UNK6:
+                /*case SPEAK_CHANNEL_UNK6:
                 {
                         return new TRuleNumberSpeak (_msg);
                 }
@@ -3947,11 +4115,12 @@ TSpeak* TSpeakFactory::cloneSpeak (const TSpeak& clone)
                 {
                         return new TRuleSpeak (_msg);
                         break;
-                }
+                }*/
                 default:
                 {
                         uint32_t tmp = type;
                         printf ("TSpeakFactory: unknown speak type %d\n", tmp);
+                        return NULL;
                 }
         }
 }

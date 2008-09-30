@@ -314,6 +314,96 @@ class TXItem : public TThing
                 TWord8*  _xByte;
 };
 
+class TOldCreature : public TThing
+{
+        public:
+                TOldCreature (NetworkMessage* msg, DatReader* dat);
+                TOldCreature (uint32_t tibiaId, uint8_t hp,
+                                uint8_t direction, const TOutfit& outfit,
+                                const TCreatureLight& light, uint16_t speed,
+                                uint8_t skull, uint8_t shield);
+                TOldCreature (const TOldCreature& clone);
+                virtual ~TOldCreature ();
+
+                virtual ThingType getType () const;
+
+                virtual void show () const;
+                virtual void put (NetworkMessage* msg) const;
+
+                uint16_t                getItemId () const;
+                uint32_t                getTibiaId () const;
+                const std::string&      getName () const;
+                uint8_t                 getHp () const;
+                uint8_t                 getDirection () const;
+                const TOutfit&          getOutfit () const;
+                const TCreatureLight&   getCreatureLight () const;
+                uint16_t                getSpeed () const;
+                uint8_t                 getSkull () const;
+                uint8_t                 getShield () const;
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TWord16*        _itemId;
+                TWord32*        _tibiaId;
+                TWord8*         _hp;
+                TWord8*         _direction;
+                TOutfit*        _outfit;
+                TCreatureLight* _light;
+                TWord16*        _speed;
+                TWord8*         _skull;
+                TWord8*         _shield;
+
+};
+
+class TNewCreature : public TThing
+{
+        public:
+                TNewCreature (NetworkMessage* msg, DatReader* dat);
+                TNewCreature (uint32_t removeId, uint32_t tibiaId,
+                                const std::string& name, uint8_t hp,
+                                uint8_t direction, const TOutfit& outfit,
+                                const TCreatureLight& light, uint16_t speed,
+                                uint8_t skull, uint8_t shield);
+                TNewCreature (const TNewCreature& clone);
+                virtual ~TNewCreature ();
+
+                virtual ThingType getType () const;
+
+                virtual void show () const;
+                virtual void put (NetworkMessage* msg) const;
+
+                uint16_t                getItemId () const;
+                uint32_t                getRemoveId () const;
+                uint32_t                getTibiaId () const;
+                const std::string&      getName () const;
+                uint8_t                 getHp () const;
+                uint8_t                 getDirection () const;
+                const TOutfit&          getOutfit () const;
+                const TCreatureLight&   getCreatureLight () const;
+                uint16_t                getSpeed () const;
+                uint8_t                 getSkull () const;
+                uint8_t                 getShield () const;
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TWord16*        _itemId;
+                TWord32*        _removeId;
+                TWord32*        _tibiaId;
+                TString*        _name;
+                TWord8*         _hp;
+                TWord8*         _direction;
+                TOutfit*        _outfit;
+                TCreatureLight* _light;
+                TWord16*        _speed;
+                TWord8*         _skull;
+                TWord8*         _shield;
+
+};
+
+//Yes this could be derived from TCreature, but that makes thing complicated
+/*
 class TCreature : public TThing
 {
         public:
@@ -354,8 +444,6 @@ class TCreature : public TThing
                 TWord8*         _shield;
 
 };
-
-//Yes this could be derived from TCreature, but that makes thing complicated
 
 class TOldCreature : public TThing
 {
@@ -417,7 +505,7 @@ class TNewCreature : public TThing
                 TWord32*        _removeId;
                 TCreature*      _creature;
 };
-
+*/
 class TCreatureTurn : public TThing
 {
         public:

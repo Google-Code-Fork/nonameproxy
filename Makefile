@@ -1,9 +1,8 @@
 # Makefile for nonameproxy
 
-CFLAGS  = -Wall
-CFLAGS  += -lgmp
-#CFLAGS += -g
-CFLAGS += -O2
+CPPFLAGS = -Wall
+#CPPFLAGS += -g
+#CPPFLAGS += -O2
 CC     = g++
 
 objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
@@ -14,7 +13,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 all: nonameproxy
 
 nonameproxy: $(objects)
-	$(CC) $(CFLAGS) -o nonameproxy $(objects)
+	$(CC)  $(CPPFLAGS) -lgmp -o nonameproxy $(objects)
 
 main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h loginstate.h \
 		messagefactory.h messagelist.h networkmessage.h rsa.h server.h tibiacrypt.h \

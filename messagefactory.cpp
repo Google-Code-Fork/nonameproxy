@@ -198,6 +198,8 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMCreatureHealth (_msg, _gs, _dat));
         } else if (id == GRM_CREATURE_LIGHT_ID) {
                 return (new GRMCreatureLight (_msg, _gs, _dat));
+        } else if (id == GRM_CREATURE_OUTFIT_ID) {
+                return (new GRMCreatureOutfit (_msg, _gs, _dat));
         } else if (id == GRM_CREATURE_SPEED_ID) {
                 return (new GRMCreatureSpeed (_msg, _gs, _dat));
         } else if (id == GRM_CREATURE_SKULL_ID) {
