@@ -1,8 +1,7 @@
 # Makefile for nonameproxy
 
-CPPFLAGS = -Wall
-#CPPFLAGS += -g
-#CPPFLAGS += -O2
+#CPPFLAGS = -Wall -02
+CPPFLAGS = -Wall -g -O0
 CC     = g++
 
 objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
