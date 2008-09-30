@@ -4,6 +4,9 @@
 #include "gamestate.h"
 #include "client.h"
 
+//when deleting messages use MessageFactory::deleteMessage (TibiaMessage*)
+#include "messagefactory.h"
+
 void HRLoginMsg::func (TibiaMessage* tm, Client* client)
 {
         LSMLoginMsg* li = (LSMLoginMsg*)tm;
@@ -38,13 +41,18 @@ TibiaMessage* HWCharacterList::func (TibiaMessage* tm, Client* client)
         LRMCharacterList* newcl
                 = new LRMCharacterList (fixedCharList, cl->getDaysPrem ());
         //because we do not return the original TibiaMessage we must delete it
-        delete cl;
+        LRMessageFactory mf;
+        mf.deleteMessage(tm);
+
         return newcl;
 }
 
 TibiaMessage* HWMOTD::func (TibiaMessage* tm, Client* client)
 {
-        delete tm;
+        //delete the only message
+        LRMessageFactory mf;
+        mf.deleteMessage(tm);
+
         return new LRMMOTD (std::string ("450\nLol isnt this awesome\n"));
 }
 

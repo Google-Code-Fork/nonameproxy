@@ -155,15 +155,21 @@ void Connection::_putMsg ()
                         writePos = 0;
                         _putMsg ();
                 }
-        } else if (writeLen == writePos) {
+        /*} else if (writeLen == writePos) {
                 delete writeMsg;
                 writeMsg = NULL;
                 writePos = 0;
-                writeBuffer = NULL;
+                writeBuffer = NULL;*/
         } else {
                 int16_t n = _put (&writeBuffer[writePos], writeLen - writePos);
                 if (n != -1) {
                         writePos += n;
+                }
+                if (writeLen == writePos) {
+                        delete writeMsg;
+                        writeMsg = NULL;
+                        writePos = 0;
+                        writeBuffer = NULL;
                 }
         }
 }

@@ -766,7 +766,10 @@ TOldCreature::~TOldCreature ()
         delete _tibiaId;
         delete _hp;
         delete _direction;
-        delete _outfit;
+
+        TOutfitFactory of;
+        of.deleteOutfit (_outfit);
+
         delete _light;
         delete _speed;
         delete _skull;
@@ -920,7 +923,10 @@ TNewCreature::~TNewCreature ()
         delete _name;
         delete _hp;
         delete _direction;
-        delete _outfit;
+
+        TOutfitFactory of;
+        of.deleteOutfit (_outfit);
+
         delete _light;
         delete _speed;
         delete _skull;
@@ -1337,6 +1343,28 @@ TThing* TThingFactory::cloneThing (const TThing& thing)
         }
 }
 
+void TThingFactory::deleteThing (TThing* thing)
+{
+        TThing::ThingType type = thing->getType ();
+
+        if (type == TThing::newcreature) {
+                delete ((TNewCreature*)thing);
+        } else if (type == TThing::oldcreature) {
+                delete ((TOldCreature*)thing);
+        } else if (type == TThing::creatureturn) {
+                delete ((TCreatureTurn*)thing);
+        } else if (type == TThing::skip) {
+                delete ((TSkip*)thing);
+        } else if (type == TThing::item) {
+                delete ((TItem*)thing);
+        } else if (type == TThing::xitem) {
+                delete ((TXItem*)thing);
+        } else {
+                printf ("thing factory error: unknown thing type to delete\n");
+        }
+}
+
+
 /**************************************************************
  * TOutfit
  **************************************************************/
@@ -1364,7 +1392,9 @@ TItemOutfit::TItemOutfit (const TItemOutfit& clone)
 TItemOutfit::~TItemOutfit ()
 {
         delete _lookType;
-        delete _item;
+
+        TThingFactory tf;
+        tf.deleteThing (_item);
 }
 
 TOutfit::OutfitType TItemOutfit::getType () const
@@ -1509,6 +1539,19 @@ TOutfit* TOutfitFactory::getOutfit ()
         }
 }
 
+void TOutfitFactory::deleteOutfit (TOutfit* outfit)
+{
+        TOutfit::OutfitType type = outfit->getType ();
+
+        if (type == TOutfit::itemoutfit) {
+                delete ((TItemOutfit*)outfit);
+        } else if (type == TOutfit::charoutfit) {
+                delete ((TCharOutfit*)outfit);
+        } else {
+                printf ("outfit factory error: unknown outfit type to delete\n");
+        }
+}
+
 /************************************************************************
  * TMapDescription
  ************************************************************************/
@@ -1555,8 +1598,10 @@ TMapDescription::~TMapDescription ()
         delete _cur;
         delete _end;
 
+        TThingFactory tf;
         for (_it = _map.begin (); _it != _map.end (); ++_it) {
-                delete (*_it);
+                tf.deleteThing (*_it);
+                //delete (*_it);
         }
 }
 
@@ -2176,14 +2221,17 @@ TContainer::TContainer (const TContainer& clone)
         
 TContainer::~TContainer ()
 {
-        delete _item;
+        TThingFactory tf;
+        tf.deleteThing (_item);
+
         delete _name;
         delete _capacity;
         delete _hasParent;
         delete _nItems;
 
         for (_it = _items.begin (); _it != _items.end (); ++ _it) {
-                delete (*_it);
+                tf.deleteThing (*_it);
+                //delete (*_it);
         }
 }
         
@@ -2373,14 +2421,17 @@ TTradeContainer::TTradeContainer (const TTradeContainer& clone)
         
 TTradeContainer::~TTradeContainer ()
 {
-        delete _item;
+        TThingFactory tf;
+        tf.deleteThing (_item);
+
         delete _name;
         delete _capacity;
         delete _hasParent;
         delete _nItems;
 
         for (_it = _items.begin (); _it != _items.end (); ++ _it) {
-                delete (*_it);
+                tf.deleteThing (*_it);
+                //delete (*_it);
         }
 }
         
@@ -2566,7 +2617,9 @@ TShopItem::TShopItem (const TShopItem& clone)
         
 TShopItem::~TShopItem ()
 {
-        delete _item;
+        TThingFactory tf;
+        tf.deleteThing (_item);
+
         delete _xbyte;
         delete _name;
         delete _buyprice;
@@ -4124,4 +4177,23 @@ TSpeak* TSpeakFactory::cloneSpeak (const TSpeak& clone)
                 }
         }
 }
-        
+
+void TSpeakFactory::deleteSpeak (TSpeak* speak)
+{
+        TSpeak::SpeakType type = speak->getSpeakType ();
+
+        if (type == TSpeak::pub) {
+                delete ((TPublicSpeak*)speak);
+        } else if (type == TSpeak::channel) {
+                delete ((TChannelSpeak*)speak);
+        } else if (type == TSpeak::priv) {
+                delete ((TPrivateSpeak*)speak);
+        } else if (type == TSpeak::rule_num) {
+                delete ((TRuleNumberSpeak*)speak);
+        } else if (type == TSpeak::rule_text) {
+                delete ((TRuleSpeak*)speak);
+        } else {
+                printf ("speak factory error: unknown speak type to delete\n");
+        }
+}
+

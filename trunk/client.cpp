@@ -219,6 +219,7 @@ bool Client::runGame (Connection* acceptedConn)
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
                         printf ("\n\n");
+                        delete grml;
                 }
         }
 

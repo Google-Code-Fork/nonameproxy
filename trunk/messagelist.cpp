@@ -86,8 +86,10 @@ LSMessageList::LSMessageList ()
 
 LSMessageList::~LSMessageList ()
 {
+        LSMessageFactory mf;
         for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
+                mf.deleteMessage (*_it);
+                //delete (*_it);
         }
 }
 
@@ -133,8 +135,10 @@ LRMessageList::LRMessageList ()
 
 LRMessageList::~LRMessageList ()
 {
+        LRMessageFactory mf;
         for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
+                mf.deleteMessage (*_it);
+                //delete (*_it);
         }
 }
 
@@ -174,8 +178,10 @@ GSMessageList::GSMessageList ()
 
 GSMessageList::~GSMessageList ()
 {
+        GSMessageFactory mf;
         for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
+                mf.deleteMessage (*_it);
+                //delete (*_it);
         }
 }
 
@@ -208,9 +214,11 @@ GRMessageList::GRMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat
 {
         GRMessageFactory lrmf (msg, gs, dat);
         TibiaMessage* tm;
+        
         while ((tm = lrmf.getMessage ()) != NULL) {
                 _msglist.push_back (tm);
         }
+
         _it = _msglist.begin ();
 }
 
@@ -221,8 +229,10 @@ GRMessageList::GRMessageList ()
 
 GRMessageList::~GRMessageList ()
 {
+        GRMessageFactory mf;
         for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
+                mf.deleteMessage (*_it);
+                //delete (*_it);
         }
 }
 
