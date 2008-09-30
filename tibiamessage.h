@@ -12,6 +12,8 @@ class DatReader;
 class TibiaMessage
 {
         public:
+                virtual ~TibiaMessage () {}
+
                 virtual void put (NetworkMessage* msg) = 0;
                 virtual uint8_t getId () = 0;
                 virtual void show () = 0;

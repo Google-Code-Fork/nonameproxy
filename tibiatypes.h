@@ -265,6 +265,8 @@ class TThing
                         skip,
                 };
 
+                virtual ~TThing () {};
+
                 virtual ThingType getType () const = 0;
                 virtual void put (NetworkMessage* msg) const = 0;
                 virtual void show () const = 0;
@@ -590,6 +592,8 @@ class TOutfit
                         charoutfit,
                 };
 
+                virtual ~TOutfit () {};
+
                 virtual OutfitType getType () const = 0;
                 virtual void put (NetworkMessage* msg) const = 0;
                 virtual void show () const = 0;
@@ -684,6 +688,8 @@ class TSpeak
                         rule_text,
                 };
 
+                virtual ~TSpeak ();
+
                 TSpeak (NetworkMessage* msg);
                 TSpeak (uint32_t                u1, 
                         const std::string&      name,
@@ -691,7 +697,6 @@ class TSpeak
                         uint8_t                 type);
 
                 TSpeak (const TSpeak& clone);
-                virtual ~TSpeak ();
 
                 uint32_t           getU1 () const;
                 const std::string& getName () const;
