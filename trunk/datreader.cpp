@@ -452,7 +452,6 @@ DatReader::DatReader ()
         }
 
         datfile->close ();
-        delete datfile;
 }
 
 DatReader::~DatReader ()

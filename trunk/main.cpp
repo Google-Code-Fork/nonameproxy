@@ -23,10 +23,6 @@ int main (uint32_t argc, char** argv)
         clientConn = gameServer->acceptConnection ();
 
         test.runGame (clientConn);
-        
-        delete loginServer;
-        delete gameServer;
-        delete ls;
 
         return 0;
 }
