@@ -1450,6 +1450,7 @@ void GRMMapUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 TPos start (pos.x - 8, pos.y - 6, minz);
                 TPos end (pos.x + 9, pos.y + 7, maxz);
                 _map = new TMapDescription (start, end, msg, dat);
+                _hasmap = true;
         } else if (pos.z > 8){
                 //we are under ground and need the floor above us
                 minz = pos.z - 2;
@@ -1458,6 +1459,10 @@ void GRMMapUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 TPos start (pos.x - 8, pos.y - 6, minz);
                 TPos end (pos.x + 9, pos.y + 7, maxz);
                 _map = new TMapDescription (start, end, msg, dat);
+                _hasmap = true;
+        } else {
+                //we are above ground
+                _hasmap = false;
         }
 }
 
@@ -1549,6 +1554,7 @@ void GRMMapDown::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 TPos start (pos.x - 8, pos.y - 6, minz);
                 TPos end (pos.x + 9, pos.y + 7, maxz);
                 _map = new TMapDescription (start, end, msg, dat);
+                _hasmap = true;
         } else if (pos.z > 8){
                 //we are under ground and need the below above us
                 minz = MIN (pos.z + 2, MAX_FLOOR);
@@ -1557,6 +1563,10 @@ void GRMMapDown::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 TPos start (pos.x - 8, pos.y - 6, minz);
                 TPos end (pos.x + 9, pos.y + 7, maxz);
                 _map = new TMapDescription (start, end, msg, dat);
+                _hasmap = true;
+        } else {
+                //we are above ground
+                _hasmap = false;
         }
 }
 
