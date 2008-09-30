@@ -18,18 +18,13 @@ class LSMessageFactory
                 LSMessageFactory (NetworkMessage* msg,
                                         GameState* gs,
                                         DatReader* dat);
-                LSMessageFactory ();
                 virtual ~LSMessageFactory ();
 
                 TibiaMessage* getMessage ();
-
-                void deleteMessage (TibiaMessage* tm);
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
                 DatReader* _dat;
-
-                bool _readable;
 };
 
 class LRMessageFactory
@@ -38,18 +33,13 @@ class LRMessageFactory
                 LRMessageFactory (NetworkMessage* msg,
                                         GameState* gs,
                                         DatReader* dat);
-                LRMessageFactory ();
                 virtual ~LRMessageFactory ();
 
                 TibiaMessage* getMessage ();
-
-                void deleteMessage (TibiaMessage* tm);
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
                 DatReader* _dat;
-
-                bool _readable;
 };
 
 class GSMessageFactory
@@ -58,18 +48,13 @@ class GSMessageFactory
                 GSMessageFactory (NetworkMessage* msg,
                                         GameState* gs,
                                         DatReader* dat);
-                GSMessageFactory ();
                 virtual ~GSMessageFactory ();
 
                 TibiaMessage* getMessage ();
-
-                void deleteMessage (TibiaMessage* tm);
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
                 DatReader* _dat;
-
-                bool _readable;
 };
 
 class GRMessageFactory
@@ -78,18 +63,13 @@ class GRMessageFactory
                 GRMessageFactory (NetworkMessage* msg,
                                         GameState* gs,
                                         DatReader* dat);
-                GRMessageFactory ();
                 virtual ~GRMessageFactory ();
 
                 TibiaMessage* getMessage ();
-
-                void deleteMessage (TibiaMessage* tm);
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
                 DatReader* _dat;
-
-                bool _readable;
 };
 #endif
 

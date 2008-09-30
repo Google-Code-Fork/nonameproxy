@@ -273,7 +273,7 @@ LRMCharacterList::LRMCharacterList (NetworkMessage* msg,
 
 LRMCharacterList::LRMCharacterList (TCharacterList* charlist, uint16_t daysprem)
 {
-        _id = new TWord8 ((uint8_t)0x64);
+        _id = new TWord8 (0x64);
         _charlist = charlist;
         _daysprem = new TWord16 (daysprem);
 }
@@ -1679,9 +1679,7 @@ GRMTileAdd::~GRMTileAdd ()
 {
         delete _id;
         delete _pos;
-        
-        TThingFactory tf;
-        tf.deleteThing (_thing);
+        delete _thing;
 }
 
 void GRMTileAdd::put (NetworkMessage* msg)
@@ -1759,9 +1757,7 @@ GRMTileUpdate::~GRMTileUpdate ()
         delete _id;
         delete _pos;
         delete _stackpos;
-
-        TThingFactory tf;
-        tf.deleteThing (_thing);
+        delete _thing;
 }
 
 void GRMTileUpdate::put (NetworkMessage* msg)
@@ -2001,9 +1997,7 @@ GRMSlotItem::~GRMSlotItem ()
 {
         delete _id;
         delete _slot;
-
-        TThingFactory tf;
-        tf.deleteThing (_thing);
+        delete _thing;
 }
 
 void GRMSlotItem::put (NetworkMessage* msg)
@@ -2618,9 +2612,7 @@ GRMContainerAdd::~GRMContainerAdd ()
 {
         delete _id;
         delete _cid;
-
-        TThingFactory tf;
-        tf.deleteThing (_item);
+        delete _item;
 }
 
 void GRMContainerAdd::put (NetworkMessage* msg)
@@ -2700,9 +2692,7 @@ GRMContainerUpdate::~GRMContainerUpdate ()
         delete _id;
         delete _cid;
         delete _slot;
-
-        TThingFactory tf;
-        tf.deleteThing (_item);
+        delete _item;
 }
 
 void GRMContainerUpdate::put (NetworkMessage* msg)
@@ -3096,9 +3086,7 @@ GRMCreatureOutfit::~GRMCreatureOutfit ()
 {
         delete _id;
         delete _creatureid;
-
-        TOutfitFactory of;
-        of.deleteOutfit (_outfit);
+        delete _outfit;
 }
 
 void GRMCreatureOutfit::put (NetworkMessage* msg)
@@ -4944,10 +4932,7 @@ GRMTextWindow::~GRMTextWindow ()
 {
         delete _id;
         delete _windowid;
-
-        TThingFactory tf;
-        tf.deleteThing (_item);
-
+        delete _item;
         delete _maxlen;
         delete _text;
         delete _writer;
@@ -5195,9 +5180,7 @@ GRMSpeak::GRMSpeak (const GRMSpeak& clone)
 GRMSpeak::~GRMSpeak ()
 {
         delete _id;
-
-        TSpeakFactory sf;
-        sf.deleteSpeak (_speak);
+        delete _speak;
 }
 
 void GRMSpeak::put (NetworkMessage* msg)
