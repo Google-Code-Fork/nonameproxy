@@ -7,7 +7,7 @@
 void HRLoginMsg::func (TibiaMessage* tm, Client* client)
 {
         LSMLoginMsg* li = (LSMLoginMsg*)tm;
-        //client->gstate->account->setAccount (li->getAccount ());
+        client->gstate->account->setAccount (li->getAccount ());
         client->gstate->account->setPassword (li->getPassword ());
         client->crypt->setXTEAKey (li->getXTEA ());
 }
@@ -51,7 +51,7 @@ TibiaMessage* HWMOTD::func (TibiaMessage* tm, Client* client)
 void HRGameInit::func (TibiaMessage* tm, Client* client)
 {
         GSMGameInit* gi = (GSMGameInit*)tm;
-        //client->gstate->account->setAccount (gi->getAccount ());
+        client->gstate->account->setAccount (gi->getAccount ());
         client->gstate->account->setPassword (gi->getPassword ());
         client->gstate->account->setName (gi->getName ());
         client->crypt->setXTEAKey (gi->getXTEA ());

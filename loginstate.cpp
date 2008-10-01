@@ -1,7 +1,7 @@
 #include "loginstate.h"
 
 //LoginDetails
-LoginDetails::LoginDetails (uint32_t account, std::string pwd,
+LoginDetails::LoginDetails (const std::string& account, const std::string& pwd,
         TCharacterList* charlist)
 {
         _account = account;
@@ -14,7 +14,7 @@ LoginDetails::~LoginDetails ()
         delete _charlist;
 }
 
-uint32_t LoginDetails::getAccount ()
+const std::string& LoginDetails::getAccount ()
 {
         return _account;
 }
@@ -38,11 +38,11 @@ TCharacter* LoginDetails::getCharByName (const std::string& name)
 //LoginState
 void LoginState::putAccountDetails (LoginDetails* details)
 {
-        uint32_t key = details->getAccount ();
-        _loginrec.insert (std::pair<uint32_t, LoginDetails*>(key, details));
+        std::string key = details->getAccount ();
+        _loginrec.insert (std::pair<std::string, LoginDetails*>(key, details));
 }
 
-LoginDetails* LoginState::getAccountDetails (uint32_t account)
+LoginDetails* LoginState::getAccountDetails (const std::string& account)
 {
         LoginRecord::iterator i = _loginrec.find (account);
         if (i == _loginrec.end ()) {

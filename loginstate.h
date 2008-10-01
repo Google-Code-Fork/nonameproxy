@@ -9,24 +9,26 @@
 class LoginDetails
 {
         public:
-                LoginDetails (uint32_t account, std::string pwd,
-                        TCharacterList* charlist);
+                LoginDetails (  const std::string& account, 
+                                const std::string& pwd,
+                                TCharacterList* charlist);
+
                 virtual ~LoginDetails ();
-                uint32_t getAccount ();
+                const std::string& getAccount ();
                 const std::string& getPwd ();
                 TCharacter* getCharByName (const std::string& name);
         private:
-                uint32_t _account;
+                std::string _account;
                 std::string _pwd;
                 TCharacterList* _charlist;
 };
 
-typedef std::map<uint32_t, LoginDetails*> LoginRecord;
+typedef std::map<std::string, LoginDetails*> LoginRecord;
 
 class LoginState
 {
         public:
-                LoginDetails*   getAccountDetails (uint32_t account);
+                LoginDetails*   getAccountDetails (const std::string& account);
                 void            putAccountDetails (LoginDetails* details);
                 
         private:
