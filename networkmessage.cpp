@@ -103,7 +103,7 @@ bool NetworkMessage::isRSAEOF ()
 
 bool NetworkMessage::isXTEAEOF ()
 {
-        uint16_t eof = *(uint16_t*)&_buffer[2] + 4;
+        uint16_t eof = *(uint16_t*)&_buffer[6] + 8;
         if (_curpos >= eof) {
                 return true;
         } else {
@@ -167,7 +167,7 @@ bool NetworkMessage::getN (uint8_t* dest, uint32_t n)
 bool NetworkMessage::peekU8 (uint8_t& val)
 {
         if (_curpos + 1 > _size) {
-                printf ("network error: couldn't read U8\n");
+                printf ("network error: couldn't peek U8\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 1);
@@ -177,7 +177,7 @@ bool NetworkMessage::peekU8 (uint8_t& val)
 bool NetworkMessage::peekU16 (uint16_t& val)
 {
         if (_curpos + 2 > _size) {
-                printf ("network error: couldn't read U16\n");
+                printf ("network error: couldn't peek U16\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 2);
@@ -187,7 +187,7 @@ bool NetworkMessage::peekU16 (uint16_t& val)
 bool NetworkMessage::peekU32 (uint32_t& val)
 {
         if (_curpos + 4 > _size) {
-                printf ("network error: couldn't read U32\n");
+                printf ("network error: couldn't peek U32\n");
                 return false;
         }
         memcpy (&val, &_buffer[_curpos], 4);
@@ -239,6 +239,7 @@ bool NetworkMessage::putN (const uint8_t* src, uint32_t n)
 }
 
 void NetworkMessage::show () {
+        printf ("size: %d\n", _size);
         uint16_t size = MIN ((uint16_t)_size, *(uint16_t*)_buffer + 2);
         for (uint32_t i = 0; i <= size / 16; i ++) {
                 for (uint32_t ii = 0; ii < 16; ii++) {

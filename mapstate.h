@@ -18,8 +18,7 @@ class Pos
 class MapState
 {
         public:
-                Pos  getCurPos ();
-                void setCurPos (const Pos& pos);
+                Pos& getCurPos ();
         private:
                 Pos _curPos;
 };

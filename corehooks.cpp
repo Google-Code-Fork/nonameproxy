@@ -120,12 +120,11 @@ void GRHPlayerSkills::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapInit::func (TibiaMessage* tm, Client* client)
 {
-        Pos pos = client->gstate->map->getCurPos ();
+        Pos& pos = client->gstate->map->getCurPos ();
         const TPos& initPos = ((GRMMapInit*)tm)->getPos ();
         pos.x = initPos.x ();
         pos.y = initPos.y ();
         pos.z = initPos.z ();
-        client->gstate->map->setCurPos (pos);
 }
 
 /**********************************************************************
@@ -133,9 +132,8 @@ void GRHMapInit::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 {
-        Pos pos = client->gstate->map->getCurPos ();
+        Pos& pos = client->gstate->map->getCurPos ();
         pos.y --;
-        client->gstate->map->setCurPos (pos);
 }
 
 /**********************************************************************
@@ -143,9 +141,8 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapEast::func (TibiaMessage* tm, Client* client)
 {
-        Pos pos = client->gstate->map->getCurPos ();
+        Pos& pos = client->gstate->map->getCurPos ();
         pos.x ++;
-        client->gstate->map->setCurPos (pos);
 }
 
 /**********************************************************************
@@ -153,9 +150,8 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 {
-        Pos pos = client->gstate->map->getCurPos ();
+        Pos& pos = client->gstate->map->getCurPos ();
         pos.y ++;
-        client->gstate->map->setCurPos (pos);
 }
 
 /**********************************************************************
@@ -163,9 +159,25 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapWest::func (TibiaMessage* tm, Client* client)
 {
-        Pos pos = client->gstate->map->getCurPos ();
+        Pos& pos = client->gstate->map->getCurPos ();
         pos.x --;
-        client->gstate->map->setCurPos (pos);
 }
 
-        
+/**********************************************************************
+ * GRHMapUp 
+ **********************************************************************/
+void GRHMapUp::func (TibiaMessage* tm, Client* client)
+{
+        Pos& pos = client->gstate->map->getCurPos ();
+        pos.z --;
+}
+
+/**********************************************************************
+ * GRHMapDown 
+ **********************************************************************/
+void GRHMapDown::func (TibiaMessage* tm, Client* client)
+{
+        Pos& pos = client->gstate->map->getCurPos ();
+        pos.z ++;
+}
+

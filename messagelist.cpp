@@ -9,6 +9,20 @@
 //dynamically
 #define MAX_MSG_SIZE 16384
 
+MessageList::MessageList ()
+{
+        _isEnd = false;
+        _it = _msglist.begin ();
+}
+
+MessageList::~MessageList ()
+{
+        delete _mf;
+        for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
+                delete (*_it);
+        }
+}
+
 void MessageList::begin ()
 {
         _it = _msglist.begin ();
@@ -16,24 +30,49 @@ void MessageList::begin ()
 
 bool MessageList::isEnd ()
 {
-        if (_it == _msglist.end ()) {
-                return true;
-        } else {
-                return false;
-        }
+        return _isEnd;
 }
 
 void MessageList::next ()
 {
         if (_it == _msglist.end ()) {
-                printf ("error: attempt to seek past end of message list\n");
-        } else {
-                _it ++;
+                printf ("seek error: end of message list\n");
         }
+
+        MsgList::const_iterator next = _it;
+        next ++;
+        /* if we are at the end we read a message, else wise we just ++ */
+        if (next == _msglist.end () && _mf) {
+                /* then well try to add a message
+                 * but make sure we have the message factory first */
+                TibiaMessage* tm = _mf->getMessage ();
+
+                //assume weve reached the end
+                _isEnd = true;
+                if (tm) {
+                        _msglist.push_back (tm);
+                        //we lied
+                        _isEnd = false;
+                }
+        }
+        _it ++;
 }
 
 TibiaMessage* MessageList::read ()
 {
+        if (_it == _msglist.end ()) {
+                TibiaMessage* tm = _mf->getMessage ();
+
+                //assume weve reached the end
+                _isEnd = true;
+                if (tm) {
+                        _msglist.push_back (tm);
+                        //we lied
+                        _isEnd = false;
+                        //_it is currently at the end so we must move back
+                        _it --;
+                }
+        }
         return *_it;
 }
 
@@ -71,24 +110,20 @@ NetworkMessage* MessageList::put ()
 //LSMessageList
 LSMessageList::LSMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        LSMessageFactory lsmf (msg, gs, dat);
+        /*LSMessageFactory lsmf (msg, gs, dat);
         TibiaMessage* tm;
         while ((tm = lsmf.getMessage ()) != NULL) {
                 _msglist.push_back (tm);
         }
+        _it = _msglist.begin ();*/
+        _mf = new LSMessageFactory (msg, gs, dat);
         _it = _msglist.begin ();
 }
 
 LSMessageList::LSMessageList ()
 {
+        _mf = NULL;
         _it = _msglist.begin ();
-}
-
-LSMessageList::~LSMessageList ()
-{
-        for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
-        }
 }
 
 NetworkMessage* LSMessageList::put ()
@@ -118,24 +153,20 @@ NetworkMessage* LSMessageList::put ()
 //LRMessageList
 LRMessageList::LRMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        LRMessageFactory lrmf (msg, gs, dat);
+        /*LRMessageFactory lrmf (msg, gs, dat);
         TibiaMessage* tm;
         while ((tm = lrmf.getMessage ()) != NULL) {
                 _msglist.push_back (tm);
         }
+        _it = _msglist.begin ();*/
+        _mf = new LRMessageFactory (msg, gs, dat);
         _it = _msglist.begin ();
 }
 
 LRMessageList::LRMessageList ()
 {
+        _mf = NULL;
         _it = _msglist.begin ();
-}
-
-LRMessageList::~LRMessageList ()
-{
-        for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
-        }
 }
 
 NetworkMessage* LRMessageList::put ()
@@ -159,24 +190,20 @@ NetworkMessage* LRMessageList::put ()
 //GSMessageList
 GSMessageList::GSMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        GSMessageFactory lrmf (msg, gs, dat);
+        /*GSMessageFactory lrmf (msg, gs, dat);
         TibiaMessage* tm;
         while ((tm = lrmf.getMessage ()) != NULL) {
                 _msglist.push_back (tm);
         }
+        _it = _msglist.begin ();*/
+        _mf = new GSMessageFactory (msg, gs, dat);
         _it = _msglist.begin ();
 }
 
 GSMessageList::GSMessageList ()
 {
+        _mf = NULL;
         _it = _msglist.begin ();
-}
-
-GSMessageList::~GSMessageList ()
-{
-        for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
-        }
 }
 
 NetworkMessage* GSMessageList::put ()
@@ -206,24 +233,14 @@ NetworkMessage* GSMessageList::put ()
 //GRMessageList
 GRMessageList::GRMessageList (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
-        GRMessageFactory lrmf (msg, gs, dat);
-        TibiaMessage* tm;
-        while ((tm = lrmf.getMessage ()) != NULL) {
-                _msglist.push_back (tm);
-        }
+        _mf = new GRMessageFactory (msg, gs, dat);
         _it = _msglist.begin ();
 }
 
 GRMessageList::GRMessageList ()
 {
+        _mf = NULL;
         _it = _msglist.begin ();
-}
-
-GRMessageList::~GRMessageList ()
-{
-        for (_it = _msglist.begin (); _it != _msglist.end (); ++_it) {
-                delete (*_it);
-        }
 }
 
 NetworkMessage* GRMessageList::put ()

@@ -9,12 +9,15 @@ class NetworkMessage;
 class TibiaMessage;
 class GameState;
 class DatReader;
+class MessageFactory;
 
 typedef std::list<TibiaMessage*> MsgList;
 
 class MessageList
 {
         public:
+                MessageList ();
+                virtual ~MessageList ();
                 //set iterator to beginning of list
                 void begin ();
                 //returns true if iterator is at the end of the list
@@ -37,6 +40,8 @@ class MessageList
         protected:
                 MsgList _msglist;
                 MsgList::iterator _it;
+                MessageFactory* _mf;
+                bool _isEnd;
 };
 
 class LSMessageList : public MessageList
@@ -46,7 +51,6 @@ class LSMessageList : public MessageList
                                 GameState* gs,
                                 DatReader* dat);
                 LSMessageList ();
-                virtual ~LSMessageList ();
                 virtual NetworkMessage* put ();
 };
 
@@ -57,7 +61,6 @@ class LRMessageList : public MessageList
                                 GameState* gs,
                                 DatReader* dat);
                 LRMessageList ();
-                virtual ~LRMessageList ();
                 virtual NetworkMessage* put ();
 };
                 
@@ -68,7 +71,6 @@ class GSMessageList : public MessageList
                                 GameState* gs,
                                 DatReader* dat);
                 GSMessageList ();
-                virtual ~GSMessageList ();
                 virtual NetworkMessage* put ();
 };
 
@@ -79,7 +81,6 @@ class GRMessageList : public MessageList
                                 GameState* gs,
                                 DatReader* dat);
                 GRMessageList ();
-                virtual ~GRMessageList ();
                 virtual NetworkMessage* put ();
 };
 

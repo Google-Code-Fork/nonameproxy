@@ -33,9 +33,12 @@ class Client
 
                 TibiaCrypt*     crypt;
         private:
+                void addProtocolHooks ();
+
                 ConnectionManager*      connMgr;
                 HookManager*            recvHM;
                 HookManager*            sendHM;
+                HookManager*            recvProtocol;
 };
 #endif
 

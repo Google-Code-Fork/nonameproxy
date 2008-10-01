@@ -1656,8 +1656,12 @@ void TMapDescription::get (const TPos& start, const TPos& end,
 
         TThingFactory tf (msg, dat);
         TThing* thing;
+        
         while (nThings != 0) {
                 thing = tf.getThing ();
+                if (!thing) {
+                        printf ("null thing\n");
+                }
                 if (thing->getType () == TThing::skip) {
                         //we alway skip one byte
                         nThings --;
@@ -2537,7 +2541,8 @@ TShopItem::TShopItem (NetworkMessage* msg, DatReader* dat)
 
 
 TShopItem::TShopItem (const TThing& item, uint8_t xbyte, 
-        const std::string& name, uint32_t buyprice, uint32_t sellprice)
+        const std::string& name, uint32_t weight,
+        uint32_t buyprice, uint32_t sellprice)
 {
         TThingFactory tf;
         _item = tf.cloneThing (item);
@@ -2549,6 +2554,7 @@ TShopItem::TShopItem (const TThing& item, uint8_t xbyte,
         }
 
         _name = new TString (name);
+        _weight = new TWord32 (weight);
         _buyprice = new TWord32 (buyprice);
         _sellprice = new TWord32 (sellprice);
 }
@@ -2560,6 +2566,7 @@ TShopItem::TShopItem (const TShopItem& clone)
 
         _xbyte = new TWord8 (*clone._xbyte);
         _name = new TString (*clone._name);
+        _weight = new TWord32 (*clone._weight);
         _buyprice = new TWord32 (*clone._buyprice);
         _sellprice = new TWord32 (*clone._sellprice);
 }
@@ -2569,6 +2576,7 @@ TShopItem::~TShopItem ()
         delete _item;
         delete _xbyte;
         delete _name;
+        delete _weight;
         delete _buyprice;
         delete _sellprice;
 }
@@ -2581,6 +2589,7 @@ void TShopItem::put (NetworkMessage* msg) const
                 _xbyte->put (msg);
         }
         _name->put (msg);
+        _weight->put (msg);
         _buyprice->put (msg);
         _sellprice->put (msg);
 }
@@ -2591,6 +2600,7 @@ void TShopItem::show () const
         printf ("\t\titem: "); _item->show (); printf ("\n");
         printf ("\t\txbyte: "); _xbyte->show (); printf ("\n");
         printf ("\t\tname: "); _name->show (); printf ("\n");
+        printf ("\t\tweight: "); _weight->show (); printf ("\n");
         printf ("\t\tbuyprice: "); _buyprice->show (); printf ("\n");
         printf ("\t\tsellprice: "); _sellprice->show (); printf ("\n");
         printf ("\t}\n");
@@ -2609,6 +2619,11 @@ uint8_t TShopItem::getXByte () const
 const std::string& TShopItem::getName () const
 {
         return _name->getString () ;
+}
+
+uint32_t TShopItem::getWeight () const
+{
+        return _weight->getVal ();
 }
 
 uint32_t TShopItem::getBuyPrice () const
@@ -2633,6 +2648,7 @@ void TShopItem::get (NetworkMessage* msg, DatReader* dat)
         }
 
         _name = new TString (msg);
+        _weight = new TWord32 (msg);
         _buyprice = new TWord32 (msg);
         _sellprice = new TWord32 (msg);
 }

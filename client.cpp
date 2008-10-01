@@ -11,6 +11,7 @@
 #include "corehooks.h"
 #include "hookmanager.h"
 #include "messagelist.h"
+#include "enums.h"
 
 #define CONN_TIMEOUT 5000
 
@@ -32,6 +33,7 @@ Client::Client (LoginState* ls)
 
         recvHM = NULL;
         sendHM = NULL;
+        recvProtocol = NULL;
 }        
 
 Client::~Client ()
@@ -45,6 +47,7 @@ Client::~Client ()
 
         delete recvHM;
         delete sendHM;
+        delete recvProtocol;
 }
 
 bool Client::runLogin (Connection* acceptedConn)
@@ -137,15 +140,14 @@ bool Client::runLogin (Connection* acceptedConn)
 
 bool Client::runGame (Connection* acceptedConn)
 {
-        /* TEMP GAME STATE */
-        Pos pos (100,100,6); //above floor
-        gstate->map->setCurPos (pos);
-        /* TEMP GAME STATE */
-
         sendHM = new HookManager ();
         sendHM->addReadHook (0x0A, (ReadHook*)(new HRGameInit));
 
         recvHM = new HookManager ();
+
+        recvProtocol = new HookManager ();
+        addProtocolHooks ();
+
         //set up the connection
         Connection* clientConn = acceptedConn;
         Connection* serverConn = new Connection ();
@@ -208,21 +210,28 @@ bool Client::runGame (Connection* acceptedConn)
                         serverConn->putMsg (msg);
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
-
                         crypt->decrypt (msg);
-
-                        //printf ("init\n");
+                        printf ("init\n");
                         msg->show ();
+                        GRMessageList* grml = new GRMessageList (msg, gstate, dat);
+                        printf ("we have a list\n");
+                        while (!grml->isEnd ()) {
+                                TibiaMessage* tm = grml->read ();
 
-                        //GRMessageList* grml = new GRMessageList (msg, gstate, dat);
-                        //msg = grml->put ();
+                                recvProtocol->hookReadMessage (tm, this);
+                                recvHM->hookReadMessage (tm, this);
+                                tm = recvHM->hookWriteMessage (tm, this);
+                                grml->replace (tm);
 
-                        //printf ("remade\n");
-                        //msg->show ();
+                                grml->next ();
+                        }
+                        msg = grml->put ();
+                        printf ("remade\n");
+                        msg->show ();
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
-                        //delete grml;
-                        printf ("\n\n");
+                        delete grml;
+                        printf ("\n");
                 }
         }
 
@@ -238,3 +247,13 @@ bool Client::runGame (Connection* acceptedConn)
         return true;
 }
 
+void Client::addProtocolHooks ()
+{
+        recvProtocol->addReadHook (GRM_MAP_INIT_ID, (ReadHook*)new GRHMapInit);
+        recvProtocol->addReadHook (GRM_MAP_NORTH_ID, (ReadHook*)new GRHMapNorth);
+        recvProtocol->addReadHook (GRM_MAP_EAST_ID, (ReadHook*)new GRHMapEast);
+        recvProtocol->addReadHook (GRM_MAP_SOUTH_ID, (ReadHook*)new GRHMapSouth);
+        recvProtocol->addReadHook (GRM_MAP_WEST_ID, (ReadHook*)new GRHMapWest);
+        recvProtocol->addReadHook (GRM_MAP_UP_ID, (ReadHook*)new GRHMapUp);
+        recvProtocol->addReadHook (GRM_MAP_DOWN_ID, (ReadHook*)new GRHMapDown);
+}

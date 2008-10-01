@@ -1442,6 +1442,7 @@ void GRMMapUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
         Pos pos = gs->map->getCurPos ();
+
         uint32_t minz;
         uint32_t maxz;
         if (pos.z == 8) {
@@ -1545,7 +1546,7 @@ TMapDescription& GRMMapDown::getMap ()
 void GRMMapDown::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
-        Pos pos = gs->map->getCurPos ();
+        const Pos& pos = gs->map->getCurPos ();
         uint32_t minz;
         uint32_t maxz;
         if (pos.z == 7) {
@@ -1557,7 +1558,7 @@ void GRMMapDown::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 TPos end (pos.x + 9, pos.y + 7, maxz);
                 _map = new TMapDescription (start, end, msg, dat);
                 _hasmap = true;
-        } else if (pos.z > 8){
+        } else if (pos.z > 7){
                 //we are under ground and need the below above us
                 minz = MIN (pos.z + 2, MAX_FLOOR);
                 maxz = minz;
