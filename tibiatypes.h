@@ -1019,7 +1019,7 @@ class TPlayerStats
                 TPlayerStats (NetworkMessage* msg);
                 TPlayerStats (uint16_t getHp,
                                 uint16_t getHpmax,
-                                uint16_t getCapacity,
+                                uint32_t getCapacity,
                                 uint32_t getExperience,
                                 uint16_t getLevel,
                                 uint8_t getLevelPercent,
@@ -1038,7 +1038,7 @@ class TPlayerStats
 
                 uint16_t getHp () const;
                 uint16_t getHpmax () const;
-                uint16_t getCapacity () const;
+                uint32_t getCapacity () const;
                 uint32_t getExperience () const;
                 uint16_t getLevel () const;
                 uint8_t getLevelPercent () const;
@@ -1054,7 +1054,7 @@ class TPlayerStats
 
                 TWord16*        _hp;
                 TWord16*        _hpmax;
-                TWord16*        _capacity;
+                TWord32*        _capacity;
                 TWord32*        _experience;
                 TWord16*        _level;
                 TWord8*         _levelPercent;

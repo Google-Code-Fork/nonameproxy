@@ -35,7 +35,8 @@ class LSMLoginMsg : public TibiaMessage
                                 DatReader* dat);
                 LSMLoginMsg (uint16_t OS, uint16_t version, uint32_t datsig,
                         uint32_t sprsig, uint32_t picsig, uint8_t u1,
-                        uint32_t* xtea, uint32_t account, std::string password);
+                        uint32_t* xtea, const std::string& account, 
+                        const std::string& password);
 
                 virtual ~LSMLoginMsg ();
                 virtual uint8_t getId ();
@@ -49,7 +50,7 @@ class LSMLoginMsg : public TibiaMessage
                 uint32_t                getPicSig ();
                 uint8_t                 getU1 ();
                 const uint32_t*         getXTEA ();
-                uint32_t                getAccount ();
+                const std::string&      getAccount ();
                 const std::string&      getPassword (); 
                 
                 //im not exactly sure how deriving classes works, if this
@@ -66,7 +67,7 @@ class LSMLoginMsg : public TibiaMessage
                 TWord32*  _picsig;
                 TWord8*   _u1;
                 TXTEAKey* _xtea;
-                TWord32*  _account;
+                TString*  _account;
                 TString*  _password;
                 
                 //and somewhere to store the remaining bytes
@@ -270,8 +271,8 @@ class GSMGameInit : public TibiaMessage
                                 GameState* gs,
                                 DatReader* dat);
                 GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
-                        uint32_t* xtea, uint8_t isGM, uint32_t account,
-                        std::string password, std::string name);
+                        uint32_t* xtea, uint8_t isGM, const std::string& account,
+                        const std::string& password, const std::string& name);
 
                 virtual ~GSMGameInit ();
                 virtual uint8_t getId ();
@@ -283,7 +284,7 @@ class GSMGameInit : public TibiaMessage
                 uint8_t                 getU1 ();
                 const uint32_t*         getXTEA ();
                 uint8_t                 getIsGM ();
-                uint32_t                getAccount ();
+                const std::string&      getAccount ();
                 const std::string&      getName (); 
                 const std::string&      getPassword (); 
                 
@@ -297,7 +298,7 @@ class GSMGameInit : public TibiaMessage
                 TWord8*   _u1;
                 TXTEAKey* _xtea;
                 TWord8*   _isGM;
-                TWord32*  _account;
+                TString*  _account;
                 TString*  _name;
                 TString*  _password;
                 

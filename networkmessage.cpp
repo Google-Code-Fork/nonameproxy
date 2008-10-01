@@ -28,23 +28,27 @@ NetworkMessage::~NetworkMessage ()
 
 void NetworkMessage::prepRSAHeader ()
 {
-        _curpos = 2;
+        //_curpos = 2;
+        _curpos = 6;
 }
 
 void NetworkMessage::prepHeader ()
 {
-        _curpos = 4;
+        //_curpos = 4;
+        _curpos = 8;
 }
 
 void NetworkMessage::writeRSAHeader ()
 {
+        //uint16_t packetSize = _curpos - 2;
+        //memcpy (_buffer, &packetSize, 2);
         uint16_t packetSize = _curpos - 2;
         memcpy (_buffer, &packetSize, 2);
 }
 
 void NetworkMessage::writeHeader ()
 {
-        uint16_t plainSize = _curpos - 4;
+        uint16_t plainSize = _curpos - 8;
         struct timeval tv;
         gettimeofday (&tv, NULL);
         srand (tv.tv_usec);
@@ -59,7 +63,7 @@ void NetworkMessage::writeHeader ()
         //encrypted packet
         uint16_t cryptSize = _curpos - 2;
         memcpy (_buffer, &cryptSize, 2);
-        memcpy (&_buffer[2], &plainSize, 2);
+        memcpy (&_buffer[6], &plainSize, 2);
 }
 
 uint8_t* NetworkMessage::getBuffer ()

@@ -60,7 +60,7 @@ int32_t Connection::_get (void* buf, int32_t len)
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
                 if (errno != EAGAIN) {
-                        perror ("recv error");
+                        perror ("recv error get");
                 }
         }
         return n;
@@ -72,7 +72,7 @@ int32_t Connection::_peek (void* buf, int32_t len)
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
                 if (errno != EAGAIN) {
-                        perror ("recv error");
+                        perror ("recv error peek");
                 }
         }
         return n;
@@ -84,7 +84,7 @@ int32_t Connection::_put (void* buf, int32_t len)
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
                 if (errno != EAGAIN) {
-                        perror ("recv error");
+                        perror ("send error");
                 }
         }
         return n;

@@ -78,7 +78,9 @@ bool Client::runLogin (Connection* acceptedConn)
         while (serverConn->isConnected () && clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
+                        //msg->show ();
                         crypt->decrypt (msg);
+                        msg->show ();
                         LSMessageList* lsml = new LSMessageList (msg, gstate, dat);
                         while (!lsml->isEnd ()) {
                                 TibiaMessage* tm = lsml->read ();
@@ -89,6 +91,7 @@ bool Client::runLogin (Connection* acceptedConn)
                                 lsml->next ();
                         }
                         msg = lsml->put ();
+                        msg->show ();
                         crypt->encrypt (msg);
                         serverConn->putMsg (msg);
                         delete lsml;
@@ -208,17 +211,17 @@ bool Client::runGame (Connection* acceptedConn)
 
                         crypt->decrypt (msg);
 
-                        printf ("init\n");
+                        //printf ("init\n");
                         msg->show ();
 
-                        GRMessageList* grml = new GRMessageList (msg, gstate, dat);
-                        msg = grml->put ();
+                        //GRMessageList* grml = new GRMessageList (msg, gstate, dat);
+                        //msg = grml->put ();
 
-                        printf ("remade\n");
-                        msg->show ();
+                        //printf ("remade\n");
+                        //msg->show ();
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
-                        delete grml;
+                        //delete grml;
                         printf ("\n\n");
                 }
         }

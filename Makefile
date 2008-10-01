@@ -7,7 +7,7 @@ CC     = g++
 objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
 		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
-		accountstate.o charstate.o safefile.o datreader.o mapstate.o
+		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o
 
 all: nonameproxy
 
@@ -22,7 +22,7 @@ tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h enums.h
 
 tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h datreader.h enums.h
 
-tibiacrypt.o: tibiacrypt.cpp tibiacrypt.h rsa.h xtea.h networkmessage.h
+tibiacrypt.o: tibiacrypt.cpp tibiacrypt.h rsa.h xtea.h networkmessage.h adler32.h
 
 rsa.o: rsa.cpp rsa.h
 
@@ -64,6 +64,8 @@ mapstate.o: mapstate.h mapstate.cpp
 safefile.o: safefile.cpp safefile.h
 
 datreader.o: datreader.cpp datreader.h safefile.h tibiatypes.h
+
+adler32.o: adler32.cpp adler32.h
 
 clean:
 	rm -f nonameproxy $(objects)

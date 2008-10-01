@@ -23,7 +23,7 @@ LSMLoginMsg::LSMLoginMsg (NetworkMessage* msg,
 
 LSMLoginMsg::LSMLoginMsg (uint16_t OS, uint16_t version, uint32_t datsig,
         uint32_t sprsig, uint32_t picsig, uint8_t u1, uint32_t* xtea,
-        uint32_t account, std::string password)
+        const std::string& account, const std::string& password)
 {
         _id = new TWord8 ((uint8_t)0x01);
 
@@ -34,11 +34,11 @@ LSMLoginMsg::LSMLoginMsg (uint16_t OS, uint16_t version, uint32_t datsig,
         _picsig = new TWord32 (picsig);
         _u1 = new TWord8 ((uint8_t)0);
         _xtea = new TXTEAKey (xtea);
-        _account = new TWord32 (account);
+        _account = new TString (account);
         _password = new TString (password);
         //the TByteBuffer (uint32_t len) constructer automatically
         //generates a random byte buffer
-        uint32_t rem = RSA_LEN - (23 + _password->getLen ());
+        uint32_t rem = RSA_LEN - (21 + _password->getLen () + _account->getLen ());
         _bytes = new TByteBuffer (rem);
 }
 
@@ -62,9 +62,9 @@ uint8_t LSMLoginMsg::getId ()
         return _id->getVal ();
 }
 
-uint32_t LSMLoginMsg::getAccount ()
+const std::string& LSMLoginMsg::getAccount ()
 {
-        return _account->getVal ();
+        return _account->getString ();
 }
 
 const std::string& LSMLoginMsg::getPassword ()
@@ -99,10 +99,10 @@ void LSMLoginMsg::get (NetworkMessage* msg,
         _picsig = new TWord32 (msg);
         _u1 = new TWord8 (msg);
         _xtea = new TXTEAKey (msg);
-        _account = new TWord32 (msg);
+        _account = new TString (msg);
         _password = new TString (msg);
         //this time we just take the random bytes from the packet
-        uint32_t rem = RSA_LEN - (23 + _password->getLen ());
+        uint32_t rem = RSA_LEN - (21 + _password->getLen () + _account->getLen ());
         _bytes = new TByteBuffer (rem, msg);
 }
 
@@ -820,8 +820,8 @@ GSMGameInit::GSMGameInit (NetworkMessage* msg, GameState* gs, DatReader* dat)
 }
 
 GSMGameInit::GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
-        uint32_t* xtea, uint8_t isGM,  uint32_t account, std::string name,
-        std::string password)
+        uint32_t* xtea, uint8_t isGM, const std::string& account, 
+        const std::string& name, const std::string& password)
 {
         _id = new TWord8 ((uint8_t)0x0A);
 
@@ -830,12 +830,13 @@ GSMGameInit::GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
         _u1 = new TWord8 ((uint8_t)0);
         _xtea = new TXTEAKey (xtea);
         _isGM = new TWord8 (isGM);
-        _account = new TWord32 (account);
+        _account = new TString (account);
         _name = new TString (name);
         _password = new TString (password);
         //the TByteBuffer (uint32_t len) constructer automatically
         //generates a random byte buffer
-        uint32_t rem = RSA_LEN - (23 + _password->getLen ());
+        uint32_t rem = RSA_LEN - (24 + _password->getLen () + _name->getLen ()
+                                        + _account->getLen ());
         _bytes = new TByteBuffer (rem);
 }
 
@@ -858,9 +859,9 @@ uint8_t GSMGameInit::getId ()
         return _id->getVal ();
 }
 
-uint32_t GSMGameInit::getAccount ()
+const std::string& GSMGameInit::getAccount ()
 {
-        return _account->getVal ();
+        return _account->getString ();
 }
 
 const std::string& GSMGameInit::getPassword ()
@@ -895,11 +896,12 @@ void GSMGameInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
         _u1 = new TWord8 (msg);
         _xtea = new TXTEAKey (msg);
         _isGM = new TWord8 (msg);
-        _account = new TWord32 (msg);
+        _account = new TString (msg);
         _name = new TString (msg);
         _password = new TString (msg);
         //this time we just take the random bytes from the packet
-        uint32_t rem = RSA_LEN - (26 + _password->getLen () + _name->getLen ());
+        uint32_t rem = RSA_LEN - (24 + _password->getLen () + _name->getLen ()
+                                        + _account->getLen ());
         _bytes = new TByteBuffer (rem, msg);
 }
 
