@@ -1793,7 +1793,7 @@ TPlayerStats::TPlayerStats (NetworkMessage* msg)
 
 TPlayerStats::TPlayerStats (uint16_t hp,
                         uint16_t hpmax,
-                        uint16_t capacity,
+                        uint32_t capacity,
                         uint32_t experience,
                         uint16_t level,
                         uint8_t levelPercent,
@@ -1806,7 +1806,7 @@ TPlayerStats::TPlayerStats (uint16_t hp,
 {
         _hp =                  new TWord16 (hp);
         _hpmax =               new TWord16 (hpmax);
-        _capacity =            new TWord16 (capacity);
+        _capacity =            new TWord32 (capacity);
         _experience =          new TWord32 (experience);
         _level =               new TWord16 (level);
         _levelPercent =        new TWord8 (levelPercent);
@@ -1822,7 +1822,7 @@ TPlayerStats::TPlayerStats (const TPlayerStats& clone)
 {
         _hp =                  new TWord16 (*clone._hp);
         _hpmax =               new TWord16 (*clone._hpmax);
-        _capacity =            new TWord16 (*clone._capacity);
+        _capacity =            new TWord32 (*clone._capacity);
         _experience =          new TWord32 (*clone._experience);
         _level =               new TWord16 (*clone._level);
         _levelPercent =        new TWord8 (*clone._levelPercent);
@@ -1894,7 +1894,7 @@ uint16_t TPlayerStats::getHpmax () const
         return _hpmax->getVal ();
 }
 
-uint16_t TPlayerStats::getCapacity () const
+uint32_t TPlayerStats::getCapacity () const
 {
         return _capacity->getVal ();
 }
@@ -1948,7 +1948,7 @@ void TPlayerStats::get (NetworkMessage* msg)
 {
         _hp =                  new TWord16 (msg);
         _hpmax =               new TWord16 (msg);
-        _capacity =            new TWord16 (msg);
+        _capacity =            new TWord32 (msg);
         _experience =          new TWord32 (msg);
         _level =               new TWord16 (msg);
         _levelPercent =        new TWord8 (msg);

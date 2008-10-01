@@ -11,6 +11,7 @@
 
 //testing puposes
 #include "tibiamessage.h"
+extern uint32_t stamp;
 
 class NetworkMessage
 {

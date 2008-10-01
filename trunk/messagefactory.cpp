@@ -26,6 +26,7 @@ TibiaMessage* LSMessageFactory::getMessage ()
                 return NULL;
         }
         uint8_t id;
+
         _msg->peekU8 (id);
         if (id == 0x01) {
                 return (new LSMLoginMsg (_msg, _gs, _dat));
