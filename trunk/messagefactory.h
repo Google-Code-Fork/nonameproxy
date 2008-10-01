@@ -12,7 +12,15 @@ class DatReader;
 //it will also call delete the NetworkMessage, so after assigning a
 //networkmessage to a factory do not use it again
 
-class LSMessageFactory
+class MessageFactory
+{
+        public:
+                virtual ~MessageFactory () {}
+
+                virtual TibiaMessage* getMessage () = 0;
+};
+
+class LSMessageFactory : public MessageFactory
 {
         public:
                 LSMessageFactory (NetworkMessage* msg,
@@ -20,14 +28,14 @@ class LSMessageFactory
                                         DatReader* dat);
                 virtual ~LSMessageFactory ();
 
-                TibiaMessage* getMessage ();
+                virtual TibiaMessage* getMessage ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
                 DatReader* _dat;
 };
 
-class LRMessageFactory
+class LRMessageFactory : public MessageFactory
 {
         public:
                 LRMessageFactory (NetworkMessage* msg,
@@ -35,14 +43,14 @@ class LRMessageFactory
                                         DatReader* dat);
                 virtual ~LRMessageFactory ();
 
-                TibiaMessage* getMessage ();
+                virtual TibiaMessage* getMessage ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
                 DatReader* _dat;
 };
 
-class GSMessageFactory
+class GSMessageFactory : public MessageFactory
 {
         public:
                 GSMessageFactory (NetworkMessage* msg,
@@ -50,14 +58,14 @@ class GSMessageFactory
                                         DatReader* dat);
                 virtual ~GSMessageFactory ();
 
-                TibiaMessage* getMessage ();
+                virtual TibiaMessage* getMessage ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
                 DatReader* _dat;
 };
 
-class GRMessageFactory
+class GRMessageFactory : public MessageFactory
 {
         public:
                 GRMessageFactory (NetworkMessage* msg,
@@ -65,7 +73,7 @@ class GRMessageFactory
                                         DatReader* dat);
                 virtual ~GRMessageFactory ();
 
-                TibiaMessage* getMessage ();
+                virtual TibiaMessage* getMessage ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;

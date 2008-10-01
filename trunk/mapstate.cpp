@@ -14,13 +14,8 @@ Pos::Pos (uint32_t xx, uint32_t yy, uint32_t zz)
         z = zz;
 }
 
-Pos MapState::getCurPos ()
+Pos& MapState::getCurPos ()
 {
         return _curPos;
-}
-
-void MapState::setCurPos (const Pos& pos)
-{
-        _curPos = pos;
 }
 

@@ -1260,8 +1260,8 @@ class TShopItem
         public:
                 TShopItem (NetworkMessage* msg, DatReader* dat);
                 TShopItem (const TThing& item, uint8_t xbyte, 
-                                const std::string& name, uint32_t buyprice,
-                                uint32_t sellprice);
+                                const std::string& name, uint32_t weight,
+                                uint32_t buyprice, uint32_t sellprice);
                 TShopItem (const TShopItem& clone);
                 virtual ~TShopItem ();
 
@@ -1271,6 +1271,7 @@ class TShopItem
                 const TThing& getItem () const;
                 uint8_t getXByte () const;
                 const std::string& getName () const;
+                uint32_t getWeight () const;
                 uint32_t getBuyPrice () const;
                 uint32_t getSellPrice () const;
 
@@ -1280,6 +1281,7 @@ class TShopItem
                 TThing* _item;
                 TWord8* _xbyte;
                 TString* _name;
+                TWord32* _weight;
                 TWord32* _buyprice;
                 TWord32* _sellprice;
 };
