@@ -6,6 +6,7 @@
 #include "gamestate.h"
 #include "loginstate.h"
 #include "datreader.h"
+#include "messenger.h"
 
 class Connection;
 class ConnectionManager;
