@@ -3213,18 +3213,18 @@ GRMCreatureSpeed::GRMCreatureSpeed (NetworkMessage* msg,
         get (msg, gs, dat);
 }
 
-GRMCreatureSpeed::GRMCreatureSpeed (uint32_t creatureid, uint8_t speed)
+GRMCreatureSpeed::GRMCreatureSpeed (uint32_t creatureid, uint16_t speed)
 {
         _id = new TWord8 ((uint8_t)GRM_CREATURE_SPEED_ID);
         _creatureid = new TWord32 (creatureid);
-        _speed = new TWord8 (speed);
+        _speed = new TWord16 (speed);
 }
 
 GRMCreatureSpeed::GRMCreatureSpeed (const GRMCreatureSpeed& clone)
 {
         _id = new TWord8 (*clone._id);
         _creatureid = new TWord32 (*clone._creatureid);
-        _speed = new TWord8 (*clone._speed);
+        _speed = new TWord16 (*clone._speed);
 }
 
 GRMCreatureSpeed::~GRMCreatureSpeed ()
@@ -3259,7 +3259,7 @@ uint32_t GRMCreatureSpeed::getCreatureId ()
         return _creatureid->getVal ();
 }
 
-uint8_t GRMCreatureSpeed::getSpeed ()
+uint16_t GRMCreatureSpeed::getSpeed ()
 {
         return _speed->getVal ();
 }
@@ -3270,7 +3270,7 @@ void GRMCreatureSpeed::get (NetworkMessage* msg,
 {
         _id = new TWord8 (msg);
         _creatureid = new TWord32 (msg);
-        _speed = new TWord8 (msg);
+        _speed = new TWord16 (msg);
 }
 
 /***************************************************************
@@ -3610,33 +3610,39 @@ GRMShopGold::GRMShopGold (NetworkMessage* msg,
         get (msg, gs, dat);
 }
 
-GRMShopGold::GRMShopGold (uint32_t ngold)
+GRMShopGold::GRMShopGold (uint32_t ngold, TShopSellList* selllist)
 {
         _id = new TWord8 ((uint8_t)GRM_SHOP_GOLD_ID);
         _ngold = new TWord32 (ngold);
+        _selllist = selllist;
 }
 
 GRMShopGold::GRMShopGold (const GRMShopGold& clone)
 {
         _id = new TWord8 (*clone._id);
         _ngold = new TWord32 (*clone._ngold);
+        _selllist = new TShopSellList (*clone._selllist);
 }
         
 GRMShopGold::~GRMShopGold ()
 {
         delete _id;
         delete _ngold;
+        delete _selllist;
 }
 
 void GRMShopGold::put (NetworkMessage* msg)
 {
         _id->put (msg);
         _ngold->put (msg);
+        _selllist->put (msg);
 }
 
 void GRMShopGold::show ()
 {
-        printf ("GRMShopGold {gold: "); _ngold->show (); printf ("}\n");
+        printf ("GRMShopGold {\n");
+        printf ("\tgold: "); _ngold->show (); printf ("\n");
+        printf ("\tsell list: "); _selllist->show (); printf ("\n");
 }
 
 uint8_t GRMShopGold::getId ()
@@ -3649,11 +3655,17 @@ uint32_t GRMShopGold::getNGold ()
         return _ngold->getVal ();
 }
 
+const TShopSellList& GRMShopGold::getSellList ()
+{
+        return *_selllist;
+}
+
 void GRMShopGold::get (NetworkMessage* msg, GameState* gs,
                                         DatReader* dat)
 {
         _id = new TWord8 (msg);
         _ngold = new TWord32 (msg);
+        _selllist = new TShopSellList (msg, dat);
 }
 
 /***************************************************************

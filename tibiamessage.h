@@ -1524,7 +1524,7 @@ class GRMCreatureSpeed : public TibiaMessage
                 GRMCreatureSpeed (NetworkMessage* msg,
                                         GameState* gs,
                                         DatReader* dat);
-                GRMCreatureSpeed (uint32_t creatureid, uint8_t speed);
+                GRMCreatureSpeed (uint32_t creatureid, uint16_t speed);
                 GRMCreatureSpeed (const GRMCreatureSpeed& clone);
 
                 virtual ~GRMCreatureSpeed ();
@@ -1534,7 +1534,7 @@ class GRMCreatureSpeed : public TibiaMessage
                 virtual uint8_t getId ();
 
                 uint32_t getCreatureId ();
-                uint8_t  getSpeed ();
+                uint16_t getSpeed ();
 
                 virtual void get (NetworkMessage* msg,
                                         GameState* gs, 
@@ -1543,7 +1543,7 @@ class GRMCreatureSpeed : public TibiaMessage
         private:
                 TWord8* _id;
                 TWord32* _creatureid;
-                TWord8* _speed;
+                TWord16* _speed;
 };
 
 /***************************************************************
@@ -1709,7 +1709,8 @@ class GRMShopGold : public TibiaMessage
                 GRMShopGold (NetworkMessage* msg,
                                 GameState* gs,
                                 DatReader* dat);
-                GRMShopGold (uint32_t ngold);
+                //This constructor takes control of selllist
+                GRMShopGold (uint32_t ngold, TShopSellList* selllist);
                 GRMShopGold (const GRMShopGold& clone);
                 virtual ~GRMShopGold ();
 
@@ -1718,6 +1719,7 @@ class GRMShopGold : public TibiaMessage
                 virtual uint8_t getId ();
 
                 uint32_t getNGold ();
+                const TShopSellList& getSellList ();
 
                 virtual void get (NetworkMessage* msg,
                                   GameState* gs,
@@ -1725,6 +1727,7 @@ class GRMShopGold : public TibiaMessage
         private:
                 TWord8* _id;
                 TWord32* _ngold;
+                TShopSellList* _selllist;
 };
 
 /***************************************************************

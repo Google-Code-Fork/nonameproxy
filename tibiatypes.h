@@ -1334,6 +1334,82 @@ class TShopList
 };
 
 /************************************************************************
+ * TShopSellItem
+ * items player can sell to 
+ * note that the extra byte (xbyte) is always present
+ * if item is a TXItem xbyte will be added automatically
+ * if item is a TItem then xbyte will be used
+ ************************************************************************/
+
+class TShopSellItem
+{
+        public:
+                TShopSellItem (NetworkMessage* msg, DatReader* dat);
+                TShopSellItem (const TThing& item, uint8_t xbyte);
+                TShopSellItem (const TShopSellItem& clone);
+                virtual ~TShopSellItem ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                const TThing& getItem () const;
+                uint8_t getXByte () const;
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TThing* _item;
+                TWord8* _xbyte;
+};
+
+/************************************************************************
+ * TShopSellList
+ * Contains a list of shopitems
+ ************************************************************************/
+
+typedef std::list<TShopSellItem*> ShopSellList;
+
+class TShopSellList
+{
+        public:
+                TShopSellList (NetworkMessage* msg, DatReader* dat);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TShopSellList (uint8_t nitems);
+                TShopSellList (const TShopSellList& clone);
+                virtual ~TShopSellList ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getNItems () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current shopitem
+                const TShopSellItem& getShopSellItem ();
+                //insert thing BEFORE current thing
+                void insert (TShopSellItem* shopitem);
+                //replace current thing
+                void replace (TShopSellItem* shopitem);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (TShopSellItem* shopitem);
+
+        private:
+                void get (NetworkMessage* msg, DatReader* dat);
+
+                TWord8* _nitems;
+                ShopSellList _items;
+                ShopSellList::iterator _it;
+};
+
+/************************************************************************
  * TOutfitSelection
  ************************************************************************/
 
