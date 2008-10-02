@@ -2802,6 +2802,198 @@ void TShopList::get (NetworkMessage* msg, DatReader* dat)
 }
 
 /************************************************************************
+ * TShopSellItem
+ ************************************************************************/
+
+TShopSellItem::TShopSellItem (NetworkMessage* msg, DatReader* dat)
+{
+        get (msg, dat);
+}
+
+
+TShopSellItem::TShopSellItem (const TThing& item, uint8_t xbyte)
+{
+        TThingFactory tf;
+        _item = tf.cloneThing (item);
+
+        if (_item->getType () == TThing::xitem) {
+                _xbyte = new TWord8 (((TXItem*)_item)->getXByte ());
+        } else {
+                _xbyte = new TWord8 (xbyte);
+        }
+}
+        
+TShopSellItem::TShopSellItem (const TShopSellItem& clone)
+{
+        TThingFactory tf;
+        _item = tf.cloneThing (*clone._item);
+
+        _xbyte = new TWord8 (*clone._xbyte);
+}
+        
+TShopSellItem::~TShopSellItem ()
+{
+        delete _item;
+        delete _xbyte;
+}
+        
+
+void TShopSellItem::put (NetworkMessage* msg) const
+{
+        _item->put (msg);
+        if (_item->getType () != TThing::xitem) {
+                _xbyte->put (msg);
+        }
+}
+        
+void TShopSellItem::show () const
+{
+        printf ("\tTShopSellItem {\n");
+        printf ("\t\titem: "); _item->show (); printf ("\n");
+        printf ("\t\txbyte: "); _xbyte->show (); printf ("\n");
+        printf ("\t}\n");
+}
+
+const TThing& TShopSellItem::getItem () const
+{
+        return *_item;
+}
+
+uint8_t TShopSellItem::getXByte () const
+{
+        return _xbyte->getVal ();
+}
+
+void TShopSellItem::get (NetworkMessage* msg, DatReader* dat)
+{
+        TThingFactory tf (msg, dat);
+        _item = tf.getThing ();
+
+        if (_item->getType () == TThing::xitem) {
+                _xbyte = new TWord8 (((TXItem*)_item)->getXByte ());
+        } else {
+                _xbyte = new TWord8 (msg);
+        }
+}
+
+/************************************************************************
+ * TShopSellList
+ ************************************************************************/
+
+TShopSellList::TShopSellList (NetworkMessage* msg, DatReader* dat)
+{
+        get (msg, dat);
+        _it = _items.begin ();
+}
+
+
+TShopSellList::TShopSellList (uint8_t nitems)
+{
+        _nitems = new TWord8 ((uint8_t)0);
+        _it = _items.begin ();
+}
+        
+TShopSellList::TShopSellList (const TShopSellList& clone)
+{
+        _nitems = new TWord8 (*clone._nitems);
+
+        ShopSellList::const_iterator i;
+        for (i = clone._items.begin (); i != clone._items.end (); ++ i) {
+                _items.push_back (new TShopSellItem (**i));
+        }
+
+        _it = _items.begin ();
+}
+        
+TShopSellList::~TShopSellList ()
+{
+        delete _nitems;
+
+        for (_it = _items.begin (); _it != _items.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TShopSellList::put (NetworkMessage* msg) const
+{
+        _nitems->put (msg);
+
+        ShopSellList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TShopSellList::show () const
+{
+        printf ("\tTShopSellList {\n");
+        printf ("\t\tnitems: "); _nitems->show (); printf ("\n");
+
+        printf ("\t\tShopSellItems:\n");
+
+        ShopSellList::const_iterator i;
+        for (i = _items.begin (); i != _items.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+uint8_t TShopSellList::getNItems () const
+{
+        return _nitems->getVal ();
+}
+
+void TShopSellList::begin ()
+{
+        _it = _items.begin ();
+}
+
+bool TShopSellList::isEnd ()
+{
+        if (_it == _items.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TShopSellList::next ()
+{
+        if (_it == _items.end ()) {
+                printf ("error: attempt to seek past end of map\n");
+        } else {
+                _it ++;
+        }
+}
+
+const TShopSellItem& TShopSellList::getShopSellItem ()
+{
+        return *(*_it);
+}
+
+void TShopSellList::insert (TShopSellItem* shopitem)
+{
+        _items.insert (_it, shopitem);
+        uint8_t tmp = _nitems->getVal ();
+        delete _nitems;
+        _nitems = new TWord8 (tmp + 1);
+}
+
+void TShopSellList::get (NetworkMessage* msg, DatReader* dat)
+{
+        _nitems = new TWord8 (msg);
+
+        uint32_t n = _nitems->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _items.push_back (new TShopSellItem (msg, dat));
+        }
+
+        _it = _items.begin ();
+}
+
+/************************************************************************
  * TOutfitSelection
  ************************************************************************/
 
