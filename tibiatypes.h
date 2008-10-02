@@ -1017,18 +1017,18 @@ class TPlayerStats
 {
         public:
                 TPlayerStats (NetworkMessage* msg);
-                TPlayerStats (uint16_t getHp,
-                                uint16_t getHpmax,
-                                uint32_t getCapacity,
-                                uint32_t getExperience,
-                                uint16_t getLevel,
-                                uint8_t getLevelPercent,
-                                uint16_t getMana,
-                                uint16_t getMaxmana,
-                                uint8_t getMagicLevel,
-                                uint8_t getMagicLevelPercent,
-                                uint8_t getSoul,
-                                uint16_t getStamina);
+                TPlayerStats (uint16_t hp,
+                                uint16_t hpmax,
+                                uint32_t capacity,
+                                uint32_t experience,
+                                uint16_t level,
+                                uint8_t levelPercent,
+                                uint16_t mana,
+                                uint16_t maxmana,
+                                uint8_t magicLevel,
+                                uint8_t magicLevelPercent,
+                                uint8_t soul,
+                                uint16_t stamina);
 
                 TPlayerStats (const TPlayerStats& clone);
                 virtual ~TPlayerStats ();
@@ -1037,13 +1037,13 @@ class TPlayerStats
                 void show ();
 
                 uint16_t getHp () const;
-                uint16_t getHpmax () const;
+                uint16_t getHpMax () const;
                 uint32_t getCapacity () const;
                 uint32_t getExperience () const;
                 uint16_t getLevel () const;
                 uint8_t getLevelPercent () const;
                 uint16_t getMana () const;
-                uint16_t getMaxmana () const;
+                uint16_t getManaMax () const;
                 uint8_t getMagicLevel () const;
                 uint8_t getMagicLevelPercent () const;
                 uint8_t getSoul () const;

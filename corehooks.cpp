@@ -71,6 +71,11 @@ void HRGameInit::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHSelfInfo::func (TibiaMessage* tm, Client* client)
 {
+        GRMSelfInfo* si = (GRMSelfInfo*)tm;
+        GameState* gs = client->gstate;
+
+        gs->character->setTibiaId (si->getTibiaId ());
+        gs->character->setReportErrors (si->getReportErrors ());
 }
 
 /**********************************************************************
@@ -109,10 +114,58 @@ void GRHCreatureLight::func (TibiaMessage* tm, Client* client)
 }
 
 /**********************************************************************
+ * GRHPlayerStats 
+ **********************************************************************/
+void GRHPlayerStats::func (TibiaMessage* tm, Client* client)
+{
+        GRMPlayerStats* ps = (GRMPlayerStats*)tm;
+        CharState* character = client->gstate->character;
+
+        const TPlayerStats& stats = ps->getStats ();
+
+        character->setHp (stats.getHp ());
+        character->setHpMax (stats.getHpMax ());
+        character->setCapacity (stats.getCapacity ());
+        character->setExperience (stats.getExperience ());
+        character->setLevel (stats.getLevel ());
+        character->setLevelPercent (stats.getLevelPercent ());
+        character->setMana (stats.getMana ());
+        character->setManaMax (stats.getManaMax ());
+        character->setMagicLevel (stats.getMagicLevel ());
+        character->setMagicLevelPercent (stats.getMagicLevelPercent ());
+        character->setSoul (stats.getSoul ());
+        character->setStamina (stats.getStamina ());
+}
+
+/**********************************************************************
  * GRHPlayerSkills 
  **********************************************************************/
 void GRHPlayerSkills::func (TibiaMessage* tm, Client* client)
 {
+        GRMPlayerSkills* ps = (GRMPlayerSkills*)tm;
+        CharState* chr = client->gstate->character;
+        
+        chr->setFist (ps->getSkills ().getFist ().getLevel ());
+        chr->setFistPercent (ps->getSkills ().getFist ().getPercent ());
+
+        chr->setClub (ps->getSkills ().getClub ().getLevel ());
+        chr->setClubPercent (ps->getSkills ().getClub ().getPercent ());
+
+        chr->setSword (ps->getSkills ().getSword ().getLevel ());
+        chr->setSwordPercent (ps->getSkills ().getSword ().getPercent ());
+
+        chr->setAxe (ps->getSkills ().getAxe ().getLevel ());
+        chr->setAxePercent (ps->getSkills ().getAxe ().getPercent ());
+
+        chr->setDistance (ps->getSkills ().getDistance ().getLevel ());
+        chr->setDistancePercent (ps->getSkills ().getDistance ().getPercent ());
+
+        chr->setShield (ps->getSkills ().getShield ().getLevel ());
+        chr->setShieldPercent (ps->getSkills ().getShield ().getPercent ());
+
+        chr->setFishing (ps->getSkills ().getFishing ().getLevel ());
+        chr->setFishingPercent (ps->getSkills ().getFishing ().getPercent ());
+
 }
 
 /**********************************************************************

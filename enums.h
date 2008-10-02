@@ -128,18 +128,18 @@ enum speak_id_t{
  * Thank you otserv, credit where its due
  ******************************************************************/
 enum icons_t{
-	ICON_POISON     = 1,
-	ICON_BURN       = 2,
-	ICON_ENERGY     = 4,
-	ICON_DRUNK      = 8,
-	ICON_MANASHIELD = 16,
-	ICON_PARALYZE   = 32,
-	ICON_HASTE      = 64,
-	ICON_SWORDS     = 128,
-	ICON_DROWNING   = 256,
-	ICON_FREEZING   = 512,
-	ICON_DAZZLED    = 1024,
-	ICON_CURSED     = 2048
+	ICON_POISON     = 0x0001,
+	ICON_BURN       = 0x0002,
+	ICON_ENERGY     = 0x0004,
+	ICON_DRUNK      = 0x0008,
+	ICON_MANASHIELD = 0x0010,
+	ICON_PARALYZE   = 0x0020,
+	ICON_HASTE      = 0x0040,
+	ICON_SWORDS     = 0x0080,
+	ICON_DROWNING   = 0x0100,
+	ICON_FREEZING   = 0x0200,
+	ICON_DAZZLED    = 0x0400,
+	ICON_CURSED     = 0x0800,
 };
 
 
