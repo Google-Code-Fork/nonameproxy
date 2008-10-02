@@ -8,7 +8,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
 		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
-		idmanager.o messanger.o
+		idmanager.o messenger.o
 
 all: nonameproxy
 
@@ -52,7 +52,7 @@ xtea.o: xtea.cpp xtea.h
 
 client.o: client.cpp client.h tibiacrypt.h connection.h networkmessage.h connectionmanager.h \
 		tibiamessage.h hook.h corehooks.h hookmanager.h messagelist.h gamestate.h \
-		loginstate.h
+		loginstate.h rsakeys.h messagelist.h enums.h datreader.h messenger.h
 
 hookmanager.o: hookmanager.h hookmanager.cpp hook.h tibiamessage.h
 
@@ -70,7 +70,7 @@ adler32.o: adler32.cpp adler32.h
 
 idmanager.o: idmanager.cpp idmanager.h
 
-messanger.o: messanger.cpp messanger.h
+messenger.o: messenger.cpp messenger.h
 
 clean:
 	rm -f nonameproxy $(objects)
