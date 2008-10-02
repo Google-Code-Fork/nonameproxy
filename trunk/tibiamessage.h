@@ -497,7 +497,7 @@ class GRMSelfInfo : public TibiaMessage
                 uint32_t getTibiaId ();
                 uint8_t  getU1 ();
                 uint8_t  getU2 ();
-                uint8_t  reportErrors ();
+                uint8_t  getReportErrors ();
 
                 virtual void get (NetworkMessage* msg,
                                   GameState* gs,
@@ -776,7 +776,7 @@ class GRMPlayerStats : public TibiaMessage
 };
 
 /*************************************************************************
- * TPlayerSkills
+ * PlayerSkills
  *************************************************************************/
 
 class GRMPlayerSkills : public TibiaMessage

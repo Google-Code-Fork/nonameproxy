@@ -969,6 +969,16 @@ uint8_t GRMSelfInfo::getId ()
         return GRM_SELF_INFO_ID;
 }
 
+uint32_t GRMSelfInfo::getTibiaId ()
+{
+        return _tibiaId->getVal ();
+}
+
+uint8_t GRMSelfInfo::getReportErrors ()
+{
+        return _reportErrors->getVal ();
+}
+
 void GRMSelfInfo::put (NetworkMessage* msg)
 {
         _id->put (msg);

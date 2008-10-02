@@ -2,6 +2,7 @@
 #define __HOOK_H
 
 #include <stdlib.h>
+#include <list>
 
 class TibiaMessage;
 class Client;
@@ -20,6 +21,5 @@ class WriteHook
                 virtual TibiaMessage* func (TibiaMessage* tm, Client* client)
                         {return NULL;}
 };
-
 #endif
 

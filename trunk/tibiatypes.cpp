@@ -1893,7 +1893,7 @@ uint16_t TPlayerStats::getHp () const
         return _hp->getVal ();
 }
 
-uint16_t TPlayerStats::getHpmax () const
+uint16_t TPlayerStats::getHpMax () const
 {
         return _hpmax->getVal ();
 }
@@ -1923,7 +1923,7 @@ uint16_t TPlayerStats::getMana () const
         return _mana->getVal ();
 }
 
-uint16_t TPlayerStats::getMaxmana () const
+uint16_t TPlayerStats::getManaMax () const
 {
         return _maxmana->getVal ();
 }
