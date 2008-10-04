@@ -1,19 +1,19 @@
 # Makefile for nonameproxy
 
-#CPPFLAGS = -Wall -02
-CPPFLAGS = -Wall -g -O0
+#CPPFLAGS = -Wall -02 -rdynamic
+CPPFLAGS = -Wall -g -O0 -rdynamic
 CC     = g++
 
 objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
 		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
 		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
-		idmanager.o messenger.o
+		idmanager.o messenger.o plugin.o pluginmanager.o
 
 all: nonameproxy
 
 nonameproxy: $(objects)
-	$(CC)  $(CPPFLAGS) -lgmp -o nonameproxy $(objects)
+	$(CC)  $(CPPFLAGS) -ldl -lgmp -o nonameproxy $(objects)
 
 main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h loginstate.h \
 		messagefactory.h messagelist.h networkmessage.h rsa.h server.h tibiacrypt.h \
@@ -44,7 +44,7 @@ loginstate.o: loginstate.cpp loginstate.h tibiatypes.h
 
 gamestate.o: gamestate.cpp gamestate.h accountstate.h charstate.h
 
-corehooks.o: corehooks.cpp corehooks.h hook.h tibiamessage.h
+corehooks.o: corehooks.cpp corehooks.h hook.h tibiamessage.h gamestate.h client.h
 
 messagelist.o: messagelist.cpp messagelist.h 
 
@@ -71,6 +71,11 @@ adler32.o: adler32.cpp adler32.h
 idmanager.o: idmanager.cpp idmanager.h
 
 messenger.o: messenger.cpp messenger.h
+
+plugin.o: plugin.h plugin.cpp 
+
+pluginmanager.o: pluginmanager.cpp pluginmanager.h plugin.h idmanager.h hookmanager.h messenger.h \
+		connectionmanager.h
 
 clean:
 	rm -f nonameproxy $(objects)

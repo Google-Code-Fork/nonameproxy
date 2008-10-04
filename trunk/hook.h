@@ -12,12 +12,14 @@ class Client;
 class ReadHook
 {
         public:
+                virtual ~ReadHook () {};
                 virtual void func (TibiaMessage* tm, Client* client) {}
 };
 
 class WriteHook
 {
         public:
+                virtual ~WriteHook () {};
                 virtual TibiaMessage* func (TibiaMessage* tm, Client* client)
                         {return NULL;}
 };

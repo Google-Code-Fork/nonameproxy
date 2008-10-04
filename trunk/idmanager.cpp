@@ -26,7 +26,7 @@ IdManager::IdManager (uint32_t bin_size)
 {
         _bin_size = bin_size;
         
-        for (uint32_t i = 0; i < bin_size; i ++) {
+        for (uint32_t i = 1; i < bin_size + 1; i ++) {
                 recyclebin.push_back (i);
         }
 }
@@ -40,7 +40,7 @@ uint32_t IdManager::newId ()
                 used.insert (id);
         } else {
                 std::pair <std::set<uint32_t>::iterator, bool> ret;
-                id = 0;
+                id = 1;
                 ret = used.insert (id);
                 while (!ret.second) {
                         id ++;

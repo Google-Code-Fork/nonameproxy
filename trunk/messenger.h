@@ -1,5 +1,5 @@
-#ifndef __MESSANGER_H
-#define __MESSANGER_H
+#ifndef __MESSENGER_H
+#define __MESSENGER_H
 
 #include <stdint.h>
 #include <map>
@@ -10,11 +10,11 @@
 class Recipricant
 {
         public:
-                virtual ~Recipricant () = 0;
-                virtual void func (const std::string& msg);
+                virtual ~Recipricant () {};
+                virtual void func (const std::string& msg) {};
 };
 
-typedef std::map<uint32_t, Recipricant*> RecipricantList;
+typedef std::map<uint32_t, Recipricant> RecipricantList;
 
 class Messenger
 {
