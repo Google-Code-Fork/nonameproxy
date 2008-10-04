@@ -36,7 +36,6 @@ uint32_t HookManager::addReadHook (uint8_t id, ReadHook* hook) {
         uint32_t hid = ids->newId ();
         rLookup.insert (std::pair<uint32_t, uint32_t> (hid, id));
         rHooks[id].insert (std::pair<uint32_t, ReadHook*> (hid, hook));
-        printf ("insert: %p\n", hook);
         return hid;
 }
 
@@ -61,19 +60,21 @@ uint32_t HookManager::addWriteHook (uint8_t id, WriteHook* hook)
 
 void HookManager::deleteReadHook (uint32_t hid)
 {
-        HookMap::iterator i = rLookup.find (hid);
-        if (i == rLookup.end ()) {
+        HookMap::iterator i1 = rLookup.find (hid);
+        if (i1 == rLookup.end ()) {
                 printf ("hookmanager error: delete: non existant hook\n");
                 return;
         }
-        uint32_t mid = (*i).second;
+        uint32_t mid = (*i1).second;
 
-        if (rHooks[mid].erase (hid) == 0) {
+        RHookList::iterator i2 = rHooks[mid].find (hid);
+        if (i2 == rHooks[mid].end ()) {
                 printf ("hookmanager error: delete: concurrency error. \n\
                          This is really bad. Its not your fault but let \
                          know if it happens.\n");
                 return;
         }
+        delete (*i2).second;
         ids->recycleId (hid);
 }
 

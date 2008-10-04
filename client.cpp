@@ -20,11 +20,10 @@ Client::Client (LoginState* ls)
         lstate = ls;
         gstate = new GameState ();
         dat = new DatReader ();
-        //messenger = new Messenger ();
+        messenger = new Messenger ();
 
         serverConn = NULL;
         clientConn = NULL;
-        connMgr = NULL;
 
         crypt = new TibiaCrypt ();
         //i guess there is some redundancy having an RSA module
@@ -32,13 +31,19 @@ Client::Client (LoginState* ls)
         crypt->setRSAPublicKey (TIBKEY, TIBMOD);
         crypt->setRSAPrivateKey (OTKEY, OTMOD);
 
-        recvHM = NULL;
-        sendHM = NULL;
-        recvProtocol = NULL;
+        sendHM = new HookManager ();
+        recvHM = new HookManager ();
+        recvProtocol = new HookManager ();
+        connMgr = new ConnectionManager ();
+        pluginManager = new PluginManager (messenger, recvHM, sendHM, 
+                                           connMgr, this);
+
 }        
 
 Client::~Client ()
 {
+        delete pluginManager;
+
         delete gstate;
         delete dat;
 
@@ -46,7 +51,7 @@ Client::~Client ()
         delete clientConn;
         delete connMgr;
 
-        //delete messenger;
+        delete messenger;
 
         delete recvHM;
         delete sendHM;
@@ -55,134 +60,117 @@ Client::~Client ()
 
 bool Client::runLogin (Connection* acceptedConn)
 {
-        //first initialize the core hooks, im not going to add support for
-        //user defined login hooks. All we have to do is load the core hooks
-        sendHM = new HookManager ();
+        /* first initialize the core hooks, im not going to add support for
+         * user defined login hooks. All we have to do is load the core hooks */
         sendHM->addReadHook (0x01, (ReadHook*)(new HRLoginMsg));
-
-        recvHM = new HookManager ();
         recvHM->addWriteHook (0x64, (WriteHook*)(new HWCharacterList));
-        //im only adding this hook for fun
+
+        /* im only adding this hook for fun */
         recvHM->addWriteHook (0x14, (WriteHook*)(new HWMOTD));
 
-        //set up the connection
+        /* set up the connection */
         Connection* clientConn = acceptedConn;
         Connection* serverConn = new Connection ();
-        //need to add support for all login servers
+        /* TODO need to add support for all login servers */
         if (!serverConn->connectTo ("login02.tibia.com", 7171)) {
                 printf ("error: failed to connect to login server\n");
                 return false;
         }
-
-        ConnectionManager* connMgr = new ConnectionManager ();
         connMgr->addConnection (clientConn);
         connMgr->addConnection (serverConn);
 
+        /* This loop will only terminate after both connections have terminated
+         * Although this is less than ideal, it should work */
         NetworkMessage* msg;
-        //This loop will only terminate after both connections have terminated
-        //Although this is less than ideal, it should work
         while (serverConn->isConnected () && clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
-                        //msg->show ();
                         crypt->decrypt (msg);
-                        msg->show ();
+                        //msg->show ();
                         LSMessageList* lsml = new LSMessageList (msg, gstate, dat);
                         while (!lsml->isEnd ()) {
                                 TibiaMessage* tm = lsml->read ();
                                 sendHM->hookReadMessage (tm, this);
                                 tm = sendHM->hookWriteMessage (tm, this);
                                 lsml->replace (tm);
-                                tm->show ();
                                 lsml->next ();
                         }
                         msg = lsml->put ();
-                        msg->show ();
+                        //msg->show ();
                         crypt->encrypt (msg);
                         serverConn->putMsg (msg);
                         delete lsml;
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
-                        msg->show ();
+                        //msg->show ();
                         crypt->decrypt (msg);
-                        msg->show ();
+                        //msg->show ();
                         LRMessageList* lrml = new LRMessageList (msg, gstate, dat);
                         while (!lrml->isEnd ()) {
                                 TibiaMessage* tm = lrml->read ();
                                 recvHM->hookReadMessage (tm, this);
                                 tm = recvHM->hookWriteMessage (tm, this);
                                 lrml->replace (tm);
-                                tm->show ();
                                 lrml->next ();
                         }
                         msg = lrml->put ();
-                        msg->show ();
+                        //msg->show ();
                         crypt->encrypt (msg);
-                        msg->show ();
+                        //msg->show ();
                         clientConn->putMsg (msg);
                         delete lrml;
                         break;
                 }
         }
 
-        //this is a dodgy hack to flush the msg left over from the break statement
+        /* this is a dodgy hack to flush the msg left
+         * over from the break statement */
         connMgr->selectConnections (125);
-
-        delete connMgr;
-        delete clientConn;
-        delete serverConn;
-        delete recvHM;
-        delete sendHM;
-        clientConn = NULL;
-        serverConn = NULL;
-        recvHM = NULL;
-        sendHM = NULL;
 
         return true;
 }
 
 bool Client::runGame (Connection* acceptedConn)
 {
-        sendHM = new HookManager ();
+        /* first initialize the core hooks, im not going to add support for
+         * user defined login hooks. All we have to do is load the core hooks */
         sendHM->addReadHook (0x0A, (ReadHook*)(new HRGameInit));
-
-        recvHM = new HookManager ();
-
-        recvProtocol = new HookManager ();
         addProtocolHooks ();
 
-        //set up the connection
+        /* set up the connection */
         Connection* clientConn = acceptedConn;
         Connection* serverConn = new Connection ();
 
-        ConnectionManager* connMgr = new ConnectionManager ();
         connMgr->addConnection (clientConn);
 
-        NetworkMessage* msg;
+        /* TEST PLUGIN CODE */
+        std::string path = "./plugins/dummy/dummy.so";
+        uint32_t dummyid = pluginManager->addPlugin (path);
 
-        //in order to connect to the game server we need to retrieve the
-        //original ip address but in order to do that we need to first
-        //recv a packet from the client
+
+        /* in order to connect to the game server we need to retrieve the
+         * original ip address but in order to do that we need to first
+         * recv a packet from the client */
+        NetworkMessage* msg;
         while (clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        msg->show ();
+                        //msg->show ();
                         GSMessageList* gsml = new GSMessageList (msg, gstate, dat);
                         while (!gsml->isEnd ()) {
                                 TibiaMessage* tm = gsml->read ();
                                 sendHM->hookReadMessage (tm, this);
                                 tm = sendHM->hookWriteMessage (tm, this);
                                 gsml->replace (tm);
-                                tm->show ();
                                 gsml->next ();
                         }
                         msg = gsml->put ();
-                        msg->show ();
+                        //msg->show ();
                         crypt->encrypt (msg);
-                        //now we want to send the message to the server, but
-                        //we have to connect to the server first, so well
-                        //save the message
+                        /* now we want to send the message to the server, but
+                         * we have to connect to the server first, so well
+                         * save the message */
                         delete gsml;
                         break;
                 }
@@ -193,31 +181,29 @@ bool Client::runGame (Connection* acceptedConn)
         TCharacter* connChar = ld->getCharByName
                 (gstate->account->getName ());
 
-        //and now we can finally connect
+        /* and now we can finally connect */
         if (!serverConn->connectTo (connChar->getIp (), connChar->getPort ())) {
                 printf ("error: failed to connect to game server\n");
                 return false;
         }
 
-        //and dont forget to add it to the connection manager
+        /* and dont forget to add it to the connection manager */
         connMgr->addConnection (serverConn);
         serverConn->putMsg (msg);
 
-        //and finally the main loop
+        /* and finally the main loop */
         while (serverConn->isConnected () || clientConn->isConnected ()) {
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        msg->show ();
+                        //msg->show ();
                         crypt->encrypt (msg);
                         serverConn->putMsg (msg);
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        printf ("init\n");
-                        msg->show ();
+                        //msg->show ();
                         GRMessageList* grml = new GRMessageList (msg, gstate, dat);
-                        printf ("we have a list\n");
                         while (!grml->isEnd ()) {
                                 TibiaMessage* tm = grml->read ();
 
@@ -229,23 +215,12 @@ bool Client::runGame (Connection* acceptedConn)
                                 grml->next ();
                         }
                         msg = grml->put ();
-                        printf ("remade\n");
-                        msg->show ();
+                        //msg->show ();
                         crypt->encrypt (msg);
                         clientConn->putMsg (msg);
                         delete grml;
-                        printf ("\n");
                 }
         }
-
-        delete clientConn;
-        delete serverConn;
-        delete recvHM;
-        delete sendHM;
-        clientConn = NULL;
-        serverConn = NULL;
-        recvHM = NULL;
-        sendHM = NULL;
 
         return true;
 }
@@ -260,3 +235,53 @@ void Client::addProtocolHooks ()
         recvProtocol->addReadHook (GRM_MAP_UP_ID, (ReadHook*)new GRHMapUp);
         recvProtocol->addReadHook (GRM_MAP_DOWN_ID, (ReadHook*)new GRHMapDown);
 }
+
+/************************************************************************
+ * Plugin Wrappers
+ ************************************************************************/
+
+void Client::sendMessage (uint32_t pid, const std::string& msg)
+{
+        pluginManager->sendMessage (pid, msg);
+}
+
+uint32_t Client::addRecvReadHook (uint32_t pid, uint8_t id, ReadHook* hook)
+{
+        return pluginManager->addRecvReadHook (pid, id, hook);
+}
+
+uint32_t Client::addRecvWriteHook (uint32_t pid, uint8_t id, WriteHook* hook)
+{
+        return pluginManager->addRecvWriteHook (pid, id, hook);
+}
+
+uint32_t Client::addSendReadHook (uint32_t pid, uint8_t id, ReadHook* hook)
+{
+        return pluginManager->addSendReadHook (pid, id, hook);
+}
+
+uint32_t Client::addSendWriteHook (uint32_t pid, uint8_t id, WriteHook* hook)
+{
+        return pluginManager->addSendWriteHook (pid, id, hook);
+}
+
+void Client::deleteRecvReadHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deleteRecvReadHook (pid, hid);
+}
+
+void Client::deleteRecvWriteHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deleteRecvWriteHook (pid, hid);
+}
+
+void Client::deleteSendReadHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deleteSendReadHook (pid, hid);
+}
+
+void Client::deleteSendWriteHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deleteSendWriteHook (pid, hid);
+}
+

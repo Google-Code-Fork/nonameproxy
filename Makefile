@@ -27,7 +27,7 @@ tibiacrypt.o: tibiacrypt.cpp tibiacrypt.h rsa.h xtea.h networkmessage.h adler32.
 
 rsa.o: rsa.cpp rsa.h
 
-connectionmanager.o: connectionmanager.cpp connectionmanager.h connection.h
+connectionmanager.o: connectionmanager.cpp connectionmanager.h connection.h idmanager.h
 
 networkmessage.o: networkmessage.cpp networkmessage.h connection.h tibiacrypt.h tibiatypes.h
 

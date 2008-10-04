@@ -1,15 +1,34 @@
 #include "connectionmanager.h"
-#include "connection.h"
 
 #define MAX(x,y) (x) > (y) ? (x) : (y)
 
-void ConnectionManager::addConnection (Connection* connection)
+ConnectionManager::ConnectionManager ()
 {
-        connections.push_back (connection);
+        ids = new IdManager (100);
 }
 
-void ConnectionManager::closeConnections ()
+ConnectionManager::~ConnectionManager ()
 {
+        ConnectionList::iterator it;
+
+        for (it = connections.begin (); it != connections.end (); ++ it)
+        {
+                delete (*it).second;
+        }
+
+        delete ids;
+}
+
+uint32_t ConnectionManager::addConnection (Connection* connection)
+{
+        if (!connection) {
+                printf ("warning: attempt to assign NULL connectin\n");
+                return -1;
+        }
+
+        uint32_t cid = ids->newId ();
+        connections.insert (std::pair<uint32_t, Connection*> (cid, connection));
+        return cid;
 }
 
 #ifdef WIN32
@@ -29,7 +48,7 @@ void ConnectionManager::selectConnections (uint32_t timeout)
 
         for (ConnectionList::iterator c = connections.begin();
                 c != connections.end(); ++c) {
-                new_fd = (*c)->query_fd (readfds, writefds, errfds);
+                new_fd = (*c).second->query_fd (readfds, writefds, errfds);
                 max_fd = MAX (new_fd, max_fd);
         }
 
@@ -39,8 +58,20 @@ void ConnectionManager::selectConnections (uint32_t timeout)
 
         for (ConnectionList::iterator c = connections.begin();
                 c != connections.end(); ++c) {
-                (*c)->tell_fd (readfds, writefds, errfds);
+                (*c).second->tell_fd (readfds, writefds, errfds);
         }
 }
 #endif
+
+void ConnectionManager::deleteConnection (uint32_t cid)
+{
+        ConnectionList::iterator i = connections.find (cid);
+        if (i == connections.end ()) {
+                printf ("connectionmanager error: delete: non-existant\
+                         connection id\n");
+                return;
+        }
+        delete (*i).second;
+        ids->recycleId (cid);
+}
 
