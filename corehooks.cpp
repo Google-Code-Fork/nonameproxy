@@ -6,6 +6,7 @@
 
 void HRLoginMsg::func (TibiaMessage* tm, Client* client)
 {
+        printf ("weho\n");
         LSMLoginMsg* li = (LSMLoginMsg*)tm;
         client->gstate->account->setAccount (li->getAccount ());
         client->gstate->account->setPassword (li->getPassword ());

@@ -4,6 +4,9 @@
 /********************************************************************
  * IdManager
  * IdManager is used for managing unique ids
+ * IdManager will not assign 0 unless all other ids are used
+ * which is insanely unlikely given that this class will run out of
+ * addressable memory before then
  ********************************************************************/
 
 #include <stdint.h>

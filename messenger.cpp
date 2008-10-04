@@ -4,9 +4,6 @@
 Messenger::Messenger ()
 {
         ids = new IdManager (100);
-        for (RecipricantList::iterator i; i != rlist.end (); ++ i) {
-                delete (*i).second;
-        }
 }
 
 Messenger::~Messenger ()
@@ -18,7 +15,7 @@ uint32_t Messenger::addRecipricant (Recipricant* recipricant)
 {
         uint32_t id = ids->newId ();
 
-        rlist.insert (std::pair<uint32_t, Recipricant*> (id, recipricant));
+        rlist.insert (std::pair<uint32_t, Recipricant> (id, *recipricant));
         return id;
 }
 
@@ -40,14 +37,14 @@ void Messenger::sendMessage (uint32_t rid, const std::string& msg)
         if (i == rlist.end ()) {
                 printf ("messenger send error: recipricant does not exist\n");
         } else {
-                (*i).second->func (msg);
+                (*i).second.func (msg);
         }
 }
 
 void Messenger::broadcastMessage (const std::string& msg)
 {
         for (RecipricantList::iterator i; i != rlist.end (); ++ i) {
-                (*i).second->func (msg);
+                (*i).second.func (msg);
         }
 }
 

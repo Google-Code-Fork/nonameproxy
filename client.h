@@ -20,23 +20,32 @@ class Client
                 virtual ~Client ();
                 bool runLogin (Connection* acceptedConn);
                 bool runGame (Connection* acceptedConn);
-                //these definitions are part of the Client standard and
-                //by declaring anything here you make a promise that 
-                //these classes will be initialized when client is initialized.
-                //The only exceptions are the connections which may be
-                //initialized on a call to runLogin or runGame
+
+                /* these definitions are part of the Client standard and
+                 * by declaring anything here you make a promise that 
+                 * these classes will be initialized when client is initialized.
+                 * The only exceptions are the connections which may be
+                 * initialized on a call to runLogin or runGame */
+
                 LoginState*     lstate;
                 GameState*      gstate;
                 DatReader*      dat;
 
-                Connection*     serverConn;
-                Connection*     clientConn;
+                /* Tibia crypt stores certain infomataton, namely the xtea
+                 * key, therefore its in the same 'league' as gamestate */
 
                 TibiaCrypt*     crypt;
+
         private:
                 void addProtocolHooks ();
 
                 ConnectionManager*      connMgr;
+                Connection*             serverConn;
+                Connection*             clientConn;
+
+
+                Messenger*              messenger;
+
                 HookManager*            recvHM;
                 HookManager*            sendHM;
                 HookManager*            recvProtocol;

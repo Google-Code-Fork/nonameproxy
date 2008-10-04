@@ -20,6 +20,7 @@ Client::Client (LoginState* ls)
         lstate = ls;
         gstate = new GameState ();
         dat = new DatReader ();
+        //messenger = new Messenger ();
 
         serverConn = NULL;
         clientConn = NULL;
@@ -44,6 +45,8 @@ Client::~Client ()
         delete serverConn;
         delete clientConn;
         delete connMgr;
+
+        //delete messenger;
 
         delete recvHM;
         delete sendHM;
