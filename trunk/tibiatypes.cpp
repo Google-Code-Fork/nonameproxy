@@ -292,7 +292,6 @@ TCharacter::TCharacter (const TCharacter& clone)
         _world = new TString (*clone._world);
         _ip = new TWord32 (*clone._ip);
         _port = new TWord16 (*clone._port);
-        clone._port->show (); printf (" "); _port->show (); printf ("\n");
 }
 
 TCharacter::~TCharacter ()
@@ -4298,7 +4297,7 @@ TSpeak* TSpeakFactory::cloneSpeak (const TSpeak& clone)
                 case SPEAK_PRIVATE_NP:
                 case SPEAK_PRIVATE_PN:
                 {
-                        return new TPublicSpeak (_msg);
+                        return new TPublicSpeak ((const TPublicSpeak&)clone);
                 }
 
                 case SPEAK_CHANNEL_R1:
@@ -4306,22 +4305,22 @@ TSpeak* TSpeakFactory::cloneSpeak (const TSpeak& clone)
                 case SPEAK_CHANNEL_O:
                 case SPEAK_CHANNEL_Y:
                 {
-                        return new TChannelSpeak (_msg);
+                        return new TChannelSpeak ((const TChannelSpeak&)clone);
                 }
                 case SPEAK_PRIVATE:
                 case SPEAK_BROADCAST:
                 case SPEAK_PRIVATE_RED:
                 {
-                        return new TPrivateSpeak (_msg);
+                        return new TPrivateSpeak ((const TPrivateSpeak&)clone);
                 }
                 /*case SPEAK_CHANNEL_UNK6:
                 {
-                        return new TRuleNumberSpeak (_msg);
+                        return new TRuleNumberSpeak (clone);
                 }
                 case SPEAK_CHANNEL_UNK7:
                 case SPEAK_CHANNEL_UNK8:
                 {
-                        return new TRuleSpeak (_msg);
+                        return new TRuleSpeak (clone);
                         break;
                 }*/
                 default:

@@ -38,7 +38,6 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
                 printf ("plugin error: could not resolve symbol \"name\"\n");
                 return false;
         }
-        printf ("yay\n");
         _load (pluginId, client);
         _client = client;
         return true;
@@ -71,19 +70,76 @@ void Plugin::setRecipricantId (uint32_t rid)
         _recipricantId = rid;
 }
 
-bool Plugin::addHookId (uint32_t hid)
+void Plugin::addRecvReadHookId (uint32_t hid)
 {
         std::pair <std::set<uint32_t>::iterator, bool> ret;
-        ret = _hooks.insert (hid);
-        return ret.second;
+        ret = _rrhooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addRecvReadHookId: ");
+                printf ("hook id already exists\n");
+        }
 }
 
-bool Plugin::removeHookId (uint32_t hid)
+void Plugin::addRecvWriteHookId (uint32_t hid)
 {
-        if (_hooks.erase (hid) == 0) {
-                return false;
+        std::pair <std::set<uint32_t>::iterator, bool> ret;
+        ret = _rwhooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addRecvWriteHookId: ");
+                printf ("hook id already exists\n");
         }
-        return true;
+}
+
+void Plugin::addSendReadHookId (uint32_t hid)
+{
+        std::pair <std::set<uint32_t>::iterator, bool> ret;
+        ret = _srhooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addSendReadHookId: ");
+                printf ("hook id already exists\n");
+        }
+}
+
+void Plugin::addSendWriteHookId (uint32_t hid)
+{
+        std::pair <std::set<uint32_t>::iterator, bool> ret;
+        ret = _swhooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addSendWriteHookId: ");
+                printf ("hook id already exists\n");
+        }
+}
+
+void Plugin::deleteRecvReadHookId (uint32_t hid)
+{
+        if (_rrhooks.erase (hid) == 0) {
+                printf ("plugin error: deleteRecvReadId: ");
+                printf ("non existant hook id\n");
+        }
+}
+
+void Plugin::deleteRecvWriteHookId (uint32_t hid)
+{
+        if (_rrhooks.erase (hid) == 0) {
+                printf ("plugin error: deleteRecvWriteId: ");
+                printf ("non existant hook id\n");
+        }
+}
+
+void Plugin::deleteSendReadHookId (uint32_t hid)
+{
+        if (_rrhooks.erase (hid) == 0) {
+                printf ("plugin error: deleteSendReadId: ");
+                printf ("non existant hook id\n");
+        }
+}
+
+void Plugin::deleteSendWriteHookId (uint32_t hid)
+{
+        if (_rrhooks.erase (hid) == 0) {
+                printf ("plugin error: deleteSendWriteId: ");
+                printf ("non existant hook id\n");
+        }
 }
 
 bool Plugin::addConnectionId (uint32_t cid)
@@ -95,7 +151,7 @@ bool Plugin::addConnectionId (uint32_t cid)
 
 bool Plugin::removeConnectionId (uint32_t hid)
 {
-        if (_hooks.erase (hid) == 0) {
+        if (_connections.erase (hid) == 0) {
                 return false;
         }
         return true;

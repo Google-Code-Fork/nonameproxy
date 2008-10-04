@@ -28,8 +28,15 @@ class Plugin
                 uint32_t getRecipricantId ();
                 void     setRecipricantId (uint32_t rid);
 
-                bool     addHookId (uint32_t hid);
-                bool     removeHookId (uint32_t hid);
+                void     addRecvReadHookId (uint32_t hid);
+                void     addRecvWriteHookId (uint32_t hid);
+                void     addSendReadHookId (uint32_t hid);
+                void     addSendWriteHookId (uint32_t hid);
+
+                void     deleteRecvReadHookId (uint32_t hid);
+                void     deleteRecvWriteHookId (uint32_t hid);
+                void     deleteSendReadHookId (uint32_t hid);
+                void     deleteSendWriteHookId (uint32_t hid);
 
                 bool     addConnectionId (uint32_t cid);
                 bool     removeConnectionId (uint32_t cid);
@@ -47,7 +54,10 @@ class Plugin
                 unloadfunc _unload;
 
                 uint32_t _recipricantId;
-                idset _hooks;
+                idset _rrhooks;
+                idset _rwhooks;
+                idset _srhooks;
+                idset _swhooks;
                 idset _connections;
 };
         

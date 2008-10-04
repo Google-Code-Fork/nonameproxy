@@ -9,20 +9,25 @@
 
 int main (uint32_t argc, char** argv)
 {
+        Client* test;
+
         Server* loginServer = new Server ();
         loginServer->listenOn (1337);
         Connection* clientConn = loginServer->acceptConnection ();
 
         LoginState* ls = new LoginState ();
 
-        Client test (ls);
-        test.runLogin (clientConn);
+        test = new Client (ls);
+        test->runLogin (clientConn);
+        delete test;
         
         Server* gameServer = new Server ();
         gameServer->listenOn (7331);
         clientConn = gameServer->acceptConnection ();
 
-        test.runGame (clientConn);
+        test = new Client (ls);
+        test->runGame (clientConn);
+        delete test;
 
         return 0;
 }

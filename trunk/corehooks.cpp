@@ -6,7 +6,6 @@
 
 void HRLoginMsg::func (TibiaMessage* tm, Client* client)
 {
-        printf ("weho\n");
         LSMLoginMsg* li = (LSMLoginMsg*)tm;
         client->gstate->account->setAccount (li->getAccount ());
         client->gstate->account->setPassword (li->getPassword ());
@@ -38,7 +37,7 @@ TibiaMessage* HWCharacterList::func (TibiaMessage* tm, Client* client)
 
         LRMCharacterList* newcl
                 = new LRMCharacterList (fixedCharList, cl->getDaysPrem ());
-        //because we do not return the original TibiaMessage we must delete it
+        /* because we do not return the original message it must be deleted */
         delete cl;
         return newcl;
 }
