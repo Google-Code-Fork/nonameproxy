@@ -10,5 +10,7 @@ GameState::GameState ()
 GameState::~GameState ()
 {
         delete account;
+        delete character;
+        delete map;
 }
 

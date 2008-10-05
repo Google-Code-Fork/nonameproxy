@@ -3,6 +3,7 @@
 #include "enums.h"
 
 uint32_t pluginId;
+uint32_t rid;
 uint32_t chickenHookId;
 
 Client* clientPtr;
@@ -38,6 +39,14 @@ TibiaMessage* ChickenHook::func (TibiaMessage* tm, Client* client)
         return newSpeak;
 }
 
+void TestRecipricant::func (const Args& args)
+{
+        Args::const_iterator i;
+        for (i = args.begin (); i != args.end (); ++ i) {
+                printf ("%s\n", (*i).c_str ());
+        }
+}
+
 void load (uint32_t id, Client* client)
 {
         pluginId = id;
@@ -54,11 +63,14 @@ void load (uint32_t id, Client* client)
 
         chickenHookId = clientPtr->addRecvWriteHook (pluginId, GRM_SPEAK_ID,
                                                         new ChickenHook);
+        rid = clientPtr->addRecipricant (pluginId, new TestRecipricant);
 }
 
 void unload ()
 {
+        printf ("unloading\n");
         clientPtr->deleteRecvWriteHook (pluginId, chickenHookId);
+        clientPtr->deleteRecipricant (pluginId, rid);
 }
 
 const std::string& name ()

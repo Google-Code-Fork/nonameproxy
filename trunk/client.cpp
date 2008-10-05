@@ -56,6 +56,7 @@ Client::~Client ()
         delete recvHM;
         delete sendHM;
         delete recvProtocol;
+        delete crypt;
 }
 
 bool Client::runLogin (Connection* acceptedConn)
@@ -92,8 +93,12 @@ bool Client::runLogin (Connection* acceptedConn)
                                 TibiaMessage* tm = lsml->read ();
                                 sendHM->hookReadMessage (tm, this);
                                 tm = sendHM->hookWriteMessage (tm, this);
-                                lsml->replace (tm);
-                                lsml->next ();
+                                if (tm == NULL) {
+                                        lsml->remove ();
+                                } else {
+                                        lsml->replace (tm);
+                                        lsml->next ();
+                                }
                         }
                         msg = lsml->put ();
                         //msg->show ();
@@ -110,8 +115,12 @@ bool Client::runLogin (Connection* acceptedConn)
                                 TibiaMessage* tm = lrml->read ();
                                 recvHM->hookReadMessage (tm, this);
                                 tm = recvHM->hookWriteMessage (tm, this);
-                                lrml->replace (tm);
-                                lrml->next ();
+                                if (tm == NULL) {
+                                        lrml->remove ();
+                                } else {
+                                        lrml->replace (tm);
+                                        lrml->next ();
+                                }
                         }
                         msg = lrml->put ();
                         //msg->show ();
@@ -144,9 +153,14 @@ bool Client::runGame (Connection* acceptedConn)
         connMgr->addConnection (clientConn);
 
         /* TEST PLUGIN CODE */
-        std::string path = "./plugins/dummy/dummy.so";
-        uint32_t dummyid = pluginManager->addPlugin (path);
+        std::string dummypath = "./plugins/dummy/dummy.so";
+        uint32_t dummyid = pluginManager->addPlugin (dummypath);
+        sendMessage (dummyid, "this is a test, an epic test");
+        pluginManager->deletePlugin (dummyid);
 
+        std::string channelpath = "./plugins/channelmanager/channelmanager.so";
+        uint32_t cmid = pluginManager->addPlugin (channelpath);
+        sendMessage (cmid, "channelmanager add test 1234");
 
         /* in order to connect to the game server we need to retrieve the
          * original ip address but in order to do that we need to first
@@ -162,8 +176,12 @@ bool Client::runGame (Connection* acceptedConn)
                                 TibiaMessage* tm = gsml->read ();
                                 sendHM->hookReadMessage (tm, this);
                                 tm = sendHM->hookWriteMessage (tm, this);
-                                gsml->replace (tm);
-                                gsml->next ();
+                                if (tm == NULL) {
+                                        gsml->remove ();
+                                } else {
+                                        gsml->replace (tm);
+                                        gsml->next ();
+                                }
                         }
                         msg = gsml->put ();
                         //msg->show ();
@@ -196,7 +214,7 @@ bool Client::runGame (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        //msg->show ();
+                        msg->show ();
                         crypt->encrypt (msg);
                         serverConn->putMsg (msg);
                 }
@@ -210,9 +228,12 @@ bool Client::runGame (Connection* acceptedConn)
                                 recvProtocol->hookReadMessage (tm, this);
                                 recvHM->hookReadMessage (tm, this);
                                 tm = recvHM->hookWriteMessage (tm, this);
-                                grml->replace (tm);
-
-                                grml->next ();
+                                if (tm == NULL) {
+                                        grml->remove ();
+                                } else {
+                                        grml->replace (tm);
+                                        grml->next ();
+                                }
                         }
                         msg = grml->put ();
                         //msg->show ();
@@ -283,5 +304,15 @@ void Client::deleteSendReadHook (uint32_t pid, uint32_t hid)
 void Client::deleteSendWriteHook (uint32_t pid, uint32_t hid)
 {
         pluginManager->deleteSendWriteHook (pid, hid);
+}
+
+uint32_t Client::addRecipricant (uint32_t pid, Recipricant* recipricant)
+{
+        return pluginManager->addRecipricant (pid, recipricant);
+}
+
+void Client::deleteRecipricant (uint32_t pid, uint32_t rid)
+{
+        pluginManager->deleteRecipricant (pid, rid);
 }
 

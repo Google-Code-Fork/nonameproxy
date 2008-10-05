@@ -30,6 +30,8 @@ class MessageList
                 void insert (TibiaMessage* tm);
                 //replace the current message
                 void replace (TibiaMessage* tm);
+                //removes the current, the iterator points to the next message
+                void remove ();
                 //add a message to the end of the message list
                 void add (TibiaMessage* tm);
 

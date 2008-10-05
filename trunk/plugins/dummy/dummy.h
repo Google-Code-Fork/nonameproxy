@@ -6,11 +6,17 @@
 
 #include "client.h"
 #include "tibiamessage.h"
+#include "messenger.h"
 #include "hook.h"
 
 class ChickenHook : public WriteHook
 {
         virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
+};
+
+class TestRecipricant : public Recipricant
+{
+        virtual void func (const Args& args);
 };
 
 extern "C"

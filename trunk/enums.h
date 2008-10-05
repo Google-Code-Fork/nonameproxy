@@ -102,7 +102,8 @@ enum gr_message_id_t
  * Enum of tibias speak types
  * The following is taken from YACT sources
  ******************************************************************/
-enum speak_id_t{
+enum speak_id_t
+{
         SPEAK_SAY               = 0x01, //normal talk
         SPEAK_WHISPER           = 0x02, //whispering - #w text
         SPEAK_YELL              = 0x03, //yelling - #y text
@@ -127,7 +128,8 @@ enum speak_id_t{
  * Enum of player icons
  * Thank you otserv, credit where its due
  ******************************************************************/
-enum icons_t{
+enum icons_t
+{
 	ICON_POISON     = 0x0001,
 	ICON_BURN       = 0x0002,
 	ICON_ENERGY     = 0x0004,
@@ -142,5 +144,20 @@ enum icons_t{
 	ICON_CURSED     = 0x0800,
 };
 
+/******************************************************************
+ * Directions
+ ******************************************************************/
+
+enum direction_t 
+{
+        DIRECTION_EAST  = 0x01,
+        DIRECTION_NE    = 0x02,
+        DIRECTION_NORTH = 0x03,
+        DIRECTION_NW    = 0x04,
+        DIRECTION_WEST  = 0x05,
+        DIRECTION_SW    = 0x06,
+        DIRECTION_SOUTH = 0x07, 
+        DIRECTION_SE    = 0x08,
+};
 
 #endif

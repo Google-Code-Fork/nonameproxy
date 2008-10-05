@@ -5,6 +5,7 @@
 #endif
 
 #include "plugin.h"
+#include "client.h"
 
 Plugin::Plugin ()
 {
@@ -40,6 +41,7 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
         }
         _load (pluginId, client);
         _client = client;
+        _pluginId = pluginId;
         return true;
 #endif
 }
@@ -48,11 +50,32 @@ bool Plugin::unload ()
 {
         _unload ();
 
+        /* now we do the dirty work if the plugin was to lazy */
+        IdSet::iterator i;
+        for (i = _rrhooks.begin (); i != _rrhooks.end (); ++ i) {
+                _client->deleteRecvReadHook (_pluginId, (*i));
+        }
+        for (i = _rwhooks.begin (); i != _rwhooks.end (); ++ i) {
+                _client->deleteRecvWriteHook (_pluginId, (*i));
+        }
+        for (i = _srhooks.begin (); i != _srhooks.end (); ++ i) {
+                _client->deleteSendReadHook (_pluginId, (*i));
+        }
+        for (i = _swhooks.begin (); i != _swhooks.end (); ++ i) {
+                _client->deleteSendWriteHook (_pluginId, (*i));
+        }
+        /* TODO add connection cleanum */
+                
+
+#ifdef WIN32
+        /* do windows stuff here */
+#else
         if (dlclose (_handle) != 0) {
                 printf ("plugin error: %s\n", dlerror());
                 return false;
         }
         return true;
+#endif
 }
 
 const std::string& Plugin::name ()
@@ -120,7 +143,7 @@ void Plugin::deleteRecvReadHookId (uint32_t hid)
 
 void Plugin::deleteRecvWriteHookId (uint32_t hid)
 {
-        if (_rrhooks.erase (hid) == 0) {
+        if (_rwhooks.erase (hid) == 0) {
                 printf ("plugin error: deleteRecvWriteId: ");
                 printf ("non existant hook id\n");
         }
@@ -128,7 +151,7 @@ void Plugin::deleteRecvWriteHookId (uint32_t hid)
 
 void Plugin::deleteSendReadHookId (uint32_t hid)
 {
-        if (_rrhooks.erase (hid) == 0) {
+        if (_srhooks.erase (hid) == 0) {
                 printf ("plugin error: deleteSendReadId: ");
                 printf ("non existant hook id\n");
         }
@@ -136,7 +159,7 @@ void Plugin::deleteSendReadHookId (uint32_t hid)
 
 void Plugin::deleteSendWriteHookId (uint32_t hid)
 {
-        if (_rrhooks.erase (hid) == 0) {
+        if (_swhooks.erase (hid) == 0) {
                 printf ("plugin error: deleteSendWriteId: ");
                 printf ("non existant hook id\n");
         }

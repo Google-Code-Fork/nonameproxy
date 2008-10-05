@@ -11,7 +11,7 @@ typedef const std::string& (*namefunc) ();
 typedef void (*loadfunc) (uint32_t, Client*);
 typedef void (*unloadfunc) ();
 
-typedef std::set <uint32_t> idset;
+typedef std::set <uint32_t> IdSet;
 
 class Plugin
 {
@@ -53,12 +53,13 @@ class Plugin
                 loadfunc   _load;
                 unloadfunc _unload;
 
+                uint32_t _pluginId;
                 uint32_t _recipricantId;
-                idset _rrhooks;
-                idset _rwhooks;
-                idset _srhooks;
-                idset _swhooks;
-                idset _connections;
+                IdSet _rrhooks;
+                IdSet _rwhooks;
+                IdSet _srhooks;
+                IdSet _swhooks;
+                IdSet _connections;
 };
         
 #endif

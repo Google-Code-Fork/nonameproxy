@@ -2066,7 +2066,7 @@ class GRMChannelList : public TibiaMessage
                                 GameState* gs,
                                 DatReader* dat);
                 //This constructor takes control of questlist
-                GRMChannelList (TChannelList* questlist);
+                GRMChannelList (TChannelList* channellist);
                 GRMChannelList (const GRMChannelList& clone);
                 virtual ~GRMChannelList ();
 
@@ -2075,7 +2075,7 @@ class GRMChannelList : public TibiaMessage
                 virtual uint8_t getId ();
 
                 uint16_t getQuestId ();
-                TChannelList& getChannelList();
+                TChannelList& getChannelList ();
 
                 virtual void get (NetworkMessage* msg,
                                   GameState* gs,
@@ -2366,6 +2366,40 @@ class GRMSpeak : public TibiaMessage
                 TWord8* _id;
                 TSpeak* _speak;
 };
+
+/*****************************************************************
+ * Game Send Messages
+ *****************************************************************/
+
+/*****************************************************************
+ * AutoWalk
+ *****************************************************************/
+
+class GSMAutoWalk : public TibiaMessage
+{
+        public:
+                GSMAutoWalk (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMAutoWalk (const TSpeak& speak);
+                GSMAutoWalk (const GSMAutoWalk& clone);
+                virtual ~GSMAutoWalk ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                const TSpeak& getSpeak ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TSpeak* _speak;
+};
+
+
 
 #endif
 
