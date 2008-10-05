@@ -72,6 +72,7 @@ void ConnectionManager::deleteConnection (uint32_t cid)
                 return;
         }
         delete (*i).second;
+        connections.erase (cid);
         ids->recycleId (cid);
 }
 
