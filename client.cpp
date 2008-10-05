@@ -153,7 +153,7 @@ bool Client::runGame (Connection* acceptedConn)
         connMgr->addConnection (clientConn);
 
         /* TEST PLUGIN CODE */
-        std::string dummypath = "./plugins/dummy/dummy.so";
+        /*std::string dummypath = "./plugins/dummy/dummy.so";
         uint32_t dummyid = pluginManager->addPlugin (dummypath);
         sendMessage (dummyid, "this is a test, an epic test");
         pluginManager->deletePlugin (dummyid);
@@ -161,7 +161,7 @@ bool Client::runGame (Connection* acceptedConn)
         std::string channelpath = "./plugins/channelmanager/channelmanager.so";
         uint32_t cmid = pluginManager->addPlugin (channelpath);
         sendMessage (cmid, "channelmanager add test 1234");
-
+        */
         /* in order to connect to the game server we need to retrieve the
          * original ip address but in order to do that we need to first
          * recv a packet from the client */
