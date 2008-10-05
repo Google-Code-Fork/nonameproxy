@@ -48,6 +48,9 @@ class PluginManager
                 void deleteRecvWriteHook (uint32_t pid, uint32_t hid);
                 void deleteSendReadHook (uint32_t pid, uint32_t hid);
                 void deleteSendWriteHook (uint32_t pid, uint32_t hid);
+
+                uint32_t addRecipricant (uint32_t pid, Recipricant* recipricant);
+                void     deleteRecipricant (uint32_t pid, uint32_t rid);
         private:
                 PluginList plist;
                 IdManager* ids;

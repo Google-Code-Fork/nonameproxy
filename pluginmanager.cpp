@@ -18,10 +18,10 @@ PluginManager::PluginManager (Messenger* messenger,
 
 PluginManager::~PluginManager ()
 {
-        PluginList::iterator it;
-        for (it = plist.begin (); it != plist.end (); ++ it)
+        PluginList::iterator i;
+        for (i = plist.begin (); i != plist.end (); ++ i)
         {
-                delete (*it).second;
+                delete (*i).second;
         }
         delete ids;
 }
@@ -46,13 +46,16 @@ uint32_t PluginManager::addPlugin (const std::string& path)
 
 void PluginManager::deletePlugin (uint32_t pid)
 {
-        if (plist.erase (pid) == 0) {
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
                 printf ("plugin delete error: plugin doesnt exist\n");
                 return;
         }
         if (!ids->recycleId (pid)) {
                 printf ("plugin delete error: ids not concurrent\n");
         }
+        delete (*i).second;
+        plist.erase (pid);
 }
 
 uint32_t PluginManager::getPluginByName (const std::string& name)
@@ -191,3 +194,41 @@ void PluginManager::deleteSendWriteHook (uint32_t pid, uint32_t hid)
         (*i).second->deleteSendWriteHookId (hid);
 }
 
+uint32_t PluginManager::addRecipricant (uint32_t pid, Recipricant* recipricant)
+{
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: setRecipricant: non existant plugin\n");
+                return 0;
+        }
+        if ((*i).second->getRecipricantId () != 0) {
+                printf ("plugin manager error: plugins only allowed one ");
+                printf ("recipricant at a time\n");
+                return 0;
+        }
+        uint32_t rid = _messenger->addRecipricant (recipricant);
+        (*i).second->setRecipricantId (rid);
+        return rid;
+}
+
+void PluginManager::deleteRecipricant (uint32_t pid, uint32_t rid)
+{
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: setRecipricant: non existant plugin\n");
+                return;
+        }
+        if ((*i).second->getRecipricantId () == 0) {
+                printf ("plugin manager error: attempt delete ");
+                printf ("non existant plugin\n");
+                return;
+        }
+        if ((*i).second->getRecipricantId () != rid) {
+                printf ("plugin manager error: attempt delete ");
+                printf ("recipricant that does not belong to plugin\n");
+                return;
+        }
+        _messenger->deleteRecipricant (rid);
+        (*i).second->setRecipricantId (0);
+}
+        

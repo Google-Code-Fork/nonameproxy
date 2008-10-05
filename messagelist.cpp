@@ -97,6 +97,19 @@ void MessageList::replace (TibiaMessage* tm)
         _it --;
 } 
 
+void MessageList::remove ()
+{
+        if (_msglist.size () == 0) {
+                printf ("msglist error: attemp to remove in empty list\n");
+                return;
+        }
+        if (_it == _msglist.end ()) {
+                printf ("msglist error: attemp to remove \"end\"\n");
+                return;
+        }
+        _it = _msglist.erase (_it);
+} 
+
 void MessageList::add (TibiaMessage* tm)
 {
         _msglist.push_back (tm);
