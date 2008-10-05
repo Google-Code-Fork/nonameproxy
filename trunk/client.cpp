@@ -87,7 +87,7 @@ bool Client::runLogin (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        //msg->show ();
+                        msg->show ();
                         LSMessageList* lsml = new LSMessageList (msg, gstate, dat);
                         while (!lsml->isEnd ()) {
                                 TibiaMessage* tm = lsml->read ();
@@ -109,7 +109,7 @@ bool Client::runLogin (Connection* acceptedConn)
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         //msg->show ();
                         crypt->decrypt (msg);
-                        //msg->show ();
+                        msg->show ();
                         LRMessageList* lrml = new LRMessageList (msg, gstate, dat);
                         while (!lrml->isEnd ()) {
                                 TibiaMessage* tm = lrml->read ();

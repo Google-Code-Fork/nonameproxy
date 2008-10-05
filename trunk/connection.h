@@ -1,10 +1,14 @@
 #ifndef __CONNECTION_H
 #define __CONNECTION_H
 
+#ifdef WIN32
+        #include <winsock2.h>
+#endif
+
 #include <stdint.h>
 #include <list>
 
-#include "server.h"
+//#include "server.h"
 
 class NetworkMessage;
 
@@ -30,6 +34,10 @@ class Connection
                 NetworkMessage* getMsg ();
 
                 #ifdef WIN32
+                SOCKET  query_fd (fd_set& readfds, fd_set& writefds,
+                        fd_set errfds);
+                void    tell_fd  (fd_set& readfds, fd_set& writefds,
+                        fd_set& errfds);
                 #else
                 int32_t query_fd (fd_set& readfds, fd_set& writefds,
                         fd_set& errfds);
@@ -39,7 +47,7 @@ class Connection
 
         protected:
                 #ifdef WIN32
-                //maybe ill add this if i feel sorry for the incompetent
+                void setSocket (SOCKET socket);
                 #else
                 void setSocket (int32_t socket);
                 #endif
@@ -57,6 +65,7 @@ class Connection
                 NetworkMessage* _getMsg ();
 
                 #ifdef WIN32
+                SOCKET socket;
                 #else
                 int32_t connsock;
                 #endif

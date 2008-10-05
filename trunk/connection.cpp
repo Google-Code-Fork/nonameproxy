@@ -1,12 +1,28 @@
-#include <netdb.h>
+#ifdef WIN32
+#else
+        #include <netdb.h>
+        #include <errno.h>
+        #include <sys/select.h>
+        #include <fcntl.h>
+#endif
+
 #include <string.h>
 #include <stdio.h>
-#include <errno.h>
-#include <sys/select.h>
-#include <fcntl.h>
 
 #include "connection.h"
 #include "networkmessage.h"
+
+#ifdef WIN32
+#define NETWORK_ERROR(str)      if (WSAGetLastError () != EWOULDBLOCK) { \
+                                        printf (str); \
+                                        printf (": error no %d\n", \
+                                                        WSAGetLastError ()); \
+                                }
+#else
+#define NETWORK_ERROR(str)      if (errno != EAGAIN) { \
+                                        perror (str); \
+                                }
+#endif
 
 Connection::Connection ()
 {
@@ -59,9 +75,7 @@ int32_t Connection::_get (void* buf, int32_t len)
         int32_t n = recv (connsock, buf, len, 0);
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
-                if (errno != EAGAIN) {
-                        perror ("recv error get");
-                }
+                NETWORK_ERROR ("recv error get");
         }
         return n;
 }
@@ -71,9 +85,7 @@ int32_t Connection::_peek (void* buf, int32_t len)
         int32_t n = recv (connsock, buf, len, MSG_PEEK);
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
-                if (errno != EAGAIN) {
-                        perror ("recv error peek");
-                }
+                NETWORK_ERROR ("recv error peek");
         }
         return n;
 }
@@ -83,9 +95,7 @@ int32_t Connection::_put (void* buf, int32_t len)
         int32_t n = send (connsock, buf, len, 0);
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
-                if (errno != EAGAIN) {
-                        perror ("send error");
-                }
+                NETWORK_ERROR ("send error");
         }
         return n;
 }
@@ -93,9 +103,7 @@ int32_t Connection::_put (void* buf, int32_t len)
 int32_t Connection::_close ()
 {
         int32_t n = close (connsock);
-        if (n != 0) {
-                perror ("close error");
-        }
+        NETWORK_ERROR ("close error");
         return n;
 }
 
@@ -175,6 +183,39 @@ void Connection::_putMsg ()
 }
 
 #ifdef WIN32
+SOCKET Connection::query_fd (fd_set& readfds, fd_set& writefds,
+        fd_set& errfds)
+{
+        if (_isConnected) {
+                //we always try to recv
+                FD_SET (connsock, &readfds);
+
+                if (!putQueue.empty ()) {
+                        FD_SET (connsock, &writefds);
+                }
+
+                FD_SET (connsock, &errfds);
+        }
+        return connsock;
+}
+
+//this function takes the result of select and responds accordingly
+void Connection::tell_fd (fd_set& readfds, fd_set& writefds,
+        fd_set& errfds)
+{
+        if (FD_ISSET (connsock, &readfds)) {
+                NetworkMessage* msg = _getMsg ();
+                if (msg != NULL) {
+                        getQueue.push_back (msg);
+                }
+        }
+        if (FD_ISSET (connsock, &writefds)) {
+                if (!putQueue.empty ()) {
+                        _putMsg ();
+                }
+        }
+}
+                
 #else
 //Ive got no idea how this is going to be implemented under windows
 //but im going to leave that problem for another day
@@ -231,7 +272,11 @@ bool Connection::connectTo (const char* host, uint16_t port)
 {
         struct hostent* he = gethostbyname (host);
         if (he == NULL) {
+#ifdef WIN32
+                printf ("gethostbyname error: %d\n", WSAGetLasteError ());
+#else
                 herror ("gethostbyname error");
+#endif
                 return false;
         } else {
                 struct sockaddr_in hostaddr;
@@ -254,23 +299,38 @@ bool Connection::connectTo (uint32_t ip, uint16_t port)
 bool Connection::_connectTo (struct sockaddr_in hostaddr)
 {
         if ((connsock = socket (AF_INET, SOCK_STREAM, NULL)) == -1) {
-                perror ("socket error");
+                NETWORK_ERROR ("socket error");
                 return false;
         }
         uint32_t sin_size = sizeof (hostaddr);
         if (connect (connsock, (struct sockaddr*)&hostaddr, sin_size) == -1) {
-                perror ("connect error");
+                NETWORK_ERROR ("connect error");
                 return false;
         }
+#ifdef WIN32
+        uint32_t notzero = 1;
+        if (iocntlsocket (connsock, FIONBIO, &notzero) == SOCKET_ERROR) {
+                NETWORK_ERROR ("iocntlsocket error");
+                return false;
+        }
+#else
         if (fcntl (connsock, F_SETFL, O_NONBLOCK) == -1) {
-                perror ("fcntl error");
+                NETWORK_ERROR ("fcntl error");
                 return false;
         }
+#endif
         _isConnected = true;
         return true;
 }
 
 #ifdef WIN32
+void Connection::setSocket (SOCKET socket)
+{
+        //it is the responsibility of the calling function to ensure
+        //socket is connected
+        _isConnected = true;
+        connsock = socket;
+}
 #else
 void Connection::setSocket (int32_t socket)
 {
