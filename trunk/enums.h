@@ -2,100 +2,129 @@
 #define __NONAME_PROXY_ENUMS_H
 
 /******************************************************************
+ * Enum of tibias game send 
+ ******************************************************************/
+
+enum gs_message_id_t
+{
+        GSM_GAME_INIT_ID                = 0x0A,
+
+        GSM_AUTO_WALK_ID                = 0x64,
+        GSM_AUTO_WALK_CANCEL_ID         = 0x69,
+
+        GSM_MOVE_NORTH_ID               = 0x65,
+        GSM_MOVE_EAST_ID                = 0x66,
+        GSM_MOVE_SOUTH_ID               = 0x67,
+        GSM_MOVE_WEST_ID                = 0x68,
+        GSM_MOVE_NE_ID                  = 0x6A,
+        GSM_MOVE_SE_ID                  = 0x6B,
+        GSM_MOVE_SW_ID                  = 0x6C,
+        GSM_MOVE_NW_ID                  = 0x6D,
+
+        GSM_TURN_NORTH_ID               = 0x6F,
+        GSM_TURN_EAST_ID                = 0x70,
+        GSM_TURN_SOUTH_ID               = 0x71,
+        GSM_TURN_WEST_ID                = 0x72,
+
+        GSM_MOVE_ITEM_ID                = 0x78,
+};
+
+/******************************************************************
  * Enum of tibias game recieve
  ******************************************************************/
+
 enum gr_message_id_t
 {
-        GRM_SELF_INFO_ID =              0x0A,
+        GRM_SELF_INFO_ID                = 0x0A,
 
-        GRM_GM_ACTION_ID =              0x0B,
-        GRM_ERROR_ID =                  0x14,
-        GRM_FYI_ID =                    0x15,
-        GRM_QUEUE_ID =                  0x16,
-        GRM_PING_ID =                   0x1E,
-        GRM_LOGIN_WINDOW_ID =           0x28,
+        GRM_GM_ACTION_ID                = 0x0B,
+        GRM_ERROR_ID                    = 0x14,
+        GRM_FYI_ID                      = 0x15,
+        GRM_QUEUE_ID                    = 0x16,
+        GRM_PING_ID                     = 0x1E,
+        GRM_LOGIN_WINDOW_ID             = 0x28,
 
-        GRM_MAP_INIT_ID =               0x64,
-        GRM_MAP_NORTH_ID =              0x65,
-        GRM_MAP_EAST_ID =               0x66,
-        GRM_MAP_SOUTH_ID =              0x67,
-        GRM_MAP_WEST_ID =               0x68,
+        GRM_MAP_INIT_ID                 = 0x64,
+        GRM_MAP_NORTH_ID                = 0x65,
+        GRM_MAP_EAST_ID                 = 0x66,
+        GRM_MAP_SOUTH_ID                = 0x67,
+        GRM_MAP_WEST_ID                 = 0x68,
 
-        GRM_MAP_UP_ID =                 0xBE,
-        GRM_MAP_DOWN_ID =               0xBF,
+        GRM_MAP_UP_ID                   = 0xBE,
+        GRM_MAP_DOWN_ID                 = 0xBF,
 
-        GRM_TILE_SET_ID =               0x69,
-        GRM_TILE_ADD_ID =               0x6A,
-        GRM_TILE_UPDATE_ID =            0x6B,
-        GRM_TILE_REMOVE_ID =            0x6C,
+        GRM_TILE_SET_ID                 = 0x69,
+        GRM_TILE_ADD_ID                 = 0x6A,
+        GRM_TILE_UPDATE_ID              = 0x6B,
+        GRM_TILE_REMOVE_ID              = 0x6C,
 
-        GRM_CREATURE_MOVE_ID =          0x6D,
+        GRM_CREATURE_MOVE_ID            = 0x6D,
 
-        GRM_OPEN_CONTAINER_ID =         0x6E,
-        GRM_CLOSE_CONTAINER_ID =        0x6F,
-        GRM_CONT_ADD_ID =               0x70,
-        GRM_CONT_UPDATE_ID =            0x71,
-        GRM_CONT_REMOVE_ID =            0x72,
+        GRM_OPEN_CONTAINER_ID           = 0x6E,
+        GRM_CLOSE_CONTAINER_ID          = 0x6F,
+        GRM_CONT_ADD_ID                 = 0x70,
+        GRM_CONT_UPDATE_ID              = 0x71,
+        GRM_CONT_REMOVE_ID              = 0x72,
 
-        GRM_SLOT_ITEM_ID =              0x78,
-        GRM_SLOT_CLEAR_ID =             0x79,
+        GRM_SLOT_ITEM_ID                = 0x78,
+        GRM_SLOT_CLEAR_ID               = 0x79,
 
-        GRM_SHOP_TRADE_ID =             0x7A,
-        GRM_SHOP_GOLD_ID =              0x7B,
-        GRM_SHOP_CLOSE_ID =             0x7C,
+        GRM_SHOP_TRADE_ID               = 0x7A,
+        GRM_SHOP_GOLD_ID                = 0x7B,
+        GRM_SHOP_CLOSE_ID               = 0x7C,
 
-        GRM_OPEN_SELF_TRADE_ID =        0x7D,
-        GRM_OPEN_PLAYER_TRADE_ID =      0x7E,
-        GRM_CLOSE_TRADE_ID =            0x7F,
+        GRM_OPEN_SELF_TRADE_ID          = 0x7D,
+        GRM_OPEN_PLAYER_TRADE_ID        = 0x7E,
+        GRM_CLOSE_TRADE_ID              = 0x7F,
 
-        GRM_GLOBAL_LIGHT_ID =           0x82,
+        GRM_GLOBAL_LIGHT_ID             = 0x82,
 
-        GRM_MAGIC_EFFECT_ID =           0x83,
-        GRM_ANIMATED_TEXT_ID =          0x84,
-        GRM_SHOOT_EFFECT_ID =           0x85,
+        GRM_MAGIC_EFFECT_ID             = 0x83,
+        GRM_ANIMATED_TEXT_ID            = 0x84,
+        GRM_SHOOT_EFFECT_ID             = 0x85,
 
-        GRM_CREATURE_SQUARE_ID =        0x86,
-        GRM_CREATURE_HEALTH_ID =        0x8C,
-        GRM_CREATURE_LIGHT_ID =         0x8D,
-        GRM_CREATURE_OUTFIT_ID =        0x8E,
-        GRM_CREATURE_SPEED_ID =         0x8F,
-        GRM_CREATURE_SKULL_ID =         0x90,
-        GRM_CREATURE_SHIELD_ID =        0x91,
+        GRM_CREATURE_SQUARE_ID          = 0x86,
+        GRM_CREATURE_HEALTH_ID          = 0x8C,
+        GRM_CREATURE_LIGHT_ID           = 0x8D,
+        GRM_CREATURE_OUTFIT_ID          = 0x8E,
+        GRM_CREATURE_SPEED_ID           = 0x8F,
+        GRM_CREATURE_SKULL_ID           = 0x90,
+        GRM_CREATURE_SHIELD_ID          = 0x91,
 
-        GRM_TEXT_WINDOW_ID =            0x96,
-        GRM_TEXT_HOUSE_ID =             0x97,
+        GRM_TEXT_WINDOW_ID              = 0x96,
+        GRM_TEXT_HOUSE_ID               = 0x97,
 
-        GRM_PLAYER_STATS_ID =           0xA0,
-        GRM_PLAYER_SKILLS_ID =          0xA1,
-        GRM_PLAYER_ICONS_ID =           0xA2,
-        GRM_PLAYER_CANCEL_ATTACK_ID =   0xA3,
-        GRM_PLAYER_CANCEL_WALK_ID =     0xB5,
+        GRM_PLAYER_STATS_ID             = 0xA0,
+        GRM_PLAYER_SKILLS_ID            = 0xA1,
+        GRM_PLAYER_ICONS_ID             = 0xA2,
+        GRM_PLAYER_CANCEL_ATTACK_ID     = 0xA3,
+        GRM_PLAYER_CANCEL_WALK_ID       = 0xB5,
 
-        GRM_SPEAK_ID =                  0xAA,
-        GRM_CHANNEL_LIST_ID =           0xAB,
-        GRM_CHANNEL_OPEN_ID =           0xAC,
-        GRM_CHANNEL_PLAYER_ID =         0xAD,
-        GRM_CHANNEL_RULE_OPEN_ID =      0xAE,
-        GRM_CHANNEL_RULE_U1_ID =        0xAF,
-        GRM_CHANNEL_RULE_U2_ID =        0xB0,
-        GRM_CHANNEL_RULE_U3_ID =        0xB1,
-        GRM_CHANNEL_CHAT_ID =           0xB2,
-        GRM_CHANNEL_CLOSE_ID =          0xB3,
+        GRM_SPEAK_ID                    = 0xAA,
+        GRM_CHANNEL_LIST_ID             = 0xAB,
+        GRM_CHANNEL_OPEN_ID             = 0xAC,
+        GRM_CHANNEL_PLAYER_ID           = 0xAD,
+        GRM_CHANNEL_RULE_OPEN_ID        = 0xAE,
+        GRM_CHANNEL_RULE_U1_ID          = 0xAF,
+        GRM_CHANNEL_RULE_U2_ID          = 0xB0,
+        GRM_CHANNEL_RULE_U3_ID          = 0xB1,
+        GRM_CHANNEL_CHAT_ID             = 0xB2,
+        GRM_CHANNEL_CLOSE_ID            = 0xB3,
 
-        GRM_TEXT_MSG_ID =               0xB4,
+        GRM_TEXT_MSG_ID                 = 0xB4,
 
-        GRM_OUTFIT_WINDOW_ID =          0xC8,
+        GRM_OUTFIT_WINDOW_ID            = 0xC8,
 
-        GRM_VIP_INIT_ID =               0xD2,
-        GRM_VIP_LOGIN_ID =              0xD3,
-        GRM_VIP_LOGOUT_ID =             0xD4,
+        GRM_VIP_INIT_ID                 = 0xD2,
+        GRM_VIP_LOGIN_ID                = 0xD3,
+        GRM_VIP_LOGOUT_ID               = 0xD4,
 
-        GRM_SHOW_TUTORIAL_ID =          0xDC,
+        GRM_SHOW_TUTORIAL_ID            = 0xDC,
 
-        GRM_MINI_MAP_MARK_ID =          0xDD,
+        GRM_MINI_MAP_MARK_ID            = 0xDD,
 
-        GRM_QUEST_LIST_ID =             0xF0,
-        GRM_SUB_QUEST_LIST_ID =         0xF1,
+        GRM_QUEST_LIST_ID               = 0xF0,
+        GRM_SUB_QUEST_LIST_ID           = 0xF1,
 };
 
 /******************************************************************

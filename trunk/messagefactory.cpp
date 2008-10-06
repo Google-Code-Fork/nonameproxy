@@ -109,8 +109,28 @@ TibiaMessage* GSMessageFactory::getMessage ()
 
         uint8_t id;
         _msg->peekU8 (id);
-        if (id == 0x0A) {
+        if (id == GSM_GAME_INIT_ID) {
                 return (new GSMGameInit (_msg, _gs, _dat));
+        } else if (id == GSM_AUTO_WALK_ID) {
+                return (new GSMAutoWalk (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_NORTH_ID) {
+                return (new GSMMoveNorth (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_EAST_ID) {
+                return (new GSMMoveEast (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_SOUTH_ID) {
+                return (new GSMMoveSouth (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_WEST_ID) {
+                return (new GSMMoveWest (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_NE_ID) {
+                return (new GSMMoveNE (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_SE_ID) {
+                return (new GSMMoveSE (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_SW_ID) {
+                return (new GSMMoveSW (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_NW_ID) {
+                return (new GSMMoveNW (_msg, _gs, _dat));
+        } else if (id == GSM_MOVE_ITEM_ID) {
+                return (new GSMMoveItem (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GS Message 0x%X\n", id);
         return NULL;

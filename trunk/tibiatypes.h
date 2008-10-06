@@ -1701,5 +1701,50 @@ class TChannelList
                 ChannelList::iterator _it;
 };
 
+/************************************************************************
+ * TDirectionList
+ ************************************************************************/
+
+typedef std::list<TWord8*> DirectionList;
+
+class TDirectionList
+{
+        public:
+                TDirectionList (NetworkMessage* msg);
+                //if this constructor is used it is expected that the user will use
+                //manipulation functions to add things
+                TDirectionList (uint8_t ndirections);
+                TDirectionList (const TDirectionList& clone);
+                virtual ~TDirectionList ();
+
+                void put (NetworkMessage* msg) const;
+                void show () const;
+
+                uint8_t getNDirections () const;
+
+                //sets the iterator to the beginning of the map
+                void begin ();
+                //returns true if at end of map
+                bool isEnd ();
+                //move to the next thing
+                void next ();
+                //get the current direction
+                uint8_t getDirection ();
+                //insert thing BEFORE current thing
+                void insert (uint8_t direction);
+                //replace current thing
+                void replace (uint8_t direction);
+                //remove current thing and moves to the next thing
+                void remove ();
+                //adds a thing to the end of the map
+                void add (uint8_t direction);
+
+        private:
+                void get (NetworkMessage* msg);
+
+                TWord8* _ndirections;
+                DirectionList _directions;
+                DirectionList::iterator _it;
+};
 #endif
 

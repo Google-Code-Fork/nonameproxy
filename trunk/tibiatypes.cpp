@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/time.h>
-#include <time.h>
+#include "timer.h"
 #include "tibiatypes.h"
 #include "networkmessage.h"
 #include "datreader.h"
@@ -176,7 +175,10 @@ TByteBuffer::TByteBuffer (uint32_t len)
         _len = len;
         //init the random number generator
         struct timeval tv;
-        gettimeofday (&tv, NULL);
+
+        Timer timer;
+        timer.gettimeofday (&tv, NULL);
+
         srand (tv.tv_usec);
         //now fill the buffer, most of the time this is called
         //len will be < 8, so i havent bothered making it efficient
@@ -4332,3 +4334,159 @@ TSpeak* TSpeakFactory::cloneSpeak (const TSpeak& clone)
         }
 }
         
+/************************************************************************
+ * TDirectionList
+ ************************************************************************/
+
+TDirectionList::TDirectionList (NetworkMessage* msg)
+{
+        get (msg);
+        _it = _directions.begin ();
+}
+
+
+TDirectionList::TDirectionList (uint8_t ndirections)
+{
+        _ndirections = new TWord8 ((uint8_t)0);
+        _it = _directions.begin ();
+}
+        
+TDirectionList::TDirectionList (const TDirectionList& clone)
+{
+        _ndirections = new TWord8 (*clone._ndirections);
+
+        DirectionList::const_iterator i;
+        for (i = clone._directions.begin (); i != clone._directions.end (); ++ i) {
+                _directions.push_back (new TWord8 (**i));
+        }
+
+        _it = _directions.begin ();
+}
+        
+TDirectionList::~TDirectionList ()
+{
+        delete _ndirections;
+
+        for (_it = _directions.begin (); _it != _directions.end (); ++ _it) {
+                delete (*_it);
+        }
+}
+        
+
+void TDirectionList::put (NetworkMessage* msg) const
+{
+        _ndirections->put (msg);
+
+        DirectionList::const_iterator i;
+        for (i = _directions.begin (); i != _directions.end (); ++ i) {
+                (*i)->put (msg);
+        }
+}
+        
+void TDirectionList::show () const
+{
+        printf ("\tTDirectionList {\n");
+        printf ("\t\tndirections: "); _ndirections->show (); printf ("\n");
+
+        printf ("\t\tDirections:\n");
+
+        DirectionList::const_iterator i;
+        for (i = _directions.begin (); i != _directions.end (); ++ i) {
+                printf ("\t\t"); (*i)->show (); printf ("\n");
+        }
+        printf ("\t}\n");
+}
+
+uint8_t TDirectionList::getNDirections () const
+{
+        return _ndirections->getVal ();
+}
+
+void TDirectionList::begin ()
+{
+        _it = _directions.begin ();
+}
+
+bool TDirectionList::isEnd ()
+{
+        if (_it == _directions.end ()) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+void TDirectionList::next ()
+{
+        if (_it == _directions.end ()) {
+                printf ("error: attempt to seek past end of direction list\n");
+        } else {
+                _it ++;
+        }
+}
+
+uint8_t TDirectionList::getDirection ()
+{
+        return (*_it)->getVal ();
+}
+
+void TDirectionList::insert (uint8_t direction)
+{
+        _directions.insert (_it, new TWord8 (direction));
+        uint8_t tmp = _ndirections->getVal ();
+        delete _ndirections;
+        _ndirections = new TWord8 (tmp + 1);
+}
+
+void TDirectionList::replace (uint8_t direction)
+{
+        if (_directions.size () == 0) {
+                printf ("directionlist error: attemp to replace in empty list\n");
+                return;
+        }
+        if (_it == _directions.end ()) {
+                printf ("directionlist error: attemp to replace \"end\"\n");
+                return;
+        }
+        _it = _directions.erase (_it);
+        _directions.insert (_it, new TWord8 (direction));
+        _it --;
+} 
+
+void TDirectionList::remove ()
+{
+        if (_directions.size () == 0) {
+                printf ("directionlist error: attemp to remove in empty list\n");
+                return;
+        }
+        if (_it == _directions.end ()) {
+                printf ("directionlist error: attemp to remove \"end\"\n");
+                return;
+        }
+        _it = _directions.erase (_it);
+        uint8_t tmp = _ndirections->getVal ();
+        delete _ndirections;
+        _ndirections = new TWord8 (tmp - 1);
+}
+
+void TDirectionList::add (uint8_t direction)
+{
+        _directions.push_back (new TWord8 (direction));
+        uint8_t tmp = _ndirections->getVal ();
+        delete _ndirections;
+        _ndirections = new TWord8 (tmp + 1);
+}
+
+void TDirectionList::get (NetworkMessage* msg)
+{
+        _ndirections = new TWord8 (msg);
+
+        uint32_t n = _ndirections->getVal ();
+
+        for (uint32_t i = 0; i < n; i ++) {
+                _directions.push_back (new TWord8 (msg));
+        }
+
+        _it = _directions.begin ();
+}
+

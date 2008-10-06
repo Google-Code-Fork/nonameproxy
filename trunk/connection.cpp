@@ -103,7 +103,9 @@ int32_t Connection::_put (void* buf, int32_t len)
 int32_t Connection::_close ()
 {
         int32_t n = close (connsock);
-        NETWORK_ERROR ("close error");
+        if (n != 0) {
+                NETWORK_ERROR ("close error");
+        }
         return n;
 }
 

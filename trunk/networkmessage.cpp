@@ -1,9 +1,8 @@
 #include <stdlib.h>
-#include <sys/time.h>
-#include <time.h>
 #include <string.h>
 #include <stdio.h>
 #include "networkmessage.h"
+#include "timer.h"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
@@ -50,7 +49,10 @@ void NetworkMessage::writeHeader ()
 {
         uint16_t plainSize = _curpos - 8;
         struct timeval tv;
-        gettimeofday (&tv, NULL);
+
+        Timer timer;
+        timer.gettimeofday (&tv, NULL);
+
         srand (tv.tv_usec);
         //once we have the plain size we must add random bytes for XTEA
         //calculate how many random bytes
@@ -84,7 +86,7 @@ uint32_t NetworkMessage::getPos ()
 bool NetworkMessage::isRSA ()
 {
         uint16_t size = *(uint16_t*)_buffer;
-        if (size % 8 != 0) {
+        if ((size - 4) % 8 != 0) {
                 return true;
         } else {
                 return false;
