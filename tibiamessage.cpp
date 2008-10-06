@@ -480,6 +480,831 @@ void LRMNewLoginServer::show ()
         printf ("LRMNewLoginServer {}\n");
 }
 
+/********************************************************************
+ * Game Send Messages
+ ********************************************************************/
+
+/********************************************************************
+ * GSMGameInit
+ ********************************************************************/
+
+GSMGameInit::GSMGameInit (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMGameInit::GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
+        uint32_t* xtea, uint8_t isGM, const std::string& account, 
+        const std::string& name, const std::string& password)
+{
+        _id = new TWord8 ((uint8_t)GSM_GAME_INIT_ID);
+
+        _OS = new TWord16 (OS);
+        _version = new TWord16 (version);
+        _u1 = new TWord8 ((uint8_t)0);
+        _xtea = new TXTEAKey (xtea);
+        _isGM = new TWord8 (isGM);
+        _account = new TString (account);
+        _name = new TString (name);
+        _password = new TString (password);
+        //the TByteBuffer (uint32_t len) constructer automatically
+        //generates a random byte buffer
+        uint32_t rem = RSA_LEN - (24 + _password->getLen () + _name->getLen ()
+                                        + _account->getLen ());
+        _bytes = new TByteBuffer (rem);
+}
+
+GSMGameInit::~GSMGameInit ()
+{
+        delete _id;
+        delete _OS; 
+        delete _version; 
+        delete _u1;
+        delete _xtea;
+        delete _isGM;
+        delete _password;
+        delete _account;
+        delete _name;
+        delete _bytes;
+}
+
+uint8_t GSMGameInit::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMGameInit::getAccount ()
+{
+        return _account->getString ();
+}
+
+const std::string& GSMGameInit::getPassword ()
+{
+        return _password->getString ();
+}
+
+const std::string& GSMGameInit::getName ()
+{
+        return _name->getString ();
+}
+
+void GSMGameInit::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _OS->put (msg);
+        _version->put (msg);
+        _u1->put (msg);
+        _xtea->put (msg);
+        _isGM->put (msg);
+        _account->put (msg);
+        _name->put (msg);
+        _password->put (msg);
+        _bytes->put (msg);
+}
+
+void GSMGameInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _OS = new TWord16 (msg);
+        _version = new TWord16 (msg);
+        _u1 = new TWord8 (msg);
+        _xtea = new TXTEAKey (msg);
+        _isGM = new TWord8 (msg);
+        _account = new TString (msg);
+        _name = new TString (msg);
+        _password = new TString (msg);
+        //this time we just take the random bytes from the packet
+        uint32_t rem = RSA_LEN - (24 + _password->getLen () + _name->getLen ()
+                                        + _account->getLen ());
+        _bytes = new TByteBuffer (rem, msg);
+}
+
+const uint32_t* GSMGameInit::getXTEA ()
+{
+        return _xtea->getKey ();
+}
+        
+void GSMGameInit::show ()
+{
+        printf ("GSMGameInit {\n");
+        printf ("\tOS: "); _OS->show (); printf ("\n");
+        printf ("\tversion: "); _version->show (); printf ("\n");
+        printf ("\tu1: "); _u1->show (); printf ("\n");
+        printf ("\txtea: "); _xtea->show (); printf ("\n");
+        printf ("\tisGM: "); _isGM->show (); printf ("\n");
+        printf ("\taccount: "); _account->show (); printf ("\n");
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("\tpassword: "); _password->show (); printf ("\n");
+        printf ("\tbytes: "); _bytes->show (); printf ("\n");
+        printf ("}\n");
+}
+
+/***************************************************************
+ * AutoWalk
+ ***************************************************************/
+
+GSMAutoWalk::GSMAutoWalk (NetworkMessage* msg,
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMAutoWalk::GSMAutoWalk (TDirectionList* directions)
+{
+        _id = new TWord8 ((uint8_t)GSM_AUTO_WALK_ID);
+        _directions = directions;
+}
+
+GSMAutoWalk::GSMAutoWalk (const GSMAutoWalk& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _directions = new TDirectionList (*clone._directions);
+}
+        
+GSMAutoWalk::~GSMAutoWalk ()
+{
+        delete _id;
+        delete _directions;
+}
+
+void GSMAutoWalk::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _directions->put (msg);
+}
+
+void GSMAutoWalk::show ()
+{
+        printf ("GSMAutoWalk {\n");
+        _directions->show ();
+        printf ("}\n");
+}
+
+uint8_t GSMAutoWalk::getId ()
+{
+        return _id->getVal ();
+}
+
+TDirectionList& GSMAutoWalk::getDirectionList ()
+{
+        return *_directions;
+}
+
+void GSMAutoWalk::get (NetworkMessage* msg, GameState* gs,
+                                        DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _directions = new TDirectionList (msg);
+}
+
+/********************************************************************
+ * MoveNorth
+ ********************************************************************/
+
+GSMMoveNorth::GSMMoveNorth (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveNorth::GSMMoveNorth ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_NORTH_ID);
+}
+
+GSMMoveNorth::~GSMMoveNorth ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveNorth::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveNorth::show ()
+{
+        printf ("GSMMoveNorth {}\n");
+}
+
+void GSMMoveNorth::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveNorth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveEast
+ ********************************************************************/
+
+GSMMoveEast::GSMMoveEast (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveEast::GSMMoveEast ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_EAST_ID);
+}
+
+GSMMoveEast::~GSMMoveEast ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveEast::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveEast::show ()
+{
+        printf ("GSMMoveEast {}\n");
+}
+
+void GSMMoveEast::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveEast::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveSouth
+ ********************************************************************/
+
+GSMMoveSouth::GSMMoveSouth (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveSouth::GSMMoveSouth ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_SOUTH_ID);
+}
+
+GSMMoveSouth::~GSMMoveSouth ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveSouth::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveSouth::show ()
+{
+        printf ("GSMMoveSouth {}\n");
+}
+
+void GSMMoveSouth::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveSouth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveWest
+ ********************************************************************/
+
+GSMMoveWest::GSMMoveWest (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveWest::GSMMoveWest ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_WEST_ID);
+}
+
+GSMMoveWest::~GSMMoveWest ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveWest::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveWest::show ()
+{
+        printf ("GSMMoveWest {}\n");
+}
+
+void GSMMoveWest::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveWest::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveNE
+ ********************************************************************/
+
+GSMMoveNE::GSMMoveNE (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveNE::GSMMoveNE ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_NE_ID);
+}
+
+GSMMoveNE::~GSMMoveNE ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveNE::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveNE::show ()
+{
+        printf ("GSMMoveNE {}\n");
+}
+
+void GSMMoveNE::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveNE::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveSE
+ ********************************************************************/
+
+GSMMoveSE::GSMMoveSE (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveSE::GSMMoveSE ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_SE_ID);
+}
+
+GSMMoveSE::~GSMMoveSE ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveSE::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveSE::show ()
+{
+        printf ("GSMMoveSE {}\n");
+}
+
+void GSMMoveSE::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveSE::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveSW
+ ********************************************************************/
+
+GSMMoveSW::GSMMoveSW (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveSW::GSMMoveSW ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_SW_ID);
+}
+
+GSMMoveSW::~GSMMoveSW ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveSW::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveSW::show ()
+{
+        printf ("GSMMoveSW {}\n");
+}
+
+void GSMMoveSW::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveSW::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveNW
+ ********************************************************************/
+
+GSMMoveNW::GSMMoveNW (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMMoveNW::GSMMoveNW ()
+{
+        _id = new TWord8 ((uint8_t)GSM_MOVE_NW_ID);
+}
+
+GSMMoveNW::~GSMMoveNW ()
+{
+        delete _id;
+}
+
+uint8_t GSMMoveNW::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMMoveNW::show ()
+{
+        printf ("GSMMoveNW {}\n");
+}
+
+void GSMMoveNW::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMMoveNW::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * AutoWalkCancel
+ ********************************************************************/
+
+GSMAutoWalkCancel::GSMAutoWalkCancel (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMAutoWalkCancel::GSMAutoWalkCancel ()
+{
+        _id = new TWord8 ((uint8_t)GSM_AUTO_WALK_CANCEL_ID);
+}
+
+GSMAutoWalkCancel::~GSMAutoWalkCancel ()
+{
+        delete _id;
+}
+
+uint8_t GSMAutoWalkCancel::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMAutoWalkCancel::show ()
+{
+        printf ("GSMAutoWalkCancel {}\n");
+}
+
+void GSMAutoWalkCancel::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMAutoWalkCancel::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * MoveItemCancel
+ ********************************************************************/
+
+GSMMoveItem::GSMMoveItem (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+/* Ground to Ground constructor */
+GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos, 
+                          const TPos& to, uint8_t count)
+{
+        _toType   = ground;
+        _fromType = ground;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (from);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+        _to       = new TPos (to);
+        _count    = new TWord8 (count);
+}
+
+/* Ground to Container constructor */
+GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos, 
+                          uint8_t toContainerId, uint8_t toContainerPos,
+                          uint8_t count)
+{
+        _toType   = ground;
+        _fromType = container;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (from);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+        _to       = new TPos (0xFFFF, 0x0040 | toContainerId, toContainerPos);
+        _count    = new TWord8 (count);
+}
+
+/* Ground to Inventory constructor */
+GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos,
+                          uint8_t toSlot, uint8_t count)
+{
+        _toType   = ground;
+        _fromType = inventory;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (from);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+        _to       = new TPos (0xFFFF, toSlot, 0);
+        _count    = new TWord8 (count);
+}
+
+/* Container to Ground constructor */  
+GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
+                             uint16_t itemid, const TPos& to, uint8_t count)
+{
+        _toType   = container;
+        _fromType = ground;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (0xFFFF, 0x0040 | fromContainerId, 
+                                                        fromContainerPos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (fromContainerPos);
+        _to       = new TPos (to);
+        _count    = new TWord8 (count);
+}
+
+
+/* Container to Container constructor */
+GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
+                          uint16_t itemid, uint8_t toContainerId,
+                          uint8_t toContainerPos, uint8_t count)
+{
+        _toType   = container;
+        _fromType = container;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (0xFFFF, 0x0040 | fromContainerId, 
+                                                        fromContainerPos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (fromContainerPos);
+        _to       = new TPos (0xFFFF, 0x0040 | toContainerId, toContainerPos);
+        _count    = new TWord8 (count);
+}
+
+/* Container to Inventory constructor */
+GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
+                          uint16_t itemid, uint8_t toSlot, uint8_t count)
+{
+        _toType   = container;
+        _fromType = inventory;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (0xFFFF, 0x0040 | fromContainerId, 
+                                                        fromContainerPos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (fromContainerPos);
+        _to       = new TPos (0xFFFF, toSlot, 0);
+        _count    = new TWord8 (count);
+}
+
+/* Inventory to Ground constructor */
+GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid, 
+                          const TPos& to, uint8_t count)
+{
+        _toType   = inventory;
+        _fromType = ground;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (0xFFFF, fromSlot, 0);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 ((uint8_t)0);
+        _to       = new TPos (to);
+        _count    = new TWord8 (count);
+}
+
+/* Inventory to Container constructor */
+GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid, 
+                          uint8_t toContainerId, uint8_t toContainerPos, 
+                          uint8_t count)
+{
+        _toType   = inventory;
+        _fromType = container;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (0xFFFF, fromSlot, 0);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 ((uint8_t)0);
+        _to       = new TPos (0xFFFF, 0x0040 | toContainerId, toContainerPos);
+        _count    = new TWord8 (count);
+}
+
+/* Inventory to Inventory constructor */
+GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid,
+                          uint8_t toSlot, uint8_t count)
+{
+        _toType   = inventory;
+        _fromType = inventory;
+
+        _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
+        _from     = new TPos (0xFFFF, fromSlot, 0);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 ((uint8_t)0);
+        _to       = new TPos (0xFFFF, toSlot, 0);
+        _count    = new TWord8 (count);
+}
+
+
+GSMMoveItem::GSMMoveItem (const GSMMoveItem& clone)
+{
+        _toType   = clone._toType;
+        _fromType = clone._fromType;
+
+        _id       = new TWord8 (*clone._id);
+        _from     = new TPos (*clone._from);
+        _itemid   = new TWord16 (*clone._itemid);
+        _stackpos = new TWord8 (*clone._stackpos);
+        _to       = new TPos (*clone._to);
+        _count    = new TWord8 (*clone._count);
+}
+
+GSMMoveItem::~GSMMoveItem ()
+{
+        delete _id;
+        delete _from;
+        delete _itemid;
+        delete _stackpos;
+        delete _to;
+        delete _count;
+}
+
+GSMMoveItem::MoveType GSMMoveItem::getFromType ()
+{
+        return _fromType;
+}
+
+GSMMoveItem::MoveType GSMMoveItem::getToType ()
+{
+        return _toType;
+}
+
+uint8_t GSMMoveItem::getId ()
+{
+        return _id->getVal ();
+}
+
+
+const TPos& GSMMoveItem::getFromPos ()
+{
+        return *_from;
+}
+
+uint8_t GSMMoveItem::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+uint8_t  GSMMoveItem::getFromContainerId ()
+{
+        return _from->y () & 0xF;
+}
+
+uint8_t  GSMMoveItem::getFromContainerPos ()
+{
+        return _from->z ();
+}
+
+uint8_t GSMMoveItem::getFromSlot ()
+{
+        return _from->y ();
+}
+
+const TPos&GSMMoveItem::getToPos ()
+{
+        return *_to;
+}
+
+uint8_t GSMMoveItem::getToContainerId ()
+{
+        return _to->x () & 0xF;
+}
+
+uint8_t GSMMoveItem::getToContainerPos ()
+{
+        return _to->z ();
+}
+
+uint8_t GSMMoveItem::getToSlot ()
+{
+        return _to->y ();
+}
+
+uint16_t GSMMoveItem::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+uint8_t GSMMoveItem::getCount ()
+{
+        return _count->getVal ();
+}
+ 
+void GSMMoveItem::show ()
+{
+        printf ("GSMMoveItem {\n");
+        printf ("from: "); _from->show (); printf ("\n");
+        printf ("itemid: "); _itemid->show (); printf ("\n");
+        printf ("stackpos: "); _stackpos->show (); printf ("\n");
+        printf ("to: "); _to->show (); printf ("\n");
+        printf ("count: "); _count->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void GSMMoveItem::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _from->put (msg);
+        _itemid->put (msg);
+        _stackpos->put (msg);
+        _to->put (msg);
+        _count->put (msg);
+}
+
+void GSMMoveItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id       = new TWord8 (msg);
+        _from     = new TPos (msg);
+        _itemid   = new TWord16 (msg);
+        _stackpos = new TWord8 (msg);
+        _to       = new TPos (msg);
+        _count    = new TWord8 (msg);
+
+        if (_from->x () == 0xFFFF) {
+                if (_from->y () & 0x40) {
+                        _fromType = container;
+                } else {
+                        _fromType = inventory;
+                }
+        } else {
+                _fromType = ground;
+        }
+
+        if (_to->x () == 0xFFFF) {
+                if (_to->y () & 0x40) {
+                        _toType = container;
+                } else {
+                        _toType = inventory;
+                }
+        } else {
+                _toType = ground;
+        }
+}
+
 /***************************************************************
  * Game Recv Messages
  ***************************************************************/
@@ -808,121 +1633,6 @@ uint8_t GRMLoginWindow::getId ()
 void GRMLoginWindow::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
-}
-
-/********************************************************************
- * GSMGameInit
- ********************************************************************/
-
-GSMGameInit::GSMGameInit (NetworkMessage* msg, GameState* gs, DatReader* dat)
-{
-        get (msg, gs, dat);
-}
-
-GSMGameInit::GSMGameInit (uint16_t OS, uint16_t version, uint8_t u1,
-        uint32_t* xtea, uint8_t isGM, const std::string& account, 
-        const std::string& name, const std::string& password)
-{
-        _id = new TWord8 ((uint8_t)0x0A);
-
-        _OS = new TWord16 (OS);
-        _version = new TWord16 (version);
-        _u1 = new TWord8 ((uint8_t)0);
-        _xtea = new TXTEAKey (xtea);
-        _isGM = new TWord8 (isGM);
-        _account = new TString (account);
-        _name = new TString (name);
-        _password = new TString (password);
-        //the TByteBuffer (uint32_t len) constructer automatically
-        //generates a random byte buffer
-        uint32_t rem = RSA_LEN - (24 + _password->getLen () + _name->getLen ()
-                                        + _account->getLen ());
-        _bytes = new TByteBuffer (rem);
-}
-
-GSMGameInit::~GSMGameInit ()
-{
-        delete _id;
-        delete _OS; 
-        delete _version; 
-        delete _u1;
-        delete _xtea;
-        delete _isGM;
-        delete _password;
-        delete _account;
-        delete _name;
-        delete _bytes;
-}
-
-uint8_t GSMGameInit::getId ()
-{
-        return _id->getVal ();
-}
-
-const std::string& GSMGameInit::getAccount ()
-{
-        return _account->getString ();
-}
-
-const std::string& GSMGameInit::getPassword ()
-{
-        return _password->getString ();
-}
-
-const std::string& GSMGameInit::getName ()
-{
-        return _name->getString ();
-}
-
-void GSMGameInit::put (NetworkMessage* msg)
-{
-        _id->put (msg);
-        _OS->put (msg);
-        _version->put (msg);
-        _u1->put (msg);
-        _xtea->put (msg);
-        _isGM->put (msg);
-        _account->put (msg);
-        _name->put (msg);
-        _password->put (msg);
-        _bytes->put (msg);
-}
-
-void GSMGameInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
-{
-        _id = new TWord8 (msg);
-        _OS = new TWord16 (msg);
-        _version = new TWord16 (msg);
-        _u1 = new TWord8 (msg);
-        _xtea = new TXTEAKey (msg);
-        _isGM = new TWord8 (msg);
-        _account = new TString (msg);
-        _name = new TString (msg);
-        _password = new TString (msg);
-        //this time we just take the random bytes from the packet
-        uint32_t rem = RSA_LEN - (24 + _password->getLen () + _name->getLen ()
-                                        + _account->getLen ());
-        _bytes = new TByteBuffer (rem, msg);
-}
-
-const uint32_t* GSMGameInit::getXTEA ()
-{
-        return _xtea->getKey ();
-}
-        
-void GSMGameInit::show ()
-{
-        printf ("GSMGameInit {\n");
-        printf ("\tOS: "); _OS->show (); printf ("\n");
-        printf ("\tversion: "); _version->show (); printf ("\n");
-        printf ("\tu1: "); _u1->show (); printf ("\n");
-        printf ("\txtea: "); _xtea->show (); printf ("\n");
-        printf ("\tisGM: "); _isGM->show (); printf ("\n");
-        printf ("\taccount: "); _account->show (); printf ("\n");
-        printf ("\tname: "); _name->show (); printf ("\n");
-        printf ("\tpassword: "); _password->show (); printf ("\n");
-        printf ("\tbytes: "); _bytes->show (); printf ("\n");
-        printf ("}\n");
 }
 
 /****************************************************************

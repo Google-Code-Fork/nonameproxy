@@ -141,6 +141,11 @@ LSMessageList::LSMessageList ()
 
 NetworkMessage* LSMessageList::put ()
 {
+        /* add any pending messages */
+        TibiaMessage* tm;
+        while ((tm = _mf->getMessage ()) != NULL) {
+                _msglist.push_back (tm);
+        }
         if (_msglist.size () == 0) {
                 return NULL; //we dont want to be sending empty msgs
         }
@@ -184,6 +189,11 @@ LRMessageList::LRMessageList ()
 
 NetworkMessage* LRMessageList::put ()
 {
+        /* add any pending messages */
+        TibiaMessage* tm;
+        while ((tm = _mf->getMessage ()) != NULL) {
+                _msglist.push_back (tm);
+        }
         //there are no rsa messages recvd from the login server
         if (_msglist.size () == 0) {
                 return NULL; //we dont want to be sending empty msgs
@@ -221,6 +231,11 @@ GSMessageList::GSMessageList ()
 
 NetworkMessage* GSMessageList::put ()
 {
+        /* add any pending messages */
+        TibiaMessage* tm;
+        while ((tm = _mf->getMessage ()) != NULL) {
+                _msglist.push_back (tm);
+        }
         //there are no rsa messages recvd from the login server
         if (_msglist.size () == 0) {
                 return NULL; //we dont want to be sending empty msgs
@@ -258,6 +273,11 @@ GRMessageList::GRMessageList ()
 
 NetworkMessage* GRMessageList::put ()
 {
+        /* add any pending messages */
+        TibiaMessage* tm;
+        while ((tm = _mf->getMessage ()) != NULL) {
+                _msglist.push_back (tm);
+        }
         //there are no rsa messages recvd from the game server
         if (_msglist.size () == 0) {
                 return NULL; //we dont want to be sending empty msgs

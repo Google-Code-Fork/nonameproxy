@@ -262,6 +262,10 @@ class LRMNewLoginServer : public TibiaMessage
  * Game Send Messages
  ******************************************************************/
 
+/******************************************************************
+ * GameInit
+ ******************************************************************/
+
 class GSMGameInit : public TibiaMessage
 {
         public:
@@ -306,6 +310,357 @@ class GSMGameInit : public TibiaMessage
                 TByteBuffer* _bytes;
 };
 
+/*****************************************************************
+ * AutoWalk
+ *****************************************************************/
+
+class GSMAutoWalk : public TibiaMessage
+{
+        public:
+                GSMAutoWalk (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                /* AutoWalk takes control of directions */
+                GSMAutoWalk (TDirectionList* directions);
+                GSMAutoWalk (const GSMAutoWalk& clone);
+                virtual ~GSMAutoWalk ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                TDirectionList& getDirectionList ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+                TDirectionList* _directions;
+};
+
+/*****************************************************************
+ * MoveNorth
+ *****************************************************************/
+
+class GSMMoveNorth : public TibiaMessage
+{
+        public:
+                GSMMoveNorth (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveNorth ();
+                GSMMoveNorth (const GSMMoveNorth& clone);
+                virtual ~GSMMoveNorth ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * MoveEast
+ *****************************************************************/
+
+class GSMMoveEast : public TibiaMessage
+{
+        public:
+                GSMMoveEast (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveEast ();
+                GSMMoveEast (const GSMMoveEast& clone);
+                virtual ~GSMMoveEast ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * MoveSouth
+ *****************************************************************/
+
+class GSMMoveSouth : public TibiaMessage
+{
+        public:
+                GSMMoveSouth (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveSouth ();
+                GSMMoveSouth (const GSMMoveSouth& clone);
+                virtual ~GSMMoveSouth ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * MoveWest
+ *****************************************************************/
+
+class GSMMoveWest : public TibiaMessage
+{
+        public:
+                GSMMoveWest (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveWest ();
+                GSMMoveWest (const GSMMoveWest& clone);
+                virtual ~GSMMoveWest ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * MoveNE
+ *****************************************************************/
+
+class GSMMoveNE : public TibiaMessage
+{
+        public:
+                GSMMoveNE (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveNE ();
+                GSMMoveNE (const GSMMoveNE& clone);
+                virtual ~GSMMoveNE ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * MoveSE
+ *****************************************************************/
+
+class GSMMoveSE : public TibiaMessage
+{
+        public:
+                GSMMoveSE (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveSE ();
+                GSMMoveSE (const GSMMoveSE& clone);
+                virtual ~GSMMoveSE ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * MoveSW
+ *****************************************************************/
+
+class GSMMoveSW : public TibiaMessage
+{
+        public:
+                GSMMoveSW (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveSW ();
+                GSMMoveSW (const GSMMoveSW& clone);
+                virtual ~GSMMoveSW ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * MoveNW
+ *****************************************************************/
+
+class GSMMoveNW : public TibiaMessage
+{
+        public:
+                GSMMoveNW (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMMoveNW ();
+                GSMMoveNW (const GSMMoveNW& clone);
+                virtual ~GSMMoveNW ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * AutoWalkCancel
+ *****************************************************************/
+
+class GSMAutoWalkCancel : public TibiaMessage
+{
+        public:
+                GSMAutoWalkCancel (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMAutoWalkCancel ();
+                GSMAutoWalkCancel (const GSMAutoWalkCancel& clone);
+                virtual ~GSMAutoWalkCancel ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/***************************************************************************
+ * MoveItem
+ * Tibia has a wierd method of moving items, it has one message
+ * for all move types. These include
+ *      Ground:    pos = pos, stackpos = stackpos
+ *      Inventory: pos.x = 0xFFFF, pos.y = slot, pos.z = 0 stackpos = 0
+ *      Container: pos.x = 0xFFFF, pos.y = container id | 0x40
+ *                 pos.z = container pos, stackpos = container pos
+ * To ease the madness, i have multiple constructors and the internal
+ * data can be read in multiple ways.
+ ***************************************************************************/
+
+class GSMMoveItem : public TibiaMessage
+{
+        public:
+                GSMMoveItem (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+
+                enum MoveType
+                {
+                        ground,
+                        container,
+                        inventory,
+                };
+
+                /* Ground to Ground constructor */
+                GSMMoveItem (const TPos& from, uint16_t itemid, 
+                             uint8_t stackpos, const TPos& to, 
+                             uint8_t count);
+                /* Ground to Container constructor */
+                GSMMoveItem (const TPos& from, uint16_t itemid, 
+                             uint8_t stackpos, uint8_t toContainerId,
+                             uint8_t toContainerPos, uint8_t count);
+                /* Ground to Inventory constructor */
+                GSMMoveItem (const TPos& from, uint16_t itemid, 
+                             uint8_t stackpos, uint8_t toSlot, 
+                             uint8_t count);
+                /* Container to Ground constructor */
+                GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
+                             uint16_t itemid, const TPos& to, uint8_t count);
+                /* Container to Container constructor */
+                GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
+                             uint16_t itemid, uint8_t toContainerId,
+                             uint8_t toContainerPos, uint8_t count);
+                /* Container to Inventory constructor */
+                GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
+                             uint16_t itemid, uint8_t toSlot, uint8_t count);
+                /* Inventory to Ground constructor */
+                GSMMoveItem (uint8_t fromSlot, uint16_t itemid, 
+                             const TPos& to, uint8_t count);
+                /* Inventory to Container constructor */
+                GSMMoveItem (uint8_t fromSlot, uint16_t itemid, 
+                             uint8_t toContainerId, uint8_t toContainerPos, 
+                             uint8_t count);
+                /* Inventory to Inventory constructor */
+                GSMMoveItem (uint8_t fromSlot, uint16_t itemid,
+                             uint8_t toSlot, uint8_t count);
+
+                GSMMoveItem (const GSMMoveItem& clone);
+                virtual ~GSMMoveItem ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                MoveType getToType ();
+                MoveType getFromType ();
+
+                const TPos&     getFromPos ();
+                uint8_t         getStackPos ();
+                uint8_t         getFromContainerId ();
+                uint8_t         getFromContainerPos ();
+                uint8_t         getFromSlot ();
+
+                const TPos&     getToPos ();
+                uint8_t         getToContainerId ();
+                uint8_t         getToContainerPos ();
+                uint8_t         getToSlot ();
+
+                uint16_t        getItemId ();
+                uint8_t         getCount ();
+ 
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                MoveType        _toType;
+                MoveType        _fromType;
+
+                TWord8*         _id;
+                TPos*           _from;
+                TWord16*        _itemid;
+                TWord8*         _stackpos;
+                TPos*           _to;
+                TWord8*         _count;
+};
 
 /******************************************************************
  * Game Recv Messages
@@ -2366,40 +2721,6 @@ class GRMSpeak : public TibiaMessage
                 TWord8* _id;
                 TSpeak* _speak;
 };
-
-/*****************************************************************
- * Game Send Messages
- *****************************************************************/
-
-/*****************************************************************
- * AutoWalk
- *****************************************************************/
-
-class GSMAutoWalk : public TibiaMessage
-{
-        public:
-                GSMAutoWalk (NetworkMessage* msg,
-                                GameState* gs,
-                                DatReader* dat);
-                GSMAutoWalk (const TSpeak& speak);
-                GSMAutoWalk (const GSMAutoWalk& clone);
-                virtual ~GSMAutoWalk ();
-
-                virtual void put (NetworkMessage* msg);
-                virtual void show ();
-                virtual uint8_t getId ();
-
-                const TSpeak& getSpeak ();
-
-                virtual void get (NetworkMessage* msg,
-                                  GameState* gs,
-                                  DatReader* dat);
-        private:
-                TWord8* _id;
-                TSpeak* _speak;
-};
-
-
 
 #endif
 

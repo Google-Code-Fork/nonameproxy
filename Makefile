@@ -8,7 +8,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
 		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
-		idmanager.o messenger.o plugin.o pluginmanager.o
+		idmanager.o messenger.o plugin.o pluginmanager.o timer.o
 
 all: nonameproxy
 
@@ -21,7 +21,7 @@ main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h login
 
 tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h enums.h
 
-tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h datreader.h enums.h
+tibiatypes.o: tibiatypes.cpp tibiatypes.h networkmessage.h datreader.h enums.h timer.h
 
 tibiacrypt.o: tibiacrypt.cpp tibiacrypt.h rsa.h xtea.h networkmessage.h adler32.h
 
@@ -29,7 +29,8 @@ rsa.o: rsa.cpp rsa.h
 
 connectionmanager.o: connectionmanager.cpp connectionmanager.h connection.h idmanager.h
 
-networkmessage.o: networkmessage.cpp networkmessage.h connection.h tibiacrypt.h tibiatypes.h
+networkmessage.o: networkmessage.cpp networkmessage.h connection.h tibiacrypt.h tibiatypes.h \
+		  	timer.h
 
 server.o: server.cpp server.h connection.h
 
@@ -76,6 +77,8 @@ plugin.o: plugin.h plugin.cpp
 
 pluginmanager.o: pluginmanager.cpp pluginmanager.h plugin.h idmanager.h hookmanager.h messenger.h \
 		connectionmanager.h
+
+timer.o: timer.cpp timer.h
 
 clean:
 	rm -f nonameproxy $(objects)
