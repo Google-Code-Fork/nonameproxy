@@ -7,6 +7,7 @@
 
 enum gs_message_id_t
 {
+        GSM_PING_ID                     = 0x1E,
         GSM_GAME_INIT_ID                = 0x0A,
 
         GSM_AUTO_WALK_ID                = 0x64,
@@ -27,6 +28,71 @@ enum gs_message_id_t
         GSM_TURN_WEST_ID                = 0x72,
 
         GSM_MOVE_ITEM_ID                = 0x78,
+
+        GSM_TRADE_ITEM_ID               = 0x7D,
+        GSM_TRADE_LOOK_ID               = 0x7E,
+        GSM_TRADE_ACCEPT_ID             = 0x7F,
+        GSM_TRADE_REJECT_ID             = 0x80,
+
+        GSM_USE_ITEM_ID                 = 0x82,
+        GSM_USE_ITEM_WITH_ID            = 0x83,
+        GSM_USE_BATTLE_WINDOW_ID        = 0x84,
+        GSM_ROTATE_ITEM_ID              = 0x85,
+
+        GSM_CONTAINER_CLOSE_ID          = 0x87,
+        GSM_CONTAINER_UP_ID             = 0x88,
+
+        GSM_TEXT_WINDOW_ID              = 0x89,
+        GSM_TEXT_HOUSE_ID               = 0x8A,
+
+        GSM_LOOK_ITEM_ID                = 0x8C,
+
+        GSM_SPEAK_ID                    = 0x96,
+        GSM_REQUEST_CHANNELS_ID         = 0x97,
+        GSM_CHANNEL_OPEN_ID             = 0x98,
+        GSM_CHANNEL_CLOSE_ID            = 0x99,
+        GSM_PRIVATE_CHAT_OPEN_ID        = 0x9A,
+        GSM_RULE_VIOLATION_OPEN_ID      = 0x9B,
+        GSM_RULE_VIOLATION_CLOSE_ID     = 0x9C,
+        GSM_RULE_VIOLATION_CANCEL_ID    = 0x9D,
+
+        GSM_NPC_CHANNEL_CLOSE_ID        = 0x9E,
+
+        GSM_PRIVATE_CHANNEL_CREATE_ID   = 0xAA,
+        GSM_PRIVATE_CHANNEL_INVITE_ID   = 0xAB,
+        GSM_PRIVATE_CHANNEL_BAN_ID      = 0xAC,
+
+        GSM_FIGHT_MODES_ID              = 0xA0,
+
+        GSM_CREATURE_ATTACK_ID          = 0xA1,
+        GSM_CREATURE_FOLLOW_ID          = 0xA2,
+
+        GSM_PARTY_INVITE_ID             = 0xA3,
+        GSM_PARTY_JOIN_ID               = 0xA4,
+        GSM_PARTY_CANCEL_ID             = 0xA5,
+        GSM_PARTY_PASS_LEADERSHIP_ID    = 0xA6,
+        GSM_PARTY_LEAVE_ID              = 0xA7,
+
+        /* cancel follow / attack */
+        GSM_CANCEL_MOVE_ID              = 0xBE,
+
+        GSM_OUTFIT_REQUEST_ID           = 0xD2,
+        GSM_OUTFIT_SET_ID               = 0xD3,
+
+        GSM_VIP_ADD_ID                  = 0xDC,
+        GSM_VIP_REMOVE_ID               = 0xDD,
+
+        GSM_BUG_REPORT_ID               = 0xE6,
+
+        GSM_QUEST_REQUEST_LOG_ID        = 0xF0,
+        GSM_QUEST_REQUEST_ID            = 0xF1,
+
+        GSM_SHOP_BUY_ID                 = 0x7A,
+        GSM_SHOP_SELL_ID                = 0x7B,
+        GSM_SHOP_CLOSE_ID               = 0x7C,
+
+        GSM_REQUEST_TILE_UPDATE_ID      = 0xC9,
+        GSM_REQUEST_CONTAINER_UPDATE_ID = 0xCA,
 };
 
 /******************************************************************
@@ -60,8 +126,8 @@ enum gr_message_id_t
 
         GRM_CREATURE_MOVE_ID            = 0x6D,
 
-        GRM_OPEN_CONTAINER_ID           = 0x6E,
-        GRM_CLOSE_CONTAINER_ID          = 0x6F,
+        GRM_CONTAINER_OPEN_ID           = 0x6E,
+        GRM_CONTAINER_CLOSE_ID          = 0x6F,
         GRM_CONT_ADD_ID                 = 0x70,
         GRM_CONT_UPDATE_ID              = 0x71,
         GRM_CONT_REMOVE_ID              = 0x72,

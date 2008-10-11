@@ -87,7 +87,7 @@ bool Client::runLogin (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        msg->show ();
+                        //msg->show ();
                         LSMessageList* lsml = new LSMessageList (msg, gstate, dat);
                         while (!lsml->isEnd ()) {
                                 TibiaMessage* tm = lsml->read ();
@@ -215,6 +215,16 @@ bool Client::runGame (Connection* acceptedConn)
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
                         msg->show ();
+                        GSMessageList gsml (msg, gstate, dat);
+                        while (!gsml.isEnd ()) {
+                                TibiaMessage* tm = gsml.read ();
+                                gsml.next ();
+
+                                //recvProtocol->hookReadMessage (tm, this);
+                                //recvHM->hookReadMessage (tm, this);
+                                //tm = recvHM->hookWriteMessage (tm, this);
+                        }
+                        msg = gsml.put ();
                         crypt->encrypt (msg);
                         serverConn->putMsg (msg);
                 }

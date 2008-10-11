@@ -36,7 +36,7 @@ bool MessageList::isEnd ()
 void MessageList::next ()
 {
         if (_it == _msglist.end ()) {
-                printf ("seek error: end of message list\n");
+                printf ("next error: end of message list\n");
         }
 
         MsgList::const_iterator next = _it;
