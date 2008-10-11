@@ -485,6 +485,45 @@ void LRMNewLoginServer::show ()
  ********************************************************************/
 
 /********************************************************************
+ * Ping
+ ********************************************************************/
+
+GSMPing::GSMPing (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPing::GSMPing ()
+{
+        _id = new TWord8 ((uint8_t)GSM_PING_ID);
+}
+
+GSMPing::~GSMPing ()
+{
+        delete _id;
+}
+
+uint8_t GSMPing::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMPing::show ()
+{
+        printf ("GSMPing {}\n");
+}
+
+void GSMPing::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMPing::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
  * GSMGameInit
  ********************************************************************/
 
@@ -1009,7 +1048,7 @@ void GSMAutoWalkCancel::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 }
 
 /********************************************************************
- * MoveItemCancel
+ * MoveItem
  ********************************************************************/
 
 GSMMoveItem::GSMMoveItem (NetworkMessage* msg, GameState* gs, DatReader* dat)
@@ -1021,8 +1060,8 @@ GSMMoveItem::GSMMoveItem (NetworkMessage* msg, GameState* gs, DatReader* dat)
 GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos, 
                           const TPos& to, uint8_t count)
 {
-        _toType   = ground;
         _fromType = ground;
+        _toType   = ground;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (from);
@@ -1037,8 +1076,8 @@ GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos,
                           uint8_t toContainerId, uint8_t toContainerPos,
                           uint8_t count)
 {
-        _toType   = ground;
-        _fromType = container;
+        _fromType = ground;
+        _toType   = container;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (from);
@@ -1052,8 +1091,8 @@ GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos,
 GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos,
                           uint8_t toSlot, uint8_t count)
 {
-        _toType   = ground;
-        _fromType = inventory;
+        _fromType = ground;
+        _toType   = inventory;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (from);
@@ -1067,8 +1106,8 @@ GSMMoveItem::GSMMoveItem (const TPos& from, uint16_t itemid, uint8_t stackpos,
 GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
                              uint16_t itemid, const TPos& to, uint8_t count)
 {
-        _toType   = container;
-        _fromType = ground;
+        _fromType = container;
+        _toType   = ground;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (0xFFFF, 0x0040 | fromContainerId, 
@@ -1085,8 +1124,8 @@ GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
                           uint16_t itemid, uint8_t toContainerId,
                           uint8_t toContainerPos, uint8_t count)
 {
-        _toType   = container;
         _fromType = container;
+        _toType   = container;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (0xFFFF, 0x0040 | fromContainerId, 
@@ -1101,8 +1140,8 @@ GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
 GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
                           uint16_t itemid, uint8_t toSlot, uint8_t count)
 {
-        _toType   = container;
-        _fromType = inventory;
+        _fromType = container;
+        _toType   = inventory;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (0xFFFF, 0x0040 | fromContainerId, 
@@ -1117,8 +1156,8 @@ GSMMoveItem::GSMMoveItem (uint8_t fromContainerId, uint8_t fromContainerPos,
 GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid, 
                           const TPos& to, uint8_t count)
 {
-        _toType   = inventory;
-        _fromType = ground;
+        _fromType = inventory;
+        _toType   = ground;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (0xFFFF, fromSlot, 0);
@@ -1133,8 +1172,8 @@ GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid,
                           uint8_t toContainerId, uint8_t toContainerPos, 
                           uint8_t count)
 {
-        _toType   = inventory;
-        _fromType = container;
+        _fromType = inventory;
+        _toType   = container;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (0xFFFF, fromSlot, 0);
@@ -1148,8 +1187,8 @@ GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid,
 GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid,
                           uint8_t toSlot, uint8_t count)
 {
-        _toType   = inventory;
         _fromType = inventory;
+        _toType   = inventory;
 
         _id       = new TWord8 ((uint8_t)GSM_MOVE_ITEM_ID);
         _from     = new TPos (0xFFFF, fromSlot, 0);
@@ -1162,8 +1201,8 @@ GSMMoveItem::GSMMoveItem (uint8_t fromSlot, uint16_t itemid,
 
 GSMMoveItem::GSMMoveItem (const GSMMoveItem& clone)
 {
-        _toType   = clone._toType;
         _fromType = clone._fromType;
+        _toType   = clone._toType;
 
         _id       = new TWord8 (*clone._id);
         _from     = new TPos (*clone._from);
@@ -1211,7 +1250,7 @@ uint8_t GSMMoveItem::getStackPos ()
 
 uint8_t  GSMMoveItem::getFromContainerId ()
 {
-        return _from->y () & 0xF;
+        return _from->y () & 0x3F;
 }
 
 uint8_t  GSMMoveItem::getFromContainerPos ()
@@ -1231,7 +1270,7 @@ const TPos&GSMMoveItem::getToPos ()
 
 uint8_t GSMMoveItem::getToContainerId ()
 {
-        return _to->x () & 0xF;
+        return _to->x () & 0x3F;
 }
 
 uint8_t GSMMoveItem::getToContainerPos ()
@@ -1303,6 +1342,3483 @@ void GSMMoveItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
         } else {
                 _toType = ground;
         }
+}
+
+/********************************************************************
+ * TradeItem
+ ********************************************************************/
+
+GSMTradeItem::GSMTradeItem (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+
+        get (msg, gs, dat);
+}
+
+/* Ground constructor */
+GSMTradeItem::GSMTradeItem (const TPos& pos, uint16_t itemid, 
+                            uint8_t stackpos, uint32_t playerid)
+{
+        _type     = ground;
+
+        _id       = new TWord8 ((uint8_t)GSM_TRADE_ITEM_ID);
+        _pos      = new TPos (pos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+        _playerid = new TWord32 (playerid);
+}
+
+/* Container constructor */
+GSMTradeItem::GSMTradeItem (uint8_t containerid, uint8_t containerpos,
+                            uint16_t itemid, uint32_t playerid)
+{
+        _type     = container;
+
+        _id       = new TWord8 ((uint8_t)GSM_TRADE_ITEM_ID);
+        _pos      = new TPos (0xFFFF, 0x40 | containerid, containerpos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (containerpos);
+        _playerid = new TWord32 (playerid);
+}
+
+/* Container constructor */
+GSMTradeItem::GSMTradeItem (uint8_t slot, uint16_t itemid, uint32_t playerid)
+{
+        _type     = inventory;
+
+        _id       = new TWord8 ((uint8_t)GSM_TRADE_ITEM_ID);
+        _pos      = new TPos (0xFFFF, slot, 0);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 ((uint8_t)0);
+        _playerid = new TWord32 (playerid);
+}
+
+GSMTradeItem::GSMTradeItem (const GSMTradeItem& clone)
+{
+        _type   = clone._type;
+
+        _id       = new TWord8 (*clone._id);
+        _pos      = new TPos (*clone._pos);
+        _itemid   = new TWord16 (*clone._itemid);
+        _stackpos = new TWord8 (*clone._stackpos);
+        _playerid = new TWord32 (*clone._playerid);
+}
+
+GSMTradeItem::~GSMTradeItem ()
+{
+        delete _id;
+        delete _pos;
+        delete _itemid;
+        delete _stackpos;
+        delete _playerid;
+}
+
+GSMTradeItem::TradeType GSMTradeItem::getType ()
+{
+        return _type;
+}
+
+uint8_t GSMTradeItem::getId ()
+{
+        return _id->getVal ();
+}
+
+
+const TPos& GSMTradeItem::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GSMTradeItem::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+uint8_t  GSMTradeItem::getContainerId ()
+{
+        return _pos->y () & 0x3F;
+}
+
+uint8_t  GSMTradeItem::getContainerPos ()
+{
+        return _pos->z ();
+}
+
+uint8_t GSMTradeItem::getSlot ()
+{
+        return _pos->y ();
+}
+
+uint16_t GSMTradeItem::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+uint32_t GSMTradeItem::getPlayerId ()
+{
+        return _playerid->getVal ();
+}
+ 
+void GSMTradeItem::show ()
+{
+        printf ("GSMTradeItem {\n");
+        printf ("pos: "); _pos->show (); printf ("\n");
+        printf ("itemid: "); _itemid->show (); printf ("\n");
+        printf ("stackpos: "); _stackpos->show (); printf ("\n");
+        printf ("playerid: "); _playerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void GSMTradeItem::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _itemid->put (msg);
+        _stackpos->put (msg);
+        _playerid->put (msg);
+}
+
+void GSMTradeItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id       = new TWord8 (msg);
+        _pos      = new TPos (msg);
+        _itemid   = new TWord16 (msg);
+        _stackpos = new TWord8 (msg);
+        _playerid = new TWord32 (msg);
+
+        if (_pos->x () == 0xFFFF) {
+                if (_pos->y () & 0x40) {
+                        _type = container;
+                } else {
+                        _type = inventory;
+                }
+        } else {
+                _type = ground;
+        }
+}
+
+/***************************************************************
+ * TradeLook
+ ***************************************************************/
+
+GSMTradeLook::GSMTradeLook (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTradeLook::GSMTradeLook (uint8_t myTrade, uint8_t index)
+{
+        _id = new TWord8 ((uint8_t)GSM_TRADE_LOOK_ID);
+        _myTrade = new TWord8 (myTrade);
+        _index = new TWord8 (index);
+}
+
+GSMTradeLook::GSMTradeLook (const GSMTradeLook& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _myTrade = new TWord8 (*clone._myTrade);
+        _index = new TWord8 (*clone._index);
+}
+        
+GSMTradeLook::~GSMTradeLook ()
+{
+        delete _id;
+        delete _myTrade;
+        delete _index;
+}
+
+void GSMTradeLook::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _myTrade->put (msg);
+        _index->put (msg);
+}
+
+void GSMTradeLook::show ()
+{
+        printf ("GSMTradeLook {\n"); 
+        printf ("myTrade: "); _myTrade->show (); printf ("\n");
+        printf ("index: "); _index->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMTradeLook::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GSMTradeLook::getMyTrade ()
+{
+        return _myTrade->getVal ();
+}
+
+uint8_t GSMTradeLook::getIndex ()
+{
+        return _index->getVal ();
+}
+
+void GSMTradeLook::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _myTrade = new TWord8 (msg);
+        _index = new TWord8 (msg);
+}
+
+/********************************************************************
+ * TradeAccept
+ ********************************************************************/
+
+GSMTradeAccept::GSMTradeAccept (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTradeAccept::GSMTradeAccept ()
+{
+        _id = new TWord8 ((uint8_t)GSM_TRADE_ACCEPT_ID);
+}
+
+GSMTradeAccept::~GSMTradeAccept ()
+{
+        delete _id;
+}
+
+uint8_t GSMTradeAccept::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMTradeAccept::show ()
+{
+        printf ("GSMTradeAccept {}\n");
+}
+
+void GSMTradeAccept::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMTradeAccept::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * TradeReject
+ ********************************************************************/
+
+GSMTradeReject::GSMTradeReject (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTradeReject::GSMTradeReject ()
+{
+        _id = new TWord8 ((uint8_t)GSM_TRADE_REJECT_ID);
+}
+
+GSMTradeReject::~GSMTradeReject ()
+{
+        delete _id;
+}
+
+uint8_t GSMTradeReject::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMTradeReject::show ()
+{
+        printf ("GSMTradeReject {}\n");
+}
+
+void GSMTradeReject::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMTradeReject::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * UseItem
+ ********************************************************************/
+
+GSMUseItem::GSMUseItem (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+
+        get (msg, gs, dat);
+}
+
+/* Ground constructor */
+GSMUseItem::GSMUseItem (const TPos& pos, uint16_t itemid, uint8_t stackpos)
+{
+        _type     = ground;
+
+        _id       = new TWord8 ((uint8_t)GSM_USE_ITEM_ID);
+        _pos      = new TPos (pos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+        _index    = new TWord8 ((uint8_t)1);
+}
+
+/* Container constructor */
+GSMUseItem::GSMUseItem (uint8_t containerid, uint8_t containerpos,
+                            uint16_t itemid)
+{
+        _type     = container;
+
+        _id       = new TWord8 ((uint8_t)GSM_USE_ITEM_ID);
+        _pos      = new TPos (0xFFFF, 0x40 | containerid, containerpos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (containerpos);
+        _index    = new TWord8 (containerid);
+}
+
+/* Inventory constructor */
+GSMUseItem::GSMUseItem (uint8_t slot, uint16_t itemid)
+{
+        _type     = inventory;
+
+        _id       = new TWord8 ((uint8_t)GSM_USE_ITEM_ID);
+        _pos      = new TPos (0xFFFF, slot, 0);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 ((uint8_t)0);
+        _index    = new TWord8 ((uint8_t)1);
+}
+
+GSMUseItem::GSMUseItem (const GSMUseItem& clone)
+{
+        _type   = clone._type;
+
+        _id       = new TWord8 (*clone._id);
+        _pos      = new TPos (*clone._pos);
+        _itemid   = new TWord16 (*clone._itemid);
+        _stackpos = new TWord8 (*clone._stackpos);
+        _index    = new TWord8 (*clone._index);
+}
+
+GSMUseItem::~GSMUseItem ()
+{
+        delete _id;
+        delete _pos;
+        delete _itemid;
+        delete _stackpos;
+        delete _index;
+}
+
+GSMUseItem::UseType GSMUseItem::getType ()
+{
+        return _type;
+}
+
+uint8_t GSMUseItem::getId ()
+{
+        return _id->getVal ();
+}
+
+
+const TPos& GSMUseItem::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GSMUseItem::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+uint8_t  GSMUseItem::getContainerId ()
+{
+        return _pos->y () & 0x3F;
+}
+
+uint8_t  GSMUseItem::getContainerPos ()
+{
+        return _pos->z ();
+}
+
+uint8_t GSMUseItem::getSlot ()
+{
+        return _pos->y ();
+}
+
+uint16_t GSMUseItem::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+void GSMUseItem::show ()
+{
+        printf ("GSMUseItem {\n");
+        printf ("pos: "); _pos->show (); printf ("\n");
+        printf ("itemid: "); _itemid->show (); printf ("\n");
+        printf ("stackpos: "); _stackpos->show (); printf ("\n");
+        printf ("index: "); _index->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void GSMUseItem::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _itemid->put (msg);
+        _stackpos->put (msg);
+        _index->put (msg);
+}
+
+void GSMUseItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id       = new TWord8 (msg);
+        _pos      = new TPos (msg);
+        _itemid   = new TWord16 (msg);
+        _stackpos = new TWord8 (msg);
+        _index    = new TWord8 (msg);
+
+        if (_pos->x () == 0xFFFF) {
+                if (_pos->y () & 0x40) {
+                        /* i think i know how the protocol works
+                         * this is just a test to be sure */
+                        if (_index->getVal () != _pos->y ()) {
+                                printf ("useitem: index != container id\n");
+                        }
+                        _type = container;
+                } else {
+                        _type = inventory;
+                }
+        } else {
+                _type = ground;
+        }
+}
+
+/********************************************************************
+ * UseItemWith
+ ********************************************************************/
+
+GSMUseItemWith::GSMUseItemWith (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+/* Ground to Ground constructor */
+GSMUseItemWith::GSMUseItemWith (const TPos& from, uint16_t fromItemid, 
+                                uint8_t fromStackpos, const TPos& to, 
+                                uint16_t toItemid, uint8_t toStackpos)
+{
+        _fromType       = ground;
+        _toType         = ground;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (from);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 (fromStackpos);
+        _to             = new TPos (to);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 (toStackpos);
+}
+
+/* Ground to Container constructor */
+GSMUseItemWith::GSMUseItemWith (const TPos& from, uint16_t fromItemid, 
+                                uint8_t fromStackpos, uint8_t toContainerId, 
+                                uint8_t toContainerPos, uint16_t toItemid)
+{
+        _fromType       = ground;
+        _toType         = container;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (from);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 (fromStackpos);
+        _to             = new TPos (0xFFFF, 0x0040 | toContainerId, 
+                                        toContainerPos);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 (toContainerPos);
+}
+
+/* Ground to Inventory constructor */
+GSMUseItemWith::GSMUseItemWith (const TPos& from, uint16_t fromItemid, 
+                                uint8_t fromStackpos, uint8_t toSlot, 
+                                uint16_t toItemid)
+{
+        _fromType       = ground;
+        _toType         = inventory;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (from);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 (fromStackpos);
+        _to             = new TPos (0xFFFF, toSlot, 0);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 ((uint8_t)0);
+}
+
+/* Container to Ground constructor */  
+GSMUseItemWith::GSMUseItemWith (uint8_t fromContainerId, uint8_t fromContainerPos,
+                                uint16_t fromItemid, const TPos& to, 
+                                uint16_t toItemid, uint8_t toStackpos)
+{
+        _fromType       = container;
+        _toType         = ground;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (0xFFFF, 0x0040 | fromContainerId, 
+                                                        fromContainerPos);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 (fromContainerPos);
+        _to             = new TPos (to);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 (toStackpos);
+}
+
+
+/* Container to Container constructor */
+GSMUseItemWith::GSMUseItemWith (uint8_t fromContainerId, uint8_t fromContainerPos,
+                                uint16_t fromItemid, uint8_t toContainerId,
+                                uint8_t toContainerPos, uint16_t toItemid)
+{
+        _fromType       = container;
+        _toType         = container;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (0xFFFF, 0x0040 | fromContainerId, 
+                                                        fromContainerPos);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 (fromContainerPos);
+        _to             = new TPos (0xFFFF, 0x0040 | toContainerId, 
+                                                        toContainerPos);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 (toContainerPos);
+}
+
+/* Container to Inventory constructor */
+GSMUseItemWith::GSMUseItemWith (uint8_t fromContainerId, uint8_t fromContainerPos,
+                                uint16_t fromItemid, uint8_t toSlot, 
+                                uint16_t toItemid)
+{
+        _fromType       = container;
+        _toType         = inventory;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (0xFFFF, 0x0040 | fromContainerId, 
+                                                        fromContainerPos);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 (fromContainerPos);
+        _to             = new TPos (0xFFFF, toSlot, 0);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 ((uint8_t)0);
+}
+
+/* Inventory to Ground constructor */
+GSMUseItemWith::GSMUseItemWith (uint8_t fromSlot, uint16_t fromItemid, 
+                                const TPos& to, uint16_t toItemid, 
+                                uint8_t toStackpos)
+{
+        _fromType       = inventory;
+        _toType         = ground;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (0xFFFF, fromSlot, 0);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 ((uint8_t)0);
+        _to             = new TPos (to);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 (toStackpos);
+}
+
+/* Inventory to Container constructor */
+GSMUseItemWith::GSMUseItemWith (uint8_t fromSlot, uint16_t fromItemid, 
+                                uint8_t toContainerId, uint8_t toContainerPos, 
+                                uint8_t toItemid)
+{
+        _fromType       = inventory;
+        _toType         = container;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (0xFFFF, fromSlot, 0);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 ((uint8_t)0);
+        _to             = new TPos (0xFFFF, 0x0040 | toContainerId, 
+                                                        toContainerPos);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 (toContainerPos);
+}
+
+/* Inventory to Inventory constructor */
+GSMUseItemWith::GSMUseItemWith (uint8_t fromSlot, uint16_t fromItemid,
+                                uint8_t toSlot, uint16_t toItemid)
+{
+        _fromType       = inventory;
+        _toType         = inventory;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_ITEM_WITH_ID);
+        _from           = new TPos (0xFFFF, fromSlot, 0);
+        _fromitemid     = new TWord16 (fromItemid);
+        _fromstackpos   = new TWord8 ((uint8_t)0);
+        _to             = new TPos (0xFFFF, toSlot, 0);
+        _toitemid       = new TWord16 (toItemid);
+        _tostackpos     = new TWord8 ((uint8_t)0);
+}
+
+
+GSMUseItemWith::GSMUseItemWith (const GSMUseItemWith& clone)
+{
+        _fromType = clone._fromType;
+        _toType   = clone._toType;
+
+        _id             = new TWord8 (*clone._id);
+        _from           = new TPos (*clone._from);
+        _fromitemid     = new TWord16 (*clone._fromitemid);
+        _fromstackpos   = new TWord8 (*clone._fromstackpos);
+        _to             = new TPos (*clone._to);
+        _toitemid       = new TWord16 (*clone._toitemid);
+        _tostackpos     = new TWord8 (*clone._tostackpos);
+}
+
+GSMUseItemWith::~GSMUseItemWith ()
+{
+        delete _id;
+        delete _from;
+        delete _fromitemid;
+        delete _fromstackpos;
+        delete _to;
+        delete _toitemid;
+        delete _tostackpos;
+}
+
+GSMUseItemWith::UseType GSMUseItemWith::getFromType ()
+{
+        return _fromType;
+}
+
+GSMUseItemWith::UseType GSMUseItemWith::getToType ()
+{
+        return _toType;
+}
+
+uint8_t GSMUseItemWith::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GSMUseItemWith::getFromPos ()
+{
+        return *_from;
+}
+
+uint16_t GSMUseItemWith::getFromItemId ()
+{
+        return _fromitemid->getVal ();
+}
+
+uint8_t GSMUseItemWith::getFromStackPos ()
+{
+        return _fromstackpos->getVal ();
+}
+
+uint8_t  GSMUseItemWith::getFromContainerId ()
+{
+        return _from->y () & 0x3F;
+}
+
+uint8_t  GSMUseItemWith::getFromContainerPos ()
+{
+        return _from->z ();
+}
+
+uint8_t GSMUseItemWith::getFromSlot ()
+{
+        return _from->y ();
+}
+
+const TPos& GSMUseItemWith::getToPos ()
+{
+        return *_to;
+}
+
+uint16_t GSMUseItemWith::getToItemId ()
+{
+        return _toitemid->getVal ();
+}
+
+uint8_t GSMUseItemWith::getToStackPos ()
+{
+        return _tostackpos->getVal ();
+}
+
+uint8_t  GSMUseItemWith::getToContainerId ()
+{
+        return _to->y () & 0x3F;
+}
+
+uint8_t  GSMUseItemWith::getToContainerPos ()
+{
+        return _to->z ();
+}
+
+uint8_t GSMUseItemWith::getToSlot ()
+{
+        return _to->y ();
+}
+
+void GSMUseItemWith::show ()
+{
+        printf ("GSMUseItemWith {\n");
+        printf ("from: "); _from->show (); printf ("\n");
+        printf ("fromitemid: "); _fromitemid->show (); printf ("\n");
+        printf ("fromstackpos: "); _fromstackpos->show (); printf ("\n");
+        printf ("to: "); _to->show (); printf ("\n");
+        printf ("toitemid: "); _toitemid->show (); printf ("\n");
+        printf ("tostackpos: "); _tostackpos->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void GSMUseItemWith::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _from->put (msg);
+        _fromitemid->put (msg);
+        _fromstackpos->put (msg);
+        _to->put (msg);
+        _toitemid->put (msg);
+        _tostackpos->put (msg);
+}
+
+void GSMUseItemWith::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id             = new TWord8 (msg);
+        _from           = new TPos (msg);
+        _fromitemid     = new TWord16 (msg);
+        _fromstackpos   = new TWord8 (msg);
+        _to             = new TPos (msg);
+        _toitemid       = new TWord16 (msg);
+        _tostackpos     = new TWord8 (msg);
+
+        if (_from->x () == 0xFFFF) {
+                if (_from->y () & 0x40) {
+                        _fromType = container;
+                } else {
+                        _fromType = inventory;
+                }
+        } else {
+                _fromType = ground;
+        }
+
+        if (_to->x () == 0xFFFF) {
+                if (_to->y () & 0x40) {
+                        _toType = container;
+                } else {
+                        _toType = inventory;
+                }
+        } else {
+                _toType = ground;
+        }
+}
+
+/***************************************************************
+ * UseBattleWindow
+ ***************************************************************/
+
+GSMUseBattleWindow::GSMUseBattleWindow (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+/* Ground constructor */
+GSMUseBattleWindow::GSMUseBattleWindow (const TPos& pos, uint16_t itemid, 
+                                        uint8_t stackpos, uint32_t creatureid)
+{
+        _type     = ground;
+
+        _id = new TWord8 ((uint8_t)GSM_USE_BATTLE_WINDOW_ID);
+        _pos = new TPos (pos);
+        _itemid = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+        _creatureid = new TWord32 (creatureid);
+}
+
+/* Container constructor */
+GSMUseBattleWindow::GSMUseBattleWindow (uint8_t containerid, 
+                                        uint8_t containerpos,
+                                        uint16_t itemid,
+                                        uint32_t creatureid)
+{
+        _type           = container;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_BATTLE_WINDOW_ID);
+        _pos            = new TPos (0xFFFF, 0x40 | containerid, containerpos);
+        _itemid         = new TWord16 (itemid);
+        _stackpos       = new TWord8 (containerpos);
+        _creatureid     = new TWord32 (creatureid);
+}
+
+/* Inventory constructor */
+GSMUseBattleWindow::GSMUseBattleWindow (uint8_t slot, uint16_t itemid,
+                                        uint32_t creatureid)
+{
+        _type           = inventory;
+
+        _id             = new TWord8 ((uint8_t)GSM_USE_BATTLE_WINDOW_ID);
+        _pos            = new TPos (0xFFFF, slot, 0);
+        _itemid         = new TWord16 (itemid);
+        _stackpos       = new TWord8 ((uint8_t)0);
+        _creatureid     = new TWord32 (creatureid);
+}
+
+GSMUseBattleWindow::GSMUseBattleWindow (const GSMUseBattleWindow& clone)
+{
+        _type = clone._type;
+
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+        _itemid = new TWord16 (*clone._itemid);
+        _stackpos = new TWord8 (*clone._stackpos);
+        _creatureid = new TWord32 (*clone._creatureid);
+}
+        
+GSMUseBattleWindow::~GSMUseBattleWindow ()
+{
+        delete _id;
+        delete _pos;
+        delete _itemid;
+        delete _stackpos;
+        delete _creatureid;
+}
+
+void GSMUseBattleWindow::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _itemid->put (msg);
+        _stackpos->put (msg);
+        _creatureid->put (msg);
+}
+
+void GSMUseBattleWindow::show ()
+{
+        printf ("GSMUseBattleWindow {\n"); 
+        printf ("pos: "); _pos->show (); printf ("\n");
+        printf ("itemid: "); _itemid->show (); printf ("\n");
+        printf ("stackpos: "); _stackpos->show (); printf ("\n");
+        printf ("creatureid: "); _creatureid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+GSMUseBattleWindow::UseType GSMUseBattleWindow::getType ()
+{
+        return _type;
+}
+
+uint8_t GSMUseBattleWindow::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GSMUseBattleWindow::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GSMUseBattleWindow::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+uint8_t  GSMUseBattleWindow::getContainerId ()
+{
+        return _pos->y () & 0x3F;
+}
+
+uint8_t  GSMUseBattleWindow::getContainerPos ()
+{
+        return _pos->z ();
+}
+
+uint8_t GSMUseBattleWindow::getSlot ()
+{
+        return _pos->y ();
+}
+
+uint16_t GSMUseBattleWindow::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+uint32_t GSMUseBattleWindow::getCreatureId()
+{
+        return _creatureid->getVal ();
+}
+
+void GSMUseBattleWindow::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+        _itemid = new TWord16 (msg);
+        _stackpos = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+
+        if (_pos->x () == 0xFFFF) {
+                if (_pos->y () & 0x40) {
+                        _type = container;
+                } else {
+                        _type = inventory;
+                }
+        } else {
+                _type = ground;
+        }
+}
+
+/********************************************************************
+ * RotateItem
+ ********************************************************************/
+
+GSMRotateItem::GSMRotateItem (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+
+        get (msg, gs, dat);
+}
+
+/* Ground constructor */
+GSMRotateItem::GSMRotateItem (const TPos& pos, uint16_t itemid, uint8_t stackpos)
+{
+        _type     = ground;
+
+        _id       = new TWord8 ((uint8_t)GSM_ROTATE_ITEM_ID);
+        _pos      = new TPos (pos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+}
+
+/* Container constructor */
+GSMRotateItem::GSMRotateItem (uint8_t containerid, uint8_t containerpos,
+                            uint16_t itemid)
+{
+        _type     = container;
+
+        _id       = new TWord8 ((uint8_t)GSM_ROTATE_ITEM_ID);
+        _pos      = new TPos (0xFFFF, 0x40 | containerid, containerpos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (containerpos);
+}
+
+/* Inventory constructor */
+GSMRotateItem::GSMRotateItem (uint8_t slot, uint16_t itemid)
+{
+        _type     = inventory;
+
+        _id       = new TWord8 ((uint8_t)GSM_ROTATE_ITEM_ID);
+        _pos      = new TPos (0xFFFF, slot, 0);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 ((uint8_t)0);
+}
+
+GSMRotateItem::GSMRotateItem (const GSMRotateItem& clone)
+{
+        _type   = clone._type;
+
+        _id       = new TWord8 (*clone._id);
+        _pos      = new TPos (*clone._pos);
+        _itemid   = new TWord16 (*clone._itemid);
+        _stackpos = new TWord8 (*clone._stackpos);
+}
+
+GSMRotateItem::~GSMRotateItem ()
+{
+        delete _id;
+        delete _pos;
+        delete _itemid;
+        delete _stackpos;
+}
+
+GSMRotateItem::UseType GSMRotateItem::getType ()
+{
+        return _type;
+}
+
+uint8_t GSMRotateItem::getId ()
+{
+        return _id->getVal ();
+}
+
+
+const TPos& GSMRotateItem::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GSMRotateItem::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+uint8_t  GSMRotateItem::getContainerId ()
+{
+        return _pos->y () & 0x3F;
+}
+
+uint8_t  GSMRotateItem::getContainerPos ()
+{
+        return _pos->z ();
+}
+
+uint8_t GSMRotateItem::getSlot ()
+{
+        return _pos->y ();
+}
+
+uint16_t GSMRotateItem::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+void GSMRotateItem::show ()
+{
+        printf ("GSMRotateItem {\n");
+        printf ("pos: "); _pos->show (); printf ("\n");
+        printf ("itemid: "); _itemid->show (); printf ("\n");
+        printf ("stackpos: "); _stackpos->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void GSMRotateItem::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _itemid->put (msg);
+        _stackpos->put (msg);
+}
+
+void GSMRotateItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id       = new TWord8 (msg);
+        _pos      = new TPos (msg);
+        _itemid   = new TWord16 (msg);
+        _stackpos = new TWord8 (msg);
+
+        if (_pos->x () == 0xFFFF) {
+                if (_pos->y () & 0x40) {
+                        /* i think i know how the protocol works
+                         * this is just a test to be sure */
+                        _type = container;
+                } else {
+                        _type = inventory;
+                }
+        } else {
+                _type = ground;
+        }
+}
+
+/***************************************************************
+ * ContainerClose
+ ***************************************************************/
+
+GSMContainerClose::GSMContainerClose (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMContainerClose::GSMContainerClose (uint8_t containerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_CONTAINER_CLOSE_ID);
+        _containerid = new TWord8 (containerid);
+}
+
+GSMContainerClose::GSMContainerClose (const GSMContainerClose& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _containerid = new TWord8 (*clone._containerid);
+}
+        
+GSMContainerClose::~GSMContainerClose ()
+{
+        delete _id;
+        delete _containerid;
+}
+
+void GSMContainerClose::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _containerid->put (msg);
+}
+
+void GSMContainerClose::show ()
+{
+        printf ("GSMContainerClose {\n"); 
+        printf ("containerid: "); _containerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMContainerClose::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GSMContainerClose::getContainerId ()
+{
+        return _containerid->getVal ();
+}
+
+void GSMContainerClose::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _containerid = new TWord8 (msg);
+}
+
+/***************************************************************
+ * ContainerUp
+ ***************************************************************/
+
+GSMContainerUp::GSMContainerUp (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMContainerUp::GSMContainerUp (uint8_t containerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_CONTAINER_UP_ID);
+        _containerid = new TWord8 (containerid);
+}
+
+GSMContainerUp::GSMContainerUp (const GSMContainerUp& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _containerid = new TWord8 (*clone._containerid);
+}
+        
+GSMContainerUp::~GSMContainerUp ()
+{
+        delete _id;
+        delete _containerid;
+}
+
+void GSMContainerUp::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _containerid->put (msg);
+}
+
+void GSMContainerUp::show ()
+{
+        printf ("GSMContainerUp {\n"); 
+        printf ("containerid: "); _containerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMContainerUp::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GSMContainerUp::getContainerId ()
+{
+        return _containerid->getVal ();
+}
+
+void GSMContainerUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _containerid = new TWord8 (msg);
+}
+
+/***************************************************************
+ * TextWindow
+ ***************************************************************/
+
+GSMTextWindow::GSMTextWindow (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTextWindow::GSMTextWindow (uint32_t windowid, const std::string& text)
+{
+        _id = new TWord8 ((uint8_t)GSM_TEXT_WINDOW_ID);
+        _windowid = new TWord32 (windowid);
+        _text = new TString (text);
+}
+
+GSMTextWindow::GSMTextWindow (const GSMTextWindow& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _windowid = new TWord32 (*clone._windowid);
+        _text = new TString (*clone._text);
+}
+        
+GSMTextWindow::~GSMTextWindow ()
+{
+        delete _id;
+        delete _windowid;
+        delete _text;
+}
+
+void GSMTextWindow::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _windowid->put (msg);
+        _text->put (msg);
+}
+
+void GSMTextWindow::show ()
+{
+        printf ("GSMTextWindow {\n"); 
+        printf ("windowid: "); _windowid->show (); printf ("\n");
+        printf ("text: "); _text->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMTextWindow::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMTextWindow::getWindowId ()
+{
+        return _windowid->getVal ();
+}
+
+const std::string& GSMTextWindow::getText ()
+{
+        return _text->getString ();
+}
+
+void GSMTextWindow::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _windowid = new TWord32 (msg);
+        _text = new TString (msg);
+}
+
+/***************************************************************
+ * TextHouse
+ ***************************************************************/
+
+GSMTextHouse::GSMTextHouse (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTextHouse::GSMTextHouse (uint32_t windowid, uint8_t u1,
+                                const std::string& text)
+{
+        _id = new TWord8 ((uint8_t)GSM_TEXT_WINDOW_ID);
+        _windowid = new TWord32 (windowid);
+        _u1 = new TWord8 (u1);
+        _text = new TString (text);
+}
+
+GSMTextHouse::GSMTextHouse (const GSMTextHouse& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _windowid = new TWord32 (*clone._windowid);
+        _u1 = new TWord8 (*clone._u1);
+        _text = new TString (*clone._text);
+}
+        
+GSMTextHouse::~GSMTextHouse ()
+{
+        delete _id;
+        delete _windowid;
+        delete _u1;
+        delete _text;
+}
+
+void GSMTextHouse::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _windowid->put (msg);
+        _u1->put (msg);
+        _text->put (msg);
+}
+
+void GSMTextHouse::show ()
+{
+        printf ("GSMTextHouse {\n"); 
+        printf ("windowid: "); _windowid->show (); printf ("\n");
+        printf ("u1: "); _u1->show (); printf ("\n");
+        printf ("text: "); _text->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMTextHouse::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMTextHouse::getHouseId ()
+{
+        return _windowid->getVal ();
+}
+
+uint8_t GSMTextHouse::getU1 ()
+{
+        return _u1->getVal ();
+}
+
+const std::string& GSMTextHouse::getText ()
+{
+        return _text->getString ();
+}
+
+void GSMTextHouse::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _windowid = new TWord32 (msg);
+        _text = new TString (msg);
+}
+
+/********************************************************************
+ * LookItem
+ ********************************************************************/
+
+GSMLookItem::GSMLookItem (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+
+        get (msg, gs, dat);
+}
+
+/* Ground constructor */
+GSMLookItem::GSMLookItem (const TPos& pos, uint16_t itemid, uint8_t stackpos)
+{
+        _type     = ground;
+
+        _id       = new TWord8 ((uint8_t)GSM_LOOK_ITEM_ID);
+        _pos      = new TPos (pos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (stackpos);
+}
+
+/* Container constructor */
+GSMLookItem::GSMLookItem (uint8_t containerid, uint8_t containerpos,
+                            uint16_t itemid)
+{
+        _type     = container;
+
+        _id       = new TWord8 ((uint8_t)GSM_LOOK_ITEM_ID);
+        _pos      = new TPos (0xFFFF, 0x40 | containerid, containerpos);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 (containerpos);
+}
+
+/* Inventory constructor */
+GSMLookItem::GSMLookItem (uint8_t slot, uint16_t itemid)
+{
+        _type     = inventory;
+
+        _id       = new TWord8 ((uint8_t)GSM_LOOK_ITEM_ID);
+        _pos      = new TPos (0xFFFF, slot, 0);
+        _itemid   = new TWord16 (itemid);
+        _stackpos = new TWord8 ((uint8_t)0);
+}
+
+GSMLookItem::GSMLookItem (const GSMLookItem& clone)
+{
+        _type   = clone._type;
+
+        _id       = new TWord8 (*clone._id);
+        _pos      = new TPos (*clone._pos);
+        _itemid   = new TWord16 (*clone._itemid);
+        _stackpos = new TWord8 (*clone._stackpos);
+}
+
+GSMLookItem::~GSMLookItem ()
+{
+        delete _id;
+        delete _pos;
+        delete _itemid;
+        delete _stackpos;
+}
+
+GSMLookItem::UseType GSMLookItem::getType ()
+{
+        return _type;
+}
+
+uint8_t GSMLookItem::getId ()
+{
+        return _id->getVal ();
+}
+
+
+const TPos& GSMLookItem::getPos ()
+{
+        return *_pos;
+}
+
+uint8_t GSMLookItem::getStackPos ()
+{
+        return _stackpos->getVal ();
+}
+
+uint8_t  GSMLookItem::getContainerId ()
+{
+        return _pos->y () & 0x3F;
+}
+
+uint8_t  GSMLookItem::getContainerPos ()
+{
+        return _pos->z ();
+}
+
+uint8_t GSMLookItem::getSlot ()
+{
+        return _pos->y ();
+}
+
+uint16_t GSMLookItem::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+void GSMLookItem::show ()
+{
+        printf ("GSMLookItem {\n");
+        printf ("pos: "); _pos->show (); printf ("\n");
+        printf ("itemid: "); _itemid->show (); printf ("\n");
+        printf ("stackpos: "); _stackpos->show (); printf ("\n");
+        printf ("}\n");
+}
+
+void GSMLookItem::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+        _itemid->put (msg);
+        _stackpos->put (msg);
+}
+
+void GSMLookItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id       = new TWord8 (msg);
+        _pos      = new TPos (msg);
+        _itemid   = new TWord16 (msg);
+        _stackpos = new TWord8 (msg);
+
+        if (_pos->x () == 0xFFFF) {
+                if (_pos->y () & 0x40) {
+                        /* i think i know how the protocol works
+                         * this is just a test to be sure */
+                        _type = container;
+                } else {
+                        _type = inventory;
+                }
+        } else {
+                _type = ground;
+        }
+}
+
+/***************************************************************
+ * Speak
+ ***************************************************************/
+
+GSMSpeak::GSMSpeak (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+/* public speak constructor */
+GSMSpeak::GSMSpeak (uint8_t type, const std::string& msg)
+{
+        _speaktype = GSMSpeak::pub;
+
+        _id             = new TWord8 ((uint8_t)GSM_SPEAK_ID);
+        _type           = new TWord8 (type);
+        _msg            = new TString (msg);
+
+        _channelid      = NULL;
+        _name           = NULL;
+}
+
+/* channel speak constructor */
+GSMSpeak::GSMSpeak (uint8_t type, uint16_t channelid, const std::string& msg)
+{
+        _speaktype = GSMSpeak::channel;
+
+        _id             = new TWord8 ((uint8_t)GSM_SPEAK_ID);
+        _type           = new TWord8 (type);
+        _channelid      = new TWord16 (channel);
+        _msg            = new TString (msg);
+
+        _name           = NULL;
+}
+
+/* channel private constructor */
+GSMSpeak::GSMSpeak (uint8_t type, const std::string& name,  
+                        const std::string& msg)
+{
+        _speaktype = GSMSpeak::priv;
+
+        _id             = new TWord8 ((uint8_t)GSM_SPEAK_ID);
+        _type           = new TWord8 (type);
+        _name           = new TString (name);
+        _msg            = new TString (msg);
+
+        _channelid      = NULL;
+}
+
+GSMSpeak::GSMSpeak (const GSMSpeak& clone)
+{
+        _speaktype = clone._speaktype;;
+
+        _id             = new TWord8 (*clone._id);
+        _type           = new TWord8 (*clone._type);
+        _msg            = new TString (*clone._msg);
+
+        if (_speaktype == GSMSpeak::pub) {
+                _name           = NULL;
+                _channelid      = NULL;
+        } else if (_speaktype == GSMSpeak::channel) {
+                _name           = NULL;
+                _channelid      = new TWord16 (*clone._channelid);
+        } else if (_speaktype == GSMSpeak::priv) {
+                _name           = new TString (*clone._name);
+                _channelid      = NULL;
+        }
+}
+        
+GSMSpeak::~GSMSpeak ()
+{
+        delete _id;
+        delete _type;
+        delete _msg;
+        delete _channelid;
+        delete _name;
+}
+
+void GSMSpeak::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _type->put (msg);
+        if (_speaktype == GSMSpeak::channel) {
+                _channelid->put (msg);
+        } else if (_speaktype == GSMSpeak::priv) {
+                _name->put (msg);
+        }
+        _msg->put (msg);
+}
+
+void GSMSpeak::show ()
+{
+        printf ("GSMSpeak {\n"); 
+        if (_speaktype == GSMSpeak::pub) {
+                printf ("\tpublic speak\n");
+        } else if (_speaktype == GSMSpeak::channel) {
+                printf ("\tchannel speak\n");
+        } else if (_speaktype == GSMSpeak::priv) {
+                printf ("\tprivate speak\n");
+        }
+        printf ("\ttype: "); _type->show (); printf ("\n");
+        if (_speaktype == GSMSpeak::channel) {
+                printf ("\tchannelid: "); _channelid->show (); printf ("\n");
+        } else if (_speaktype == GSMSpeak::priv) {
+                printf ("\tname "); _name->show (); printf ("\n");
+        }
+        printf ("msg: "); _msg->show (); printf ("\n");
+        printf ("}\n");
+}
+
+GSMSpeak::SpeakType GSMSpeak::getSpeakType ()
+{
+        return _speaktype;
+}
+
+uint8_t GSMSpeak::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GSMSpeak::getType ()
+{
+        return _type->getVal ();
+}
+
+uint16_t GSMSpeak::getChannelId ()
+{
+        if (_speaktype != GSMSpeak::channel) {
+                printf ("GSMSpeak error: request for channelid for ");
+                printf ("non-channel speak\n");
+        }
+        return _channelid->getVal ();
+}
+
+const std::string& GSMSpeak::getMsg ()
+{
+        return _msg->getString ();
+}
+
+const std::string& GSMSpeak::getName ()
+{
+        if (_speaktype != GSMSpeak::priv) {
+                printf ("GSMSpeak error: request for name for ");
+                printf ("non-private speak\n");
+        }
+        return _name->getString ();
+}
+
+void GSMSpeak::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _type = new TWord8 (msg);
+
+        uint32_t t = _type->getVal ();
+
+        if (t == SPEAK_SAY
+         || t == SPEAK_WHISPER
+         || t == SPEAK_YELL
+         || t == SPEAK_PRIVATE_PN)
+        {
+                _speaktype = GSMSpeak::pub;
+                _channelid = NULL;
+                _name = NULL;
+        } else if (t == SPEAK_CHANNEL_Y
+                || t == SPEAK_CHANNEL_R1
+                || t == SPEAK_CHANNEL_R2
+                || t == SPEAK_CHANNEL_O)
+        {
+                _speaktype = GSMSpeak::channel;
+                _channelid = new TWord16 (msg); 
+                _name = NULL;
+        } else if (t == SPEAK_PRIVATE
+                || t == SPEAK_PRIVATE_RED)
+        {
+                _speaktype = GSMSpeak::priv;
+                _channelid = NULL;
+                _name = new TString (msg);
+        } else {
+                printf ("GSMSpeak error: unknown speak_id %d\n", t);
+        }
+        _msg = new TString (msg);
+}
+
+/***************************************************************
+ * RequestChannels
+ ***************************************************************/
+
+GSMRequestChannels::GSMRequestChannels (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMRequestChannels::GSMRequestChannels ()
+{
+        _id = new TWord8 ((uint8_t)GSM_REQUEST_CHANNELS_ID);
+}
+
+GSMRequestChannels::GSMRequestChannels (const GSMRequestChannels& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMRequestChannels::~GSMRequestChannels ()
+{
+        delete _id;
+}
+
+void GSMRequestChannels::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMRequestChannels::show ()
+{
+        printf ("GSMRequestChannels {}\n");
+}
+
+uint8_t GSMRequestChannels::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMRequestChannels::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * ChannelOpen
+ ***************************************************************/
+
+GSMChannelOpen::GSMChannelOpen (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMChannelOpen::GSMChannelOpen (uint16_t channelid)
+{
+        _id = new TWord8 ((uint8_t)GSM_CHANNEL_OPEN_ID);
+        _channelid = new TWord16 (channelid);
+}
+
+GSMChannelOpen::GSMChannelOpen (const GSMChannelOpen& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _channelid = new TWord16 (*clone._channelid);
+}
+        
+GSMChannelOpen::~GSMChannelOpen ()
+{
+        delete _id;
+        delete _channelid;
+}
+
+void GSMChannelOpen::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _channelid->put (msg);
+}
+
+void GSMChannelOpen::show ()
+{
+        printf ("GSMChannelOpen {\n"); 
+        printf ("channelid: "); _channelid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMChannelOpen::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GSMChannelOpen::getChannelId ()
+{
+        return _channelid->getVal ();
+}
+
+void GSMChannelOpen::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _channelid = new TWord16 (msg);
+}
+
+/***************************************************************
+ * ChannelClose
+ ***************************************************************/
+
+GSMChannelClose::GSMChannelClose (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMChannelClose::GSMChannelClose (uint16_t channelid)
+{
+        _id = new TWord8 ((uint8_t)GSM_CHANNEL_CLOSE_ID);
+        _channelid = new TWord16 (channelid);
+}
+
+GSMChannelClose::GSMChannelClose (const GSMChannelClose& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _channelid = new TWord16 (*clone._channelid);
+}
+        
+GSMChannelClose::~GSMChannelClose ()
+{
+        delete _id;
+        delete _channelid;
+}
+
+void GSMChannelClose::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _channelid->put (msg);
+}
+
+void GSMChannelClose::show ()
+{
+        printf ("GSMChannelClose {\n"); 
+        printf ("channelid: "); _channelid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMChannelClose::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GSMChannelClose::getChannelId ()
+{
+        return _channelid->getVal ();
+}
+
+void GSMChannelClose::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _channelid = new TWord16 (msg);
+}
+
+/***************************************************************
+ * PrivateChatOpen
+ ***************************************************************/
+
+GSMPrivateChatOpen::GSMPrivateChatOpen (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPrivateChatOpen::GSMPrivateChatOpen (const std::string& name)
+{
+        _id = new TWord8 ((uint8_t)GSM_PRIVATE_CHAT_OPEN_ID);
+        _name = new TString (name);
+}
+
+GSMPrivateChatOpen::GSMPrivateChatOpen (const GSMPrivateChatOpen& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _name = new TString (*clone._name);
+}
+        
+GSMPrivateChatOpen::~GSMPrivateChatOpen ()
+{
+        delete _id;
+        delete _name;
+}
+
+void GSMPrivateChatOpen::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _name->put (msg);
+}
+
+void GSMPrivateChatOpen::show ()
+{
+        printf ("GSMPrivateChatOpen {\n"); 
+        printf ("name: "); _name->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMPrivateChatOpen::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMPrivateChatOpen::getName ()
+{
+        return _name->getString ();
+}
+
+void GSMPrivateChatOpen::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _name = new TString (msg);
+}
+
+/***************************************************************
+ * RuleViolationOpen
+ ***************************************************************/
+
+GSMRuleViolationOpen::GSMRuleViolationOpen (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMRuleViolationOpen::GSMRuleViolationOpen (const std::string& msg)
+{
+        _id = new TWord8 ((uint8_t)GSM_RULE_VIOLATION_OPEN_ID);
+        _msg = new TString (msg);
+}
+
+GSMRuleViolationOpen::GSMRuleViolationOpen (const GSMRuleViolationOpen& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _msg = new TString (*clone._msg);
+}
+        
+GSMRuleViolationOpen::~GSMRuleViolationOpen ()
+{
+        delete _id;
+        delete _msg;
+}
+
+void GSMRuleViolationOpen::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _msg->put (msg);
+}
+
+void GSMRuleViolationOpen::show ()
+{
+        printf ("GSMRuleViolationOpen {\n"); 
+        printf ("msg: "); _msg->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMRuleViolationOpen::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMRuleViolationOpen::getMsg ()
+{
+        return _msg->getString ();
+}
+
+void GSMRuleViolationOpen::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _msg = new TString (msg);
+}
+
+/***************************************************************
+ * RuleViolationClose
+ ***************************************************************/
+
+GSMRuleViolationClose::GSMRuleViolationClose (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMRuleViolationClose::GSMRuleViolationClose (const std::string& msg)
+{
+        _id = new TWord8 ((uint8_t)GSM_RULE_VIOLATION_CLOSE_ID);
+        _msg = new TString (msg);
+}
+
+GSMRuleViolationClose::GSMRuleViolationClose (const GSMRuleViolationClose& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _msg = new TString (*clone._msg);
+}
+        
+GSMRuleViolationClose::~GSMRuleViolationClose ()
+{
+        delete _id;
+        delete _msg;
+}
+
+void GSMRuleViolationClose::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _msg->put (msg);
+}
+
+void GSMRuleViolationClose::show ()
+{
+        printf ("GSMRuleViolationClose {\n"); 
+        printf ("msg: "); _msg->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMRuleViolationClose::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMRuleViolationClose::getMsg ()
+{
+        return _msg->getString ();
+}
+
+void GSMRuleViolationClose::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _msg = new TString (msg);
+}
+
+/***************************************************************
+ * RuleViolationCancel
+ ***************************************************************/
+
+GSMRuleViolationCancel::GSMRuleViolationCancel (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMRuleViolationCancel::GSMRuleViolationCancel ()
+{
+        _id = new TWord8 ((uint8_t)GSM_RULE_VIOLATION_CANCEL_ID);
+}
+
+GSMRuleViolationCancel::GSMRuleViolationCancel (const GSMRuleViolationCancel& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMRuleViolationCancel::~GSMRuleViolationCancel ()
+{
+        delete _id;
+}
+
+void GSMRuleViolationCancel::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMRuleViolationCancel::show ()
+{
+        printf ("GSMRuleViolationCancel {}\n");
+}
+
+uint8_t GSMRuleViolationCancel::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMRuleViolationCancel::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * FightModes
+ ***************************************************************/
+
+GSMFightModes::GSMFightModes (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMFightModes::GSMFightModes (uint8_t attack, uint8_t chase, uint8_t secure)
+{
+        _id = new TWord8 ((uint8_t)GSM_FIGHT_MODES_ID);
+        _attack = new TWord8 (attack);
+        _chase = new TWord8 (chase);
+        _secure = new TWord8 (secure);
+}
+
+GSMFightModes::GSMFightModes (const GSMFightModes& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _attack = new TWord8 (*clone._attack);
+        _chase = new TWord8 (*clone._chase);
+        _secure = new TWord8 (*clone._secure);
+}
+        
+GSMFightModes::~GSMFightModes ()
+{
+        delete _id;
+        delete _attack;
+        delete _chase;
+        delete _secure;
+}
+
+void GSMFightModes::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _attack->put (msg);
+        _chase->put (msg);
+        _secure->put (msg);
+}
+
+void GSMFightModes::show ()
+{
+        printf ("GSMFightModes {\n"); 
+        printf ("\tattack: "); _attack->show (); printf ("\n");
+        printf ("\tchase: "); _chase->show (); printf ("\n");
+        printf ("\tsecure: "); _secure->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMFightModes::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GSMFightModes::getAttack ()
+{
+        return _attack->getVal ();
+}
+
+uint8_t GSMFightModes::getChase ()
+{
+        return _chase->getVal ();
+}
+
+uint8_t GSMFightModes::getSecure ()
+{
+        return _secure->getVal ();
+}
+
+void GSMFightModes::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _attack = new TWord8 (msg);
+        _chase = new TWord8 (msg);
+        _secure = new TWord8 (msg);
+}
+
+/***************************************************************
+ * CreatureAttack
+ ***************************************************************/
+
+GSMCreatureAttack::GSMCreatureAttack (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMCreatureAttack::GSMCreatureAttack (uint32_t creatureid)
+{
+        _id = new TWord8 ((uint8_t)GSM_CREATURE_ATTACK_ID);
+        _creatureid = new TWord32 (creatureid);
+}
+
+GSMCreatureAttack::GSMCreatureAttack (const GSMCreatureAttack& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+}
+        
+GSMCreatureAttack::~GSMCreatureAttack ()
+{
+        delete _id;
+        delete _creatureid;
+}
+
+void GSMCreatureAttack::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+}
+
+void GSMCreatureAttack::show ()
+{
+        printf ("GSMCreatureAttack {\n"); 
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMCreatureAttack::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMCreatureAttack::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+void GSMCreatureAttack::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * CreatureFollow
+ ***************************************************************/
+
+GSMCreatureFollow::GSMCreatureFollow (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMCreatureFollow::GSMCreatureFollow (uint32_t creatureid)
+{
+        _id = new TWord8 ((uint8_t)GSM_CREATURE_FOLLOW_ID);
+        _creatureid = new TWord32 (creatureid);
+}
+
+GSMCreatureFollow::GSMCreatureFollow (const GSMCreatureFollow& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _creatureid = new TWord32 (*clone._creatureid);
+}
+        
+GSMCreatureFollow::~GSMCreatureFollow ()
+{
+        delete _id;
+        delete _creatureid;
+}
+
+void GSMCreatureFollow::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _creatureid->put (msg);
+}
+
+void GSMCreatureFollow::show ()
+{
+        printf ("GSMCreatureFollow {\n"); 
+        printf ("\tcreatureid: "); _creatureid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMCreatureFollow::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMCreatureFollow::getCreatureId ()
+{
+        return _creatureid->getVal ();
+}
+
+void GSMCreatureFollow::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _creatureid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * PrivateChannelCreate
+ ***************************************************************/
+
+GSMPrivateChannelCreate::GSMPrivateChannelCreate (NetworkMessage* msg, 
+                                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPrivateChannelCreate::GSMPrivateChannelCreate ()
+{
+        _id = new TWord8 ((uint8_t)GSM_PRIVATE_CHANNEL_CREATE_ID);
+}
+
+GSMPrivateChannelCreate::GSMPrivateChannelCreate (
+                        const GSMPrivateChannelCreate& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMPrivateChannelCreate::~GSMPrivateChannelCreate ()
+{
+        delete _id;
+}
+
+void GSMPrivateChannelCreate::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMPrivateChannelCreate::show ()
+{
+        printf ("GSMPrivateChannelCreate {}\n");
+}
+
+uint8_t GSMPrivateChannelCreate::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMPrivateChannelCreate::get 
+                (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * PrivateChannelInvite
+ ***************************************************************/
+
+GSMPrivateChannelInvite::GSMPrivateChannelInvite (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPrivateChannelInvite::GSMPrivateChannelInvite (const std::string& name)
+{
+        _id = new TWord8 ((uint8_t)GSM_PRIVATE_CHANNEL_INVITE_ID);
+        _name = new TString (name);
+}
+
+GSMPrivateChannelInvite::GSMPrivateChannelInvite (const GSMPrivateChannelInvite& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _name = new TString (*clone._name);
+}
+        
+GSMPrivateChannelInvite::~GSMPrivateChannelInvite ()
+{
+        delete _id;
+        delete _name;
+}
+
+void GSMPrivateChannelInvite::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _name->put (msg);
+}
+
+void GSMPrivateChannelInvite::show ()
+{
+        printf ("GSMPrivateChannelInvite {\n"); 
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMPrivateChannelInvite::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMPrivateChannelInvite::getName ()
+{
+        return _name->getString ();
+}
+
+void GSMPrivateChannelInvite::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _name = new TString (msg);
+}
+
+/***************************************************************
+ * PrivateChannelBan
+ ***************************************************************/
+
+GSMPrivateChannelBan::GSMPrivateChannelBan (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPrivateChannelBan::GSMPrivateChannelBan (const std::string& name)
+{
+        _id = new TWord8 ((uint8_t)GSM_PRIVATE_CHANNEL_BAN_ID);
+        _name = new TString (name);
+}
+
+GSMPrivateChannelBan::GSMPrivateChannelBan (const GSMPrivateChannelBan& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _name = new TString (*clone._name);
+}
+        
+GSMPrivateChannelBan::~GSMPrivateChannelBan ()
+{
+        delete _id;
+        delete _name;
+}
+
+void GSMPrivateChannelBan::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _name->put (msg);
+}
+
+void GSMPrivateChannelBan::show ()
+{
+        printf ("GSMPrivateChannelBan {\n"); 
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMPrivateChannelBan::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMPrivateChannelBan::getName ()
+{
+        return _name->getString ();
+}
+
+void GSMPrivateChannelBan::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _name = new TString (msg);
+}
+
+/***************************************************************
+ * PartyInvite
+ ***************************************************************/
+
+GSMPartyInvite::GSMPartyInvite (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPartyInvite::GSMPartyInvite (uint32_t playerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_PARTY_INVITE_ID);
+        _playerid = new TWord32 (playerid);
+}
+
+GSMPartyInvite::GSMPartyInvite (const GSMPartyInvite& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _playerid = new TWord32 (*clone._playerid);
+}
+        
+GSMPartyInvite::~GSMPartyInvite ()
+{
+        delete _id;
+        delete _playerid;
+}
+
+void GSMPartyInvite::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _playerid->put (msg);
+}
+
+void GSMPartyInvite::show ()
+{
+        printf ("GSMPartyInvite {\n"); 
+        printf ("\tplayerid: "); _playerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMPartyInvite::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMPartyInvite::getPlayerId ()
+{
+        return _playerid->getVal ();
+}
+
+void GSMPartyInvite::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _playerid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * PartyJoin
+ ***************************************************************/
+
+GSMPartyJoin::GSMPartyJoin (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPartyJoin::GSMPartyJoin (uint32_t playerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_PARTY_JOIN_ID);
+        _playerid = new TWord32 (playerid);
+}
+
+GSMPartyJoin::GSMPartyJoin (const GSMPartyJoin& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _playerid = new TWord32 (*clone._playerid);
+}
+        
+GSMPartyJoin::~GSMPartyJoin ()
+{
+        delete _id;
+        delete _playerid;
+}
+
+void GSMPartyJoin::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _playerid->put (msg);
+}
+
+void GSMPartyJoin::show ()
+{
+        printf ("GSMPartyJoin {\n"); 
+        printf ("\tplayerid: "); _playerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMPartyJoin::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMPartyJoin::getPlayerId ()
+{
+        return _playerid->getVal ();
+}
+
+void GSMPartyJoin::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _playerid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * PartyCancel
+ ***************************************************************/
+
+GSMPartyCancel::GSMPartyCancel (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPartyCancel::GSMPartyCancel (uint32_t playerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_PARTY_CANCEL_ID);
+        _playerid = new TWord32 (playerid);
+}
+
+GSMPartyCancel::GSMPartyCancel (const GSMPartyCancel& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _playerid = new TWord32 (*clone._playerid);
+}
+        
+GSMPartyCancel::~GSMPartyCancel ()
+{
+        delete _id;
+        delete _playerid;
+}
+
+void GSMPartyCancel::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _playerid->put (msg);
+}
+
+void GSMPartyCancel::show ()
+{
+        printf ("GSMPartyCancel {\n"); 
+        printf ("\tplayerid: "); _playerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMPartyCancel::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMPartyCancel::getPlayerId ()
+{
+        return _playerid->getVal ();
+}
+
+void GSMPartyCancel::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _playerid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * PartyPassLeadership
+ ***************************************************************/
+
+GSMPartyPassLeadership::GSMPartyPassLeadership (NetworkMessage* msg, 
+                        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPartyPassLeadership::GSMPartyPassLeadership (uint32_t playerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_PARTY_PASS_LEADERSHIP_ID);
+        _playerid = new TWord32 (playerid);
+}
+
+GSMPartyPassLeadership::GSMPartyPassLeadership (
+                        const GSMPartyPassLeadership& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _playerid = new TWord32 (*clone._playerid);
+}
+        
+GSMPartyPassLeadership::~GSMPartyPassLeadership ()
+{
+        delete _id;
+        delete _playerid;
+}
+
+void GSMPartyPassLeadership::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _playerid->put (msg);
+}
+
+void GSMPartyPassLeadership::show ()
+{
+        printf ("GSMPartyPassLeadership {\n"); 
+        printf ("\tplayerid: "); _playerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMPartyPassLeadership::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMPartyPassLeadership::getPlayerId ()
+{
+        return _playerid->getVal ();
+}
+
+void GSMPartyPassLeadership::get (NetworkMessage* msg, 
+                        GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _playerid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * PartyLeave
+ ***************************************************************/
+
+GSMPartyLeave::GSMPartyLeave (NetworkMessage* msg, 
+                                GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMPartyLeave::GSMPartyLeave ()
+{
+        _id = new TWord8 ((uint8_t)GSM_PARTY_LEAVE_ID);
+}
+
+GSMPartyLeave::GSMPartyLeave (const GSMPartyLeave& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMPartyLeave::~GSMPartyLeave ()
+{
+        delete _id;
+}
+
+void GSMPartyLeave::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMPartyLeave::show ()
+{
+        printf ("GSMPartyLeave {}\n");
+}
+
+uint8_t GSMPartyLeave::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMPartyLeave::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * CancelMove
+ ***************************************************************/
+
+GSMCancelMove::GSMCancelMove (NetworkMessage* msg, 
+                                GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMCancelMove::GSMCancelMove ()
+{
+        _id = new TWord8 ((uint8_t)GSM_CANCEL_MOVE_ID);
+}
+
+GSMCancelMove::GSMCancelMove (const GSMCancelMove& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMCancelMove::~GSMCancelMove ()
+{
+        delete _id;
+}
+
+void GSMCancelMove::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMCancelMove::show ()
+{
+        printf ("GSMCancelMove {}\n");
+}
+
+uint8_t GSMCancelMove::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMCancelMove::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * OutfitRequest
+ ***************************************************************/
+
+GSMOutfitRequest::GSMOutfitRequest (NetworkMessage* msg, 
+                                GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMOutfitRequest::GSMOutfitRequest ()
+{
+        _id = new TWord8 ((uint8_t)GSM_OUTFIT_REQUEST_ID);
+}
+
+GSMOutfitRequest::GSMOutfitRequest (const GSMOutfitRequest& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMOutfitRequest::~GSMOutfitRequest ()
+{
+        delete _id;
+}
+
+void GSMOutfitRequest::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMOutfitRequest::show ()
+{
+        printf ("GSMOutfitRequest {}\n");
+}
+
+uint8_t GSMOutfitRequest::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMOutfitRequest::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * OutfitSet
+ ***************************************************************/
+
+GSMOutfitSet::GSMOutfitSet (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMOutfitSet::GSMOutfitSet (uint16_t looktype, uint8_t head, uint8_t body, 
+                                uint8_t legs, uint8_t feet, uint8_t addons)
+{
+        _id = new TWord8 ((uint8_t)GSM_OUTFIT_SET_ID);
+        _looktype = new TWord16 (looktype);
+        _head = new TWord8 (head);
+        _body = new TWord8 (body);
+        _legs = new TWord8 (legs);
+        _feet = new TWord8 (feet);
+        _addons = new TWord8 (addons);
+}
+
+GSMOutfitSet::GSMOutfitSet (const GSMOutfitSet& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _looktype = new TWord16 (*clone._looktype);
+        _head = new TWord8 (*clone._head);
+        _body = new TWord8 (*clone._body);
+        _legs = new TWord8 (*clone._legs);
+        _feet = new TWord8 (*clone._feet);
+        _addons = new TWord8 (*clone._addons);
+}
+        
+GSMOutfitSet::~GSMOutfitSet ()
+{
+        delete _id;
+        delete _looktype;
+        delete _head;
+        delete _body;
+        delete _legs;
+        delete _feet;
+        delete _addons;
+}
+
+void GSMOutfitSet::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _looktype->put (msg);
+        _head->put (msg);
+        _body->put (msg);
+        _legs->put (msg);
+        _feet->put (msg);
+        _addons->put (msg);
+}
+
+void GSMOutfitSet::show ()
+{
+        printf ("GSMOutfitSet {\n"); 
+        printf ("\tlooktype: "); _looktype->show (); printf ("\n");
+        printf ("\thead: "); _head->show (); printf ("\n");
+        printf ("\tbody: "); _body->show (); printf ("\n");
+        printf ("\tlegs: "); _legs->show (); printf ("\n");
+        printf ("\tfeet: "); _feet->show (); printf ("\n");
+        printf ("\taddons: "); _addons->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMOutfitSet::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GSMOutfitSet::getLookType ()
+{
+        return _looktype->getVal ();
+}
+
+uint8_t GSMOutfitSet::getHead ()
+{
+        return _head->getVal ();
+}
+
+uint8_t GSMOutfitSet::getBody ()
+{
+        return _body->getVal ();
+}
+
+uint8_t GSMOutfitSet::getLegs ()
+{
+        return _legs->getVal ();
+}
+
+uint8_t GSMOutfitSet::getFeet ()
+{
+        return _feet->getVal ();
+}
+
+uint8_t GSMOutfitSet::getAddons ()
+{
+        return _addons->getVal ();
+}
+
+void GSMOutfitSet::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _looktype = new TWord16 (msg);
+        _head = new TWord8 (msg);
+        _body = new TWord8 (msg);
+        _legs = new TWord8 (msg);
+        _feet = new TWord8 (msg);
+        _addons = new TWord8 (msg);
+}
+
+/***************************************************************
+ * VIPAdd
+ ***************************************************************/
+
+GSMVIPAdd::GSMVIPAdd (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMVIPAdd::GSMVIPAdd (const std::string& name)
+{
+        _id = new TWord8 ((uint8_t)GSM_VIP_ADD_ID);
+        _name = new TString (name);
+}
+
+GSMVIPAdd::GSMVIPAdd (const GSMVIPAdd& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _name = new TString (*clone._name);
+}
+        
+GSMVIPAdd::~GSMVIPAdd ()
+{
+        delete _id;
+        delete _name;
+}
+
+void GSMVIPAdd::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _name->put (msg);
+}
+
+void GSMVIPAdd::show ()
+{
+        printf ("GSMVIPAdd {\n"); 
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMVIPAdd::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMVIPAdd::getName ()
+{
+        return _name->getString ();
+}
+
+void GSMVIPAdd::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _name = new TString (msg);
+}
+
+/***************************************************************
+ * VIPRemove
+ ***************************************************************/
+
+GSMVIPRemove::GSMVIPRemove (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMVIPRemove::GSMVIPRemove (uint32_t playerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_VIP_REMOVE_ID);
+        _playerid = new TWord32 (playerid);
+}
+
+GSMVIPRemove::GSMVIPRemove (const GSMVIPRemove& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _playerid = new TWord32 (*clone._playerid);
+}
+        
+GSMVIPRemove::~GSMVIPRemove ()
+{
+        delete _id;
+        delete _playerid;
+}
+
+void GSMVIPRemove::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _playerid->put (msg);
+}
+
+void GSMVIPRemove::show ()
+{
+        printf ("GSMVIPRemove {\n"); 
+        printf ("\tplayerid: "); _playerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMVIPRemove::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMVIPRemove::getPlayerId ()
+{
+        return _playerid->getVal ();
+}
+
+void GSMVIPRemove::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _playerid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * BugReport
+ ***************************************************************/
+
+GSMBugReport::GSMBugReport (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMBugReport::GSMBugReport (const std::string& text)
+{
+        _id = new TWord8 ((uint8_t)GSM_BUG_REPORT_ID);
+        _text = new TString (text);
+}
+
+GSMBugReport::GSMBugReport (const GSMBugReport& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _text = new TString (*clone._text);
+}
+        
+GSMBugReport::~GSMBugReport ()
+{
+        delete _id;
+        delete _text;
+}
+
+void GSMBugReport::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _text->put (msg);
+}
+
+void GSMBugReport::show ()
+{
+        printf ("GSMBugReport {\n"); 
+        printf ("text: "); _text->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMBugReport::getId ()
+{
+        return _id->getVal ();
+}
+
+const std::string& GSMBugReport::getText ()
+{
+        return _text->getString ();
+}
+
+void GSMBugReport::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _text = new TString (msg);
+}
+
+/***************************************************************
+ * QuestRequestLog
+ ***************************************************************/
+
+GSMQuestRequestLog::GSMQuestRequestLog (NetworkMessage* msg, 
+                                GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMQuestRequestLog::GSMQuestRequestLog ()
+{
+        _id = new TWord8 ((uint8_t)GSM_QUEST_REQUEST_LOG_ID);
+}
+
+GSMQuestRequestLog::GSMQuestRequestLog (const GSMQuestRequestLog& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMQuestRequestLog::~GSMQuestRequestLog ()
+{
+        delete _id;
+}
+
+void GSMQuestRequestLog::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMQuestRequestLog::show ()
+{
+        printf ("GSMQuestRequestLog {}\n");
+}
+
+uint8_t GSMQuestRequestLog::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMQuestRequestLog::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * QuestRequest
+ ***************************************************************/
+
+GSMQuestRequest::GSMQuestRequest (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMQuestRequest::GSMQuestRequest (uint32_t questid)
+{
+        _id = new TWord8 ((uint8_t)GSM_QUEST_REQUEST_ID);
+        _questid = new TWord32 (questid);
+}
+
+GSMQuestRequest::GSMQuestRequest (const GSMQuestRequest& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _questid = new TWord32 (*clone._questid);
+}
+        
+GSMQuestRequest::~GSMQuestRequest ()
+{
+        delete _id;
+        delete _questid;
+}
+
+void GSMQuestRequest::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _questid->put (msg);
+}
+
+void GSMQuestRequest::show ()
+{
+        printf ("GSMQuestRequest {\n"); 
+        printf ("\tquestid: "); _questid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMQuestRequest::getId ()
+{
+        return _id->getVal ();
+}
+
+uint32_t GSMQuestRequest::getQuestId ()
+{
+        return _questid->getVal ();
+}
+
+void GSMQuestRequest::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _questid = new TWord32 (msg);
+}
+
+/***************************************************************
+ * ShopBuy
+ ***************************************************************/
+
+GSMShopBuy::GSMShopBuy (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMShopBuy::GSMShopBuy (uint16_t itemid, uint16_t count, uint8_t u1, uint8_t u2)
+{
+        _id = new TWord8 ((uint8_t)GSM_SHOP_BUY_ID);
+        _itemid = new TWord16 (itemid);
+        _count = new TWord16 (count);
+        _u1 = new TWord8 (u1);
+        _u2 = new TWord8 (u2);
+}
+
+GSMShopBuy::GSMShopBuy (const GSMShopBuy& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _itemid = new TWord16 (*clone._itemid);
+        _count = new TWord16 (*clone._count);
+        _u1 = new TWord8 (*clone._u1);
+        _u2 = new TWord8 (*clone._u2);
+}
+        
+GSMShopBuy::~GSMShopBuy ()
+{
+        delete _id;
+        delete _itemid;
+        delete _count;
+        delete _u1;
+        delete _u2;
+}
+
+void GSMShopBuy::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _itemid->put (msg);
+        _count->put (msg);
+        _u1->put (msg);
+        _u2->put (msg);
+}
+
+void GSMShopBuy::show ()
+{
+        printf ("GSMShopBuy {\n"); 
+        printf ("\titemid: "); _itemid->show (); printf ("\n");
+        printf ("\tcount: "); _count->show (); printf ("\n");
+        printf ("\tu1: "); _u1->show (); printf ("\n");
+        printf ("\tu2: "); _u2->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMShopBuy::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GSMShopBuy::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+uint16_t GSMShopBuy::getCount ()
+{
+        return _count->getVal ();
+}
+
+uint8_t GSMShopBuy::getU1 ()
+{
+        return _u1->getVal ();
+}
+
+uint8_t GSMShopBuy::getU2 ()
+{
+        return _u1->getVal ();
+}
+
+void GSMShopBuy::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _itemid = new TWord16 (msg);
+        _count = new TWord16 (msg);
+        _u1 = new TWord8 (msg);
+        _u2 = new TWord8 (msg);
+}
+
+/***************************************************************
+ * ShopSell
+ ***************************************************************/
+
+GSMShopSell::GSMShopSell (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMShopSell::GSMShopSell (uint16_t itemid, uint16_t count, uint8_t u1)
+{
+        _id = new TWord8 ((uint8_t)GSM_SHOP_SELL_ID);
+        _itemid = new TWord16 (itemid);
+        _count = new TWord16 (count);
+        _u1 = new TWord8 (u1);
+}
+
+GSMShopSell::GSMShopSell (const GSMShopSell& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _itemid = new TWord16 (*clone._itemid);
+        _count = new TWord16 (*clone._count);
+        _u1 = new TWord8 (*clone._u1);
+}
+        
+GSMShopSell::~GSMShopSell ()
+{
+        delete _id;
+        delete _itemid;
+        delete _count;
+        delete _u1;
+}
+
+void GSMShopSell::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _itemid->put (msg);
+        _count->put (msg);
+        _u1->put (msg);
+}
+
+void GSMShopSell::show ()
+{
+        printf ("GSMShopSell {\n"); 
+        printf ("\titemid: "); _itemid->show (); printf ("\n");
+        printf ("\tcount: "); _count->show (); printf ("\n");
+        printf ("\tu1: "); _u1->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMShopSell::getId ()
+{
+        return _id->getVal ();
+}
+
+uint16_t GSMShopSell::getItemId ()
+{
+        return _itemid->getVal ();
+}
+
+uint16_t GSMShopSell::getCount ()
+{
+        return _count->getVal ();
+}
+
+uint8_t GSMShopSell::getU1 ()
+{
+        return _u1->getVal ();
+}
+
+void GSMShopSell::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _itemid = new TWord16 (msg);
+        _count = new TWord16 (msg);
+        _u1 = new TWord8 (msg);
+}
+
+/***************************************************************
+ * ShopClose
+ ***************************************************************/
+
+GSMShopClose::GSMShopClose (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMShopClose::GSMShopClose ()
+{
+        _id = new TWord8 ((uint8_t)GSM_SHOP_CLOSE_ID);
+}
+
+GSMShopClose::GSMShopClose (const GSMShopClose& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMShopClose::~GSMShopClose ()
+{
+        delete _id;
+}
+
+void GSMShopClose::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMShopClose::show ()
+{
+        printf ("GSMShopClose {}\n");
+}
+
+uint8_t GSMShopClose::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMShopClose::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * NPCChannelClose
+ ***************************************************************/
+
+GSMNPCChannelClose::GSMNPCChannelClose (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMNPCChannelClose::GSMNPCChannelClose ()
+{
+        _id = new TWord8 ((uint8_t)GSM_NPC_CHANNEL_CLOSE_ID);
+}
+
+GSMNPCChannelClose::GSMNPCChannelClose (const GSMNPCChannelClose& clone)
+{
+        _id = new TWord8 (*clone._id);
+}
+        
+GSMNPCChannelClose::~GSMNPCChannelClose ()
+{
+        delete _id;
+}
+
+void GSMNPCChannelClose::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMNPCChannelClose::show ()
+{
+        printf ("GSMNPCChannelClose {}\n");
+}
+
+uint8_t GSMNPCChannelClose::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMNPCChannelClose::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/***************************************************************
+ * RequestTileUpdate
+ ***************************************************************/
+
+GSMRequestTileUpdate::GSMRequestTileUpdate (NetworkMessage* msg, 
+        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMRequestTileUpdate::GSMRequestTileUpdate (const TPos& pos)
+{
+        _id = new TWord8 ((uint8_t)GSM_REQUEST_CONTAINER_UPDATE_ID);
+        _pos = new TPos (pos);
+}
+
+GSMRequestTileUpdate::GSMRequestTileUpdate (
+                const GSMRequestTileUpdate& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _pos = new TPos (*clone._pos);
+}
+        
+GSMRequestTileUpdate::~GSMRequestTileUpdate ()
+{
+        delete _id;
+        delete _pos;
+}
+
+void GSMRequestTileUpdate::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _pos->put (msg);
+}
+
+void GSMRequestTileUpdate::show ()
+{
+        printf ("GSMRequestTileUpdate {\n"); 
+        printf ("\tpos: "); _pos->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMRequestTileUpdate::getId ()
+{
+        return _id->getVal ();
+}
+
+const TPos& GSMRequestTileUpdate::getPos ()
+{
+        return *_pos;
+}
+
+void GSMRequestTileUpdate::get (NetworkMessage* msg, 
+        GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _pos = new TPos (msg);
+}
+
+/***************************************************************
+ * RequestTileUpdate
+ ***************************************************************/
+
+GSMRequestContainerUpdate::GSMRequestContainerUpdate (NetworkMessage* msg, 
+        GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMRequestContainerUpdate::GSMRequestContainerUpdate (uint8_t containerid)
+{
+        _id = new TWord8 ((uint8_t)GSM_REQUEST_CONTAINER_UPDATE_ID);
+        _containerid = new TWord8 (containerid);
+}
+
+GSMRequestContainerUpdate::GSMRequestContainerUpdate (
+                const GSMRequestContainerUpdate& clone)
+{
+        _id = new TWord8 (*clone._id);
+        _containerid = new TWord8 (*clone._containerid);
+}
+        
+GSMRequestContainerUpdate::~GSMRequestContainerUpdate ()
+{
+        delete _id;
+        delete _containerid;
+}
+
+void GSMRequestContainerUpdate::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+        _containerid->put (msg);
+}
+
+void GSMRequestContainerUpdate::show ()
+{
+        printf ("GSMRequestContainerUpdate {\n"); 
+        printf ("containerid: "); _containerid->show (); printf ("\n");
+        printf ("}\n");
+}
+
+uint8_t GSMRequestContainerUpdate::getId ()
+{
+        return _id->getVal ();
+}
+
+uint8_t GSMRequestContainerUpdate::getContainerId ()
+{
+        return _containerid->getVal ();
+}
+
+void GSMRequestContainerUpdate::get (NetworkMessage* msg, 
+        GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+        _containerid = new TWord8 (msg);
 }
 
 /***************************************************************
@@ -3175,67 +6691,67 @@ void GRMPlayerSkills::get (NetworkMessage* msg, GameState* gs,
 }
 
 /***************************************************************
- * OpenContainer
+ * ContainerOpen
  ***************************************************************/
-GRMOpenContainer::GRMOpenContainer (NetworkMessage* msg,
+GRMContainerOpen::GRMContainerOpen (NetworkMessage* msg,
                                         GameState* gs,
                                         DatReader* dat)
 {
         get (msg, gs, dat);
 }
 
-GRMOpenContainer::GRMOpenContainer (uint8_t cid, const TContainer& container)
+GRMContainerOpen::GRMContainerOpen (uint8_t cid, const TContainer& container)
 {
-        _id = new TWord8 ((uint8_t)GRM_OPEN_CONTAINER_ID);
+        _id = new TWord8 ((uint8_t)GRM_CONTAINER_OPEN_ID);
         _cid = new TWord8 (cid);
         _container = new TContainer (container);
 }
 
-GRMOpenContainer::GRMOpenContainer (const GRMOpenContainer& clone)
+GRMContainerOpen::GRMContainerOpen (const GRMContainerOpen& clone)
 {
         _id = new TWord8 (*clone._id);
         _cid = new TWord8 (*clone._cid);
         _container = new TContainer (*clone._container);
 }
 
-GRMOpenContainer::~GRMOpenContainer ()
+GRMContainerOpen::~GRMContainerOpen ()
 {
         delete _id;
         delete _cid;
         delete _container;
 }
 
-void GRMOpenContainer::put (NetworkMessage* msg)
+void GRMContainerOpen::put (NetworkMessage* msg)
 {
         _id->put (msg);
         _cid->put (msg);
         _container->put (msg);
 }
 
-void GRMOpenContainer::show ()
+void GRMContainerOpen::show ()
 {
-        printf ("GRMOpenContainer {\n");
+        printf ("GRMContainerOpen {\n");
         printf ("\tcid: "); _cid->show (); printf ("\n");
         _container->show ();
         printf ("}\n");
 }
 
-uint8_t GRMOpenContainer::getId ()
+uint8_t GRMContainerOpen::getId ()
 {
         return _id->getVal ();
 }
 
-uint8_t GRMOpenContainer::getCid ()
+uint8_t GRMContainerOpen::getCid ()
 {
         return _cid->getVal ();
 }
 
-TContainer& GRMOpenContainer::getContainer ()
+TContainer& GRMContainerOpen::getContainer ()
 {
         return *_container;
 }
 
-void GRMOpenContainer::get (NetworkMessage* msg,
+void GRMContainerOpen::get (NetworkMessage* msg,
                                 GameState* gs, 
                                 DatReader* dat)
 {
@@ -3245,57 +6761,57 @@ void GRMOpenContainer::get (NetworkMessage* msg,
 }
 
 /***************************************************************
- * CloseContainer
+ * ContainerClose
  ***************************************************************/
-GRMCloseContainer::GRMCloseContainer (NetworkMessage* msg,
+GRMContainerClose::GRMContainerClose (NetworkMessage* msg,
                                         GameState* gs,
                                         DatReader* dat)
 {
         get (msg, gs, dat);
 }
 
-GRMCloseContainer::GRMCloseContainer (uint8_t cid)
+GRMContainerClose::GRMContainerClose (uint8_t cid)
 {
-        _id = new TWord8 ((uint8_t)GRM_CLOSE_CONTAINER_ID);
+        _id = new TWord8 ((uint8_t)GRM_CONTAINER_CLOSE_ID);
         _cid = new TWord8 (cid);
 }
 
-GRMCloseContainer::GRMCloseContainer (const GRMCloseContainer& clone)
+GRMContainerClose::GRMContainerClose (const GRMContainerClose& clone)
 {
         _id = new TWord8 (*clone._id);
         _cid = new TWord8 (*clone._cid);
 }
 
-GRMCloseContainer::~GRMCloseContainer ()
+GRMContainerClose::~GRMContainerClose ()
 {
         delete _id;
         delete _cid;
 }
 
-void GRMCloseContainer::put (NetworkMessage* msg)
+void GRMContainerClose::put (NetworkMessage* msg)
 {
         _id->put (msg);
         _cid->put (msg);
 }
 
-void GRMCloseContainer::show ()
+void GRMContainerClose::show ()
 {
-        printf ("GRMCloseContainer {\n");
+        printf ("GRMContainerClose {\n");
         printf ("\tcid: "); _cid->show (); printf ("\n");
         printf ("}\n");
 }
 
-uint8_t GRMCloseContainer::getId ()
+uint8_t GRMContainerClose::getId ()
 {
         return _id->getVal ();
 }
 
-uint8_t GRMCloseContainer::getCid ()
+uint8_t GRMContainerClose::getCid ()
 {
         return _cid->getVal ();
 }
 
-void GRMCloseContainer::get (NetworkMessage* msg,
+void GRMContainerClose::get (NetworkMessage* msg,
                                 GameState* gs, 
                                 DatReader* dat)
 {

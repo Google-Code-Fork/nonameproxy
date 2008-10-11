@@ -111,8 +111,12 @@ TibiaMessage* GSMessageFactory::getMessage ()
         _msg->peekU8 (id);
         if (id == GSM_GAME_INIT_ID) {
                 return (new GSMGameInit (_msg, _gs, _dat));
+        } else if (id == GSM_PING_ID) {
+                return (new GSMPing (_msg, _gs, _dat));
         } else if (id == GSM_AUTO_WALK_ID) {
                 return (new GSMAutoWalk (_msg, _gs, _dat));
+        } else if (id == GSM_AUTO_WALK_CANCEL_ID) {
+                return (new GSMAutoWalkCancel (_msg, _gs, _dat));
         } else if (id == GSM_MOVE_NORTH_ID) {
                 return (new GSMMoveNorth (_msg, _gs, _dat));
         } else if (id == GSM_MOVE_EAST_ID) {
@@ -131,6 +135,98 @@ TibiaMessage* GSMessageFactory::getMessage ()
                 return (new GSMMoveNW (_msg, _gs, _dat));
         } else if (id == GSM_MOVE_ITEM_ID) {
                 return (new GSMMoveItem (_msg, _gs, _dat));
+        } else if (id == GSM_TRADE_ITEM_ID) {
+                return (new GSMTradeItem (_msg, _gs, _dat));
+        } else if (id == GSM_TRADE_LOOK_ID) {
+                return (new GSMTradeLook (_msg, _gs, _dat));
+        } else if (id == GSM_TRADE_ACCEPT_ID) {
+                return (new GSMTradeAccept (_msg, _gs, _dat));
+        } else if (id == GSM_TRADE_REJECT_ID) {
+                return (new GSMTradeReject (_msg, _gs, _dat));
+        } else if (id == GSM_USE_ITEM_ID) {
+                return (new GSMUseItem (_msg, _gs, _dat));
+        } else if (id == GSM_USE_ITEM_WITH_ID) {
+                return (new GSMUseItemWith (_msg, _gs, _dat));
+        } else if (id == GSM_USE_BATTLE_WINDOW_ID) {
+                return (new GSMUseBattleWindow (_msg, _gs, _dat));
+        } else if (id == GSM_ROTATE_ITEM_ID) {
+                return (new GSMRotateItem (_msg, _gs, _dat));
+        } else if (id == GSM_CONTAINER_CLOSE_ID) {
+                return (new GSMContainerClose (_msg, _gs, _dat));
+        } else if (id == GSM_CONTAINER_UP_ID) {
+                return (new GSMContainerUp (_msg, _gs, _dat));
+        } else if (id == GSM_TEXT_WINDOW_ID) {
+                return (new GSMTextWindow (_msg, _gs, _dat));
+        } else if (id == GSM_TEXT_HOUSE_ID) {
+                return (new GSMTextHouse (_msg, _gs, _dat));
+        } else if (id == GSM_LOOK_ITEM_ID) {
+                return (new GSMLookItem (_msg, _gs, _dat));
+        } else if (id == GSM_SPEAK_ID) {
+                return (new GSMSpeak (_msg, _gs, _dat));
+        } else if (id == GSM_REQUEST_CHANNELS_ID) {
+                return (new GSMRequestChannels (_msg, _gs, _dat));
+        } else if (id == GSM_CHANNEL_OPEN_ID) {
+                return (new GSMChannelOpen (_msg, _gs, _dat));
+        } else if (id == GSM_CHANNEL_CLOSE_ID) {
+                return (new GSMChannelClose (_msg, _gs, _dat));
+        } else if (id == GSM_PRIVATE_CHAT_OPEN_ID) {
+                return (new GSMPrivateChatOpen (_msg, _gs, _dat));
+        } else if (id == GSM_RULE_VIOLATION_OPEN_ID) {
+                return (new GSMRuleViolationOpen (_msg, _gs, _dat));
+        } else if (id == GSM_RULE_VIOLATION_CLOSE_ID) {
+                return (new GSMRuleViolationClose (_msg, _gs, _dat));
+        } else if (id == GSM_RULE_VIOLATION_CANCEL_ID) {
+                return (new GSMRuleViolationCancel (_msg, _gs, _dat));
+        } else if (id == GSM_NPC_CHANNEL_CLOSE_ID) {
+                return (new GSMNPCChannelClose (_msg, _gs, _dat));
+        } else if (id == GSM_PRIVATE_CHANNEL_CREATE_ID) {
+                return (new GSMPrivateChannelCreate (_msg, _gs, _dat));
+        } else if (id == GSM_PRIVATE_CHANNEL_INVITE_ID) {
+                return (new GSMPrivateChannelInvite (_msg, _gs, _dat));
+        } else if (id == GSM_PRIVATE_CHANNEL_BAN_ID) {
+                return (new GSMPrivateChannelBan (_msg, _gs, _dat));
+        } else if (id == GSM_FIGHT_MODES_ID) {
+                return (new GSMFightModes (_msg, _gs, _dat));
+        } else if (id == GSM_CREATURE_ATTACK_ID) {
+                return (new GSMCreatureAttack (_msg, _gs, _dat));
+        } else if (id == GSM_CREATURE_FOLLOW_ID) {
+                return (new GSMCreatureFollow (_msg, _gs, _dat));
+        } else if (id == GSM_PARTY_INVITE_ID) {
+                return (new GSMPartyInvite (_msg, _gs, _dat));
+        } else if (id == GSM_PARTY_JOIN_ID) {
+                return (new GSMPartyJoin (_msg, _gs, _dat));
+        } else if (id == GSM_PARTY_CANCEL_ID) {
+                return (new GSMPartyCancel (_msg, _gs, _dat));
+        } else if (id == GSM_PARTY_PASS_LEADERSHIP_ID) {
+                return (new GSMPartyPassLeadership (_msg, _gs, _dat));
+        } else if (id == GSM_PARTY_LEAVE_ID) {
+                return (new GSMPartyLeave (_msg, _gs, _dat));
+        } else if (id == GSM_CANCEL_MOVE_ID) {
+                return (new GSMCancelMove (_msg, _gs, _dat));
+        } else if (id == GSM_OUTFIT_REQUEST_ID) {
+                return (new GSMOutfitRequest (_msg, _gs, _dat));
+        } else if (id == GSM_OUTFIT_SET_ID) {
+                return (new GSMOutfitSet (_msg, _gs, _dat));
+        } else if (id == GSM_VIP_ADD_ID) {
+                return (new GSMVIPAdd (_msg, _gs, _dat));
+        } else if (id == GSM_VIP_REMOVE_ID) {
+                return (new GSMVIPRemove (_msg, _gs, _dat));
+        } else if (id == GSM_BUG_REPORT_ID) {
+                return (new GSMBugReport (_msg, _gs, _dat));
+        } else if (id == GSM_QUEST_REQUEST_LOG_ID) {
+                return (new GSMQuestRequestLog (_msg, _gs, _dat));
+        } else if (id == GSM_QUEST_REQUEST_ID) {
+                return (new GSMQuestRequest (_msg, _gs, _dat));
+        } else if (id == GSM_SHOP_BUY_ID) {
+                return (new GSMShopBuy (_msg, _gs, _dat));
+        } else if (id == GSM_SHOP_SELL_ID) {
+                return (new GSMShopSell (_msg, _gs, _dat));
+        } else if (id == GSM_SHOP_CLOSE_ID) {
+                return (new GSMShopClose (_msg, _gs, _dat));
+        } else if (id == GSM_REQUEST_TILE_UPDATE_ID) {
+                return (new GSMRequestTileUpdate (_msg, _gs, _dat));
+        } else if (id == GSM_REQUEST_CONTAINER_UPDATE_ID) {
+                return (new GSMRequestContainerUpdate (_msg, _gs, _dat));
         }
         printf ("Protocol error: unknown GS Message 0x%X\n", id);
         return NULL;
@@ -237,10 +333,10 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMPlayerIcons (_msg, _gs, _dat));
         } else if (id == GRM_PLAYER_CANCEL_ATTACK_ID) {
                 return (new GRMPlayerCancelAttack (_msg, _gs, _dat));
-        } else if (id == GRM_OPEN_CONTAINER_ID) {
-                return (new GRMOpenContainer (_msg, _gs, _dat));
-        } else if (id == GRM_CLOSE_CONTAINER_ID) {
-                return (new GRMCloseContainer (_msg, _gs, _dat));
+        } else if (id == GRM_CONTAINER_OPEN_ID) {
+                return (new GRMContainerOpen (_msg, _gs, _dat));
+        } else if (id == GRM_CONTAINER_CLOSE_ID) {
+                return (new GRMContainerClose (_msg, _gs, _dat));
         } else if (id == GRM_CONT_ADD_ID) {
                 return (new GRMContainerAdd (_msg, _gs, _dat));
         } else if (id == GRM_CONT_UPDATE_ID) {
