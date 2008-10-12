@@ -287,6 +287,31 @@ class GSMPing : public TibiaMessage
                 TWord8* _id;
 };
 
+/*****************************************************************
+ * Logout
+ *****************************************************************/
+
+class GSMLogout : public TibiaMessage
+{
+        public:
+                GSMLogout (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMLogout ();
+                GSMLogout (const GSMLogout& clone);
+                virtual ~GSMLogout ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
 /******************************************************************
  * GameInit
  ******************************************************************/
@@ -552,6 +577,106 @@ class GSMMoveNW : public TibiaMessage
                 GSMMoveNW ();
                 GSMMoveNW (const GSMMoveNW& clone);
                 virtual ~GSMMoveNW ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * TurnNorth
+ *****************************************************************/
+
+class GSMTurnNorth : public TibiaMessage
+{
+        public:
+                GSMTurnNorth (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMTurnNorth ();
+                GSMTurnNorth (const GSMTurnNorth& clone);
+                virtual ~GSMTurnNorth ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * TurnEast
+ *****************************************************************/
+
+class GSMTurnEast : public TibiaMessage
+{
+        public:
+                GSMTurnEast (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMTurnEast ();
+                GSMTurnEast (const GSMTurnEast& clone);
+                virtual ~GSMTurnEast ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * TurnSouth
+ *****************************************************************/
+
+class GSMTurnSouth : public TibiaMessage
+{
+        public:
+                GSMTurnSouth (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMTurnSouth ();
+                GSMTurnSouth (const GSMTurnSouth& clone);
+                virtual ~GSMTurnSouth ();
+
+                virtual void put (NetworkMessage* msg);
+                virtual void show ();
+                virtual uint8_t getId ();
+
+                virtual void get (NetworkMessage* msg,
+                                  GameState* gs,
+                                  DatReader* dat);
+        private:
+                TWord8* _id;
+};
+
+/*****************************************************************
+ * TurnWest
+ *****************************************************************/
+
+class GSMTurnWest : public TibiaMessage
+{
+        public:
+                GSMTurnWest (NetworkMessage* msg,
+                                GameState* gs,
+                                DatReader* dat);
+                GSMTurnWest ();
+                GSMTurnWest (const GSMTurnWest& clone);
+                virtual ~GSMTurnWest ();
 
                 virtual void put (NetworkMessage* msg);
                 virtual void show ();
