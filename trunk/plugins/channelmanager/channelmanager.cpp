@@ -131,13 +131,35 @@ GSMChannelOpen* ChannelManager::hookChannelOpen (GSMChannelOpen* co, Client* cli
 {
         uint32_t channelId = co->getChannelId ();
         if (addList.count (channelId) != 0) {
-                printf ("blocked\n");
+                printf ("blocked open\n");
                 delete co;
                 return NULL;
-        } else {
-                printf ("whoops\n");
-                return co;
         }
+        return co;
+}
+
+GSMChannelClose* ChannelManager::hookChannelClose (GSMChannelClose* cc, Client* client)
+{
+        uint32_t channelId = cc->getChannelId ();
+        if (addList.count (channelId) != 0) {
+                printf ("blocked close\n");
+                delete cc;
+                return NULL;
+        }
+        return cc;
+}
+
+GSMSpeak* ChannelManager::hookSpeak (GSMSpeak* sp, Client* client)
+{
+        if (sp->getSpeakType == GSMSpeak::channel) {
+                uint32_t channelId = sp->getChannelId ();
+                if (addList.count (channelId) != 0) {
+                        printf ("blocked speak\n");
+                        delete sp;
+                        return NULL;
+                }
+        }
+        return sp;
 }
 
 GRMChannelList* ChannelManager::hookChannelList (GRMChannelList* cl, Client* client)
