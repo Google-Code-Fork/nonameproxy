@@ -3597,7 +3597,8 @@ void GSMPrivateChannelCreate::get
  * PrivateChannelInvite
  ***************************************************************/
 
-GSMPrivateChannelInvite::GSMPrivateChannelInvite (NetworkMessage* msg, GameState* gs, DatReader* dat)
+GSMPrivateChannelInvite::GSMPrivateChannelInvite (NetworkMessage* msg, 
+                                        GameState* gs, DatReader* dat)
 {
         get (msg, gs, dat);
 }
@@ -5192,7 +5193,7 @@ GRMSelfInfo::~GRMSelfInfo ()
 
 uint8_t GRMSelfInfo::getId ()
 {
-        return GRM_SELF_INFO_ID;
+        return _id->getVal ();
 }
 
 uint32_t GRMSelfInfo::getTibiaId ()
@@ -5281,7 +5282,7 @@ void GRMMapInit::show ()
 
 uint8_t GRMMapInit::getId ()
 {
-        return GRM_MAP_INIT_ID;
+        return _id->getVal ();
 }
 
 const TPos& GRMMapInit::getPos ()
@@ -5681,6 +5682,7 @@ void GRMMapUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 
         uint32_t minz;
         uint32_t maxz;
+        printf ("%d\n", pos.z);
         if (pos.z == 8) {
                 //we have come from underground and have 6 & 7
                 minz = 0;
@@ -5855,7 +5857,7 @@ void GRMTileSet::show ()
 
 uint8_t GRMTileSet::getId ()
 {
-        return GRM_MAP_INIT_ID;
+        return _id->getVal ();
 }
 
 const TPos& GRMTileSet::getPos ()

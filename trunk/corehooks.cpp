@@ -186,7 +186,9 @@ void GRHMapInit::func (TibiaMessage* tm, Client* client)
 void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("North: %d %d %d to ", pos.x, pos.y, pos.z);
         pos.y --;
+        printf ("%d %d %d\n", pos.x, pos.y, pos.z);
 }
 
 /**********************************************************************
@@ -195,7 +197,9 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 void GRHMapEast::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("East: %d %d %d to ", pos.x, pos.y, pos.z);
         pos.x ++;
+        printf ("%d %d %d\n", pos.x, pos.y, pos.z);
 }
 
 /**********************************************************************
@@ -204,7 +208,9 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
 void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("South: %d %d %d to ", pos.x, pos.y, pos.z);
         pos.y ++;
+        printf ("%d %d %d\n", pos.x, pos.y, pos.z);
 }
 
 /**********************************************************************
@@ -213,7 +219,9 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 void GRHMapWest::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("West: %d %d %d to ", pos.x, pos.y, pos.z);
         pos.x --;
+        printf ("%d %d %d\n", pos.x, pos.y, pos.z);
 }
 
 /**********************************************************************
@@ -222,7 +230,9 @@ void GRHMapWest::func (TibiaMessage* tm, Client* client)
 void GRHMapUp::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("Up: %d %d %d to ", pos.x, pos.y, pos.z);
         pos.z --;
+        printf ("%d %d %d\n", pos.x, pos.y, pos.z);
 }
 
 /**********************************************************************
@@ -231,6 +241,8 @@ void GRHMapUp::func (TibiaMessage* tm, Client* client)
 void GRHMapDown::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("Down: %d %d %d to ", pos.x, pos.y, pos.z);
         pos.z ++;
+        printf ("%d %d %d\n", pos.x, pos.y, pos.z);
 }
 
