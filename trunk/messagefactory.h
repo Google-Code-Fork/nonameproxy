@@ -18,6 +18,7 @@ class MessageFactory
                 virtual ~MessageFactory () {}
 
                 virtual TibiaMessage* getMessage () = 0;
+                virtual bool isEnd () = 0;
 };
 
 class LSMessageFactory : public MessageFactory
@@ -29,6 +30,7 @@ class LSMessageFactory : public MessageFactory
                 virtual ~LSMessageFactory ();
 
                 virtual TibiaMessage* getMessage ();
+                virtual bool isEnd ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
@@ -44,6 +46,7 @@ class LRMessageFactory : public MessageFactory
                 virtual ~LRMessageFactory ();
 
                 virtual TibiaMessage* getMessage ();
+                virtual bool isEnd ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
@@ -59,6 +62,7 @@ class GSMessageFactory : public MessageFactory
                 virtual ~GSMessageFactory ();
 
                 virtual TibiaMessage* getMessage ();
+                virtual bool isEnd ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;
@@ -74,6 +78,7 @@ class GRMessageFactory : public MessageFactory
                 virtual ~GRMessageFactory ();
 
                 virtual TibiaMessage* getMessage ();
+                virtual bool isEnd ();
         private:
                 NetworkMessage* _msg;
                 GameState* _gs;

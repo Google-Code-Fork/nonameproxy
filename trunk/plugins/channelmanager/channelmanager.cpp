@@ -151,7 +151,7 @@ GSMChannelClose* ChannelManager::hookChannelClose (GSMChannelClose* cc, Client* 
 
 GSMSpeak* ChannelManager::hookSpeak (GSMSpeak* sp, Client* client)
 {
-        if (sp->getSpeakType == GSMSpeak::channel) {
+        if (sp->getSpeakType () == GSMSpeak::channel) {
                 uint32_t channelId = sp->getChannelId ();
                 if (addList.count (channelId) != 0) {
                         printf ("blocked speak\n");
@@ -194,6 +194,12 @@ void ChannelManager::iload (uint32_t pluginId, Client* client)
         _channelopen_hid = _client->addSendWriteHook (_pluginId, 
                                 GSM_CHANNEL_OPEN_ID, new ChannelOpenHook ());
 
+        _channelclose_hid = _client->addSendWriteHook (_pluginId, 
+                                GSM_CHANNEL_CLOSE_ID, new ChannelCloseHook ());
+
+        _speak_hid = _client->addSendWriteHook (_pluginId, 
+                                GSM_SPEAK_ID, new SpeakHook ());
+
         _rid = _client->addRecipricant (_pluginId, new ChannelRecipricant ());
 }
 
@@ -201,6 +207,8 @@ void ChannelManager::iunload ()
 {
         _client->deleteRecvWriteHook (_pluginId, _channellist_hid);
         _client->deleteSendWriteHook (_pluginId, _channelopen_hid);
+        _client->deleteSendWriteHook (_pluginId, _channelclose_hid);
+        _client->deleteSendWriteHook (_pluginId, _speak_hid);
         _client->deleteRecipricant (_pluginId, _rid);
 }
 

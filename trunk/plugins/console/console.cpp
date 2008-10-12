@@ -37,7 +37,7 @@ void Console::output (const std::string& msg)
         if (_open) {
                 GRMessageList grml;
                 TChannelSpeak out ((uint32_t)0,
-                                   std::string("#"), 
+                                   ">", 
                                    (uint16_t)0, 
                                    SPEAK_CHANNEL_O,
                                    (uint16_t)_channelId,
@@ -50,11 +50,14 @@ void Console::output (const std::string& msg)
 
 void Console::hookChannelOpen (GSMChannelOpen* co, Client* client)
 {
+        printf ("open console\n");
         uint32_t channelId = co->getChannelId ();
         if (channelId == _channelId) {
+                printf ("ids match\n");
                 GRMessageList grml;
                 grml.add (new GRMChannelOpen (_channelId, "console"));
                 _client->sendToClient (grml);
+                printf ("console open sent\n");
                 _open = true;
         }
 }
@@ -63,6 +66,7 @@ void Console::hookChannelClose (GSMChannelClose* cc, Client* client)
 {
         uint32_t channelId = cc->getChannelId ();
         if (channelId == _channelId) {
+                printf ("console close\n");
                 _open = false;
         }
 }
@@ -72,7 +76,19 @@ void Console::hookSpeak (GSMSpeak* sp, Client* client)
         if (sp->getSpeakType () == GSMSpeak::channel) {
                 uint32_t channelId = sp->getChannelId ();
                 if (channelId == _channelId) {
-                        printf ("%s\n", sp->getMsg ().c_str ());
+                        GRMessageList grml;
+                        const std::string& msg = sp->getMsg ();
+                        TChannelSpeak out ((uint32_t)0,
+                                           "$", 
+                                           (uint16_t)0, 
+                                           SPEAK_CHANNEL_Y,
+                                           (uint16_t)_channelId,
+                                           msg);
+
+                        grml.add (new GRMSpeak (out));
+                        _client->sendToClient (grml);
+
+                        _client->broadcastMessage (msg);
                 }
         }
 }
@@ -90,7 +106,7 @@ void Console::iload (uint32_t pluginId, Client* client)
                                 GSM_CHANNEL_OPEN_ID, new ChannelOpenHook ());
 
         _channelclose_hid = _client->addSendReadHook (_pluginId, 
-                                GSM_CHANNEL_CLOSE_ID, new ChannelOpenHook ());
+                                GSM_CHANNEL_CLOSE_ID, new ChannelCloseHook ());
 
         _speak_hid = _client->addSendReadHook (_pluginId, 
                                 GSM_SPEAK_ID, new SpeakHook ());

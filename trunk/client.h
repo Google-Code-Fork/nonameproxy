@@ -9,6 +9,8 @@
 #include "messenger.h"
 #include "pluginmanager.h"
 #include "plugin.h"
+#include "messagelist.h"
+#include "corerecipricant.h"
 
 class Connection;
 class ConnectionManager;
@@ -41,7 +43,12 @@ class Client
                 /* these functions are wrappers for plugin management 
                  * functions accessable from external plugins */
 
+                uint32_t getPluginByName (const std::string& msg);
+
                 void sendMessage (uint32_t pid, const std::string& msg);
+
+                /* sends a message to the plugin whos name is the first arg */
+                void broadcastMessage (const std::string& msg);
 
                 uint32_t addRecvReadHook (uint32_t pid, uint8_t id,
                                                         ReadHook* hook);
@@ -59,13 +66,20 @@ class Client
                 uint32_t addRecipricant (uint32_t pid, Recipricant* recipricant);
                 void     deleteRecipricant (uint32_t pid, uint32_t rid);
 
+                void sendToClient (GRMessageList& msgs);
+                void sendToServer (GSMessageList& msgs);
+
+                /* since console will be a core plugin i think it makes sense
+                 * make it available to other plugins. */
+                uint32_t getConsoleId ();
+
+                friend class CoreRecipricant;
         private:
                 void addProtocolHooks ();
 
                 ConnectionManager*      connMgr;
                 Connection*             serverConn;
                 Connection*             clientConn;
-
 
                 Messenger*              messenger;
 
@@ -74,6 +88,8 @@ class Client
                 HookManager*            recvProtocol;
 
                 PluginManager*          pluginManager;
+
+                uint32_t                _consoleId;
 };
 #endif
 

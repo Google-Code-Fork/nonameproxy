@@ -29,12 +29,16 @@ class PluginManager
 
                 /* Add plugin returns a unique id for the hook just added */
                 uint32_t addPlugin    (const std::string& path);
-                void     deletePlugin (uint32_t pid);
+                bool     deletePlugin (uint32_t pid);
+
+                /* a hack to allow the core to add a recipricant */
+                uint32_t addFakein    (const std::string& name);
 
                 uint32_t getPluginByName      (const std::string& name);
 
                 /* Interfacing functions */
                 void sendMessage (uint32_t pid, const std::string& msg);
+                void broadcastMessage (const std::string& msg);
 
                 uint32_t addRecvReadHook (uint32_t pid, uint8_t id,
                                                         ReadHook* hook);
