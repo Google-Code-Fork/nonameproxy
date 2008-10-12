@@ -485,6 +485,45 @@ void LRMNewLoginServer::show ()
  ********************************************************************/
 
 /********************************************************************
+ * Logout
+ ********************************************************************/
+
+GSMLogout::GSMLogout (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMLogout::GSMLogout ()
+{
+        _id = new TWord8 ((uint8_t)GSM_LOGOUT_ID);
+}
+
+GSMLogout::~GSMLogout ()
+{
+        delete _id;
+}
+
+uint8_t GSMLogout::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMLogout::show ()
+{
+        printf ("GSMLogout {}\n");
+}
+
+void GSMLogout::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMLogout::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
  * Ping
  ********************************************************************/
 
@@ -1004,6 +1043,162 @@ void GSMMoveNW::put (NetworkMessage* msg)
 }
 
 void GSMMoveNW::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * TurnNorth
+ ********************************************************************/
+
+GSMTurnNorth::GSMTurnNorth (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTurnNorth::GSMTurnNorth ()
+{
+        _id = new TWord8 ((uint8_t)GSM_TURN_NORTH_ID);
+}
+
+GSMTurnNorth::~GSMTurnNorth ()
+{
+        delete _id;
+}
+
+uint8_t GSMTurnNorth::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMTurnNorth::show ()
+{
+        printf ("GSMTurnNorth {}\n");
+}
+
+void GSMTurnNorth::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMTurnNorth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * TurnEast
+ ********************************************************************/
+
+GSMTurnEast::GSMTurnEast (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTurnEast::GSMTurnEast ()
+{
+        _id = new TWord8 ((uint8_t)GSM_TURN_EAST_ID);
+}
+
+GSMTurnEast::~GSMTurnEast ()
+{
+        delete _id;
+}
+
+uint8_t GSMTurnEast::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMTurnEast::show ()
+{
+        printf ("GSMTurnEast {}\n");
+}
+
+void GSMTurnEast::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMTurnEast::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * TurnSouth
+ ********************************************************************/
+
+GSMTurnSouth::GSMTurnSouth (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTurnSouth::GSMTurnSouth ()
+{
+        _id = new TWord8 ((uint8_t)GSM_TURN_SOUTH_ID);
+}
+
+GSMTurnSouth::~GSMTurnSouth ()
+{
+        delete _id;
+}
+
+uint8_t GSMTurnSouth::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMTurnSouth::show ()
+{
+        printf ("GSMTurnSouth {}\n");
+}
+
+void GSMTurnSouth::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMTurnSouth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        _id = new TWord8 (msg);
+}
+
+/********************************************************************
+ * TurnWest
+ ********************************************************************/
+
+GSMTurnWest::GSMTurnWest (NetworkMessage* msg, GameState* gs, DatReader* dat)
+{
+        get (msg, gs, dat);
+}
+
+GSMTurnWest::GSMTurnWest ()
+{
+        _id = new TWord8 ((uint8_t)GSM_TURN_WEST_ID);
+}
+
+GSMTurnWest::~GSMTurnWest ()
+{
+        delete _id;
+}
+
+uint8_t GSMTurnWest::getId ()
+{
+        return _id->getVal ();
+}
+
+void GSMTurnWest::show ()
+{
+        printf ("GSMTurnWest {}\n");
+}
+
+void GSMTurnWest::put (NetworkMessage* msg)
+{
+        _id->put (msg);
+}
+
+void GSMTurnWest::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
 }

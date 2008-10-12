@@ -7,8 +7,9 @@
 
 enum gs_message_id_t
 {
-        GSM_PING_ID                     = 0x1E,
         GSM_GAME_INIT_ID                = 0x0A,
+        GSM_LOGOUT_ID                   = 0x14,
+        GSM_PING_ID                     = 0x1E,
 
         GSM_AUTO_WALK_ID                = 0x64,
         GSM_AUTO_WALK_CANCEL_ID         = 0x69,

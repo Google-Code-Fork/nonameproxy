@@ -122,6 +122,8 @@ TibiaMessage* GSMessageFactory::getMessage ()
         _msg->peekU8 (id);
         if (id == GSM_GAME_INIT_ID) {
                 return (new GSMGameInit (_msg, _gs, _dat));
+        } else if (id == GSM_LOGOUT_ID) {
+                return (new GSMLogout (_msg, _gs, _dat));
         } else if (id == GSM_PING_ID) {
                 return (new GSMPing (_msg, _gs, _dat));
         } else if (id == GSM_AUTO_WALK_ID) {
@@ -144,6 +146,14 @@ TibiaMessage* GSMessageFactory::getMessage ()
                 return (new GSMMoveSW (_msg, _gs, _dat));
         } else if (id == GSM_MOVE_NW_ID) {
                 return (new GSMMoveNW (_msg, _gs, _dat));
+        } else if (id == GSM_TURN_NORTH_ID) {
+                return (new GSMTurnNorth (_msg, _gs, _dat));
+        } else if (id == GSM_TURN_EAST_ID) {
+                return (new GSMTurnEast (_msg, _gs, _dat));
+        } else if (id == GSM_TURN_SOUTH_ID) {
+                return (new GSMTurnSouth (_msg, _gs, _dat));
+        } else if (id == GSM_TURN_WEST_ID) {
+                return (new GSMTurnWest (_msg, _gs, _dat));
         } else if (id == GSM_MOVE_ITEM_ID) {
                 return (new GSMMoveItem (_msg, _gs, _dat));
         } else if (id == GSM_TRADE_ITEM_ID) {
