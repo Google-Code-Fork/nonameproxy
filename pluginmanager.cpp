@@ -44,23 +44,42 @@ uint32_t PluginManager::addPlugin (const std::string& path)
         }
 }
 
-void PluginManager::deletePlugin (uint32_t pid)
+uint32_t PluginManager::addFakein (const std::string& name)
+{
+        uint32_t id = ids->newId ();
+
+        Fakein* p = new Fakein (name);
+        /* we have to add the id before calling load */
+        plist.insert (std::pair<uint32_t, Plugin*> (id, p));
+        if (p->load (id, "", _client)) {
+                printf ("inserted %d\n", id);
+                return id;
+        } else {
+                plist.erase (id);
+                ids->recycleId (id);
+                printf ("plugin manager error: could not load fakein\n");
+                return 0;
+        }
+}
+
+bool PluginManager::deletePlugin (uint32_t pid)
 {
         PluginList::iterator i = plist.find (pid);
         if (i == plist.end ()) {
                 printf ("plugin delete error: plugin doesnt exist\n");
-                return;
+                return false;
         }
         if (!ids->recycleId (pid)) {
                 printf ("plugin delete error: ids not concurrent\n");
         }
         delete (*i).second;
         plist.erase (pid);
+        return true;
 }
 
 uint32_t PluginManager::getPluginByName (const std::string& name)
 {
-        for (PluginList::iterator i; i != plist.end (); ++ i) {
+        for (PluginList::iterator i = plist.begin (); i != plist.end (); ++ i) {
                 if (name == (*i).second->name ()) {
                         return (*i).first;
                 }
@@ -80,6 +99,26 @@ void PluginManager::sendMessage (uint32_t pid, const std::string& msg)
         PluginList::iterator i = plist.find (pid);
         if (i == plist.end ()) {
                 printf ("plugin manager: sendMessage: non existant plugin\n");
+                return;
+        }
+        uint32_t rid = (*i).second->getRecipricantId ();
+        _messenger->sendMessage (rid, msg);
+}
+
+void PluginManager::broadcastMessage (const std::string& msg)
+{
+        printf ("yay\n");
+        ArgsParser ap (msg);
+        const Args& args = ap.getArgs ();
+
+        if (args.size () == 0) {
+                printf ("broadcast error: empty message\n");
+                return;
+        }
+        uint32_t pid = getPluginByName (args.front ());
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                /* a broadcast is allowed to fail */
                 return;
         }
         uint32_t rid = (*i).second->getRecipricantId ();

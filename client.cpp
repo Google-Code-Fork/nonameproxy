@@ -10,7 +10,6 @@
 #include "hook.h"
 #include "corehooks.h"
 #include "hookmanager.h"
-#include "messagelist.h"
 #include "enums.h"
 
 #define CONN_TIMEOUT 5000
@@ -38,6 +37,8 @@ Client::Client (LoginState* ls)
         pluginManager = new PluginManager (messenger, recvHM, sendHM, 
                                            connMgr, this);
 
+        _consoleId = 0;
+
 }        
 
 Client::~Client ()
@@ -47,8 +48,7 @@ Client::~Client ()
         delete gstate;
         delete dat;
 
-        delete serverConn;
-        delete clientConn;
+        /* connMgr deletes all its connections */
         delete connMgr;
 
         delete messenger;
@@ -70,8 +70,8 @@ bool Client::runLogin (Connection* acceptedConn)
         recvHM->addWriteHook (0x14, (WriteHook*)(new HWMOTD));
 
         /* set up the connection */
-        Connection* clientConn = acceptedConn;
-        Connection* serverConn = new Connection ();
+        clientConn = acceptedConn;
+        serverConn = new Connection ();
         /* TODO need to add support for all login servers */
         if (!serverConn->connectTo ("login02.tibia.com", 7171)) {
                 printf ("error: failed to connect to login server\n");
@@ -101,9 +101,12 @@ bool Client::runLogin (Connection* acceptedConn)
                                 }
                         }
                         msg = lsml->put ();
-                        //msg->show ();
-                        crypt->encrypt (msg);
-                        serverConn->putMsg (msg);
+                        /* msg may be null if there are now messages */
+                        if (msg) {
+                                //msg->show ();
+                                crypt->encrypt (msg);
+                                serverConn->putMsg (msg);
+                        }
                         delete lsml;
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
@@ -123,10 +126,13 @@ bool Client::runLogin (Connection* acceptedConn)
                                 }
                         }
                         msg = lrml->put ();
-                        //msg->show ();
-                        crypt->encrypt (msg);
-                        //msg->show ();
-                        clientConn->putMsg (msg);
+                        /* msg may be null if there are no messages */
+                        if (msg) {
+                                //msg->show ();
+                                crypt->encrypt (msg);
+                                //msg->show ();
+                                clientConn->putMsg (msg);
+                        }
                         delete lrml;
                         break;
                 }
@@ -147,8 +153,8 @@ bool Client::runGame (Connection* acceptedConn)
         addProtocolHooks ();
 
         /* set up the connection */
-        Connection* clientConn = acceptedConn;
-        Connection* serverConn = new Connection ();
+        clientConn = acceptedConn;
+        serverConn = new Connection ();
 
         connMgr->addConnection (clientConn);
 
@@ -156,12 +162,18 @@ bool Client::runGame (Connection* acceptedConn)
         /*std::string dummypath = "./plugins/dummy/dummy.so";
         uint32_t dummyid = pluginManager->addPlugin (dummypath);
         sendMessage (dummyid, "this is a test, an epic test");
-        pluginManager->deletePlugin (dummyid);
+        pluginManager->deletePlugin (dummyid);*/
+
+        uint32_t coreid = pluginManager->addFakein ("core");
+        addRecipricant (coreid, new CoreRecipricant (this));
 
         std::string channelpath = "./plugins/channelmanager/channelmanager.so";
         uint32_t cmid = pluginManager->addPlugin (channelpath);
-        sendMessage (cmid, "channelmanager add test 1234");
-        */
+        sendMessage (cmid, "channelmanager add console 1234");
+        
+        std::string consolepath = "./plugins/console/console.so";
+        _consoleId = pluginManager->addPlugin (consolepath);
+        
         /* in order to connect to the game server we need to retrieve the
          * original ip address but in order to do that we need to first
          * recv a packet from the client */
@@ -207,6 +219,13 @@ bool Client::runGame (Connection* acceptedConn)
 
         /* and dont forget to add it to the connection manager */
         connMgr->addConnection (serverConn);
+        
+        /* msg may be null if there are no messages */
+        if (!msg) {
+                printf ("client error: first game recv packet ");
+                printf ("empty\n");
+                return false;
+        }
         serverConn->putMsg (msg);
 
         /* and finally the main loop */
@@ -214,23 +233,32 @@ bool Client::runGame (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
+                        printf ("send:\n");
                         msg->show ();
                         GSMessageList gsml (msg, gstate, dat);
                         while (!gsml.isEnd ()) {
                                 TibiaMessage* tm = gsml.read ();
-                                gsml.next ();
 
-                                //recvProtocol->hookReadMessage (tm, this);
-                                //recvHM->hookReadMessage (tm, this);
-                                //tm = recvHM->hookWriteMessage (tm, this);
+                                sendHM->hookReadMessage (tm, this);
+                                tm = sendHM->hookWriteMessage (tm, this);
+                                if (tm == NULL) {
+                                        gsml.remove ();
+                                } else {
+                                        gsml.replace (tm);
+                                        gsml.next ();
+                                }
                         }
                         msg = gsml.put ();
-                        crypt->encrypt (msg);
-                        serverConn->putMsg (msg);
+                        /* msg may be null if there are no messages */
+                        if (msg) {
+                                crypt->encrypt (msg);
+                                serverConn->putMsg (msg);
+                        }
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        //msg->show ();
+                        printf ("recv:\n");
+                        msg->show ();
                         GRMessageList* grml = new GRMessageList (msg, gstate, dat);
                         while (!grml->isEnd ()) {
                                 TibiaMessage* tm = grml->read ();
@@ -247,8 +275,11 @@ bool Client::runGame (Connection* acceptedConn)
                         }
                         msg = grml->put ();
                         //msg->show ();
-                        crypt->encrypt (msg);
-                        clientConn->putMsg (msg);
+                        /* msg may be null if there are no messages */
+                        if (msg) {
+                                crypt->encrypt (msg);
+                                clientConn->putMsg (msg);
+                        }
                         delete grml;
                 }
         }
@@ -271,9 +302,19 @@ void Client::addProtocolHooks ()
  * Plugin Wrappers
  ************************************************************************/
 
+uint32_t Client::getPluginByName (const std::string& msg)
+{
+        return pluginManager->getPluginByName (msg);
+}
+
 void Client::sendMessage (uint32_t pid, const std::string& msg)
 {
         pluginManager->sendMessage (pid, msg);
+}
+
+void Client::broadcastMessage (const std::string& msg)
+{
+        pluginManager->broadcastMessage (msg);
 }
 
 uint32_t Client::addRecvReadHook (uint32_t pid, uint8_t id, ReadHook* hook)
@@ -324,5 +365,48 @@ uint32_t Client::addRecipricant (uint32_t pid, Recipricant* recipricant)
 void Client::deleteRecipricant (uint32_t pid, uint32_t rid)
 {
         pluginManager->deleteRecipricant (pid, rid);
+}
+
+void Client::sendToClient (GRMessageList& msgs)
+{
+        printf ("yay1\n");
+        NetworkMessage* msg = msgs.put ();
+        /* msg may be null if there are no messages */
+        if (msg) {
+                printf ("sending to client\n");
+                msg->show ();
+                crypt->encrypt (msg);
+                clientConn->putMsg (msg);
+        }
+}
+
+void Client::sendToServer (GSMessageList& msgs)
+{
+        msgs.begin ();
+        while (!msgs.isEnd ()) {
+                /*TibiaMessage* tm = msgs.read ();
+
+                tm = sendProtocol->hookWriteMessage (tm, this);
+                if (tm == NULL) {
+                        grml->remove ();
+                } else {
+                        grml->replace (tm);
+                        grml->next ();
+                }*/
+                msgs.next (); /* remove this after adding protocol code */
+        }
+        NetworkMessage* msg = msgs.put ();
+        /* msg may be null if there are no messages */
+        if (msg) {
+                printf ("sending to server\n");
+                msg->show ();
+                crypt->encrypt (msg);
+                serverConn->putMsg (msg);
+        }
+}
+
+uint32_t Client::getConsoleId ()
+{
+        return _consoleId;
 }
 

@@ -76,8 +76,8 @@ class ChannelManager
                 GRMChannelList*  hookChannelList (GRMChannelList* cl, Client* client);
 
                 GSMChannelOpen*  hookChannelOpen (GSMChannelOpen* co, Client* client);
-                GSMChannelClose* hookChannelOpen (GSMChannelClose* cc, Client* client);
-                GSMSpeak*        hookChannelOpen (GSMSpeak* co, Client* client);
+                GSMChannelClose* hookChannelClose (GSMChannelClose* cc, Client* client);
+                GSMSpeak*        hookSpeak (GSMSpeak* co, Client* client);
 
                 void iload (uint32_t pluginId, Client* client);
                 void iunload ();

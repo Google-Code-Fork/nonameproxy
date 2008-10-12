@@ -19,11 +19,11 @@ class Plugin
                 Plugin ();
                 virtual ~Plugin ();
 
-                bool load (uint32_t pluginId, const std::string& path, 
+                virtual bool load (uint32_t pluginId, const std::string& path, 
                                 Client* client);
 
-                bool unload ();
-                const std::string& name ();
+                virtual bool unload ();
+                virtual const std::string& name ();
 
                 uint32_t getRecipricantId ();
                 void     setRecipricantId (uint32_t rid);
@@ -40,6 +40,11 @@ class Plugin
 
                 bool     addConnectionId (uint32_t cid);
                 bool     removeConnectionId (uint32_t cid);
+        
+        protected:
+                bool fakeload (uint32_t pluginId, Client* client);
+                bool fakeunload ();
+                bool _loaded;
 
         private:
 #ifdef WIN32
@@ -60,6 +65,20 @@ class Plugin
                 IdSet _srhooks;
                 IdSet _swhooks;
                 IdSet _connections;
+};
+
+/* the core has a fakein which allows it to act like a plugin */
+class Fakein : public Plugin
+{
+        public:
+                Fakein (const std::string& pluginName);
+                virtual bool load (uint32_t pluginId, const std::string& path, 
+                                Client* client);
+
+                virtual const std::string& name ();
+
+        private:
+                std::string _name;
 };
         
 #endif

@@ -34,6 +34,12 @@ TibiaMessage* LSMessageFactory::getMessage ()
         return NULL;
 }
 
+bool LSMessageFactory::isEnd ()
+{
+        //only the RSA message is part of LS
+        return _msg->isRSAEOF ();
+}
+
 // LRMessage Factory
 LRMessageFactory::LRMessageFactory (NetworkMessage* msg,
                                         GameState* gs,
@@ -72,6 +78,11 @@ TibiaMessage* LRMessageFactory::getMessage ()
         return NULL;
 }
 
+bool LRMessageFactory::isEnd ()
+{
+        //LR has no RSA messages
+        return _msg->isXTEAEOF ();
+}
 
 // GSMessage Factory
 GSMessageFactory::GSMessageFactory (NetworkMessage* msg,
@@ -230,6 +241,16 @@ TibiaMessage* GSMessageFactory::getMessage ()
         }
         printf ("Protocol error: unknown GS Message 0x%X\n", id);
         return NULL;
+}
+
+bool GSMessageFactory::isEnd ()
+{
+        //GS has RSA and xtea messages
+        if (_msg->isRSA ()) {
+                return _msg->isRSAEOF ();
+        } else {
+                return _msg->isXTEAEOF ();
+        }
 }
 
 // GRMessage Factory
@@ -402,3 +423,9 @@ TibiaMessage* GRMessageFactory::getMessage ()
         return NULL;
 }
         
+bool GRMessageFactory::isEnd ()
+{
+        //GR has no RSA messages
+        return _msg->isXTEAEOF ();
+}
+

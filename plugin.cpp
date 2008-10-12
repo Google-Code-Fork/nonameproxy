@@ -10,15 +10,23 @@
 Plugin::Plugin ()
 {
         _recipricantId = 0;
+        _loaded = false;
 }
 
 Plugin::~Plugin ()
 {
-        unload ();
+        if (_loaded) {
+                unload ();
+        }
 }
 
 bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
 {
+        if (_loaded) {
+                printf ("plugin load error: plugin already loaded\n");
+                return false;
+        }
+        _loaded = true;
 #ifdef WIN32
         /* do windows stuff here */
 #else
@@ -48,6 +56,11 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
         
 bool Plugin::unload ()
 {
+        if (!_loaded) {
+                printf ("plugin unload error: plugin not loaded\n");
+                return false;
+        }
+        _loaded = false;
         _unload ();
 
         /* now we do the dirty work if the plugin was to lazy */
@@ -178,5 +191,43 @@ bool Plugin::removeConnectionId (uint32_t hid)
                 return false;
         }
         return true;
+}
+
+/* protected fakein wrappers */
+void _fakeload (uint32_t pluginId, Client* client) {};
+void _fakeunload () {};
+
+bool Plugin::fakeload (uint32_t pluginId, Client* client)
+{
+        if (_loaded) {
+                printf ("plugin fakeload error: fakein already loaded\n");
+                return false;
+        }
+        _loaded = true;
+
+        _pluginId = pluginId;
+        _client = client;
+
+        _load = _fakeload;
+        _unload = _fakeunload;
+        return true;
+}
+
+/************************************************
+ * Fakein
+ ************************************************/
+Fakein::Fakein (const std::string& pluginName)
+{
+        _name = pluginName;
+}
+
+bool Fakein::load (uint32_t pluginId, const std::string& path, Client* client)
+{
+        return Plugin::fakeload (pluginId, client);
+}
+
+const std::string& Fakein::name ()
+{
+        return _name;
 }
 

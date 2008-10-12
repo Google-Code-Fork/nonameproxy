@@ -78,18 +78,17 @@ TibiaMessage* MessageList::read ()
 
 void MessageList::insert (TibiaMessage* tm)
 {
-        _msglist.insert (_it, tm);
-        //_it --;
+        _it = _msglist.insert (_it, tm);
 }
 
 void MessageList::replace (TibiaMessage* tm)
 {
         if (_msglist.size () == 0) {
-                printf ("msglist error: attemp to replace in empty list\n");
+                printf ("msglist error: attempt to replace in empty list\n");
                 return;
         }
         if (_it == _msglist.end ()) {
-                printf ("msglist error: attemp to replace \"end\"\n");
+                printf ("msglist error: attempt to replace \"end\"\n");
                 return;
         }
         _it = _msglist.erase (_it);
@@ -100,14 +99,18 @@ void MessageList::replace (TibiaMessage* tm)
 void MessageList::remove ()
 {
         if (_msglist.size () == 0) {
-                printf ("msglist error: attemp to remove in empty list\n");
+                printf ("msglist error: attempt to remove in empty list\n");
                 return;
         }
         if (_it == _msglist.end ()) {
-                printf ("msglist error: attemp to remove \"end\"\n");
+                printf ("msglist error: attempt to remove \"end\"\n");
                 return;
         }
         _it = _msglist.erase (_it);
+        //now we have to do another end check
+        if (_mf->isEnd ()) {
+                _isEnd = true;
+        }
 } 
 
 void MessageList::add (TibiaMessage* tm)
@@ -142,9 +145,11 @@ LSMessageList::LSMessageList ()
 NetworkMessage* LSMessageList::put ()
 {
         /* add any pending messages */
-        TibiaMessage* tm;
-        while ((tm = _mf->getMessage ()) != NULL) {
-                _msglist.push_back (tm);
+        if (_mf) {
+                TibiaMessage* tm;
+                while ((tm = _mf->getMessage ()) != NULL) {
+                        _msglist.push_back (tm);
+                }
         }
         if (_msglist.size () == 0) {
                 return NULL; //we dont want to be sending empty msgs
@@ -190,9 +195,11 @@ LRMessageList::LRMessageList ()
 NetworkMessage* LRMessageList::put ()
 {
         /* add any pending messages */
-        TibiaMessage* tm;
-        while ((tm = _mf->getMessage ()) != NULL) {
-                _msglist.push_back (tm);
+        if (_mf) {
+                TibiaMessage* tm;
+                while ((tm = _mf->getMessage ()) != NULL) {
+                        _msglist.push_back (tm);
+                }
         }
         //there are no rsa messages recvd from the login server
         if (_msglist.size () == 0) {
@@ -232,9 +239,11 @@ GSMessageList::GSMessageList ()
 NetworkMessage* GSMessageList::put ()
 {
         /* add any pending messages */
-        TibiaMessage* tm;
-        while ((tm = _mf->getMessage ()) != NULL) {
-                _msglist.push_back (tm);
+        if (_mf) {
+                TibiaMessage* tm;
+                while ((tm = _mf->getMessage ()) != NULL) {
+                        _msglist.push_back (tm);
+                }
         }
         //there are no rsa messages recvd from the login server
         if (_msglist.size () == 0) {
@@ -274,9 +283,11 @@ GRMessageList::GRMessageList ()
 NetworkMessage* GRMessageList::put ()
 {
         /* add any pending messages */
-        TibiaMessage* tm;
-        while ((tm = _mf->getMessage ()) != NULL) {
-                _msglist.push_back (tm);
+        if (_mf) {
+                TibiaMessage* tm;
+                while ((tm = _mf->getMessage ()) != NULL) {
+                        _msglist.push_back (tm);
+                }
         }
         //there are no rsa messages recvd from the game server
         if (_msglist.size () == 0) {
