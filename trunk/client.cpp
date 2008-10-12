@@ -169,7 +169,6 @@ bool Client::runGame (Connection* acceptedConn)
 
         std::string channelpath = "./plugins/channelmanager/channelmanager.so";
         uint32_t cmid = pluginManager->addPlugin (channelpath);
-        sendMessage (cmid, "channelmanager add console 1234");
         
         std::string consolepath = "./plugins/console/console.so";
         _consoleId = pluginManager->addPlugin (consolepath);

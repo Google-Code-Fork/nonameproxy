@@ -112,6 +112,9 @@ void Console::iload (uint32_t pluginId, Client* client)
                                 GSM_SPEAK_ID, new SpeakHook ());
 
         _rid = _client->addRecipricant (_pluginId, new ChannelRecipricant ());
+
+        uint32_t _cMgrId = _client->getPluginByName ("channelmanager");
+        _client->sendMessage (_cMgrId, "channelmanager add console 1234");
 }
 
 void Console::iunload ()
