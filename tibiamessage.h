@@ -4420,9 +4420,9 @@ class GRMPlayerCancelWalk : public TibiaMessage
                 TWord8* _direction;
 };
 
-/***************************************************************
+/***************************************************************************
  * Speak
- ***************************************************************/
+ ***************************************************************************/
 
 class GRMSpeak : public TibiaMessage
 {
@@ -4430,7 +4430,28 @@ class GRMSpeak : public TibiaMessage
                 GRMSpeak (NetworkMessage* msg,
                                 GameState* gs,
                                 DatReader* dat);
-                GRMSpeak (const TSpeak& speak);
+
+                enum SpeakType
+                {
+                        pub,
+                        channel,
+                        priv,
+                };
+
+                /* public speak constructor */
+                GRMSpeak (uint32_t u1, const std::string& name, uint16_t level,
+                                uint8_t type, const TPos& pos,
+                                const std::string& msg);
+
+                /* channel speak constructor */
+                GRMSpeak (uint32_t u1, const std::string& name, uint16_t level,
+                                uint8_t type, uint16_t channelid,
+                                const std::string& msg);
+
+                /* channel private constructor */
+                GRMSpeak (uint32_t u1, const std::string& name, uint16_t level,
+                                uint8_t type, const std::string& msg);
+
                 GRMSpeak (const GRMSpeak& clone);
                 virtual ~GRMSpeak ();
 
@@ -4438,14 +4459,36 @@ class GRMSpeak : public TibiaMessage
                 virtual void show ();
                 virtual uint8_t getId ();
 
-                const TSpeak& getSpeak ();
+                SpeakType               getSpeakType ();
+                uint32_t                getU1 ();
+                const std::string&      getName ();
+                uint16_t                getLevel ();
+                uint8_t                 getType ();
+                const std::string&      getMsg ();
 
+                /* note these functions may or may not be relevant
+                 * they will produce an error if the speak type is
+                 * incorrect and seg-fault */
+                const TPos&             getPos ();
+
+                uint16_t                getChannelId ();
+                const std::string&      getChannelName ();
+ 
                 virtual void get (NetworkMessage* msg,
                                   GameState* gs,
                                   DatReader* dat);
         private:
-                TWord8* _id;
-                TSpeak* _speak;
+                SpeakType         _speaktype;
+
+                TWord8*         _id;
+                TWord32*        _u1;
+                TString*        _name;
+                TWord16*        _level;
+                TWord8*         _type;
+                TString*        _msg;
+
+                TPos*           _pos;
+                TWord16*        _channelid;
 };
 
 #endif

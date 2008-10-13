@@ -9609,38 +9609,134 @@ GRMSpeak::GRMSpeak (NetworkMessage* msg, GameState* gs, DatReader* dat)
         get (msg, gs, dat);
 }
 
-GRMSpeak::GRMSpeak (const TSpeak& speak)
+/* public speak constructor */
+GRMSpeak::GRMSpeak (uint32_t u1, const std::string& name, uint16_t level,
+                    uint8_t type, const TPos& pos, const std::string& msg)
 {
-        _id = new TWord8 ((uint8_t)GRM_SPEAK_ID);
-        
-        TSpeakFactory sf;
-        _speak = sf.cloneSpeak (speak);
+        _speaktype = GRMSpeak::pub;
+
+        _id             = new TWord8 ((uint8_t)GRM_SPEAK_ID);
+        _u1             = new TWord32 (u1);
+        _name           = new TString (name);
+        _level          = new TWord16 (level);
+        _type           = new TWord8 (type);
+        _pos            = new TPos (pos);
+        _msg            = new TString (msg);
+
+        _channelid      = NULL;
+}
+
+/* channel speak constructor */
+GRMSpeak::GRMSpeak (uint32_t u1, const std::string& name, uint16_t level,
+                    uint8_t type, uint16_t channelid, const std::string& msg)
+{
+        _speaktype = GRMSpeak::channel;
+
+        _id             = new TWord8 ((uint8_t)GRM_SPEAK_ID);
+        _u1             = new TWord32 (u1);
+        _name           = new TString (name);
+        _level          = new TWord16 (level);
+        _type           = new TWord8 (type);
+        _channelid      = new TWord16 (channelid);
+        _msg            = new TString (msg);
+
+        _pos            = NULL;
+}
+
+/* channel private constructor */
+GRMSpeak::GRMSpeak (uint32_t u1, const std::string& name, uint16_t level,
+                    uint8_t type, const std::string& msg)
+{
+        _speaktype = GRMSpeak::priv;
+
+        _id             = new TWord8 ((uint8_t)GRM_SPEAK_ID);
+        _u1             = new TWord32 (u1);
+        _name           = new TString (name);
+        _level          = new TWord16 (level);
+        _type           = new TWord8 (type);
+        _msg            = new TString (msg);
+
+        _pos            = NULL;
+        _channelid      = NULL;
 }
 
 GRMSpeak::GRMSpeak (const GRMSpeak& clone)
 {
-        _id = new TWord8 (*clone._id);
+        _speaktype = clone._speaktype;;
 
-        TSpeakFactory sf;
-        _speak = sf.cloneSpeak (*clone._speak);
+        _id             = new TWord8 (*clone._id);
+        _u1             = new TWord32 (*clone._u1);
+        _name           = new TString (*clone._name);
+        _level          = new TWord16 (*clone._level);
+        _type           = new TWord8 (*clone._type);
+        _msg            = new TString (*clone._msg);
+
+        if (_speaktype == GRMSpeak::pub) {
+                _pos            = new TPos (*clone._pos);
+                _channelid      = NULL;
+        } else if (_speaktype == GRMSpeak::channel) {
+                _pos            = NULL;
+                _channelid      = new TWord16 (*clone._channelid);
+        } else if (_speaktype == GRMSpeak::priv) {
+                _pos            = NULL;
+                _channelid      = NULL;
+        }
 }
         
 GRMSpeak::~GRMSpeak ()
 {
         delete _id;
-        delete _speak;
+        delete _u1;
+        delete _name;
+        delete _level;
+        delete _type;
+        delete _msg;
+
+        delete _pos;
+        delete _channelid;
 }
 
 void GRMSpeak::put (NetworkMessage* msg)
 {
         _id->put (msg);
-        _speak->put (msg);
+        _u1->put (msg);
+        _name->put (msg);
+        _level->put (msg);
+        _type->put (msg);
+        if (_speaktype == GRMSpeak::pub) {
+                _pos->put (msg);
+        } else if (_speaktype == GRMSpeak::channel) {
+                _channelid->put (msg);
+        }
+        _msg->put (msg);
 }
 
 void GRMSpeak::show ()
 {
-        printf ("GRMSpeak {\n");
-        printf ("\t"); _speak->show (); printf ("\n}\n");
+        printf ("GRMSpeak {\n"); 
+        if (_speaktype == GRMSpeak::pub) {
+                printf ("\tpublic speak\n");
+        } else if (_speaktype == GRMSpeak::channel) {
+                printf ("\tchannel speak\n");
+        } else if (_speaktype == GRMSpeak::priv) {
+                printf ("\tprivate speak\n");
+        }
+        printf ("\tu1: "); _u1->show (); printf ("\n");
+        printf ("\tname: "); _name->show (); printf ("\n");
+        printf ("\tlevel: "); _level->show (); printf ("\n");
+        printf ("\ttype: "); _type->show (); printf ("\n");
+        if (_speaktype == GRMSpeak::pub) {
+                printf ("\tpos: "); _pos->show (); printf ("\n");
+        } else if (_speaktype == GRMSpeak::channel) {
+                printf ("\tchannelid: "); _channelid->show (); printf ("\n");
+        }
+        printf ("msg: "); _msg->show (); printf ("\n");
+        printf ("}\n");
+}
+
+GRMSpeak::SpeakType GRMSpeak::getSpeakType ()
+{
+        return _speaktype;
 }
 
 uint8_t GRMSpeak::getId ()
@@ -9648,17 +9744,88 @@ uint8_t GRMSpeak::getId ()
         return _id->getVal ();
 }
 
-const TSpeak& GRMSpeak::getSpeak ()
+uint32_t GRMSpeak::getU1 ()
 {
-        return *_speak;
+        return _u1->getVal ();
 }
 
-void GRMSpeak::get (NetworkMessage* msg, GameState* gs,
-                                        DatReader* dat)
+const std::string& GRMSpeak::getName ()
+{
+        return _name->getString ();
+}
+
+uint16_t GRMSpeak::getLevel ()
+{
+        return _level->getVal ();
+}
+
+uint8_t GRMSpeak::getType ()
+{
+        return _type->getVal ();
+}
+
+const TPos& GRMSpeak::getPos ()
+{
+        if (_speaktype != GRMSpeak::pub) {
+                printf ("GRMSpeak error: request for pos for ");
+                printf ("non-public speak\n");
+        }
+        return *_pos;
+}
+
+uint16_t GRMSpeak::getChannelId ()
+{
+        if (_speaktype != GRMSpeak::channel) {
+                printf ("GRMSpeak error: request for channelid for ");
+                printf ("non-channel speak\n");
+        }
+        return _channelid->getVal ();
+}
+
+const std::string& GRMSpeak::getMsg ()
+{
+        return _msg->getString ();
+}
+
+void GRMSpeak::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
-        
-        TSpeakFactory sf (msg);
-        _speak = sf.getSpeak ();
+        _u1 = new TWord32 (msg);
+        _name = new TString (msg);
+        _level = new TWord16 (msg);
+        _type = new TWord8 (msg);
+
+        uint32_t t = _type->getVal ();
+
+        if (t == SPEAK_SAY
+         || t == SPEAK_WHISPER
+         || t == SPEAK_YELL
+         || t == SPEAK_PRIVATE_PN
+         || t == SPEAK_PRIVATE_NP
+         || t == SPEAK_MONSTER_SAY
+         || t == SPEAK_MONSTER_YELL)
+        {
+                _speaktype = GRMSpeak::pub;
+                _pos = new TPos (msg);
+                _channelid = NULL;
+        } else if (t == SPEAK_CHANNEL_Y
+                || t == SPEAK_CHANNEL_R1
+                || t == SPEAK_CHANNEL_R2
+                || t == SPEAK_CHANNEL_O)
+        {
+                _speaktype = GRMSpeak::channel;
+                _pos = NULL;
+                _channelid = new TWord16 (msg); 
+        } else if (t == SPEAK_PRIVATE
+                || t == SPEAK_BROADCAST
+                || t == SPEAK_PRIVATE_RED)
+        {
+                _speaktype = GRMSpeak::priv;
+                _pos = NULL;
+                _channelid = NULL;
+        } else {
+                printf ("GRMSpeak error: unknown speak_id %d\n", t);
+        }
+        _msg = new TString (msg);
 }
 
