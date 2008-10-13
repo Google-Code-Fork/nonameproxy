@@ -36,14 +36,14 @@ void Console::output (const std::string& msg)
 {
         if (_open) {
                 GRMessageList grml;
-                TChannelSpeak out ((uint32_t)0,
-                                   ">", 
-                                   (uint16_t)0, 
-                                   SPEAK_CHANNEL_O,
-                                   (uint16_t)_channelId,
-                                   msg);
+                GRMSpeak* out = new GRMSpeak ((uint32_t)0,
+                                              ">", 
+                                              (uint16_t)0, 
+                                              SPEAK_CHANNEL_O,
+                                              (uint16_t)_channelId,
+                                              msg);
 
-                grml.add (new GRMSpeak (out));
+                grml.add (out);
                 _client->sendToClient (grml);
         }
 }
@@ -78,14 +78,14 @@ void Console::hookSpeak (GSMSpeak* sp, Client* client)
                 if (channelId == _channelId) {
                         GRMessageList grml;
                         const std::string& msg = sp->getMsg ();
-                        TChannelSpeak out ((uint32_t)0,
-                                           "$", 
-                                           (uint16_t)0, 
-                                           SPEAK_CHANNEL_Y,
-                                           (uint16_t)_channelId,
-                                           msg);
+                        GRMSpeak* out = new GRMSpeak ((uint32_t)0,
+                                                      "$", 
+                                                      (uint16_t)0, 
+                                                      SPEAK_CHANNEL_Y,
+                                                      (uint16_t)_channelId,
+                                                      msg);
 
-                        grml.add (new GRMSpeak (out));
+                        grml.add (out);
                         _client->sendToClient (grml);
 
                         _client->broadcastMessage (msg);

@@ -13,30 +13,24 @@ TibiaMessage* ChickenHook::func (TibiaMessage* tm, Client* client)
 {
         GRMSpeak* speak = (GRMSpeak*)tm;
 
-        const TSpeak& orig = speak->getSpeak ();
-        if (orig.getSpeakType () != TSpeak::pub) {
+        if (speak->getSpeakType () != GRMSpeak::pub) {
                 /* if the speak isnt a public one dont do anything */
                 return tm;
         }
 
-        /* because speak has a derived class structure this will be a bit
-         * more complicated than usual */
-
-        const TPublicSpeak& oldPublic = (TPublicSpeak&)orig;
         /* look at the header files for the definitions */
-        TPublicSpeak squark (oldPublic.getU1 (),
-                             oldPublic.getName (),
-                             oldPublic.getLevel (),
-                             oldPublic.getType (),
-                             oldPublic.getPos (),
-                             "Squark");
+        GRMSpeak* squark = new GRMSpeak (speak->getU1 (),
+                                         speak->getName (),
+                                         speak->getLevel (),
+                                         speak->getType (),
+                                         speak->getPos (),
+                                         "Squark");
         
         /* delete the old message and return a new one, this is how a 
          * write hook works. The new proxy will replace the old message
          * with the new one */
         delete tm;
-        GRMSpeak* newSpeak = new GRMSpeak (squark);
-        return newSpeak;
+        return squark;
 }
 
 void TestRecipricant::func (const Args& args)
