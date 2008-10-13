@@ -186,7 +186,13 @@ void GRHMapInit::func (TibiaMessage* tm, Client* client)
 void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("North: %d %d %d ", pos.x, pos.y, pos.z);
         pos.y --;
+        printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
+
+        TMapDescription& map = ((GRMMapNorth*)tm)->getMap ();
+        printf ("map from: "); map.getStart ().show (); printf ("\n");
+        printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 }
 
 /**********************************************************************
@@ -195,7 +201,13 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 void GRHMapEast::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("East: %d %d %d ", pos.x, pos.y, pos.z);
         pos.x ++;
+        printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
+
+        TMapDescription& map = ((GRMMapEast*)tm)->getMap ();
+        printf ("map from: "); map.getStart ().show (); printf ("\n");
+        printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 }
 
 /**********************************************************************
@@ -204,7 +216,13 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
 void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("South: %d %d %d ", pos.x, pos.y, pos.z);
         pos.y ++;
+        printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
+
+        TMapDescription& map = ((GRMMapSouth*)tm)->getMap ();
+        printf ("map from: "); map.getStart ().show (); printf ("\n");
+        printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 }
 
 /**********************************************************************
@@ -213,7 +231,13 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 void GRHMapWest::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("West: %d %d %d ", pos.x, pos.y, pos.z);
         pos.x --;
+        printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
+
+        TMapDescription& map = ((GRMMapWest*)tm)->getMap ();
+        printf ("map from: "); map.getStart ().show (); printf ("\n");
+        printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 }
 
 /**********************************************************************
@@ -222,7 +246,17 @@ void GRHMapWest::func (TibiaMessage* tm, Client* client)
 void GRHMapUp::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("Up: %d %d %d ", pos.x, pos.y, pos.z);
         pos.z --;
+        printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
+
+        if (((GRMMapUp*)tm)->hasMap ()) {
+                TMapDescription& map = ((GRMMapUp*)tm)->getMap ();
+                printf ("map from: "); map.getStart ().show (); printf ("\n");
+                printf ("map to:   "); map.getEnd ().show (); printf ("\n");
+        } else {
+                printf ("no map\n");
+        }
 }
 
 /**********************************************************************
@@ -231,6 +265,16 @@ void GRHMapUp::func (TibiaMessage* tm, Client* client)
 void GRHMapDown::func (TibiaMessage* tm, Client* client)
 {
         Pos& pos = client->gstate->map->getCurPos ();
+        printf ("Down: %d %d %d ", pos.x, pos.y, pos.z);
         pos.z ++;
+        printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
+
+        if (((GRMMapUp*)tm)->hasMap ()) {
+                TMapDescription& map = ((GRMMapDown*)tm)->getMap ();
+                printf ("map from: "); map.getStart ().show (); printf ("\n");
+                printf ("map to:   "); map.getEnd ().show (); printf ("\n");
+        } else {
+                printf ("no map\n");
+        }
 }
 

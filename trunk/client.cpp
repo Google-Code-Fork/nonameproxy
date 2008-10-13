@@ -232,8 +232,8 @@ bool Client::runGame (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        printf ("send:\n");
-                        msg->show ();
+                        //printf ("send:\n");
+                        //msg->show ();
                         GSMessageList gsml (msg, gstate, dat);
                         while (!gsml.isEnd ()) {
                                 TibiaMessage* tm = gsml.read ();
@@ -256,8 +256,8 @@ bool Client::runGame (Connection* acceptedConn)
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        printf ("recv:\n");
-                        msg->show ();
+                        //printf ("recv:\n");
+                        //msg->show ();
                         GRMessageList* grml = new GRMessageList (msg, gstate, dat);
                         while (!grml->isEnd ()) {
                                 TibiaMessage* tm = grml->read ();
@@ -282,7 +282,6 @@ bool Client::runGame (Connection* acceptedConn)
                         delete grml;
                 }
         }
-
         return true;
 }
 

@@ -5506,8 +5506,8 @@ void GRMMapInit::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 maxz = MIN (_pos->z () + 2, MAX_FLOOR);
         }
                 
-        TPos start (_pos->x () - 9, _pos->y () - 7, minz);
-        TPos end (_pos->x () + 8, _pos->y () + 6, maxz);
+        TPos start (_pos->x () - 8, _pos->y () - 6, minz);
+        TPos end (_pos->x () + 9, _pos->y () + 7, maxz);
 
         _map = new TMapDescription (start, end, msg, dat);
 }
@@ -5577,8 +5577,8 @@ void GRMMapNorth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 maxz = MIN (pos.z + 2, MAX_FLOOR);
         }
                 
-        TPos start (pos.x - 8, pos.y - 6, minz);
-        TPos end (pos.x + 9, pos.y - 6, maxz);
+        TPos start (pos.x - 8, pos.y - 7, minz);
+        TPos end (pos.x + 9, pos.y - 7, maxz);
 
         _map = new TMapDescription (start, end, msg, dat);
 }
@@ -5648,8 +5648,8 @@ void GRMMapEast::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 maxz = MIN (pos.z + 2, 15);
         }
                 
-        TPos start (pos.x + 9, pos.y - 6, minz);
-        TPos end (pos.x + 9, pos.y + 7, maxz);
+        TPos start (pos.x + 10, pos.y - 6, minz);
+        TPos end (pos.x + 10, pos.y + 7, maxz);
 
         _map = new TMapDescription (start, end, msg, dat);
 }
@@ -5718,9 +5718,9 @@ void GRMMapSouth::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 minz = pos.z - 2;
                 maxz = MIN (pos.z + 2, 15);
         }
-                
-        TPos start (pos.x - 8, pos.y + 7, minz);
-        TPos end (pos.x + 9, pos.y + 7, maxz);
+
+        TPos start (pos.x - 8, pos.y + 8, minz);
+        TPos end (pos.x + 9, pos.y + 8, maxz);
 
         _map = new TMapDescription (start, end, msg, dat);
 }
@@ -5790,8 +5790,8 @@ void GRMMapWest::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 maxz = MIN (pos.z + 2, 15);
         }
                 
-        TPos start (pos.x - 8, pos.y - 6, minz);
-        TPos end (pos.x - 8, pos.y + 7, maxz);
+        TPos start (pos.x - 9, pos.y - 6, minz);
+        TPos end (pos.x - 9, pos.y + 7, maxz);
 
         _map = new TMapDescription (start, end, msg, dat);
 }
@@ -5859,6 +5859,11 @@ void GRMMapUp::show ()
 uint8_t GRMMapUp::getId ()
 {
         return _id->getVal ();
+}
+
+bool GRMMapUp::hasMap ()
+{
+        return _hasmap;
 }
 
 TMapDescription& GRMMapUp::getMap ()
@@ -5965,6 +5970,11 @@ void GRMMapDown::show ()
 uint8_t GRMMapDown::getId ()
 {
         return _id->getVal ();
+}
+
+bool GRMMapDown::hasMap ()
+{
+        return _hasmap;
 }
 
 TMapDescription& GRMMapDown::getMap ()
