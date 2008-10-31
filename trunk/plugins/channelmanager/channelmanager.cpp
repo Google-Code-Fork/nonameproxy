@@ -24,69 +24,80 @@ TibiaMessage* SpeakHook::func (TibiaMessage* tm, Client* client)
         return chanMgr.hookSpeak ((GSMSpeak*)tm, client);
 }
 
-void ChannelRecipricant::func (const Args& args)
+Args ChannelRecipricant::func (const Args& args)
 {
+        Args ret;
         Args::const_iterator i = args.begin ();
         if (args.size () < 2) {
-                return;
+                ret.push_back ("channelmanager: usage");
+                ret.push_back ("channelmanager add channelname channelid");
+                ret.push_back ("channelmanager remove channelid");
+                ret.push_back ("channelmanager blacklist channelid");
+                ret.push_back ("channelmanager whitelist channelid");
+                return ret;
         }
         if ((*i) != "channelmanager") {
-                return;
+                return ret;
         }
         i ++;
         if ((*i) == "add") {
                 if (args.size () != 4) {
-                        printf ("channel manager: add takes 4 args\n");
-                        return;
+                        ret.push_back ("channelmanager: add takes 4 args");
+                        return ret;
                 }
                 i ++;
                 const std::string& name = *i;
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        printf ("warning channel id out of range\n");
+                        ret.push_back ("channelmanager: warning id out of range");
                         id %= 0xFFFF;
                 }
                 chanMgr.addChannel (name, id);
+                ret.push_back ("channelmanager: channel " + *i + " added");
         } else if ((*i) == "remove") {
                 if (args.size () != 3) {
-                        printf ("channel manager: remove takes 3 args\n");
-                        return;
+                        ret.push_back ("channelmanager: remove takes 3 args");
+                        return ret;
                 }
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        printf ("warning channel id out of range\n");
+                        ret.push_back ("channelmanager: warning id out of range");
                         id %= 0xFFFF;
                 }
                 chanMgr.removeChannel (id);
+                ret.push_back ("channelmanager: channel " + *i + " removed");
         } else if ((*i) == "blacklist") {
                 if (args.size () != 3) {
-                        printf ("channel manager: blacklist takes 3 args\n");
-                        return;
+                        ret.push_back ("channel manager: blacklist takes 3 args");
+                        return ret;
                 }
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        printf ("warning channel id out of range\n");
+                        ret.push_back ("channelmanager: warning id out of range\n");
                         id %= 0xFFFF;
                 }
                 chanMgr.blackListChannel (id);
+                ret.push_back ("channelmanager: channel " + *i + " blacklisted");
         } else if ((*i) == "whitelist") {
                 if (args.size () != 3) {
-                        printf ("channel manager: whitelist takes 4 args\n");
-                        return;
+                        ret.push_back ("channelmanager: whitelist takes 4 args");
+                        return ret;
                 }
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        printf ("warning channel id out of range\n");
+                        ret.push_back ("channelmanager: warning channel id out of range\n");
                         id %= 0xFFFF;
                 }
                 chanMgr.whiteListChannel (id);
+                ret.push_back ("channelmanager: channel " + *i + " whitelisted");
         } else {
-                printf ("channel manager: unreconized command %s\n", (*i).c_str ());
+                ret.push_back ("channelmanager: unreconized command " + *i);
         }
+        return ret;
 }
 
 void ChannelManager::addChannel (const std::string& name, uint32_t id)

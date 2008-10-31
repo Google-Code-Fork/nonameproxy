@@ -18,30 +18,37 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *****************************************************************************/
 
-#ifndef __CORE_RECIPRICANT_H
-#define __CORE_RECIPRICANT_H
+#ifndef __PACKET_HOOK_MANAGER_H
+#define __PACKET_HOOK_MANAGER_H
 
 #include <stdint.h>
-#include <string>
-#include "messenger.h"
+#include <map>
 
-class Client;
+#include "idmanager.h"
 
-class CoreRecipricant : public Recipricant
+class PacketHook;
+class NetworkMessage;
+
+typedef std::map<uint32_t, PacketHook*> PHookMap;
+
+class PacketHookManager
 {
         public:
-                CoreRecipricant (Client* client);
-                virtual Args func (const Args& args);
+                PacketHookManager ();
+                virtual ~PacketHookManager ();
+                /* these functions return a hook id, so it can be 
+                 * deleted later. 0 means failure to insert hook */
+                uint32_t addPreHook (PacketHook* hook); 
+                uint32_t addPostHook (PacketHook* hook); 
+                void deletePreHook (uint32_t hid);
+                void deletePostHook (uint32_t hid);
+                void hookPrePacket (const NetworkMessage& msg);
+                void hookPostPacket (const NetworkMessage& msg);
         private:
-                Args loadPlugin (const Args& args, Args::const_iterator i,
-                                        uint32_t argc);
-                Args unloadPlugin (const Args& args, Args::const_iterator i,
-                                        uint32_t argc);
-
-                Args usage ();
-
-                Client* _client;
+                IdManager*      preIds;
+                IdManager*      postIds;
+                PHookMap        preHooks;
+                PHookMap        postHooks;
 };
-
 #endif
 

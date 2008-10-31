@@ -19,17 +19,18 @@ void SpeakHook::func (TibiaMessage* tm, Client* client)
         console.hookSpeak ((GSMSpeak*)tm, client);
 }
 
-void ChannelRecipricant::func (const Args& args)
+Args ConsoleRecipricant::func (const Args& args)
 {
         Args::const_iterator i = args.begin ();
         if (args.size () < 2) {
-                return;
+                return Args ();
         }
         if ((*i) != "console") {
-                return;
+                return Args ();
         }
         i ++;
         console.output (*i);
+        return Args ();
 }
 
 void Console::output (const std::string& msg)
@@ -78,19 +79,40 @@ void Console::hookSpeak (GSMSpeak* sp, Client* client)
                 if (channelId == _channelId) {
                         GRMessageList grml;
                         const std::string& msg = sp->getMsg ();
-                        GRMSpeak* out = new GRMSpeak ((uint32_t)0,
-                                                      "$", 
-                                                      (uint16_t)0, 
-                                                      SPEAK_CHANNEL_Y,
-                                                      (uint16_t)_channelId,
-                                                      msg);
+                        
+                        grml.add (consoleIn (msg));
 
-                        grml.add (out);
+                        Args ret = _client->broadcastMessage (msg);
+
+                        Args::iterator i;
+                        for (i = ret.begin (); i != ret.end (); ++ i) {
+                                grml.add (consoleOut (*i));
+                        }
                         _client->sendToClient (grml);
-
-                        _client->broadcastMessage (msg);
                 }
         }
+}
+
+GRMSpeak* Console::consoleIn (const std::string& msg)
+{
+        GRMSpeak* in = new GRMSpeak ((uint32_t)0,
+                                      "$", 
+                                      (uint16_t)0, 
+                                      SPEAK_CHANNEL_Y,
+                                      (uint16_t)_channelId,
+                                      msg);
+        return in;
+}
+
+GRMSpeak* Console::consoleOut (const std::string& msg)
+{
+        GRMSpeak* out = new GRMSpeak ((uint32_t)0,
+                                      ">", 
+                                      (uint16_t)0, 
+                                      SPEAK_CHANNEL_O,
+                                      (uint16_t)_channelId,
+                                      msg);
+        return out;
 }
 
 void Console::iload (uint32_t pluginId, Client* client)
@@ -111,7 +133,7 @@ void Console::iload (uint32_t pluginId, Client* client)
         _speak_hid = _client->addSendReadHook (_pluginId, 
                                 GSM_SPEAK_ID, new SpeakHook ());
 
-        _rid = _client->addRecipricant (_pluginId, new ChannelRecipricant ());
+        _rid = _client->addRecipricant (_pluginId, new ConsoleRecipricant ());
 
         uint32_t _cMgrId = _client->getPluginByName ("channelmanager");
         _client->sendMessage (_cMgrId, "channelmanager add console 1234");

@@ -79,7 +79,7 @@ ThingData::ThingData (SafeFile* datfile, uint16_t id)
         datfile->seek (2 * spritecount, SafeFile::s_from_current);
 }
 
-void ThingData::show ()
+void ThingData::show () const
 {
         printf ("id = %d {\n", _id);
 
@@ -128,213 +128,274 @@ void ThingData::show ()
         printf ("}\n");
 }
 
-bool ThingData::isTopOrder1 () {
+bool ThingData::isTopOrder1 () const
+{
         return _thingFlags & f_isTopOrder1;
 }
 
-bool ThingData::isTopOrder2 () {
+bool ThingData::isTopOrder2 () const
+{
         return _thingFlags & f_isTopOrder2;
 }
 
-bool ThingData::isTopOrder3 () {
+bool ThingData::isTopOrder3 () const
+{
         return _thingFlags & f_isTopOrder3;
 }
 
-bool ThingData::isContainer () {
+bool ThingData::isContainer () const
+{
         return _thingFlags & f_isContainer;
 }
 
-bool ThingData::isStackable () {
+bool ThingData::isStackable () const
+{
         return _thingFlags & f_isStackable;
 }
 
-bool ThingData::isCorpse () {
+bool ThingData::isCorpse () const
+{
         return _thingFlags & f_isCorpse;
 }
 
-bool ThingData::isUsable () {
+bool ThingData::isUsable () const
+{
         return _thingFlags & f_isUsable;
 }
 
-bool ThingData::isRune () {
+bool ThingData::isRune () const
+{
         return _thingFlags & f_isRune;
 }
 
-bool ThingData::isWritable () {
+bool ThingData::isWritable () const
+{
         return _thingFlags & f_isWritable;
 }
 
-bool ThingData::isReadable () {
+bool ThingData::isReadable () const
+{
         return _thingFlags & f_isReadable;
 }
 
-bool ThingData::isFluidContainer () {
+bool ThingData::isFluidContainer () const
+{
         return _thingFlags & f_isFluidContainer;
 }
 
-bool ThingData::isSplash () {
+bool ThingData::isSplash () const
+{
         return _thingFlags & f_isSplash;
 }
 
-bool ThingData::isBlocking () {
+bool ThingData::isBlocking () const
+{
         return _thingFlags & f_isBlocking;
 }
 
-bool ThingData::isImmobile () {
+bool ThingData::isImmobile () const
+{
         return _thingFlags & f_isImmobile;
 }
 
-bool ThingData::isMissileBlocking () {
+bool ThingData::isMissileBlocking () const
+{
         return _thingFlags & f_isMissileBlocking;
 }
 
-bool ThingData::isPathBlocking () {
+bool ThingData::isPathBlocking () const
+{
         return _thingFlags & f_isPathBlocking;
 }
 
-bool ThingData::isPickupable () {
+bool ThingData::isPickupable () const
+{
         return _thingFlags & f_isPickupable;
 }
 
-bool ThingData::isHangable () {
+bool ThingData::isHangable () const
+{
         return _thingFlags & f_isHangable;
 }
 
-bool ThingData::isHangableHorizontal () {
+bool ThingData::isHangableHorizontal () const
+{
         return _thingFlags & f_isHangableHorizontal;
 }
 
-bool ThingData::isHangableVertical () {
+bool ThingData::isHangableVertical () const
+{
         return _thingFlags & f_isHangableVertical;
 }
 
-bool ThingData::isRotatable () {
+bool ThingData::isRotatable () const
+{
         return _thingFlags & f_isRotatable;
 }
 
-bool ThingData::isLightSource () {
+bool ThingData::isLightSource () const
+{
         return _thingFlags & f_isLightSource;
 }
 
-bool ThingData::isFloorChange () {
+bool ThingData::isFloorChange () const
+{
         return _thingFlags & f_isFloorChange;
 }
 
-bool ThingData::isOffset () {
+bool ThingData::isOffset () const
+{
         return _thingFlags & f_isOffset;
 }
 
-bool ThingData::isRaised () {
+bool ThingData::isRaised () const
+{
         return _thingFlags & f_isRaised;
 }
 
-bool ThingData::isIdleAnimation () {
+bool ThingData::isIdleAnimation () const
+{
         return _thingFlags & f_isIdleAnimation;
 }
 
-bool ThingData::isMiniMap () {
+bool ThingData::isMiniMap () const
+{
         return _thingFlags & f_isMiniMap;
 }
 
-bool ThingData::isGround () {
+bool ThingData::isGround () const
+{
         return _thingFlags & f_isGround;
 }
 
-bool ThingData::isLadder () {
+bool ThingData::isLadder () const
+{
         return _helpByte == h_isLadder;
 }
 
-bool ThingData::isSewer () {
+bool ThingData::isSewer () const
+{
         return _helpByte == h_isSewer;
 }
 
-bool ThingData::isRopeSpot () {
+bool ThingData::isRopeSpot () const
+{
         return _helpByte == h_isRopeSpot;
 }
 
-bool ThingData::isSwitch () {
+bool ThingData::isSwitch () const
+{
         return _helpByte == h_isSwitch;
 }
 
-bool ThingData::isDoor () {
+bool ThingData::isDoor () const
+{
         return _helpByte == h_isDoor;
 }
 
-bool ThingData::isDoorWithLock () {
+bool ThingData::isDoorWithLock () const
+{
         return _helpByte == h_isDoorWithLock;
 }
 
-bool ThingData::isStairs () {
+bool ThingData::isStairs () const
+{
         return _helpByte == h_isStairs;
 }
 
-bool ThingData::isMailBox () {
+bool ThingData::isMailBox () const
+{
         return _helpByte == h_isMailBox;
 }
 
-bool ThingData::isDepot () {
+bool ThingData::isDepot () const
+{
         return _helpByte == h_isDepot;
 }
 
-bool ThingData::isTrash () {
+bool ThingData::isTrash () const
+{
         return _helpByte == h_isTrash;
 }
 
-bool ThingData::isHole () {
+bool ThingData::isHole () const
+{
         return _helpByte == h_isHole;
 }
 
-bool ThingData::isSpecialDescription () {
+bool ThingData::isSpecialDescription () const
+{
         return _helpByte == h_isSpecialDescription;
 }
 
-bool ThingData::isReadOnly () {
+bool ThingData::isReadOnly () const
+{
         return _helpByte == h_isReadOnly;
 }
 
-TWord16* ThingData::getSpeed ()
+uint32_t ThingData::getSpeed () const
 {
-        return new TWord16 (_speed);
+        return _speed;
 }
 
-TWord16* ThingData::getWriteLimit ()
+uint32_t ThingData::getWriteLimit () const
 {
-        return new TWord16 (_writeLimit);
+        return _writeLimit;
 }
 
-TWord16* ThingData::getReadLimit ()
+uint32_t ThingData::getReadLimit () const
 {
-        return new TWord16 (_readLimit);
+        return _readLimit;
 }
 
-TItemLight* ThingData::getLight ()
+uint32_t ThingData::getLightColor () const
 {
-        return new TItemLight (_lightColor, _lightRadius);
+        return _lightColor;
 }
 
-TWord16* ThingData::getOffsetX ()
+uint32_t ThingData::getLightRadius () const
 {
-        return new TWord16 (_offsetX);
+        return _lightRadius;
 }
 
-TWord16* ThingData::getOffsetY ()
+uint32_t ThingData::getOffsetX () const
 {
-        return new TWord16 (_offsetY);
+        return _offsetX;
 }
 
-TWord16* ThingData::getRaised ()
+uint32_t ThingData::getOffsetY () const
 {
-        return new TWord16 (_raised);
+        return _offsetY;
 }
 
-TWord16* ThingData::getMiniMap ()
+uint32_t ThingData::getRaised () const
 {
-        return new TWord16 (_miniMapColor);
+        return _raised;
 }
 
-bool ThingData::isXItem ()
+uint32_t ThingData::getMiniMap () const
+{
+        return _miniMapColor;
+}
+
+bool ThingData::isXItem () const
 {
        return isStackable () || isRune () || isFluidContainer () || isSplash ();
+}
+
+uint32_t ThingData::getOrder () const
+{
+        if (isGround ()) {
+                return 0;
+        } else if (isTopOrder1 ()) {
+                return 1;
+        } else if (isTopOrder2 ()) {
+                return 2;
+        } else if (isTopOrder3 ()) {
+                return 3;
+        } else {
+                return 5;
+        }
 }
 
 void ThingData::parseOp (SafeFile* datfile, uint8_t op)
@@ -483,23 +544,18 @@ DatReader::~DatReader ()
         delete[] _things;
 }
 
-ThingData* DatReader::getItemData (TWord16* itemId)
-{
-        return (getItemData (itemId->getVal ()));
-}
-        
-ThingData* DatReader::getItemData (uint16_t itemId)
+const ThingData& DatReader::getItemData (uint16_t itemId) const
 {
         uint32_t index = itemId - ID_OFFSET;
         if (0 <= index && index < _nIds) {
-                return _things[index];
+                return *_things[index];
         } else {
-                printf ("error: item id out of range");
-                return NULL;
+                printf ("dat error: item id out of range");
+                return *((ThingData*)NULL);
         }
 }
 
-uint32_t DatReader::getNIds ()
+uint32_t DatReader::getNIds () const
 {
         return _nIds;
 }

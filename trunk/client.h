@@ -36,6 +36,7 @@ class Connection;
 class ConnectionManager;
 class TibiaCrypt;
 class HookManager;
+class PacketHookManager;
 
 class Client
 {
@@ -65,10 +66,10 @@ class Client
 
                 uint32_t getPluginByName (const std::string& msg);
 
-                void sendMessage (uint32_t pid, const std::string& msg);
+                Args sendMessage (uint32_t pid, const std::string& msg);
 
                 /* sends a message to the plugin whos name is the first arg */
-                void broadcastMessage (const std::string& msg);
+                Args broadcastMessage (const std::string& msg);
 
                 uint32_t addRecvReadHook (uint32_t pid, uint8_t id,
                                                         ReadHook* hook);
@@ -82,6 +83,16 @@ class Client
                 void deleteRecvWriteHook (uint32_t pid, uint32_t hid);
                 void deleteSendReadHook (uint32_t pid, uint32_t hid);
                 void deleteSendWriteHook (uint32_t pid, uint32_t hid);
+
+                uint32_t addPreSendPacketHook (uint32_t pid, PacketHook* hook);
+                uint32_t addPostSendPacketHook (uint32_t pid, PacketHook* hook);
+                uint32_t addPreRecvPacketHook (uint32_t pid, PacketHook* hook);
+                uint32_t addPostRecvPacketHook (uint32_t pid, PacketHook* hook);
+
+                void deletePreSendPacketHook (uint32_t pid, uint32_t hid);
+                void deletePostSendPacketHook (uint32_t pid, uint32_t hid);
+                void deletePreRecvPacketHook (uint32_t pid, uint32_t hid);
+                void deletePostRecvPacketHook (uint32_t pid, uint32_t hid);
 
                 uint32_t addRecipricant (uint32_t pid, Recipricant* recipricant);
                 void     deleteRecipricant (uint32_t pid, uint32_t rid);
@@ -103,9 +114,12 @@ class Client
 
                 Messenger*              messenger;
 
-                HookManager*            recvHM;
                 HookManager*            sendHM;
+                HookManager*            recvHM;
                 HookManager*            recvProtocol;
+
+                PacketHookManager*      sendPHM;
+                PacketHookManager*      recvPHM;
 
                 PluginManager*          pluginManager;
 

@@ -22,15 +22,19 @@
 #include "pluginmanager.h"
 
 PluginManager::PluginManager (Messenger* messenger,
-                              HookManager* recvhm,
                               HookManager* sendhm,
+                              HookManager* recvhm,
+                              PacketHookManager* sendphm,
+                              PacketHookManager* recvphm,
                               ConnectionManager* connMgr,
                               Client* client)
 {
         _client = client;
         _messenger = messenger;
-        _recvhm = recvhm;
         _sendhm = sendhm;
+        _recvhm = recvhm;
+        _sendphm = sendphm;
+        _recvphm = recvphm;
         _connMgr = connMgr;
 
         ids = new IdManager (100);
@@ -52,6 +56,7 @@ uint32_t PluginManager::addPlugin (const std::string& path)
 
         Plugin* p = new Plugin ();
         /* we have to add the id before calling load */
+        /* TODO add protection from loading a plugin multiple times */
         plist.insert (std::pair<uint32_t, Plugin*> (id, p));
         if (p->load (id, path, _client)) {
                 printf ("inserted %d\n", id);
@@ -114,18 +119,18 @@ uint32_t PluginManager::getPluginByName (const std::string& name)
  *       id from the outside
  ************************************************************************/
 
-void PluginManager::sendMessage (uint32_t pid, const std::string& msg)
+Args PluginManager::sendMessage (uint32_t pid, const std::string& msg)
 {
         PluginList::iterator i = plist.find (pid);
         if (i == plist.end ()) {
                 printf ("plugin manager: sendMessage: non existant plugin\n");
-                return;
+                return Args ();
         }
         uint32_t rid = (*i).second->getRecipricantId ();
-        _messenger->sendMessage (rid, msg);
+        return _messenger->sendMessage (rid, msg);
 }
 
-void PluginManager::broadcastMessage (const std::string& msg)
+Args PluginManager::broadcastMessage (const std::string& msg)
 {
         printf ("yay\n");
         ArgsParser ap (msg);
@@ -133,16 +138,16 @@ void PluginManager::broadcastMessage (const std::string& msg)
 
         if (args.size () == 0) {
                 printf ("broadcast error: empty message\n");
-                return;
+                return Args ();
         }
         uint32_t pid = getPluginByName (args.front ());
         PluginList::iterator i = plist.find (pid);
         if (i == plist.end ()) {
                 /* a broadcast is allowed to fail */
-                return;
+                return Args ();
         }
         uint32_t rid = (*i).second->getRecipricantId ();
-        _messenger->sendMessage (rid, msg);
+        return _messenger->sendMessage (rid, msg);
 }
 
 uint32_t PluginManager::addRecvReadHook (uint32_t pid, uint8_t id, 
@@ -291,3 +296,107 @@ void PluginManager::deleteRecipricant (uint32_t pid, uint32_t rid)
         (*i).second->setRecipricantId (0);
 }
         
+uint32_t PluginManager::addPreSendPacketHook (uint32_t pid, PacketHook* hook)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: addPreSendHook: non existant plugin\n");
+                return 0;
+        }
+        uint32_t hid = _sendphm->addPreHook (hook);
+        (*i).second->addPreSendPacketHookId (hid);
+        return hid;
+}
+        
+uint32_t PluginManager::addPostSendPacketHook (uint32_t pid, PacketHook* hook)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: addPostSendHook: non existant plugin\n");
+                return 0;
+        }
+        uint32_t hid = _sendphm->addPostHook (hook);
+        (*i).second->addPostSendPacketHookId (hid);
+        return hid;
+}
+        
+uint32_t PluginManager::addPreRecvPacketHook (uint32_t pid, PacketHook* hook)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: addPreRecvHook: non existant plugin\n");
+                return 0;
+        }
+        uint32_t hid = _recvphm->addPreHook (hook);
+        (*i).second->addPreRecvPacketHookId (hid);
+        return hid;
+}
+        
+uint32_t PluginManager::addPostRecvPacketHook (uint32_t pid, PacketHook* hook)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: addPostRecvHook: non existant plugin\n");
+                return 0;
+        }
+        uint32_t hid = _recvphm->addPostHook (hook);
+        (*i).second->addPostRecvPacketHookId (hid);
+        return hid;
+}
+        
+void PluginManager::deletePreSendPacketHook (uint32_t pid, uint32_t hid)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: delete PreSendPacketHook: ");
+                printf ("non existant plugin\n");
+                return;
+        }
+        _sendphm->deletePreHook (hid);
+        (*i).second->deletePreSendPacketHookId (hid);
+}
+
+void PluginManager::deletePostSendPacketHook (uint32_t pid, uint32_t hid)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: delete PrePacketHook: ");
+                printf ("non existant plugin\n");
+                return;
+        }
+        _sendphm->deletePostHook (hid);
+        (*i).second->deletePostSendPacketHookId (hid);
+}
+
+void PluginManager::deletePreRecvPacketHook (uint32_t pid, uint32_t hid)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: delete PreRecvPacketHook: ");
+                printf ("non existant plugin\n");
+                return;
+        }
+        _recvphm->deletePreHook (hid);
+        (*i).second->deletePreRecvPacketHookId (hid);
+}
+
+void PluginManager::deletePostRecvPacketHook (uint32_t pid, uint32_t hid)
+{
+        /* before we add the hook we make sure the plugin actually exists */
+        PluginList::iterator i = plist.find (pid);
+        if (i == plist.end ()) {
+                printf ("plugin manager: delete PrePacketHook: ");
+                printf ("non existant plugin\n");
+                return;
+        }
+        _recvphm->deletePostHook (hid);
+        (*i).second->deletePostRecvPacketHookId (hid);
+}
+

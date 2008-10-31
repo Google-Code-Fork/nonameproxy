@@ -198,6 +198,78 @@ void Plugin::deleteSendWriteHookId (uint32_t hid)
         }
 }
 
+void Plugin::addPreSendPacketHookId (uint32_t hid)
+{
+        std::pair <std::set<uint32_t>::iterator, bool> ret;
+        ret = _preshooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addPreSendPacketHookId: ");
+                printf ("hook id already exists\n");
+        }
+}
+
+void Plugin::addPostSendPacketHookId (uint32_t hid)
+{
+        std::pair <std::set<uint32_t>::iterator, bool> ret;
+        ret = _postshooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addPostSendPacketHookId: ");
+                printf ("hook id already exists\n");
+        }
+}
+
+void Plugin::addPreRecvPacketHookId (uint32_t hid)
+{
+        std::pair <std::set<uint32_t>::iterator, bool> ret;
+        ret = _prerhooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addPreRecvPacketHookId: ");
+                printf ("hook id already exists\n");
+        }
+}
+
+void Plugin::addPostRecvPacketHookId (uint32_t hid)
+{
+        std::pair <std::set<uint32_t>::iterator, bool> ret;
+        ret = _postrhooks.insert (hid);
+        if (!ret.second) {
+                printf ("plugin error: addPostRecvPacketHookId: ");
+                printf ("hook id already exists\n");
+        }
+}
+
+void Plugin::deletePreSendPacketHookId (uint32_t hid)
+{
+        if (_preshooks.erase (hid) == 0) {
+                printf ("plugin error: deletePreSendPacketHookId: ");
+                printf ("non existant hook id\n");
+        }
+}
+
+void Plugin::deletePostSendPacketHookId (uint32_t hid)
+{
+        if (_postshooks.erase (hid) == 0) {
+                printf ("plugin error: deletePostSendPacketHookId: ");
+                printf ("non existant hook id\n");
+        }
+}
+
+void Plugin::deletePreRecvPacketHookId (uint32_t hid)
+{
+        if (_prerhooks.erase (hid) == 0) {
+                printf ("plugin error: deletePreRecvPacketHookId: ");
+                printf ("non existant hook id\n");
+        }
+}
+
+void Plugin::deletePostRecvPacketHookId (uint32_t hid)
+{
+        if (_postrhooks.erase (hid) == 0) {
+                printf ("plugin error: deletePostRecvPacketHookId: ");
+                printf ("non existant hook id\n");
+        }
+}
+
 bool Plugin::addConnectionId (uint32_t cid)
 {
         std::pair <std::set<uint32_t>::iterator, bool> ret;

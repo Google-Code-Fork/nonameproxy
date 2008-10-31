@@ -44,7 +44,7 @@ class NetworkMessage
                 void writeRSAHeader ();
                 void writeHeader ();
 
-                void show ();
+                void show () const;
         protected:
                 //these functions should only be used by connection
                 //for efficient socket use
@@ -52,12 +52,12 @@ class NetworkMessage
                 uint8_t* getBuffer ();
 
                 void setPos (uint32_t pos);
-                uint32_t getPos ();
+                uint32_t getPos () const;
 
-                bool isRSA ();
-                bool isEOF ();
-                bool isXTEAEOF ();
-                bool isRSAEOF ();
+                bool isRSA () const;
+                bool isEOF () const;
+                bool isXTEAEOF () const;
+                bool isRSAEOF () const;
 
                 //these functions provide the fundamental methods of reading
                 //and writing data to a network message all other all
@@ -68,9 +68,9 @@ class NetworkMessage
                 bool getN   (uint8_t* dest, uint32_t n);
 
                 //Peek functions are exclusively for the factories
-                bool peekU8  (uint8_t& val);
-                bool peekU16 (uint16_t& val);
-                bool peekU32 (uint32_t& val);
+                bool peekU8  (uint8_t& val) const;
+                bool peekU16 (uint16_t& val) const;
+                bool peekU32 (uint32_t& val) const;
 
                 bool putU8  (uint8_t  val);
                 bool putU16 (uint16_t val);

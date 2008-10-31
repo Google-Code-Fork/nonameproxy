@@ -33,9 +33,9 @@ class SpeakHook : public ReadHook
         virtual void func (TibiaMessage* tm, Client* client);
 };
 
-class ChannelRecipricant : public Recipricant
+class ConsoleRecipricant : public Recipricant
 {
-        virtual void func (const Args& args);
+        virtual Args func (const Args& args);
 };
 
 class Console
@@ -52,6 +52,9 @@ class Console
                 const std::string& iname ();
 
         private:
+                GRMSpeak* consoleIn (const std::string& msg);
+                GRMSpeak* consoleOut (const std::string& msg);
+
                 uint32_t _pluginId;
                 uint32_t _channelopen_hid;
                 uint32_t _channelclose_hid;

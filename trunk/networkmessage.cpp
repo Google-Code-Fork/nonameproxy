@@ -98,12 +98,12 @@ void NetworkMessage::setPos (uint32_t pos)
         _curpos = pos;
 }
 
-uint32_t NetworkMessage::getPos ()
+uint32_t NetworkMessage::getPos () const
 {
         return _curpos;
 }
 
-bool NetworkMessage::isRSA ()
+bool NetworkMessage::isRSA () const
 {
         uint16_t size = *(uint16_t*)_buffer;
         if ((size - 4) % 8 != 0) {
@@ -113,7 +113,7 @@ bool NetworkMessage::isRSA ()
         }
 }
 
-bool NetworkMessage::isRSAEOF ()
+bool NetworkMessage::isRSAEOF () const
 {
         uint16_t eof = *(uint16_t*)_buffer + 2;
         if (_curpos >= eof) {
@@ -123,7 +123,7 @@ bool NetworkMessage::isRSAEOF ()
         }
 }
 
-bool NetworkMessage::isXTEAEOF ()
+bool NetworkMessage::isXTEAEOF () const
 {
         uint16_t eof = *(uint16_t*)&_buffer[6] + 8;
         if (_curpos >= eof) {
@@ -133,7 +133,7 @@ bool NetworkMessage::isXTEAEOF ()
         }
 }
 
-bool NetworkMessage::isEOF ()
+bool NetworkMessage::isEOF () const
 {
         if (_curpos >= _size) {
                 return true;
@@ -186,7 +186,7 @@ bool NetworkMessage::getN (uint8_t* dest, uint32_t n)
         return true;
 }
 
-bool NetworkMessage::peekU8 (uint8_t& val)
+bool NetworkMessage::peekU8 (uint8_t& val) const
 {
         if (_curpos + 1 > _size) {
                 printf ("network error: couldn't peek U8\n");
@@ -196,7 +196,7 @@ bool NetworkMessage::peekU8 (uint8_t& val)
         return true;
 }
 
-bool NetworkMessage::peekU16 (uint16_t& val)
+bool NetworkMessage::peekU16 (uint16_t& val) const
 {
         if (_curpos + 2 > _size) {
                 printf ("network error: couldn't peek U16\n");
@@ -206,7 +206,7 @@ bool NetworkMessage::peekU16 (uint16_t& val)
         return true;
 }
 
-bool NetworkMessage::peekU32 (uint32_t& val)
+bool NetworkMessage::peekU32 (uint32_t& val) const
 {
         if (_curpos + 4 > _size) {
                 printf ("network error: couldn't peek U32\n");
@@ -260,7 +260,8 @@ bool NetworkMessage::putN (const uint8_t* src, uint32_t n)
         return true;
 }
 
-void NetworkMessage::show () {
+void NetworkMessage::show () const
+{
         printf ("size: %d\n", _size);
         uint16_t size = MIN ((uint16_t)_size, *(uint16_t*)_buffer + 2);
         for (uint32_t i = 0; i <= size / 16; i ++) {
