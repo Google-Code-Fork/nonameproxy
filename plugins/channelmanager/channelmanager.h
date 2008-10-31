@@ -58,7 +58,7 @@ class SpeakHook : public WriteHook
 
 class ChannelRecipricant : public Recipricant
 {
-        virtual void func (const Args& args);
+        virtual Args func (const Args& args);
 };
 
 typedef std::map<uint32_t, std::string> ChannelMap;

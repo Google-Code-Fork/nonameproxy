@@ -50,7 +50,7 @@ HookManager::~HookManager ()
 uint32_t HookManager::addReadHook (uint8_t id, ReadHook* hook) {
         if (!hook) {
                 printf ("warning: attempt to assign NULL read hook\n");
-                return -1;
+                return 0;
         }
 
         uint32_t hid = ids->newId ();

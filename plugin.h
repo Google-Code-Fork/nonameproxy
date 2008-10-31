@@ -58,6 +58,18 @@ class Plugin
                 void     deleteSendReadHookId (uint32_t hid);
                 void     deleteSendWriteHookId (uint32_t hid);
 
+                void     addPreSendPacketHookId (uint32_t hid);
+                void     addPostSendPacketHookId (uint32_t hid);
+
+                void     addPreRecvPacketHookId (uint32_t hid);
+                void     addPostRecvPacketHookId (uint32_t hid);
+
+                void     deletePreSendPacketHookId (uint32_t hid);
+                void     deletePostSendPacketHookId (uint32_t hid);
+
+                void     deletePreRecvPacketHookId (uint32_t hid);
+                void     deletePostRecvPacketHookId (uint32_t hid);
+
                 bool     addConnectionId (uint32_t cid);
                 bool     removeConnectionId (uint32_t cid);
         
@@ -84,6 +96,10 @@ class Plugin
                 IdSet _rwhooks;
                 IdSet _srhooks;
                 IdSet _swhooks;
+                IdSet _preshooks;
+                IdSet _postshooks;
+                IdSet _prerhooks;
+                IdSet _postrhooks;
                 IdSet _connections;
 };
 

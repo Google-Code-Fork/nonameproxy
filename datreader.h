@@ -28,63 +28,67 @@ class SafeFile;
 class ThingData
 {
         public:
-                //a ThingData will read itself from the dat file
+                /* a ThingData will read itself from the dat file */
                 ThingData (SafeFile* datfile, uint16_t id);
-                void show ();
+                void show () const;
 
-                bool isTopOrder1 ();
-                bool isTopOrder2 ();
-                bool isTopOrder3 ();
-                bool isContainer ();
-                bool isStackable ();
-                bool isCorpse ();
-                bool isUsable ();
-                bool isRune ();
-                bool isWritable ();
-                bool isReadable ();
-                bool isFluidContainer ();
-                bool isSplash ();
-                bool isBlocking ();
-                bool isImmobile ();
-                bool isMissileBlocking ();
-                bool isPathBlocking ();
-                bool isPickupable ();
-                bool isHangable ();
-                bool isHangableHorizontal ();
-                bool isHangableVertical ();
-                bool isRotatable ();
-                bool isLightSource ();
-                bool isFloorChange ();
-                bool isOffset ();
-                bool isRaised ();
-                bool isIdleAnimation ();
-                bool isMiniMap ();
-                bool isGround ();
-                bool isLadder ();
-                bool isSewer ();
-                bool isRopeSpot ();
-                bool isSwitch ();
-                bool isDoor ();
-                bool isDoorWithLock ();
-                bool isStairs ();
-                bool isMailBox ();
-                bool isDepot ();
-                bool isTrash ();
-                bool isHole ();
-                bool isSpecialDescription ();
-                bool isReadOnly ();
-                //these functions actually return something
-                TWord16*        getSpeed ();
-                TWord16*        getWriteLimit ();
-                TWord16*        getReadLimit ();
-                TItemLight*     getLight ();
-                TWord16*        getOffsetX ();
-                TWord16*        getOffsetY ();
-                TWord16*        getRaised ();
-                TWord16*        getMiniMap ();
+                bool isTopOrder1 () const;
+                bool isTopOrder2 () const;
+                bool isTopOrder3 () const;
+                bool isContainer () const;
+                bool isStackable () const;
+                bool isCorpse () const;
+                bool isUsable () const;
+                bool isRune () const;
+                bool isWritable () const;
+                bool isReadable () const;
+                bool isFluidContainer () const;
+                bool isSplash () const;
+                bool isBlocking () const;
+                bool isImmobile () const;
+                bool isMissileBlocking () const;
+                bool isPathBlocking () const;
+                bool isPickupable () const;
+                bool isHangable () const;
+                bool isHangableHorizontal () const;
+                bool isHangableVertical () const;
+                bool isRotatable () const;
+                bool isLightSource () const;
+                bool isFloorChange () const;
+                bool isOffset () const;
+                bool isRaised () const;
+                bool isIdleAnimation () const;
+                bool isMiniMap () const;
+                bool isGround () const;
+                bool isLadder () const;
+                bool isSewer () const;
+                bool isRopeSpot () const;
+                bool isSwitch () const;
+                bool isDoor () const;
+                bool isDoorWithLock () const;
+                bool isStairs () const;
+                bool isMailBox () const;
+                bool isDepot () const;
+                bool isTrash () const;
+                bool isHole () const;
+                bool isSpecialDescription () const;
+                bool isReadOnly () const;
+                /* these functions actually return something */
+                uint32_t getSpeed () const;
+                uint32_t getWriteLimit () const;
+                uint32_t getReadLimit () const;
+                uint32_t getLightColor () const;
+                uint32_t getLightRadius () const;
+                uint32_t getOffsetX () const;
+                uint32_t getOffsetY () const;
+                uint32_t getRaised () const;
+                uint32_t getMiniMap () const;
 
-                //determines if a function has an extra byte
-                bool isXItem ();
+                /* determines if an item has an extra byte */
+                bool isXItem () const;
+
+                /* determines an items order */
+                uint32_t getOrder () const;
 
         private:
                 void parseOp (SafeFile* datfile, uint8_t op);
@@ -140,17 +144,17 @@ class ThingData
                 uint32_t _thingFlags;
                 uint8_t  _helpByte;
 
-                uint16_t _speed;
-                uint16_t _writeLimit;
-                uint16_t _readLimit;
-                uint16_t _lightColor;
-                uint16_t _lightRadius;
-                uint16_t _offsetX;
-                uint16_t _offsetY;
-                uint16_t _raised;
-                uint16_t _miniMapColor;
-                uint16_t _id;
-                //i dont keep any of the sprite data
+                uint32_t _speed;
+                uint32_t _writeLimit;
+                uint32_t _readLimit;
+                uint32_t _lightColor;
+                uint32_t _lightRadius;
+                uint32_t _offsetX;
+                uint32_t _offsetY;
+                uint32_t _raised;
+                uint32_t _miniMapColor;
+                uint32_t _id;
+                /* i dont keep any of the sprite data */
 };
         
 class DatReader
@@ -158,11 +162,9 @@ class DatReader
         public:
                 DatReader ();
                 virtual ~DatReader ();
-                //ThingData* getItemData (TItem* item);
-                ThingData* getItemData (TWord16* itemId);
-                ThingData* getItemData (uint16_t itemId);
+                const ThingData& getItemData (uint16_t itemId) const;
 
-                uint32_t getNIds ();
+                uint32_t getNIds () const;
 
         private:
                 ThingData** _things;

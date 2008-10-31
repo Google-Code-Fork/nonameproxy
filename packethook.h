@@ -18,29 +18,23 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *****************************************************************************/
 
-#ifndef __CORE_RECIPRICANT_H
-#define __CORE_RECIPRICANT_H
+#ifndef __PACKET_HOOK_H
+#define __PACKET_HOOK_H
 
-#include <stdint.h>
-#include <string>
-#include "messenger.h"
+#include <stdlib.h>
+#include <list>
 
+class NetworkMessage;
 class Client;
 
-class CoreRecipricant : public Recipricant
+/* These are stub classes. Hooks can either be defined in corehooks.h
+ * or a module can define a hook in its own code. */
+
+class PacketHook
 {
         public:
-                CoreRecipricant (Client* client);
-                virtual Args func (const Args& args);
-        private:
-                Args loadPlugin (const Args& args, Args::const_iterator i,
-                                        uint32_t argc);
-                Args unloadPlugin (const Args& args, Args::const_iterator i,
-                                        uint32_t argc);
-
-                Args usage ();
-
-                Client* _client;
+                virtual ~PacketHook () {};
+                virtual void func (const NetworkMessage& msg);
 };
 
 #endif

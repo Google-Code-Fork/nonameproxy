@@ -53,9 +53,12 @@ Client::Client (LoginState* ls)
         sendHM = new HookManager ();
         recvHM = new HookManager ();
         recvProtocol = new HookManager ();
+        sendPHM = new PacketHookManager ();
+        recvPHM = new PacketHookManager ();
         connMgr = new ConnectionManager ();
-        pluginManager = new PluginManager (messenger, recvHM, sendHM, 
-                                           connMgr, this);
+
+        pluginManager = new PluginManager (messenger, sendHM, recvHM, sendPHM,
+                                           recvPHM, connMgr, this);
 
         _consoleId = 0;
 
@@ -73,8 +76,10 @@ Client::~Client ()
 
         delete messenger;
 
-        delete recvHM;
         delete sendHM;
+        delete recvHM;
+        delete sendPHM;
+        delete recvPHM;
         delete recvProtocol;
         delete crypt;
 }
@@ -325,14 +330,14 @@ uint32_t Client::getPluginByName (const std::string& msg)
         return pluginManager->getPluginByName (msg);
 }
 
-void Client::sendMessage (uint32_t pid, const std::string& msg)
+Args Client::sendMessage (uint32_t pid, const std::string& msg)
 {
-        pluginManager->sendMessage (pid, msg);
+        return pluginManager->sendMessage (pid, msg);
 }
 
-void Client::broadcastMessage (const std::string& msg)
+Args Client::broadcastMessage (const std::string& msg)
 {
-        pluginManager->broadcastMessage (msg);
+        return pluginManager->broadcastMessage (msg);
 }
 
 uint32_t Client::addRecvReadHook (uint32_t pid, uint8_t id, ReadHook* hook)
@@ -373,6 +378,46 @@ void Client::deleteSendReadHook (uint32_t pid, uint32_t hid)
 void Client::deleteSendWriteHook (uint32_t pid, uint32_t hid)
 {
         pluginManager->deleteSendWriteHook (pid, hid);
+}
+
+uint32_t Client::addPreSendPacketHook (uint32_t pid, PacketHook* hook)
+{
+        return pluginManager->addPreSendPacketHook (pid, hook);
+}
+
+uint32_t Client::addPostSendPacketHook (uint32_t pid, PacketHook* hook)
+{
+        return pluginManager->addPostSendPacketHook (pid, hook);
+}
+
+uint32_t Client::addPreRecvPacketHook (uint32_t pid, PacketHook* hook)
+{
+        return pluginManager->addPreRecvPacketHook (pid, hook);
+}
+
+uint32_t Client::addPostRecvPacketHook (uint32_t pid, PacketHook* hook)
+{
+        return pluginManager->addPostRecvPacketHook (pid, hook);
+}
+
+void Client::deletePreSendPacketHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deletePreSendPacketHook (pid, hid);
+}
+
+void Client::deletePostSendPacketHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deletePostSendPacketHook (pid, hid);
+}
+
+void Client::deletePreRecvPacketHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deletePreRecvPacketHook (pid, hid);
+}
+
+void Client::deletePostRecvPacketHook (uint32_t pid, uint32_t hid)
+{
+        pluginManager->deletePostRecvPacketHook (pid, hid);
 }
 
 uint32_t Client::addRecipricant (uint32_t pid, Recipricant* recipricant)

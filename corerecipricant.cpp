@@ -26,67 +26,66 @@ CoreRecipricant::CoreRecipricant (Client* client)
         _client = client;
 }
 
-void CoreRecipricant::func (const Args& args)
+Args CoreRecipricant::func (const Args& args)
 {
-        uint32_t consoleId = _client->getConsoleId ();
         Args::const_iterator i = args.begin ();
         uint32_t argc = args.size ();
-        if (argc == 0) {
-                return;
-        }
-
         if (argc > 2) {
                 i ++;
                 if (*i == "load") {
-                        loadPlugin (args, i, argc);
+                        return loadPlugin (args, i, argc);
                 } else if (*i == "unload") {
-                        unloadPlugin (args, i, argc);
+                        return unloadPlugin (args, i, argc);
                 }
-        } else if (consoleId != 0) {
-                _client->sendMessage (consoleId, 
-                        "console 'core: usage'");
-                _client->sendMessage (consoleId,
-                        "console 'load \\'plugin path\\''");
-                _client->sendMessage (consoleId,
-                        "console 'unload \\'plugin name\\''");
         }
+        return usage ();
 }
 
-void CoreRecipricant::loadPlugin (const Args& args, Args::const_iterator i,
+Args CoreRecipricant::loadPlugin (const Args& args, Args::const_iterator i,
                                   uint32_t argc)
 {
-        uint32_t consoleId = _client->getConsoleId ();
+        Args ret;
         if (argc < 3) {
-                _client->sendMessage (consoleId, 
-                        "console 'core: load requires a path name'");
-                return;
+                ret.push_back ("core: load requires a path name");
+                return ret;
         }
         i ++;
         if (_client->pluginManager->addPlugin (*i) == 0) {
-                std::string error = "console 'core: could not load " +
-                                        *i + "'";
-                _client->sendMessage (consoleId, error); 
+                ret.push_back ("core: could not load " + *i);
+                return ret;
         }
+        ret.push_back ("core: plugin " + *i + " successfully loaded");
+        return ret;
 }
                 
-void CoreRecipricant::unloadPlugin (const Args& args, Args::const_iterator i,
+Args CoreRecipricant::unloadPlugin (const Args& args, Args::const_iterator i,
                                     uint32_t argc)
 {
-        uint32_t consoleId = _client->getConsoleId ();
+        Args ret;
         if (argc < 3) {
-                _client->sendMessage (consoleId, 
-                        "console 'core: unload requires a plugin name'");
-                return;
+                ret.push_back ("core: unload requires a plugin name");
+                return ret;
         }
         i ++;
-        std::string error = "console 'core: could not unload plugin " + *i + "'";
         uint32_t pid = _client->getPluginByName (*i);
         if (pid == 0) {
-                _client->sendMessage (consoleId, error);
-                return;
+                ret.push_back ("core: could not find plugin " + *i);
+                return ret;
         }
         if (!_client->pluginManager->deletePlugin (pid)) {
-                _client->sendMessage (consoleId, error); 
+                ret.push_back ("core: could not unload plugin " + *i);
+                return ret;
         }
+        ret.push_back ("core: " + *i + " successfully unloaded");
+        return ret;
 }
                 
+Args CoreRecipricant::usage ()
+{
+        Args ret;
+        ret.push_back ("core: usage");
+        ret.push_back ("load 'plugin path'");
+        ret.push_back ("unload 'plugin name'");
+        return ret;
+}
+

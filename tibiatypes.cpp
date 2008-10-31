@@ -1331,7 +1331,7 @@ TThing* TThingFactory::getThing ()
         } else if (id >= 0xFF00) {
                 return new TSkip (_msg);
         } else {
-                if (_dat->getItemData (id)->isXItem ()) {
+                if (_dat->getItemData (id).isXItem ()) {
                         return new TXItem (_msg);
                 } else {
                         return new TItem (_msg);

@@ -67,7 +67,7 @@ class Recipricant
 {
         public:
                 virtual ~Recipricant () {};
-                virtual void func (const Args& args) {};
+                virtual Args func (const Args& args) = 0;
 };
 
 typedef std::map<uint32_t, Recipricant*> RecipricantList;
@@ -82,8 +82,8 @@ class Messenger
                 uint32_t addRecipricant    (Recipricant* recipricant);
                 void     deleteRecipricant (uint32_t rid);
 
-                void sendMessage (uint32_t rid, const std::string& msg);
-                void broadcastMessage (const std::string& msg);
+                Args sendMessage (uint32_t rid, const std::string& msg);
+                Args broadcastMessage (const std::string& msg);
 
         private:
                 RecipricantList rlist;

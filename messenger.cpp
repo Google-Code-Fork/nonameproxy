@@ -57,25 +57,27 @@ void Messenger::deleteRecipricant (uint32_t rid)
         rlist.erase (rid);
 }
 
-void Messenger::sendMessage (uint32_t rid, const std::string& msg)
+Args Messenger::sendMessage (uint32_t rid, const std::string& msg)
 {
         RecipricantList::iterator i = rlist.find (rid);
 
         if (i == rlist.end ()) {
                 printf ("messenger send error: recipricant does not exist\n");
+                return Args ();
         } else {
                 ArgsParser ap (msg);
-                (*i).second->func (ap.getArgs ());
+                return (*i).second->func (ap.getArgs ());
         }
 }
 
-void Messenger::broadcastMessage (const std::string& msg)
+Args Messenger::broadcastMessage (const std::string& msg)
 {
         ArgsParser ap (msg);
         const Args& args = ap.getArgs ();
         for (RecipricantList::iterator i; i != rlist.end (); ++ i) {
-                (*i).second->func (args);
+                return (*i).second->func (args);
         }
+        return Args ();
 }
 
 /*****************************************************************
