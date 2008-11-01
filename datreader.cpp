@@ -400,7 +400,7 @@ uint32_t ThingData::getOrder () const
 
 void ThingData::parseOp (SafeFile* datfile, uint8_t op)
 {
-        switch(op)
+        switch (op)
         {
                 case 0x00: //ground speed
                         datfile->read (&_speed, 2);

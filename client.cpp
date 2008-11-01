@@ -112,7 +112,6 @@ bool Client::runLogin (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        //msg->show ();
                         LSMessageList* lsml = new LSMessageList (msg, gstate, dat);
                         while (!lsml->isEnd ()) {
                                 TibiaMessage* tm = lsml->read ();
@@ -128,16 +127,13 @@ bool Client::runLogin (Connection* acceptedConn)
                         msg = lsml->put ();
                         /* msg may be null if there are now messages */
                         if (msg) {
-                                //msg->show ();
                                 crypt->encrypt (msg);
                                 serverConn->putMsg (msg);
                         }
                         delete lsml;
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
-                        //msg->show ();
                         crypt->decrypt (msg);
-                        //msg->show ();
                         LRMessageList* lrml = new LRMessageList (msg, gstate, dat);
                         while (!lrml->isEnd ()) {
                                 TibiaMessage* tm = lrml->read ();
@@ -153,9 +149,7 @@ bool Client::runLogin (Connection* acceptedConn)
                         msg = lrml->put ();
                         /* msg may be null if there are no messages */
                         if (msg) {
-                                //msg->show ();
                                 crypt->encrypt (msg);
-                                //msg->show ();
                                 clientConn->putMsg (msg);
                         }
                         delete lrml;
@@ -206,7 +200,6 @@ bool Client::runGame (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        //msg->show ();
                         GSMessageList* gsml = new GSMessageList (msg, gstate, dat);
                         while (!gsml->isEnd ()) {
                                 TibiaMessage* tm = gsml->read ();
@@ -220,7 +213,6 @@ bool Client::runGame (Connection* acceptedConn)
                                 }
                         }
                         msg = gsml->put ();
-                        //msg->show ();
                         crypt->encrypt (msg);
                         /* now we want to send the message to the server, but
                          * we have to connect to the server first, so well
@@ -257,8 +249,7 @@ bool Client::runGame (Connection* acceptedConn)
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        //printf ("send:\n");
-                        //msg->show ();
+                        sendPHM->hookPrePacket (*msg);
                         GSMessageList gsml (msg, gstate, dat);
                         while (!gsml.isEnd ()) {
                                 TibiaMessage* tm = gsml.read ();
@@ -275,14 +266,15 @@ bool Client::runGame (Connection* acceptedConn)
                         msg = gsml.put ();
                         /* msg may be null if there are no messages */
                         if (msg) {
+                                sendPHM->hookPostPacket (*msg);
                                 crypt->encrypt (msg);
                                 serverConn->putMsg (msg);
                         }
                 }
                 if ((msg = serverConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
-                        //printf ("recv:\n");
-                        //msg->show ();
+                        recvPHM->hookPrePacket (*msg);
+                        
                         GRMessageList* grml = new GRMessageList (msg, gstate, dat);
                         while (!grml->isEnd ()) {
                                 TibiaMessage* tm = grml->read ();
@@ -298,9 +290,9 @@ bool Client::runGame (Connection* acceptedConn)
                                 }
                         }
                         msg = grml->put ();
-                        //msg->show ();
                         /* msg may be null if there are no messages */
                         if (msg) {
+                                recvPHM->hookPostPacket (*msg);
                                 crypt->encrypt (msg);
                                 clientConn->putMsg (msg);
                         }
@@ -432,12 +424,9 @@ void Client::deleteRecipricant (uint32_t pid, uint32_t rid)
 
 void Client::sendToClient (GRMessageList& msgs)
 {
-        printf ("yay1\n");
         NetworkMessage* msg = msgs.put ();
         /* msg may be null if there are no messages */
         if (msg) {
-                printf ("sending to client\n");
-                msg->show ();
                 crypt->encrypt (msg);
                 clientConn->putMsg (msg);
         }
@@ -461,8 +450,6 @@ void Client::sendToServer (GSMessageList& msgs)
         NetworkMessage* msg = msgs.put ();
         /* msg may be null if there are no messages */
         if (msg) {
-                printf ("sending to server\n");
-                msg->show ();
                 crypt->encrypt (msg);
                 serverConn->putMsg (msg);
         }

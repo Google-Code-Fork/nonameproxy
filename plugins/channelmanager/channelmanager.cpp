@@ -102,7 +102,6 @@ Args ChannelRecipricant::func (const Args& args)
 
 void ChannelManager::addChannel (const std::string& name, uint32_t id)
 {
-        printf ("adding\n");
         if (addList.count (id) != 0) {
                 printf ("channelmanager add error: channel already added\n");
                 return;
@@ -142,7 +141,6 @@ GSMChannelOpen* ChannelManager::hookChannelOpen (GSMChannelOpen* co, Client* cli
 {
         uint32_t channelId = co->getChannelId ();
         if (addList.count (channelId) != 0) {
-                printf ("blocked open\n");
                 delete co;
                 return NULL;
         }
@@ -153,7 +151,6 @@ GSMChannelClose* ChannelManager::hookChannelClose (GSMChannelClose* cc, Client* 
 {
         uint32_t channelId = cc->getChannelId ();
         if (addList.count (channelId) != 0) {
-                printf ("blocked close\n");
                 delete cc;
                 return NULL;
         }
@@ -165,7 +162,6 @@ GSMSpeak* ChannelManager::hookSpeak (GSMSpeak* sp, Client* client)
         if (sp->getSpeakType () == GSMSpeak::channel) {
                 uint32_t channelId = sp->getChannelId ();
                 if (addList.count (channelId) != 0) {
-                        printf ("blocked speak\n");
                         delete sp;
                         return NULL;
                 }

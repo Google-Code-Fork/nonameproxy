@@ -21,6 +21,9 @@
 #ifndef __DAT_READER_H
 #define __DAT_READER_H
 
+#define ORDER_GROUND 0
+#define ORDER_CREATURE 4
+
 #include "tibiatypes.h"
 
 class SafeFile;

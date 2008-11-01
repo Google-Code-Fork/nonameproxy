@@ -12,12 +12,15 @@ class Thing
                 
                 enum thing_t
                 {
+                        t_unused,
                         t_item,
                         t_xitem,
                         t_creature,
                 };
 
-                virtual thing_t getType () const = 0;
+                virtual thing_t getType () const { return t_unused; }
+                virtual void show () const { printf ("wtf\n"); } 
+                //virtual void show () = 0; 
 };
 
 class Item : public Thing
@@ -28,6 +31,7 @@ class Item : public Thing
                 virtual ~Item () {};
 
                 virtual thing_t getType () const;
+                virtual void show () const;
                 uint32_t getItemId () const;
                 void setItemId (uint32_t itemid);
 
@@ -43,6 +47,7 @@ class XItem : public Thing
                 virtual ~XItem () {};
 
                 virtual thing_t getType () const;
+                virtual void show () const;
                 
                 uint32_t getItemId () const;
                 void setItemId (uint32_t itemid);
@@ -84,6 +89,7 @@ class Creature : public Thing
                 virtual ~Creature () {};
 
                 virtual thing_t getType () const;
+                virtual void show () const;
 
                 bool isPlayer () const;
                 bool isMonster () const;

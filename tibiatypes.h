@@ -276,9 +276,9 @@ class TThing
         public:
                 enum ThingType
                 {
+                        unused,
                         item,
                         xitem,
-                        creature,
                         oldcreature,
                         newcreature,
                         creatureturn,
@@ -287,9 +287,9 @@ class TThing
 
                 virtual ~TThing () {};
 
-                virtual ThingType getType () const = 0;
-                virtual void put (NetworkMessage* msg) const = 0;
-                virtual void show () const = 0;
+                virtual ThingType getType () const { printf ("fuck\n"); return unused; }
+                virtual void put (NetworkMessage* msg) const {}
+                virtual void show () const {};
 };
 
 class TItem : public TThing

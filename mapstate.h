@@ -39,13 +39,16 @@ class Tile
                 Tile ();
                 virtual ~Tile ();
 
+                void show () const;
+
                 void clear ();
                 uint32_t getThingCount () const;
 
                 bool insertThing (const Thing& thing, uint32_t stackpos,
                         DatReader* dat);
                 bool removeThing (uint32_t stackpos);
-                bool addThing (const Thing& thing, DatReader* dat);
+                bool addThing (const Thing& thing, DatReader* dat, 
+                        bool push = false);
 
                 Thing* getThingByStackPos (uint32_t stackpos);
                 const Thing* getThingByStackPos (uint32_t stackpos) const;
@@ -53,7 +56,7 @@ class Tile
                 const Item* getGround () const;
 
         private:
-                bool i_addThing (Thing* thing, uint32_t order);
+                uint32_t i_getOrder (const Thing& thing, DatReader* dat);
                 Thing*          _ground;
                 ThingVector     _things;
 };
@@ -62,8 +65,12 @@ class MapState
 {
         public:
                 Pos& getCurPos ();
+
+                Tile& getTile (uint32_t x, uint32_t y, uint32_t z);
         private:
                 Pos _curPos;
+
+                Tile _map [18][14][8];
 };
 #endif
 

@@ -59,7 +59,6 @@ uint32_t PluginManager::addPlugin (const std::string& path)
         /* TODO add protection from loading a plugin multiple times */
         plist.insert (std::pair<uint32_t, Plugin*> (id, p));
         if (p->load (id, path, _client)) {
-                printf ("inserted %d\n", id);
                 return id;
         } else {
                 plist.erase (id);
@@ -77,7 +76,6 @@ uint32_t PluginManager::addFakein (const std::string& name)
         /* we have to add the id before calling load */
         plist.insert (std::pair<uint32_t, Plugin*> (id, p));
         if (p->load (id, "", _client)) {
-                printf ("inserted %d\n", id);
                 return id;
         } else {
                 plist.erase (id);
@@ -132,7 +130,6 @@ Args PluginManager::sendMessage (uint32_t pid, const std::string& msg)
 
 Args PluginManager::broadcastMessage (const std::string& msg)
 {
-        printf ("yay\n");
         ArgsParser ap (msg);
         const Args& args = ap.getArgs ();
 

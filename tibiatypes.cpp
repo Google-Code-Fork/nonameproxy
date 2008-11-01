@@ -664,7 +664,7 @@ TItem::ThingType TItem::getType () const
                 
 void TItem::show () const
 {
-        printf ("\tItem {id = "); _itemId->show (); printf ("}\n)");
+        printf ("\tItem {id = "); _itemId->show (); printf ("}\n");
 }
 
 void TItem::put (NetworkMessage* msg) const
@@ -715,7 +715,7 @@ TThing::ThingType TXItem::getType () const
 void TXItem::show () const
 {
         printf ("\tXItem {id = "); _itemId->show (); 
-        printf ("xByte = "); _xByte->show (); printf ("}\n)");
+        printf ("xByte = "); _xByte->show (); printf ("}\n");
 }
 
 void TXItem::put (NetworkMessage* msg) const

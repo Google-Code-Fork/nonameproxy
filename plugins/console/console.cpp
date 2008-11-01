@@ -51,14 +51,11 @@ void Console::output (const std::string& msg)
 
 void Console::hookChannelOpen (GSMChannelOpen* co, Client* client)
 {
-        printf ("open console\n");
         uint32_t channelId = co->getChannelId ();
         if (channelId == _channelId) {
-                printf ("ids match\n");
                 GRMessageList grml;
                 grml.add (new GRMChannelOpen (_channelId, "console"));
                 _client->sendToClient (grml);
-                printf ("console open sent\n");
                 _open = true;
         }
 }
@@ -67,7 +64,6 @@ void Console::hookChannelClose (GSMChannelClose* cc, Client* client)
 {
         uint32_t channelId = cc->getChannelId ();
         if (channelId == _channelId) {
-                printf ("console close\n");
                 _open = false;
         }
 }
