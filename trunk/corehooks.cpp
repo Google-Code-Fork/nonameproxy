@@ -23,6 +23,7 @@
 #include "tibiamessage.h"
 #include "gamestate.h"
 #include "client.h"
+#include "typeparser.h"
 
 void HRLoginMsg::func (TibiaMessage* tm, Client* client)
 {
@@ -193,11 +194,16 @@ void GRHPlayerSkills::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapInit::func (TibiaMessage* tm, Client* client)
 {
-        Pos& pos = client->gstate->map->getCurPos ();
-        const TPos& initPos = ((GRMMapInit*)tm)->getPos ();
+        GRMMapInit* mi = (GRMMapInit*)tm;
+
+        Pos& pos = client->gstate->map->getCurPos (); 
+        const TPos& initPos = mi->getPos ();
         pos.x = initPos.x ();
         pos.y = initPos.y ();
         pos.z = initPos.z ();
+
+        TypeParser tp;
+        tp.parseMapDescription (client->gstate, mi->getMap (), client->dat);
 }
 
 /**********************************************************************

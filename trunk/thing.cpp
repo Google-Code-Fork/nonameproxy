@@ -19,6 +19,11 @@ Thing::thing_t Item::getType () const
         return Thing::t_item;
 }
 
+void Item::show () const
+{
+        printf ("Item {id = %d}\n", _itemid);
+}
+
 uint32_t Item::getItemId () const
 {
         return _itemid;
@@ -48,6 +53,11 @@ XItem::XItem (const XItem& clone)
 Thing::thing_t XItem::getType () const
 {
         return Thing::t_xitem;
+}
+
+void XItem::show () const
+{
+        printf ("Item {id = %d, xbyte = %d}\n", _itemid, _xbyte);
 }
 
 uint32_t XItem::getItemId () const
@@ -128,6 +138,30 @@ bool Creature::isNPC () const
 Thing::thing_t Creature::getType () const
 {
         return Thing::t_creature;
+}
+
+void Creature::show () const
+{
+        printf ("Creature {");
+        printf ("\ttibiaid = %d", _tibiaid); printf ("\n");
+        printf ("\tname = %s", _name.c_str ()); printf ("\n");
+        printf ("\thp = %d", _hp); printf ("\n");
+        printf ("\tdirection = %d", _direction); printf ("\n");
+
+        printf ("\toutfit {");
+	printf ("\t\tlooktype = %d", _outfit.looktype); printf ("\n");
+	printf ("\t\tlookhead = %d", _outfit.lookhead); printf ("\n");
+	printf ("\t\tlookbody = %d", _outfit.lookbody); printf ("\n");
+	printf ("\t\tlooklegs = %d", _outfit.looklegs); printf ("\n");
+	printf ("\t\tlookfeet = %d", _outfit.lookfeet); printf ("\n");
+	printf ("\t\tlookitem = %d", _outfit.lookitem); printf ("\n");
+	printf ("\t\taddons = %d", _outfit.addons); printf ("\n");
+
+        printf ("\tlightcolor = %d", _lightcolor); printf ("\n");
+        printf ("\tlightradius = %d", _lightradius); printf ("\n");
+        printf ("\tspeed = %d", _speed); printf ("\n");
+        printf ("\tskull = %d", _skull); printf ("\n");
+        printf ("\tshield = %d", _shield); printf ("\n");
 }
 
 uint32_t Creature::getTibiaId () const

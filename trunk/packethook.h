@@ -33,8 +33,8 @@ class Client;
 class PacketHook
 {
         public:
-                virtual ~PacketHook () {};
-                virtual void func (const NetworkMessage& msg);
+                virtual ~PacketHook () {}
+                virtual void func (const NetworkMessage& msg) {}
 };
 
 #endif

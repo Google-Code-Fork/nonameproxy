@@ -18,8 +18,8 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *****************************************************************************/
 
-#include "packethook.h"
 #include "packethookmanager.h"
+#include "packethook.h"
 #include "networkmessage.h"
 
 /**********************************************************
@@ -74,6 +74,7 @@ void PacketHookManager::deletePreHook (uint32_t hid)
                 printf ("phookmanager error: delete: non existant pre hook\n");
                 return;
         }
+        preHooks.erase (i);
         preIds->recycleId ((*i).first);
         delete (*i).second;
 }
@@ -85,6 +86,7 @@ void PacketHookManager::deletePostHook (uint32_t hid)
                 printf ("phookmanager error: delete: non existant post hook\n");
                 return;
         }
+        postHooks.erase (i);
         postIds->recycleId ((*i).first);
         delete (*i).second;
 }

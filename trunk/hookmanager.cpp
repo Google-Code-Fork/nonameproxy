@@ -94,6 +94,7 @@ void HookManager::deleteReadHook (uint32_t hid)
                          know if it happens.\n");
                 return;
         }
+        rHooks[mid].erase (i2);
         delete (*i2).second;
         ids->recycleId (hid);
 }

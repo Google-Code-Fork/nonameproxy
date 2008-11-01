@@ -10,7 +10,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
 		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
-		pos.o thing.o packethookmanager.o
+		pos.o thing.o packethookmanager.o typeparser.o
 
 all: nonameproxy
 
@@ -90,6 +90,8 @@ pos.o: pos.cpp pos.h
 thing.o: thing.cpp thing.h
 
 packethookmanager.o: packethookmanager.cpp packethookmanager.h packethook.h networkmessage.h
+
+typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h
 
 clean:
 	rm -f nonameproxy $(objects)
