@@ -78,7 +78,7 @@ bool RSA::encrypt(uint8_t* buffer, uint32_t size)
                 mpz_init2 (plain, 1024);
                 mpz_init2 (crypt, 1024);
 
-                mpz_import (plain, 128, 1, 1, 0, 0, buffer);
+                mpz_import (plain, size, 1, 1, 0, 0, buffer);
                 mpz_powm(crypt, plain, m_e, m_pubmod);
                 
                 //these 3 lines are taken directly from yact, i think i
@@ -104,7 +104,7 @@ bool RSA::decrypt(uint8_t* buffer, uint32_t size)
                 mpz_init2 (plain, 1024);
                 mpz_init2 (crypt, 1024);
 
-                mpz_import(crypt, 128, 1, 1, 0, 0, buffer);
+                mpz_import(crypt, size, 1, 1, 0, 0, buffer);
 
                 mpz_powm (plain, crypt, m_d, m_prvmod);
 

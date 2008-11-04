@@ -25,10 +25,20 @@ class TypeParser
                 Pos toPos (const TPos& tpos);
                 TPos toTPos (const Pos& pos);
 
+                direction_t toDirection (uint32_t dir);
+                turn_dir_t toTurnDirection (uint32_t dir);
+
                 /* due to the fact that these classes are derived we need to
                  * know what were converting, before we make the conversion */
                 Item toItem (const TItem& titem);
                 XItem toXItem (const TXItem& txitem);
+
+                Creature toCreature (const TNewCreature& tcreature);
+
+                /* note to convert old and creature turns we have to look them
+                 * up in the mapstate */
+
+                Outfit_t toOutfit (const TOutfit& toutfit);
 
                 /* parsing functions */
                 bool parseMapDescription (GameState* gs, 

@@ -311,6 +311,9 @@ void Client::addProtocolHooks ()
         recvProtocol->addReadHook (GRM_MAP_WEST_ID, (ReadHook*)new GRHMapWest);
         recvProtocol->addReadHook (GRM_MAP_UP_ID, (ReadHook*)new GRHMapUp);
         recvProtocol->addReadHook (GRM_MAP_DOWN_ID, (ReadHook*)new GRHMapDown);
+
+        recvProtocol->addReadHook (GRM_CREATURE_MOVE_ID, 
+                                (ReadHook*)new GRHCreatureMove);
 }
 
 /************************************************************************

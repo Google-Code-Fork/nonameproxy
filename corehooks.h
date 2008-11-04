@@ -149,5 +149,14 @@ class GRHMapDown : public ReadHook
         virtual void func (TibiaMessage* tm, Client* client);
 };
 
+/************************************************************
+ * Map Modification Messages
+ ************************************************************/
+
+class GRHCreatureMove : public ReadHook
+{
+        virtual void func (TibiaMessage* tm, Client* client);
+};
+
 #endif
 

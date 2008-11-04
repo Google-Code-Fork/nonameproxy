@@ -22,6 +22,79 @@ XItem TypeParser::toXItem (const TXItem& txitem)
         return XItem (i.getItemId (), i.getXByte ());
 }
 
+Creature TypeParser::toCreature (const TNewCreature& tcreature)
+{
+        return Creature (tcreature.getTibiaId (),
+                         tcreature.getName (),
+                         tcreature.getHp (),
+                         toTurnDirection (tcreature.getDirection ()),
+
+                         toOutfit (tcreature.getOutfit ()),
+
+                         tcreature.getCreatureLight (). getColor (),
+                         tcreature.getCreatureLight (). getRadius (),
+                         tcreature.getSpeed (),
+                         tcreature.getSkull (),
+                         tcreature.getShield());
+}
+
+Outfit_t TypeParser::toOutfit (const TOutfit& toutfit)
+{
+        Outfit_t ret;
+        if (toutfit.getType () == TOutfit::itemoutfit) {
+                ret.lookitem = ((TItemOutfit&)toutfit).getItemId ();
+
+	        ret.looktype = 0;
+	        ret.lookhead = 0;
+	        ret.lookbody = 0;
+	        ret.looklegs = 0;
+	        ret.lookfeet = 0;
+	        ret.addons = 0;
+        } else if (toutfit.getType () == TOutfit::charoutfit) {
+                const TCharOutfit& charoutfit = (TCharOutfit&)toutfit;
+
+                ret.looktype = charoutfit.getLookType ();
+                ret.lookhead = charoutfit.getHead ();
+                ret.lookbody = charoutfit.getBody ();
+                ret.looklegs = charoutfit.getLegs ();
+                ret.lookfeet = charoutfit.getFeet ();
+                ret.addons = charoutfit.getAddons ();
+
+                ret.lookitem = 0;
+        } else {
+                printf ("toOutfit error: funny outfit type\n");
+        }
+        return ret;
+}
+
+direction_t TypeParser::toDirection (uint32_t dir)
+{
+        switch (dir) {
+                case 0x01: return DIRECTION_EAST;
+                case 0x02: return DIRECTION_NE;
+                case 0x03: return DIRECTION_NORTH;
+                case 0x04: return DIRECTION_NW;
+                case 0x05: return DIRECTION_WEST;
+                case 0x06: return DIRECTION_SW;
+                case 0x07: return DIRECTION_SOUTH;
+                case 0x08: return DIRECTION_SE;
+        }
+        printf ("toDirection error: invalid direction\n");
+        return DIRECTION_UNUSED;;
+}
+
+turn_dir_t TypeParser::toTurnDirection (uint32_t dir)
+{
+        switch (dir) {
+                case 0x00: return TURN_DIR_NORTH;
+                case 0x01: return TURN_DIR_EAST;
+                case 0x02: return TURN_DIR_SOUTH;
+                case 0x03: return TURN_DIR_WEST;
+        }
+        printf ("toTurnDirection error: invalid direction\n");
+        return TURN_DIR_UNUSED;
+}
+
 /**************************************************
  * Map Parsing Functions
  **************************************************/
@@ -90,6 +163,7 @@ bool TypeParser::i_parseTile (GameState* gs,
                               DatReader* dat)
 {
         uint32_t n = 0;
+        t.clear ();
         const TThing* tthing = &map.getThing ();;
         while (tthing->getType () != TThing::skip) {
                 if (!i_parseThing (gs, *tthing, t, dat)) {
@@ -115,11 +189,11 @@ bool TypeParser::i_parseThing (GameState* gs,
                                DatReader* dat)
 {
         TThing::ThingType type = tthing.getType ();
-        if (type == TThing::oldcreature
-         || type == TThing::newcreature)
+        if (type == TThing::oldcreature)
         {
-                /* TODO add creature parsing code */
                 return true;
+        } else if (type == TThing::newcreature) {
+                return t.addThing (toCreature ((TNewCreature&)tthing), dat);
         } else if (type == TThing::creatureturn) {
                 /* TODO add creature turn code */
                 return true;

@@ -211,6 +211,8 @@ void GRHMapInit::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 {
+        GRMMapNorth* mn = (GRMMapNorth*)tm;
+
         Pos& pos = client->gstate->map->getCurPos ();
         printf ("North: %d %d %d ", pos.x, pos.y, pos.z);
         pos.y --;
@@ -219,6 +221,9 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
         TMapDescription& map = ((GRMMapNorth*)tm)->getMap ();
         printf ("map from: "); map.getStart ().show (); printf ("\n");
         printf ("map to:   "); map.getEnd ().show (); printf ("\n");
+
+        TypeParser tp;
+        tp.parseMapDescription (client->gstate, mn->getMap (), client->dat);
 }
 
 /**********************************************************************
@@ -226,6 +231,8 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapEast::func (TibiaMessage* tm, Client* client)
 {
+        GRMMapEast* me = (GRMMapEast*)tm;
+
         Pos& pos = client->gstate->map->getCurPos ();
         printf ("East: %d %d %d ", pos.x, pos.y, pos.z);
         pos.x ++;
@@ -234,6 +241,9 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
         TMapDescription& map = ((GRMMapEast*)tm)->getMap ();
         printf ("map from: "); map.getStart ().show (); printf ("\n");
         printf ("map to:   "); map.getEnd ().show (); printf ("\n");
+
+        TypeParser tp;
+        tp.parseMapDescription (client->gstate, me->getMap (), client->dat);
 }
 
 /**********************************************************************
@@ -241,6 +251,8 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 {
+        GRMMapSouth* ms = (GRMMapSouth*)tm;
+
         Pos& pos = client->gstate->map->getCurPos ();
         printf ("South: %d %d %d ", pos.x, pos.y, pos.z);
         pos.y ++;
@@ -249,6 +261,9 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
         TMapDescription& map = ((GRMMapSouth*)tm)->getMap ();
         printf ("map from: "); map.getStart ().show (); printf ("\n");
         printf ("map to:   "); map.getEnd ().show (); printf ("\n");
+
+        TypeParser tp;
+        tp.parseMapDescription (client->gstate, ms->getMap (), client->dat);
 }
 
 /**********************************************************************
@@ -256,6 +271,8 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapWest::func (TibiaMessage* tm, Client* client)
 {
+        GRMMapWest* mw = (GRMMapWest*)tm;
+
         Pos& pos = client->gstate->map->getCurPos ();
         printf ("West: %d %d %d ", pos.x, pos.y, pos.z);
         pos.x --;
@@ -264,6 +281,9 @@ void GRHMapWest::func (TibiaMessage* tm, Client* client)
         TMapDescription& map = ((GRMMapWest*)tm)->getMap ();
         printf ("map from: "); map.getStart ().show (); printf ("\n");
         printf ("map to:   "); map.getEnd ().show (); printf ("\n");
+
+        TypeParser tp;
+        tp.parseMapDescription (client->gstate, mw->getMap (), client->dat);
 }
 
 /**********************************************************************
@@ -302,5 +322,53 @@ void GRHMapDown::func (TibiaMessage* tm, Client* client)
         } else {
                 printf ("no map\n");
         }
+}
+
+/**********************************************************************
+ * GRHCreatureMove 
+ **********************************************************************/
+void GRHCreatureMove::func (TibiaMessage* tm, Client* client)
+{
+        return;
+        GRMCreatureMove* cm = (GRMCreatureMove*)tm;
+        MapState* map = client->gstate->map;
+
+        const TPos& from = cm->getFrom ();
+        uint32_t stack = cm->getStackPos ();
+        const TPos& to = cm->getTo ();
+
+        if (stack > 9) {
+                printf ("GRHMCreatureMove error: stackpos = %d > 9\n", stack);
+                return;
+        }
+
+        TypeParser tp;
+
+        Tile& fromTile = map->getTile (tp.toPos (from));
+        Tile& toTile = map->getTile (tp.toPos (to));
+        Thing& thing = fromTile.getThing (stack);
+        if (thing.getType () != Thing::t_creature) {
+                printf ("GRHMCreatureMove error: no creature at %d %d %d %d\n",
+                        from.x (), from.y (), from.z (), stack);
+                return;
+        }
+        Creature& creature = (Creature&)thing;
+
+        /* we must modify the creature before adding it because add inserts a 
+         * new copy */
+
+        
+        if (from.x () > to.x ()) {
+                creature.setDirection (TURN_DIR_WEST);
+        } else if (from.x () < to.x ()) {
+                creature.setDirection (TURN_DIR_EAST);
+        } else if (from.y () > to.y ()) {
+                creature.setDirection (TURN_DIR_NORTH);
+        } else if (from.y () < to.y ()) {
+                creature.setDirection (TURN_DIR_SOUTH);
+        }
+
+        toTile.addThing (creature, client->dat);
+        fromTile.removeThing (stack);
 }
 

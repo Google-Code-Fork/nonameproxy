@@ -266,6 +266,7 @@ enum icons_t
 
 enum turn_dir_t
 {
+        TURN_DIR_UNUSED = 0x04,
         TURN_DIR_NORTH  = 0x00,
         TURN_DIR_EAST   = 0x01,
         TURN_DIR_SOUTH  = 0x02,
@@ -274,6 +275,7 @@ enum turn_dir_t
 
 enum direction_t 
 {
+        DIRECTION_UNUSED= 0x00,
         DIRECTION_EAST  = 0x01,
         DIRECTION_NE    = 0x02,
         DIRECTION_NORTH = 0x03,
