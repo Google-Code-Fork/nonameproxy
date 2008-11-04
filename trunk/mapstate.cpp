@@ -23,9 +23,20 @@
 /*****************************************
  * Tile
  *****************************************/
+Tile::Tile (MapState* map)
+{
+        _ground = NULL;
+        _map = map;
+}
+
 Tile::Tile ()
 {
         _ground = NULL;
+}
+
+void Tile::setMap (MapState* map)
+{
+        _map = map;
 }
 
 Tile::~Tile ()
@@ -146,6 +157,7 @@ void Tile::show () const
         while (i != _things.begin ()) {
                 i --;
                 printf ("%d: ", stackpos);
+                stackpos ++;
                 (*i)->show ();
         }
 }
@@ -153,7 +165,6 @@ void Tile::show () const
 bool Tile::addThing (const Thing& thing, DatReader* dat, bool push/*= false*/)
 {
         Thing* add;
-        thing.show ();
         if (thing.getType () == Thing::t_creature) {
                 const Creature creature = (Creature&)thing;
                 add = new Creature (creature);
@@ -169,6 +180,11 @@ bool Tile::addThing (const Thing& thing, DatReader* dat, bool push/*= false*/)
         }
         uint32_t order = i_getOrder (thing, dat);
         if (order == 0) {
+                if (add->getType () == Thing::t_creature) {
+                        /* this is here for paranoia purposes */
+                        printf ("addThing error: creature has order 0\n");
+                        return false;
+                }
                 delete _ground;
                 _ground = add;
                 return true;
@@ -192,6 +208,10 @@ bool Tile::addThing (const Thing& thing, DatReader* dat, bool push/*= false*/)
                         }
                 }
                 _things.insert (i, add);
+                /* we only insert the creature on a success */
+                if (add->getType () == Thing::t_creature) {
+                        _map->addCreature ((Creature*)add);
+                }
                 return true;
         }
 }
@@ -218,9 +238,30 @@ bool Tile::removeThing (uint32_t stackpos)
         if (i == _things.end ()) {
                 return false;
         }
+        if ((*i)->getType () == Thing::t_creature) {
+                uint32_t tibiaId = ((Creature*)(*i))->getTibiaId ();
+                _map->removeCreature (tibiaId);
+        }
         delete (*i);
         _things.erase (i);
         return true;
+}
+
+Thing& Tile::getThing (uint32_t stackpos) 
+{
+        uint32_t i = stackpos;
+        if (_ground) {
+                if (stackpos == 0) {
+                        return *_ground;
+                } else {
+                        i --;
+                }
+        }
+        if (!(stackpos < getThingCount ())) {
+                printf ("getThing error: thing %d out of bounds\n", stackpos);
+                show ();
+        }
+        return *_things[i];
 }
 
 /* this type of functionality will probably eventually be implemnted
@@ -247,6 +288,16 @@ uint32_t Tile::i_getOrder (const Thing& thing, DatReader* dat)
 /********************************************************************
  * MapState
  ********************************************************************/
+MapState::MapState ()
+{
+        for (uint32_t x = 0; x < MAP_X; x ++) {
+                for (uint32_t y = 0; y < MAP_Y; y ++) {
+                        for (uint32_t z = 0; z < MAP_Y; z ++) {
+                                _map[x][y][z].setMap (this);
+                        }
+                }
+        }
+}
 
 Pos& MapState::getCurPos ()
 {
@@ -256,5 +307,51 @@ Pos& MapState::getCurPos ()
 Tile& MapState::getTile (uint32_t x, uint32_t y, uint32_t z)
 {
         return _map [x % 18][y % 14][z % 8];
+}
+
+Tile& MapState::getTile (const Pos& pos)
+{
+        return _map [pos.x % 18][pos.y % 14][pos.z % 8];
+}
+
+const Creature& MapState::getCreature (uint32_t tibiaId) const
+{
+        CreatureMap::const_iterator i = _creatures.find (tibiaId);
+        if (i == _creatures.end ()) {
+                printf ("getCreature error: creature %d does not exist\n", 
+                        tibiaId);
+        }
+        return *((*i).second);
+}
+
+const CreatureMap& MapState::getCreatures () const
+{
+        return _creatures;
+}
+
+bool MapState::addCreature (Creature* creature)
+{
+        uint32_t tibiaId = creature->getTibiaId ();
+        _creatures.insert (std::pair<uint32_t, Creature*> (tibiaId, creature));
+        return true;
+}
+
+bool MapState::removeCreature (uint32_t tibiaId)
+{
+        if (_creatures.erase (tibiaId) == 0) {
+                printf ("removeCreature error: creature %d does not exist\n",
+                        tibiaId);
+                return false;
+        } else {
+                return true;
+        }
+}
+
+void MapState::showCreatures () const
+{
+        CreatureMap::const_iterator i;
+        for (i = _creatures.begin (); i != _creatures.end (); i ++) {
+                (*i).second->show ();
+        }
 }
 

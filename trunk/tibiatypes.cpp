@@ -1404,6 +1404,18 @@ void TItemOutfit::show () const
         printf ("TItemOutfit {"); _item->show (); printf ("}\n");
 }
 
+uint16_t TItemOutfit::getItemId () const
+{
+        if (_item->getType () == TThing::item) {
+                return ((TItem*)_item)->getItemId ();
+        } else if (_item->getType () == TThing::xitem) {
+                return ((TXItem*)_item)->getItemId ();
+        } else {
+                printf ("TItemOutfit error: _item is a creature\n");
+                return 0;
+        }
+}
+
 void TItemOutfit::get (NetworkMessage* msg, DatReader* dat)
 {
         _lookType = new TWord16 (msg);
@@ -1474,6 +1486,36 @@ void TCharOutfit::show () const
         printf ("\t\tfeet: "); _feet->show (); printf ("\n");
         printf ("\t\taddons: "); _addons->show (); printf ("\n");
         printf ("}\n");
+}
+
+uint16_t TCharOutfit::getLookType () const
+{
+        return _lookType->getVal ();
+}
+
+uint8_t TCharOutfit::getHead () const
+{
+        return _head->getVal ();
+}
+
+uint8_t TCharOutfit::getBody () const
+{
+        return _body->getVal ();
+}
+
+uint8_t TCharOutfit::getLegs () const
+{
+        return _legs->getVal ();
+}
+
+uint8_t TCharOutfit::getFeet () const
+{
+        return _feet->getVal ();
+}
+
+uint8_t TCharOutfit::getAddons () const
+{
+        return _addons->getVal ();
 }
 
 void TCharOutfit::get (NetworkMessage* msg)

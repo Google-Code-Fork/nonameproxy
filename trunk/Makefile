@@ -95,3 +95,15 @@ typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h
 
 clean:
 	rm -f nonameproxy $(objects)
+
+plugins: channelmanager.so console.so debug.so
+
+channelmanager.so:
+	make -C ./plugins/channelmanager/
+	
+console.so:
+	make -C ./plugins/console/
+	
+debug.so:
+	make -C ./plugins/debug/
+	

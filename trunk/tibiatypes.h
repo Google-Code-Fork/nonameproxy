@@ -630,6 +630,8 @@ class TItemOutfit : public TOutfit
                 virtual TOutfit::OutfitType getType () const;
                 virtual void put (NetworkMessage* msg) const;
                 virtual void show () const;
+                
+                uint16_t getItemId () const;
 
         private:
                 void get (NetworkMessage* msg, DatReader* dat);
@@ -650,6 +652,13 @@ class TCharOutfit : public TOutfit
                 virtual TOutfit::OutfitType getType () const;
                 virtual void put (NetworkMessage* msg) const;
                 virtual void show () const;
+
+                uint16_t getLookType () const;
+                uint8_t  getHead () const;
+                uint8_t  getBody () const;
+                uint8_t  getLegs () const;
+                uint8_t  getFeet () const;
+                uint8_t  getAddons () const;
 
         private:
                 void get (NetworkMessage* msg);

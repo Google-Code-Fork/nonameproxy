@@ -142,13 +142,13 @@ Thing::thing_t Creature::getType () const
 
 void Creature::show () const
 {
-        printf ("Creature {");
+        printf ("Creature {\n");
         printf ("\ttibiaid = %d", _tibiaid); printf ("\n");
         printf ("\tname = %s", _name.c_str ()); printf ("\n");
         printf ("\thp = %d", _hp); printf ("\n");
         printf ("\tdirection = %d", _direction); printf ("\n");
 
-        printf ("\toutfit {");
+        printf ("\toutfit {\n");
 	printf ("\t\tlooktype = %d", _outfit.looktype); printf ("\n");
 	printf ("\t\tlookhead = %d", _outfit.lookhead); printf ("\n");
 	printf ("\t\tlookbody = %d", _outfit.lookbody); printf ("\n");
@@ -156,12 +156,14 @@ void Creature::show () const
 	printf ("\t\tlookfeet = %d", _outfit.lookfeet); printf ("\n");
 	printf ("\t\tlookitem = %d", _outfit.lookitem); printf ("\n");
 	printf ("\t\taddons = %d", _outfit.addons); printf ("\n");
+        printf ("\t}\n");
 
         printf ("\tlightcolor = %d", _lightcolor); printf ("\n");
         printf ("\tlightradius = %d", _lightradius); printf ("\n");
         printf ("\tspeed = %d", _speed); printf ("\n");
         printf ("\tskull = %d", _skull); printf ("\n");
         printf ("\tshield = %d", _shield); printf ("\n");
+        printf ("}\n");
 }
 
 uint32_t Creature::getTibiaId () const
