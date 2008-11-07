@@ -41,7 +41,7 @@ void Item::setItemId (uint32_t itemid)
 XItem::XItem (uint32_t itemid, uint32_t xbyte)
 {
         _itemid = itemid;
-        _xbyte = _xbyte;
+        _xbyte = xbyte;
 }
 
 XItem::XItem (const XItem& clone)

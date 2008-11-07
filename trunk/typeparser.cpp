@@ -61,7 +61,6 @@ Creature TypeParser::toCreature (const TOldCreature& tcreature, MapState* map)
 Creature TypeParser::toCreature (const TCreatureTurn& tcreature, MapState* map)
 {
         const Creature& updated = map->getCreature (tcreature.getTibiaId ());
-        printf ("%p\n", &updated);
 
         return Creature (0,
                          tcreature.getTibiaId (),

@@ -294,6 +294,8 @@ void GRHMapUp::func (TibiaMessage* tm, Client* client)
         Pos& pos = client->gstate->map->getCurPos ();
         //printf ("Up: %d %d %d ", pos.x, pos.y, pos.z);
         pos.z --;
+        pos.x ++;
+        pos.y ++;
         //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
 
         if (((GRMMapUp*)tm)->hasMap ()) {
@@ -313,6 +315,8 @@ void GRHMapDown::func (TibiaMessage* tm, Client* client)
         Pos& pos = client->gstate->map->getCurPos ();
         //printf ("Down: %d %d %d ", pos.x, pos.y, pos.z);
         pos.z ++;
+        pos.x --;
+        pos.y --;
         //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
 
         if (((GRMMapUp*)tm)->hasMap ()) {

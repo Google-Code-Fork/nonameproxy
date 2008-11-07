@@ -79,70 +79,62 @@ bool Tile::insertThing (const Thing& thing, uint32_t stackpos, DatReader* dat)
                 /* cannot insert a creature, only add */
                 return false;
         }
+        Thing* add;
+        uint32_t itemid;
         if (thing.getType () == Thing::t_item) {
-                const Item& item = ((Item&)thing);
-                uint32_t itemId = item.getItemId ();
-                const ThingData& thingdata = dat->getItemData (itemId);
-                if (thingdata.isGround ()) {
-                        if (stackpos != 0) {
-                                return false;
-                        }
-                        if (_ground != NULL) {
-                                delete _ground;
-                        }
-                        _ground = new Item (item);
-                        return true;
-                } else {
-                        if (stackpos == 0) {
-                                return false;
-                        }
-                        ThingVector::iterator i = _things.begin ();
-                        uint32_t curpos;
-                        for (curpos = 1; curpos < stackpos; curpos ++) {
-                                i ++;
-                                if (i == _things.end ()) {
-                                        break;
-                                }
-                        }
-                        if (curpos != stackpos) {
-                                return false;
-                        }
-                        _things.insert (i, new Item (item));
-                        return true;
-                }       
+                itemid = ((Item&)thing).getItemId ();
+                add = new Item ((Item&)thing);
         } else if (thing.getType () == Thing::t_xitem) {
-                const XItem& xitem = ((XItem&)thing);
-                uint32_t xitemId = xitem.getItemId ();
-                const ThingData& thingdata = dat->getItemData (xitemId);
-                if (thingdata.isGround ()) {
-                        if (stackpos != 0) {
-                                return false;
-                        }
-                        if (_ground != NULL) {
-                                delete _ground;
-                        }
-                        _ground = new XItem (xitem);
-                        return true;
-                } else {
-                        if (stackpos == 0) {
-                                return false;
-                        }
-                        ThingVector::iterator i = _things.begin ();
-                        uint32_t curpos;
-                        for (curpos = 1; curpos < stackpos; curpos ++) {
-                                i ++;
-                                if (i == _things.end ()) {
-                                        break;
-                                }
-                        }
-                        if (curpos != stackpos) {
-                                return false;
-                        }
-                        _things.insert (i, new XItem (xitem));
-                        return true;
-                }       
+                itemid = ((XItem&)thing).getItemId ();
+                add = new XItem ((XItem&)thing);
+        } else {
+                printf ("insertThing error: this item has a funny type\n");
+                return false;
         }
-        printf ("insertThing error: this item has a funny type\n");
+        
+        if (dat->getItemData (itemid).isGround ()) {
+                if (stackpos != 0) {
+                        printf ("insertThing error: ground != 0\n");
+                        return false;
+                }
+                if (_ground != NULL) {
+                        delete _ground;
+                }
+                _ground = add;
+                return true;
+        } else {
+                if (stackpos == 0) {
+                        printf ("insertThing error: nonground == 0\n");
+                        return false;
+                }
+                /*uint32_t stackcount = _things.size ();
+                if (stackcount < stackpos) {
+                        printf ("%d %d\n", stackcount, stackpos);
+                        printf ("insertThing error: %d out of bounds\n", 
+                                stackpos);
+                        show ();
+                        return false;
+                }*/
+                ThingVector::iterator i = _things.begin ();
+                uint32_t curpos;
+                for (curpos = 1; curpos < stackpos; curpos ++) {
+                        if (i == _things.end ()) {
+                                break;
+                        }
+                        i ++;
+                }
+                if (curpos != stackpos) {
+                        printf ("insertThing error: ");
+                        printf ("curpos %d != stackpos %d \n",
+                                curpos, stackpos);
+                        show ();
+                        add->show ();
+                        *((uint32_t*)NULL) = 0;
+                        return false;
+                }
+                _things.insert (i, add);
+                return true;
+        }       
         return false;
 }
         
@@ -211,7 +203,9 @@ bool Tile::addThing (const Thing& thing, DatReader* dat, bool push/*= false*/)
                         Creature* creature = (Creature*)add;
                         uint32_t remove = creature->getRemoveId ();
                         if (remove != 0) {
+                                printf ("removing creature\n");
                                 _map->removeCreature (remove);
+                                creature->setRemoveId (0);
                         }
                         /* when a TOldCreature or a TCreatureTurn is converted
                          * into a Creature, a modified copy of the creature is
@@ -262,6 +256,7 @@ Thing& Tile::getThing (uint32_t stackpos)
         if (!(stackpos < getThingCount ())) {
                 printf ("getThing error: thing %d out of bounds\n", stackpos);
                 show ();
+                *((uint32_t*)NULL) = 0;
         }
         uint32_t i = stackpos;
         if (_ground) {
