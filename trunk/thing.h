@@ -74,7 +74,8 @@ struct Outfit_t
 class Creature : public Thing
 {
         public:
-                Creature (uint32_t tibiaid, 
+                Creature (uint32_t removeid,
+                          uint32_t tibiaid, 
                           const std::string& name,
                           uint32_t hp, 
                           turn_dir_t direction, 
@@ -94,6 +95,9 @@ class Creature : public Thing
                 bool isPlayer () const;
                 bool isMonster () const;
                 bool isNPC () const;
+
+                uint32_t                getRemoveId () const;
+                void                    setRemoveId (uint32_t removeid);
 
                 uint32_t                getItemId () const;
                 void                    setItemId (uint32_t itemid);
@@ -130,6 +134,7 @@ class Creature : public Thing
 
         private:
 
+                uint32_t        _removeid;
                 uint32_t        _tibiaid;
                 std::string     _name;
                 uint32_t        _hp;

@@ -63,27 +63,32 @@ class HRGameInit : public ReadHook
 
 class GRHSlotItem : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHMagicEffect : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHTextMsg : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHGlobalLight : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHCreatureLight : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 /************************************************************************
@@ -92,22 +97,26 @@ class GRHCreatureLight : public ReadHook
 
 class GRHSelfInfo : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHPlayerStats : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHPlayerSkills : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHPlayerIcons : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 /************************************************************************
@@ -116,46 +125,77 @@ class GRHPlayerIcons : public ReadHook
 
 class GRHMapInit : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHMapNorth : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHMapEast : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHMapSouth : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHMapWest : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHMapUp : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 class GRHMapDown : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 /************************************************************
  * Map Modification Messages
  ************************************************************/
 
+class GRHTileSet : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHTileAdd : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHTileUpdate : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHTileRemove : public ReadHook
+{
+        public: virtual void func (TibiaMessage* tm, Client* client);
+};
+
 class GRHCreatureMove : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
 };
 
 #endif

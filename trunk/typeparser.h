@@ -34,6 +34,10 @@ class TypeParser
                 XItem toXItem (const TXItem& txitem);
 
                 Creature toCreature (const TNewCreature& tcreature);
+                Creature toCreature (const TOldCreature& tcreature, 
+                                        MapState* map);
+                Creature toCreature (const TCreatureTurn& tcreature,
+                                        MapState* map);
 
                 /* note to convert old and creature turns we have to look them
                  * up in the mapstate */

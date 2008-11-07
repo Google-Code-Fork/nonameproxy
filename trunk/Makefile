@@ -91,7 +91,7 @@ thing.o: thing.cpp thing.h
 
 packethookmanager.o: packethookmanager.cpp packethookmanager.h packethook.h networkmessage.h
 
-typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h
+typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h thing.h
 
 clean:
 	rm -f nonameproxy $(objects)

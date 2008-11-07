@@ -83,7 +83,8 @@ void XItem::setXByte (uint32_t xbyte)
 /********************************************
  * Creature
  *******************************************/
-Creature::Creature (uint32_t tibiaid, 
+Creature::Creature (uint32_t removeid,
+                    uint32_t tibiaid, 
                     const std::string& name,
                     uint32_t hp, 
                     turn_dir_t direction, 
@@ -94,6 +95,7 @@ Creature::Creature (uint32_t tibiaid,
                     uint32_t skull, 
                     uint32_t shield)
 {
+        _removeid       = removeid;
         _tibiaid        = tibiaid;
         _name           = name;
         _hp             = hp;
@@ -108,6 +110,7 @@ Creature::Creature (uint32_t tibiaid,
         
 Creature::Creature (const Creature& clone)
 {
+        _removeid       = clone._removeid;
         _tibiaid        = clone._tibiaid;
         _name           = clone._name;
         _hp             = clone._hp;
@@ -143,6 +146,7 @@ Thing::thing_t Creature::getType () const
 void Creature::show () const
 {
         printf ("Creature {\n");
+        printf ("\tremoveid = %d\n", _removeid); printf ("\n");
         printf ("\ttibiaid = %d", _tibiaid); printf ("\n");
         printf ("\tname = %s", _name.c_str ()); printf ("\n");
         printf ("\thp = %d", _hp); printf ("\n");
@@ -164,6 +168,16 @@ void Creature::show () const
         printf ("\tskull = %d", _skull); printf ("\n");
         printf ("\tshield = %d", _shield); printf ("\n");
         printf ("}\n");
+}
+
+uint32_t Creature::getRemoveId () const
+{
+        return _removeid;
+}
+
+void Creature::setRemoveId (uint32_t removeid)
+{
+        _removeid = removeid;
 }
 
 uint32_t Creature::getTibiaId () const

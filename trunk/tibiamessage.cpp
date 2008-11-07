@@ -5902,7 +5902,6 @@ void GRMMapUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 
         uint32_t minz;
         uint32_t maxz;
-        printf ("%d\n", pos.z);
         if (pos.z == 8) {
                 //we have come from underground and have 6 & 7
                 minz = 0;
@@ -6099,8 +6098,8 @@ void GRMTileSet::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
 {
         _id = new TWord8 (msg);
         _pos = new TPos (msg);
-        //this is a bit annoying, if we get an item 0xFF01 we clear the tile
-        //else we read a whole tile description
+        /* this is a bit annoying, if we get an item 0xFF01 we clear the tile
+         * else we read a whole tile description */
         _map = new TMapDescription (*_pos, *_pos);
 
         TThingFactory tf (msg, dat);

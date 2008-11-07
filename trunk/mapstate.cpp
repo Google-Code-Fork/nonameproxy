@@ -58,7 +58,9 @@ void Tile::clear ()
 
         ThingVector::iterator i;
         for (i = _things.begin (); i != _things.end (); i ++) {
-                delete (*i);
+                if ((*i)->getType () != Thing::t_creature) {
+                        delete (*i);
+                }
         }
         _things.clear ();
 }
@@ -149,13 +151,12 @@ void Tile::show () const
         uint32_t stackpos = 0;
         printf ("tile has %d things\n", getThingCount ()); 
         if (_ground) {
-                printf ("%d: ", stackpos);
+                printf ("%d: (ground) ", stackpos);
                 _ground->show ();
                 stackpos ++;
         }
-        ThingVector::const_iterator i = _things.end ();
-        while (i != _things.begin ()) {
-                i --;
+        ThingVector::const_iterator i;
+        for (i = _things.begin (); i != _things.end (); ++ i) {
                 printf ("%d: ", stackpos);
                 stackpos ++;
                 (*i)->show ();
@@ -166,14 +167,11 @@ bool Tile::addThing (const Thing& thing, DatReader* dat, bool push/*= false*/)
 {
         Thing* add;
         if (thing.getType () == Thing::t_creature) {
-                const Creature creature = (Creature&)thing;
-                add = new Creature (creature);
+                add = new Creature ((Creature&)thing);
         } else if (thing.getType () == Thing::t_item) {
-                const Item& item = (Item&)thing;
-                add = new Item (item);
+                add = new Item ((Item&)thing);
         } else if (thing.getType () == Thing::t_xitem) {
-                const XItem& xitem = (XItem&)thing;
-                add = new XItem (xitem);
+                add = new XItem ((XItem&)thing);
         } else {
                 printf ("addThing error: this item has a funny type\n");
                 return false;
@@ -210,7 +208,20 @@ bool Tile::addThing (const Thing& thing, DatReader* dat, bool push/*= false*/)
                 _things.insert (i, add);
                 /* we only insert the creature on a success */
                 if (add->getType () == Thing::t_creature) {
-                        _map->addCreature ((Creature*)add);
+                        Creature* creature = (Creature*)add;
+                        uint32_t remove = creature->getRemoveId ();
+                        if (remove != 0) {
+                                _map->removeCreature (remove);
+                        }
+                        /* when a TOldCreature or a TCreatureTurn is converted
+                         * into a Creature, a modified copy of the creature is
+                         * made. Therefore we have to make sure we get rid of
+                         * the original creature */
+                        uint32_t tibiaid = creature->getTibiaId ();
+                        if (_map->isCreature (tibiaid)) {
+                                _map->removeCreature (tibiaid);
+                        }
+                        _map->addCreature (creature);
                 }
                 return true;
         }
@@ -238,29 +249,28 @@ bool Tile::removeThing (uint32_t stackpos)
         if (i == _things.end ()) {
                 return false;
         }
-        if ((*i)->getType () == Thing::t_creature) {
-                uint32_t tibiaId = ((Creature*)(*i))->getTibiaId ();
-                _map->removeCreature (tibiaId);
+        /* if a creature leaves the map we need to keep it for later */
+        if ((*i)->getType () != Thing::t_creature) {
+                delete (*i);
         }
-        delete (*i);
         _things.erase (i);
         return true;
 }
 
 Thing& Tile::getThing (uint32_t stackpos) 
 {
-        uint32_t i = stackpos;
-        if (_ground) {
-                if (stackpos == 0) {
-                        return *_ground;
-                } else {
-                        i --;
-                }
-        }
         if (!(stackpos < getThingCount ())) {
                 printf ("getThing error: thing %d out of bounds\n", stackpos);
                 show ();
         }
+        uint32_t i = stackpos;
+        if (_ground) {
+                if (stackpos == 0) {
+                        printf ("getThing error: ground is null\n");
+                        return *_ground;
+                }
+        }
+        i --;
         return *_things[i];
 }
 
@@ -314,6 +324,20 @@ Tile& MapState::getTile (const Pos& pos)
         return _map [pos.x % 18][pos.y % 14][pos.z % 8];
 }
 
+Tile& MapState::getIsoTile (uint32_t x, uint32_t y, uint32_t z)
+{
+        return _map [(x + (_curPos.z - z)) % 18]
+                    [(y + (_curPos.z - z)) % 14]
+                    [z % 8];
+}
+
+Tile& MapState::getIsoTile (const Pos& pos)
+{
+        return _map [(pos.x + (_curPos.z - pos.z)) % 18]
+                    [(pos.y + (_curPos.z - pos.z)) % 14]
+                    [pos.z % 8];
+}
+
 const Creature& MapState::getCreature (uint32_t tibiaId) const
 {
         CreatureMap::const_iterator i = _creatures.find (tibiaId);
@@ -332,19 +356,34 @@ const CreatureMap& MapState::getCreatures () const
 bool MapState::addCreature (Creature* creature)
 {
         uint32_t tibiaId = creature->getTibiaId ();
+        if (_creatures.count (tibiaId) != 0) {
+                printf ("addCreature error: creature already exists\n");
+                return false;
+        }
         _creatures.insert (std::pair<uint32_t, Creature*> (tibiaId, creature));
         return true;
 }
 
-bool MapState::removeCreature (uint32_t tibiaId)
+bool MapState::isCreature (uint32_t tibiaId) const
 {
-        if (_creatures.erase (tibiaId) == 0) {
-                printf ("removeCreature error: creature %d does not exist\n",
-                        tibiaId);
+        if (_creatures.count (tibiaId) == 0) {
                 return false;
         } else {
                 return true;
         }
+}
+
+bool MapState::removeCreature (uint32_t tibiaId)
+{
+        CreatureMap::iterator i = _creatures.find (tibiaId);
+        if (i == _creatures.end ()) {
+                printf ("removeCreature error: creature %d does not exist\n",
+                        tibiaId);
+                return false;
+        }
+        //delete (*i).second;
+        _creatures.erase (i);
+        return true;
 }
 
 void MapState::showCreatures () const
@@ -355,3 +394,28 @@ void MapState::showCreatures () const
         }
 }
 
+void MapState::showCreatureMap (uint32_t start, uint32_t end) const
+{
+        for (uint32_t z = start; z <= end; z ++) {
+                for (uint32_t y = 0; y != MAP_Y; y ++) {
+                        for (uint32_t x = 0; x != MAP_X; x ++) {
+                                const ThingVector& t = _map[x][y][z]._things;
+                                ThingVector::const_iterator i;
+                                uint32_t s = 0;
+                                for (i = t.begin (); i != t.end (); i ++) {
+                                        if ((*i)->getType () == Thing::t_creature) {
+                                                break;
+                                        }
+                                        s ++;
+                                }
+                                if (i != t.end ()) {
+                                        printf ("%d %d %d %d\n", x, y, z, s);
+                                        (*i)->show ();
+                                }
+                        }
+                }
+        }
+}
+                                        
+                                
+                                
