@@ -24,7 +24,8 @@ XItem TypeParser::toXItem (const TXItem& txitem)
 
 Creature TypeParser::toCreature (const TNewCreature& tcreature)
 {
-        return Creature (tcreature.getTibiaId (),
+        return Creature (tcreature.getRemoveId (),
+                         tcreature.getTibiaId (),
                          tcreature.getName (),
                          tcreature.getHp (),
                          toTurnDirection (tcreature.getDirection ()),
@@ -35,7 +36,45 @@ Creature TypeParser::toCreature (const TNewCreature& tcreature)
                          tcreature.getCreatureLight (). getRadius (),
                          tcreature.getSpeed (),
                          tcreature.getSkull (),
-                         tcreature.getShield());
+                         tcreature.getShield ());
+}
+
+Creature TypeParser::toCreature (const TOldCreature& tcreature, MapState* map)
+{
+        const Creature& updated = map->getCreature (tcreature.getTibiaId ());
+
+        return Creature (0,
+                         tcreature.getTibiaId (),
+                         updated.getName (),
+                         tcreature.getHp (),
+                         toTurnDirection (tcreature.getDirection ()),
+
+                         toOutfit (tcreature.getOutfit ()),
+
+                         tcreature.getCreatureLight (). getColor (),
+                         tcreature.getCreatureLight (). getRadius (),
+                         tcreature.getSpeed (),
+                         tcreature.getSkull (),
+                         tcreature.getShield ());
+}
+
+Creature TypeParser::toCreature (const TCreatureTurn& tcreature, MapState* map)
+{
+        const Creature& updated = map->getCreature (tcreature.getTibiaId ());
+        printf ("%p\n", &updated);
+
+        return Creature (0,
+                         tcreature.getTibiaId (),
+                         updated.getName (),
+                         updated.getHp (),
+                         toTurnDirection (tcreature.getDir ()),
+
+                         updated.getOutfit (),
+                         updated.getLightColor (),
+                         updated.getLightRadius (),
+                         updated.getSpeed (),
+                         updated.getSkull (),
+                         updated.getShield ());
 }
 
 Outfit_t TypeParser::toOutfit (const TOutfit& toutfit)
@@ -91,7 +130,8 @@ turn_dir_t TypeParser::toTurnDirection (uint32_t dir)
                 case 0x02: return TURN_DIR_SOUTH;
                 case 0x03: return TURN_DIR_WEST;
         }
-        printf ("toTurnDirection error: invalid direction\n");
+        printf ("toTurnDirection error: invalid direction %d\n", dir);
+        printf (NULL);
         return TURN_DIR_UNUSED;
 }
 
@@ -144,7 +184,7 @@ bool TypeParser::i_parseFloor (GameState* gs,
         for (uint32_t x = sx; x <= ex; x ++) {
                 for (uint32_t y = sy; y <= ey; y ++) {
                         if (skip == 0) {
-                                Tile& t = gs->map->getTile (x, y, z);
+                                Tile& t = gs->map->getIsoTile (x, y, z);
                                 if (!i_parseTile (gs, map, t, skip, dat)) {
                                         return false;
                                 }
@@ -188,15 +228,17 @@ bool TypeParser::i_parseThing (GameState* gs,
                                Tile& t,
                                DatReader* dat)
 {
+        MapState* map = gs->map;
         TThing::ThingType type = tthing.getType ();
         if (type == TThing::oldcreature)
         {
-                return true;
+                Creature add = toCreature ((TOldCreature&)tthing, map);
+                return t.addThing (add, dat);
         } else if (type == TThing::newcreature) {
                 return t.addThing (toCreature ((TNewCreature&)tthing), dat);
         } else if (type == TThing::creatureturn) {
-                /* TODO add creature turn code */
-                return true;
+                Creature add = toCreature ((TCreatureTurn&)tthing, map);
+                return t.addThing (add, dat);
         } else if (type == TThing::item) {
                 return t.addThing (toItem ((TItem&)tthing), dat);
         } else if (type == TThing::xitem) {

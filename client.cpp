@@ -312,6 +312,14 @@ void Client::addProtocolHooks ()
         recvProtocol->addReadHook (GRM_MAP_UP_ID, (ReadHook*)new GRHMapUp);
         recvProtocol->addReadHook (GRM_MAP_DOWN_ID, (ReadHook*)new GRHMapDown);
 
+        recvProtocol->addReadHook (GRM_TILE_SET_ID,
+                                (ReadHook*)new GRHTileSet);
+        recvProtocol->addReadHook (GRM_TILE_ADD_ID,
+                                (ReadHook*)new GRHTileAdd);
+        recvProtocol->addReadHook (GRM_TILE_UPDATE_ID,
+                                (ReadHook*)new GRHTileUpdate);
+        recvProtocol->addReadHook (GRM_TILE_REMOVE_ID,
+                                (ReadHook*)new GRHTileRemove);
         recvProtocol->addReadHook (GRM_CREATURE_MOVE_ID, 
                                 (ReadHook*)new GRHCreatureMove);
 }

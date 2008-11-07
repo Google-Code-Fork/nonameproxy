@@ -95,15 +95,25 @@ class MapState
                 Tile& getTile (uint32_t x, uint32_t y, uint32_t z);
                 Tile& getTile (const Pos& pos);
 
+                /* mapdescriptions are sent such that each floor is at a
+                 * (x + 1, y + 1) offset. these functions automatically
+                 * compensate for that offset */
+                Tile& getIsoTile (uint32_t x, uint32_t y, uint32_t z);
+                Tile& getIsoTile (const Pos& pos);
+
                 /* creature functions */
                 const Creature& getCreature (uint32_t tibiaId) const;
                 const CreatureMap& getCreatures () const;
 
+                bool isCreature (uint32_t tibiaId) const;
+
                 void showCreatures () const;
+                void showCreatureMap (uint32_t start, uint32_t end) const;
 
         protected:
                 bool addCreature (Creature* creature);
-                /* note removeCreature will NOT delete the creature */
+                /* note removeCreature will delete the creature so remove
+                 * it from the map first */
                 bool removeCreature (uint32_t tibiaId);
 
                 friend class Tile;
