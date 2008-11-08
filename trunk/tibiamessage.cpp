@@ -5913,7 +5913,7 @@ void GRMMapUp::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 _hasmap = true;
         } else if (pos.z > 8){
                 //we are under ground and need the floor above us
-                minz = pos.z - 2;
+                minz = pos.z - 3;
                 maxz = minz;
 
                 TPos start (pos.x - 8, pos.y - 6, minz);
@@ -6022,7 +6022,7 @@ void GRMMapDown::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 _hasmap = true;
         } else if (pos.z > 7){
                 //we are under ground and need the below above us
-                minz = MIN (pos.z + 2, MAX_FLOOR);
+                minz = MIN (pos.z + 3, MAX_FLOOR);
                 maxz = minz;
 
                 TPos start (pos.x - 8, pos.y - 6, minz);

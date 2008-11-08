@@ -12,6 +12,8 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
 		pos.o thing.o packethookmanager.o typeparser.o
 
+sharedobjects = channelmanager.so console.so debug.so info.so
+
 all: nonameproxy
 
 nonameproxy: $(objects)
@@ -96,7 +98,7 @@ typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h thing.h
 clean:
 	rm -f nonameproxy $(objects)
 
-plugins: channelmanager.so console.so debug.so
+plugins: $(sharedobjects)
 
 channelmanager.so:
 	make -C ./plugins/channelmanager/
@@ -106,4 +108,8 @@ console.so:
 	
 debug.so:
 	make -C ./plugins/debug/
+	
+
+info.so:
+	make -C ./plugins/info/
 	

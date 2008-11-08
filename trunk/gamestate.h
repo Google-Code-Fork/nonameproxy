@@ -25,7 +25,6 @@
 #include "charstate.h"
 #include "mapstate.h"
 //knock these off as the states are written
-class CreatureListState;
 class MessageState;
 class InvetoryState;
 
@@ -41,7 +40,6 @@ class GameState
                 AccountState*           account;
                 CharState*              character;
                 MapState*               map;
-                CreatureListState*      creaturelist;
                 MessageState*           message;
                 InvetoryState*          inventory;
                 

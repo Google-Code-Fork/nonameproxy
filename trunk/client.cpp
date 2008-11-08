@@ -322,6 +322,11 @@ void Client::addProtocolHooks ()
                                 (ReadHook*)new GRHTileRemove);
         recvProtocol->addReadHook (GRM_CREATURE_MOVE_ID, 
                                 (ReadHook*)new GRHCreatureMove);
+
+        recvProtocol->addReadHook (GRM_PLAYER_STATS_ID,
+                                (ReadHook*)new GRHPlayerStats);
+        recvProtocol->addReadHook (GRM_PLAYER_SKILLS_ID,
+                                (ReadHook*)new GRHPlayerSkills);
 }
 
 /************************************************************************
