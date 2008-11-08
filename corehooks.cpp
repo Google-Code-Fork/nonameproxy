@@ -194,6 +194,7 @@ void GRHPlayerSkills::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapInit::func (TibiaMessage* tm, Client* client)
 {
+        printf ("map init\n");
         GRMMapInit* mi = (GRMMapInit*)tm;
 
         Pos& pos = client->gstate->map->getCurPos (); 
@@ -211,6 +212,7 @@ void GRHMapInit::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 {
+        printf ("north\n");
         GRMMapNorth* mn = (GRMMapNorth*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -231,6 +233,7 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapEast::func (TibiaMessage* tm, Client* client)
 {
+        printf ("east\n");
         GRMMapEast* me = (GRMMapEast*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -251,6 +254,7 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 {
+        printf ("south\n");
         GRMMapSouth* ms = (GRMMapSouth*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -271,6 +275,7 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapWest::func (TibiaMessage* tm, Client* client)
 {
+        printf ("north\n");
         GRMMapWest* mw = (GRMMapWest*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -291,20 +296,16 @@ void GRHMapWest::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapUp::func (TibiaMessage* tm, Client* client)
 {
+        printf ("up\n");
         Pos& pos = client->gstate->map->getCurPos ();
-        //printf ("Up: %d %d %d ", pos.x, pos.y, pos.z);
+        if (((GRMMapUp*)tm)->hasMap ()) {
+                TMapDescription& map = ((GRMMapUp*)tm)->getMap ();
+                TypeParser tp;
+                tp.parseMapDescription (client->gstate, map, client->dat);
+        }
         pos.z --;
         pos.x ++;
         pos.y ++;
-        //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
-
-        if (((GRMMapUp*)tm)->hasMap ()) {
-                TMapDescription& map = ((GRMMapUp*)tm)->getMap ();
-                //printf ("map from: "); map.getStart ().show (); printf ("\n");
-                //printf ("map to:   "); map.getEnd ().show (); printf ("\n");
-        } else {
-                //printf ("no map\n");
-        }
 }
 
 /**********************************************************************
@@ -312,20 +313,16 @@ void GRHMapUp::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapDown::func (TibiaMessage* tm, Client* client)
 {
+        printf ("down\n");
         Pos& pos = client->gstate->map->getCurPos ();
-        //printf ("Down: %d %d %d ", pos.x, pos.y, pos.z);
+        if (((GRMMapUp*)tm)->hasMap ()) {
+                TMapDescription& map = ((GRMMapDown*)tm)->getMap ();
+                TypeParser tp;
+                tp.parseMapDescription (client->gstate, map, client->dat);
+        }
         pos.z ++;
         pos.x --;
         pos.y --;
-        //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
-
-        if (((GRMMapUp*)tm)->hasMap ()) {
-                TMapDescription& map = ((GRMMapDown*)tm)->getMap ();
-                //printf ("map from: "); map.getStart ().show (); printf ("\n");
-                //printf ("map to:   "); map.getEnd ().show (); printf ("\n");
-        } else {
-                //printf ("no map\n");
-        }
 }
 
 /**********************************************************************
@@ -333,6 +330,7 @@ void GRHMapDown::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHTileSet::func (TibiaMessage* tm, Client* client)
 {
+        printf ("set\n");
         GRMTileSet* ts = (GRMTileSet*)tm;
 
         //ts->show ();
@@ -428,8 +426,6 @@ void GRHTileUpdate::func (TibiaMessage* tm, Client* client)
                         return;
                 }
                 Creature& creature = (Creature&)thing;
-                printf ("turns not yet implemented\n");
-                return;
                 if (creature.getTibiaId () != turn.getTibiaId ()) {
                         printf ("GRHTileUpdate error: ");
                         printf ("creature ids do not match\n");
@@ -520,6 +516,7 @@ void GRHCreatureMove::func (TibiaMessage* tm, Client* client)
         if (thing.getType () != Thing::t_creature) {
                 printf ("GRHCreatureMove error: no creature at %d %d %d %d\n",
                         from.x (), from.y (), from.z (), stack);
+                *((uint32_t*)NULL) = 0;
                 return;
         }
         Creature& creature = (Creature&)thing;

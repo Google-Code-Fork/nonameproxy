@@ -175,6 +175,7 @@ bool TypeParser::i_parseFloor (GameState* gs,
                                uint32_t& skip,
                                DatReader* dat)
 {
+        printf ("parsing floor %d\n", z);
         uint32_t sx = map.getStart ().x ();
         uint32_t ex = map.getEnd ().x ();
         uint32_t sy = map.getStart ().y ();
