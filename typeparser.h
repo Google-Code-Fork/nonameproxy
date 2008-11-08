@@ -28,6 +28,8 @@ class TypeParser
                 direction_t toDirection (uint32_t dir);
                 turn_dir_t toTurnDirection (uint32_t dir);
 
+                slot_t toSlot (uint32_t slot);
+
                 /* due to the fact that these classes are derived we need to
                  * know what were converting, before we make the conversion */
                 Item toItem (const TItem& titem);

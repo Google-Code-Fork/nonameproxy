@@ -25,6 +25,7 @@ GameState::GameState ()
         account = new AccountState;
         character = new CharState;
         map = new MapState;
+        inventory = new InventoryState;
 }
 
 GameState::~GameState ()
@@ -32,5 +33,6 @@ GameState::~GameState ()
         delete account;
         delete character;
         delete map;
+        delete inventory;
 }
 

@@ -7057,7 +7057,7 @@ GRMContainerAdd::GRMContainerAdd (NetworkMessage* msg,
 
 GRMContainerAdd::GRMContainerAdd (uint8_t cid, const TThing& item)
 {
-        _id = new TWord8 ((uint8_t)GRM_CONT_ADD_ID);
+        _id = new TWord8 ((uint8_t)GRM_CONTAINER_ADD_ID);
         _cid = new TWord8 (cid);
 
         TThingFactory tf;
@@ -7134,7 +7134,7 @@ GRMContainerUpdate::GRMContainerUpdate (NetworkMessage* msg,
 GRMContainerUpdate::GRMContainerUpdate (uint8_t cid, uint8_t slot,
                                         const TThing& item)
 {
-        _id = new TWord8 ((uint8_t)GRM_CONT_UPDATE_ID);
+        _id = new TWord8 ((uint8_t)GRM_CONTAINER_UPDATE_ID);
         _cid = new TWord8 (cid);
         _slot = new TWord8 (slot);
 
@@ -7222,7 +7222,7 @@ GRMContainerRemove::GRMContainerRemove (NetworkMessage* msg,
 
 GRMContainerRemove::GRMContainerRemove (uint8_t cid, uint8_t slot)
 {
-        _id = new TWord8 ((uint8_t)GRM_CONT_REMOVE_ID);
+        _id = new TWord8 ((uint8_t)GRM_CONTAINER_REMOVE_ID);
         _cid = new TWord8 (cid);
         _slot = new TWord8 (slot);
 }

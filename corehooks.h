@@ -61,12 +61,6 @@ class HRGameInit : public ReadHook
  * Game Recv 
  **********************************************************************/
 
-class GRHSlotItem : public ReadHook
-{
-        public:
-                virtual void func (TibiaMessage* tm, Client* client);
-};
-
 class GRHMagicEffect : public ReadHook
 {
         public:
@@ -198,5 +192,50 @@ class GRHCreatureMove : public ReadHook
                 virtual void func (TibiaMessage* tm, Client* client);
 };
 
+/**************************************************************
+ * Inventory Messages
+ **************************************************************/
+
+class GRHContainerOpen : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHContainerClose : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHContainerAdd : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHContainerUpdate : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHContainerRemove : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHSlotItem : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
+
+class GRHSlotClear : public ReadHook
+{
+        public:
+                virtual void func (TibiaMessage* tm, Client* client);
+};
 #endif
 

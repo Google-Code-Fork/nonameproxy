@@ -149,9 +149,9 @@ enum gr_message_id_t
 
         GRM_CONTAINER_OPEN_ID           = 0x6E,
         GRM_CONTAINER_CLOSE_ID          = 0x6F,
-        GRM_CONT_ADD_ID                 = 0x70,
-        GRM_CONT_UPDATE_ID              = 0x71,
-        GRM_CONT_REMOVE_ID              = 0x72,
+        GRM_CONTAINER_ADD_ID            = 0x70,
+        GRM_CONTAINER_UPDATE_ID         = 0x71,
+        GRM_CONTAINER_REMOVE_ID         = 0x72,
 
         GRM_SLOT_ITEM_ID                = 0x78,
         GRM_SLOT_CLEAR_ID               = 0x79,
@@ -184,6 +184,7 @@ enum gr_message_id_t
         GRM_PLAYER_STATS_ID             = 0xA0,
         GRM_PLAYER_SKILLS_ID            = 0xA1,
         GRM_PLAYER_ICONS_ID             = 0xA2,
+
         GRM_PLAYER_CANCEL_ATTACK_ID     = 0xA3,
         GRM_PLAYER_CANCEL_WALK_ID       = 0xB5,
 
@@ -246,18 +247,18 @@ enum speak_id_t
  ******************************************************************/
 enum icons_t
 {
-	ICON_POISON     = 0x0001,
-	ICON_BURN       = 0x0002,
-	ICON_ENERGY     = 0x0004,
-	ICON_DRUNK      = 0x0008,
-	ICON_MANASHIELD = 0x0010,
-	ICON_PARALYZE   = 0x0020,
-	ICON_HASTE      = 0x0040,
-	ICON_SWORDS     = 0x0080,
-	ICON_DROWNING   = 0x0100,
-	ICON_FREEZING   = 0x0200,
-	ICON_DAZZLED    = 0x0400,
-	ICON_CURSED     = 0x0800,
+        ICON_POISON     = 0x0001,
+        ICON_BURN       = 0x0002,
+        ICON_ENERGY     = 0x0004,
+        ICON_DRUNK      = 0x0008,
+        ICON_MANASHIELD = 0x0010,
+        ICON_PARALYZE   = 0x0020,
+        ICON_HASTE      = 0x0040,
+        ICON_SWORDS     = 0x0080,
+        ICON_DROWNING   = 0x0100,
+        ICON_FREEZING   = 0x0200,
+        ICON_DAZZLED    = 0x0400,
+        ICON_CURSED     = 0x0800,
 };
 
 /******************************************************************
@@ -284,6 +285,26 @@ enum direction_t
         DIRECTION_SW    = 0x06,
         DIRECTION_SOUTH = 0x07, 
         DIRECTION_SE    = 0x08,
+};
+
+/*****************************************************************
+ * Slot ids
+ *****************************************************************/
+enum slot_t {
+        SLOT_NONE = -1,
+
+        SLOT_FIRST = 1,
+        SLOT_HEAD = SLOT_FIRST,
+        SLOT_NECKLACE = 2,
+        SLOT_BACKPACK = 3,
+        SLOT_ARMOR = 4,
+        SLOT_RIGHT = 5,
+        SLOT_LEFT = 6,
+        SLOT_LEGS = 7,
+        SLOT_FEET = 8,
+        SLOT_RING = 9,
+        SLOT_AMMO = 10,
+        SLOT_LAST = SLOT_AMMO + 1,
 };
 
 #endif

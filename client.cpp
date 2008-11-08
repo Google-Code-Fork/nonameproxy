@@ -327,6 +327,22 @@ void Client::addProtocolHooks ()
                                 (ReadHook*)new GRHPlayerStats);
         recvProtocol->addReadHook (GRM_PLAYER_SKILLS_ID,
                                 (ReadHook*)new GRHPlayerSkills);
+
+        recvProtocol->addReadHook (GRM_CONTAINER_OPEN_ID,
+                                (ReadHook*)new GRHContainerOpen);
+        recvProtocol->addReadHook (GRM_CONTAINER_CLOSE_ID,
+                                (ReadHook*)new GRHContainerClose);
+        recvProtocol->addReadHook (GRM_CONTAINER_ADD_ID,
+                                (ReadHook*)new GRHContainerAdd);
+        recvProtocol->addReadHook (GRM_CONTAINER_UPDATE_ID,
+                                (ReadHook*)new GRHContainerUpdate);
+        recvProtocol->addReadHook (GRM_CONTAINER_REMOVE_ID,
+                                (ReadHook*)new GRHContainerRemove);
+
+        recvProtocol->addReadHook (GRM_SLOT_ITEM_ID, 
+                                (ReadHook*)new GRHSlotItem);
+        recvProtocol->addReadHook (GRM_SLOT_CLEAR_ID, 
+                                (ReadHook*)new GRHSlotClear);
 }
 
 /************************************************************************

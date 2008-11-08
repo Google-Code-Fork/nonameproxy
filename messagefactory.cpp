@@ -388,11 +388,11 @@ TibiaMessage* GRMessageFactory::getMessage ()
                 return (new GRMContainerOpen (_msg, _gs, _dat));
         } else if (id == GRM_CONTAINER_CLOSE_ID) {
                 return (new GRMContainerClose (_msg, _gs, _dat));
-        } else if (id == GRM_CONT_ADD_ID) {
+        } else if (id == GRM_CONTAINER_ADD_ID) {
                 return (new GRMContainerAdd (_msg, _gs, _dat));
-        } else if (id == GRM_CONT_UPDATE_ID) {
+        } else if (id == GRM_CONTAINER_UPDATE_ID) {
                 return (new GRMContainerUpdate (_msg, _gs, _dat));
-        } else if (id == GRM_CONT_REMOVE_ID) {
+        } else if (id == GRM_CONTAINER_REMOVE_ID) {
                 return (new GRMContainerRemove (_msg, _gs, _dat));
         } else if (id == GRM_OPEN_SELF_TRADE_ID) {
                 return (new GRMOpenSelfTrade (_msg, _gs, _dat));
