@@ -194,7 +194,6 @@ void GRHPlayerSkills::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapInit::func (TibiaMessage* tm, Client* client)
 {
-        printf ("map init\n");
         GRMMapInit* mi = (GRMMapInit*)tm;
 
         Pos& pos = client->gstate->map->getCurPos (); 
@@ -212,7 +211,6 @@ void GRHMapInit::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapNorth::func (TibiaMessage* tm, Client* client)
 {
-        printf ("north\n");
         GRMMapNorth* mn = (GRMMapNorth*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -233,7 +231,6 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapEast::func (TibiaMessage* tm, Client* client)
 {
-        printf ("east\n");
         GRMMapEast* me = (GRMMapEast*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -254,7 +251,6 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapSouth::func (TibiaMessage* tm, Client* client)
 {
-        printf ("south\n");
         GRMMapSouth* ms = (GRMMapSouth*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -275,7 +271,6 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapWest::func (TibiaMessage* tm, Client* client)
 {
-        printf ("north\n");
         GRMMapWest* mw = (GRMMapWest*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
@@ -296,7 +291,6 @@ void GRHMapWest::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapUp::func (TibiaMessage* tm, Client* client)
 {
-        printf ("up\n");
         Pos& pos = client->gstate->map->getCurPos ();
         if (((GRMMapUp*)tm)->hasMap ()) {
                 TMapDescription& map = ((GRMMapUp*)tm)->getMap ();
@@ -313,7 +307,6 @@ void GRHMapUp::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHMapDown::func (TibiaMessage* tm, Client* client)
 {
-        printf ("down\n");
         Pos& pos = client->gstate->map->getCurPos ();
         if (((GRMMapUp*)tm)->hasMap ()) {
                 TMapDescription& map = ((GRMMapDown*)tm)->getMap ();
@@ -330,7 +323,6 @@ void GRHMapDown::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHTileSet::func (TibiaMessage* tm, Client* client)
 {
-        printf ("set\n");
         GRMTileSet* ts = (GRMTileSet*)tm;
 
         //ts->show ();
