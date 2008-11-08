@@ -24,9 +24,9 @@
 #include "accountstate.h"
 #include "charstate.h"
 #include "mapstate.h"
+#include "inventorystate.h"
 //knock these off as the states are written
 class MessageState;
-class InvetoryState;
 
 //Gamestate simply manages all the smaller states
 //note a ptr is for states if they are universal, such as login state
@@ -41,7 +41,7 @@ class GameState
                 CharState*              character;
                 MapState*               map;
                 MessageState*           message;
-                InvetoryState*          inventory;
+                InventoryState*         inventory;
                 
         private:
 };

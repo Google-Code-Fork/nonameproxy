@@ -59,8 +59,6 @@ class Tile
 
                 Thing& getThing (uint32_t stackpos);
                 const Thing& getThing (uint32_t stackpos) const;
-                const Creature& getTopCreature () const;
-                const Item& getGround () const;
 
         protected:
                 /* c ++ sucks, therefore i cant initialize an array of tiles

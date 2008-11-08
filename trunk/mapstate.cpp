@@ -203,7 +203,6 @@ bool Tile::addThing (const Thing& thing, DatReader* dat, bool push/*= false*/)
                         Creature* creature = (Creature*)add;
                         uint32_t remove = creature->getRemoveId ();
                         if (remove != 0) {
-                                printf ("removing creature\n");
                                 _map->removeCreature (remove);
                                 creature->setRemoveId (0);
                         }

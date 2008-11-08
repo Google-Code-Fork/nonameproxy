@@ -134,6 +134,25 @@ turn_dir_t TypeParser::toTurnDirection (uint32_t dir)
         return TURN_DIR_UNUSED;
 }
 
+slot_t TypeParser::toSlot (uint32_t slot)
+{
+        switch (slot)
+        {
+                case 0x01: return SLOT_HEAD;
+                case 0x02: return SLOT_NECKLACE;
+                case 0x03: return SLOT_BACKPACK;
+                case 0x04: return SLOT_ARMOR;
+                case 0x05: return SLOT_RIGHT;
+                case 0x06: return SLOT_LEFT;
+                case 0x07: return SLOT_LEGS;
+                case 0x08: return SLOT_FEET;
+                case 0x09: return SLOT_RING;
+                case 0x0A: return SLOT_AMMO;
+        }
+        printf ("toSlot error: invalid slot id %d\n", slot);
+        return SLOT_NONE;
+}
+
 /**************************************************
  * Map Parsing Functions
  **************************************************/

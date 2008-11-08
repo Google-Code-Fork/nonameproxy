@@ -100,13 +100,6 @@ void GRHSelfInfo::func (TibiaMessage* tm, Client* client)
 }
 
 /**********************************************************************
- * GRHSlotItem 
- **********************************************************************/
-void GRHSlotItem::func (TibiaMessage* tm, Client* client)
-{
-}
-
-/**********************************************************************
  * GRHMagicEffect 
  **********************************************************************/
 void GRHMagicEffect::func (TibiaMessage* tm, Client* client)
@@ -214,13 +207,7 @@ void GRHMapNorth::func (TibiaMessage* tm, Client* client)
         GRMMapNorth* mn = (GRMMapNorth*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
-        //printf ("North: %d %d %d ", pos.x, pos.y, pos.z);
         pos.y --;
-        //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
-
-        TMapDescription& map = ((GRMMapNorth*)tm)->getMap ();
-        //printf ("map from: "); map.getStart ().show (); printf ("\n");
-        //printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 
         TypeParser tp;
         tp.parseMapDescription (client->gstate, mn->getMap (), client->dat);
@@ -234,13 +221,7 @@ void GRHMapEast::func (TibiaMessage* tm, Client* client)
         GRMMapEast* me = (GRMMapEast*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
-        //printf ("East: %d %d %d ", pos.x, pos.y, pos.z);
         pos.x ++;
-        //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
-
-        TMapDescription& map = ((GRMMapEast*)tm)->getMap ();
-        //printf ("map from: "); map.getStart ().show (); printf ("\n");
-        //printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 
         TypeParser tp;
         tp.parseMapDescription (client->gstate, me->getMap (), client->dat);
@@ -254,13 +235,7 @@ void GRHMapSouth::func (TibiaMessage* tm, Client* client)
         GRMMapSouth* ms = (GRMMapSouth*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
-        //printf ("South: %d %d %d ", pos.x, pos.y, pos.z);
         pos.y ++;
-        //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
-
-        TMapDescription& map = ((GRMMapSouth*)tm)->getMap ();
-        //printf ("map from: "); map.getStart ().show (); printf ("\n");
-        //printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 
         TypeParser tp;
         tp.parseMapDescription (client->gstate, ms->getMap (), client->dat);
@@ -274,13 +249,7 @@ void GRHMapWest::func (TibiaMessage* tm, Client* client)
         GRMMapWest* mw = (GRMMapWest*)tm;
 
         Pos& pos = client->gstate->map->getCurPos ();
-        //printf ("West: %d %d %d ", pos.x, pos.y, pos.z);
         pos.x --;
-        //printf ("to %d %d %d\n", pos.x, pos.y, pos.z);
-
-        TMapDescription& map = ((GRMMapWest*)tm)->getMap ();
-        //printf ("map from: "); map.getStart ().show (); printf ("\n");
-        //printf ("map to:   "); map.getEnd ().show (); printf ("\n");
 
         TypeParser tp;
         tp.parseMapDescription (client->gstate, mw->getMap (), client->dat);
@@ -529,5 +498,170 @@ void GRHCreatureMove::func (TibiaMessage* tm, Client* client)
 
         fromTile.removeThing (stack);
         toTile.addThing (creature, client->dat);
+}
+
+/**********************************************************************
+ * GRHContainerOpen
+ **********************************************************************/
+void GRHContainerOpen::func (TibiaMessage* tm, Client* client)
+{
+        GRMContainerOpen* co = (GRMContainerOpen*)tm;
+        InventoryState* inventory = client->gstate->inventory;
+
+        TContainer& tc = co->getContainer ();
+
+        Container&  c  = inventory->getContainer (co->getCid ());
+
+        /* if the container is already open we must first close it */
+        if (c.isOpen ()) {
+                c.close ();
+        }
+        
+        const TThing& tthing = tc.getItem ();
+        uint32_t itemid;
+        if (tthing.getType () == TThing::item) {
+                itemid = ((TItem&)tthing).getItemId ();
+        } else if (tthing.getType () == TThing::xitem) {
+                itemid = ((TXItem&)tthing).getItemId ();
+        } else {
+                printf ("GRHContainerOpen error: funny type\n");
+                return;
+        }
+
+        c.open (tc.getCapacity (), itemid, tc.getHasParent (), tc.getName ());
+
+        TypeParser tp;
+        for (tc.begin (); !tc.isEnd (); tc.next ()) {
+                const TThing& add = tc.getThing ();
+                if (add.getType () == TThing::item) {
+                        c.addBackThing (tp.toItem ((TItem&)add));
+                } else if (add.getType () == TThing::xitem) {
+                        c.addBackThing (tp.toXItem ((TXItem&)add));
+                } else {
+                        printf ("GRHContainerOpen error: funny add type\n");
+                }
+        }
+}
+
+/**********************************************************************
+ * GRHContainerClose 
+ **********************************************************************/
+
+void GRHContainerClose::func (TibiaMessage* tm, Client* client)
+{
+        GRMContainerClose* cc = (GRMContainerClose*)tm;
+        InventoryState* inventory = client->gstate->inventory;
+
+        Container& c  = inventory->getContainer (cc->getCid ());
+
+        c.close ();
+}
+
+/**********************************************************************
+ * GRHContainerAdd 
+ **********************************************************************/
+
+void GRHContainerAdd::func (TibiaMessage* tm, Client* client)
+{
+        GRMContainerAdd* ca = (GRMContainerAdd*)tm;
+        InventoryState* inventory = client->gstate->inventory;
+
+        Container& c = inventory->getContainer (ca->getCid ());
+
+        TypeParser tp;
+        const TThing& add = ca->getItem ();
+        if (add.getType () == TThing::item) {
+                c.addThing (tp.toItem ((TItem&)add));
+        } else if (add.getType () == TThing::xitem) {
+                c.addThing (tp.toXItem ((TXItem&)add));
+        } else {
+                printf ("GRHContainerAdd error: funny add type\n");
+        }
+}
+
+/**********************************************************************
+ * GRHContainerUpdate 
+ **********************************************************************/
+
+void GRHContainerUpdate::func (TibiaMessage* tm, Client* client)
+{
+        GRMContainerUpdate* cu = (GRMContainerUpdate*)tm;
+        InventoryState* inventory = client->gstate->inventory;
+
+        Container& c = inventory->getContainer (cu->getCid ());
+
+        uint32_t index = cu->getSlot ();
+
+        if (!c.removeThing (index)) {
+                printf ("GRHContainerUpdate error: remove failed\n");
+                return;
+        }
+
+        TypeParser tp;
+        const TThing& add = cu->getItem ();
+        if (add.getType () == TThing::item) {
+                c.insertThing (tp.toItem ((TItem&)add), index);
+        } else if (add.getType () == TThing::xitem) {
+                c.insertThing (tp.toXItem ((TXItem&)add), index);
+        } else {
+                printf ("GRHContainerUpdate error: funny add type\n");
+        }
+}
+
+/**********************************************************************
+ * GRHContainerRemove 
+ **********************************************************************/
+
+void GRHContainerRemove::func (TibiaMessage* tm, Client* client)
+{
+        GRMContainerRemove* cr = (GRMContainerRemove*)tm;
+        InventoryState* inventory = client->gstate->inventory;
+
+        Container& c = inventory->getContainer (cr->getCid ());
+
+        uint32_t index = cr->getSlot ();
+
+        if (!c.removeThing (index)) {
+                printf ("GRHContainerRemove error: remove failed\n");
+        }
+}
+
+/**********************************************************************
+ * GRHSlotItem 
+ **********************************************************************/
+
+void GRHSlotItem::func (TibiaMessage* tm, Client* client)
+{
+        GRMSlotItem* si = (GRMSlotItem*)tm;
+        InventoryState* inventory = client->gstate->inventory;
+
+        TypeParser tp;
+        slot_t slot = tp.toSlot (si->getSlot ());
+
+        const TThing& add = si->getItem ();
+        if (add.getType () == TThing::item) {
+                inventory->setSlot (tp.toItem ((TItem&)add), slot);
+        } else if (add.getType () == TThing::xitem) {
+                inventory->setSlot (tp.toXItem ((TXItem&)add), slot);
+        } else {
+                printf ("GRHSlotItem error: funny add type\n");
+        }
+}
+
+/**********************************************************************
+ * GRHSlotClear 
+ **********************************************************************/
+
+void GRHSlotClear::func (TibiaMessage* tm, Client* client)
+{
+        GRMSlotClear* sc = (GRMSlotClear*)tm;
+        InventoryState* inventory = client->gstate->inventory;
+
+        TypeParser tp;
+        slot_t slot = tp.toSlot (sc->getSlot ());
+
+        if (!inventory->emptySlot (slot)) {
+                printf ("GRHSlotClear error: remove failed\n");
+        }
 }
 

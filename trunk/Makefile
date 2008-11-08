@@ -10,7 +10,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
 		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
-		pos.o thing.o packethookmanager.o typeparser.o
+		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o
 
 sharedobjects = channelmanager.so console.so debug.so info.so
 
@@ -47,7 +47,7 @@ corehooks.o: corehooks.cpp corehooks.h hook.h
 
 loginstate.o: loginstate.cpp loginstate.h tibiatypes.h
 
-gamestate.o: gamestate.cpp gamestate.h accountstate.h charstate.h
+gamestate.o: gamestate.cpp gamestate.h accountstate.h charstate.h mapstate.h inventorystate.h
 
 corehooks.o: corehooks.cpp corehooks.h hook.h tibiamessage.h gamestate.h client.h
 
@@ -66,7 +66,9 @@ accountstate.o: accountstate.h accountstate.cpp
 
 charstate.o: charstate.h charstate.cpp enums.h
 
-mapstate.o: mapstate.h mapstate.cpp pos.h thing.h
+mapstate.o: mapstate.h mapstate.cpp pos.h thing.h typeparser.h enums.h
+
+inventorystate.o: inventorystate.h inventorystate.cpp pos.h thing.h typeparser.h enums.h
 
 safefile.o: safefile.cpp safefile.h
 
