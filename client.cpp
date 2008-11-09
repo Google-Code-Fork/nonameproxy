@@ -19,8 +19,6 @@
  *****************************************************************************/
 
 #include <stdint.h>
-#include <sys/select.h>
-#include <unistd.h>
 
 #include "client.h"
 #include "rsakeys.h"
@@ -186,11 +184,19 @@ bool Client::runGame (Connection* acceptedConn)
         uint32_t coreid = pluginManager->addFakein ("core");
         addRecipricant (coreid, new CoreRecipricant (this));
 
+#ifdef WIN32
+        std::string channelpath = "channelmanager.dll";
+        uint32_t cmid = pluginManager->addPlugin (channelpath);
+
+        std::string consolepath = "console.dll";
+        _consoleId = pluginManager->addPlugin (consolepath);
+#else
         std::string channelpath = "./plugins/channelmanager/channelmanager.so";
         uint32_t cmid = pluginManager->addPlugin (channelpath);
         
         std::string consolepath = "./plugins/console/console.so";
         _consoleId = pluginManager->addPlugin (consolepath);
+#endif
         
         /* in order to connect to the game server we need to retrieve the
          * original ip address but in order to do that we need to first
@@ -466,19 +472,6 @@ void Client::sendToClient (GRMessageList& msgs)
 
 void Client::sendToServer (GSMessageList& msgs)
 {
-        msgs.begin ();
-        while (!msgs.isEnd ()) {
-                /*TibiaMessage* tm = msgs.read ();
-
-                tm = sendProtocol->hookWriteMessage (tm, this);
-                if (tm == NULL) {
-                        grml->remove ();
-                } else {
-                        grml->replace (tm);
-                        grml->next ();
-                }*/
-                msgs.next (); /* remove this after adding protocol code */
-        }
         NetworkMessage* msg = msgs.put ();
         /* msg may be null if there are no messages */
         if (msg) {

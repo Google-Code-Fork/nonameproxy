@@ -51,8 +51,6 @@ uint32_t ConnectionManager::addConnection (Connection* connection)
         return cid;
 }
 
-#ifdef WIN32
-#else
 void ConnectionManager::selectConnections (uint32_t timeout)
 {
         timeval tv;
@@ -81,7 +79,6 @@ void ConnectionManager::selectConnections (uint32_t timeout)
                 (*c).second->tell_fd (readfds, writefds, errfds);
         }
 }
-#endif
 
 void ConnectionManager::deleteConnection (uint32_t cid)
 {

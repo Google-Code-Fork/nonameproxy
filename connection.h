@@ -55,7 +55,7 @@ class Connection
 
                 #ifdef WIN32
                 SOCKET  query_fd (fd_set& readfds, fd_set& writefds,
-                        fd_set errfds);
+                        fd_set& errfds);
                 void    tell_fd  (fd_set& readfds, fd_set& writefds,
                         fd_set& errfds);
                 #else
@@ -78,14 +78,14 @@ class Connection
                 bool _connectTo (struct sockaddr_in hostaddr);
                 int32_t _get   (void* buf, int32_t len);
                 int32_t _peek  (void* buf, int32_t len);
-                int32_t _put   (void* buf, int32_t len);
+                int32_t _put   (const void* buf, int32_t len);
                 int32_t _close ();
 
                 void _putMsg ();
                 NetworkMessage* _getMsg ();
 
                 #ifdef WIN32
-                SOCKET socket;
+                SOCKET connsock;
                 #else
                 int32_t connsock;
                 #endif

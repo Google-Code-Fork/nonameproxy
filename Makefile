@@ -1,9 +1,22 @@
 # Makefile for nonameproxy
 
+#Linux
 #CPPFLAGS = -Wall -02 -rdynamic
 CPPFLAGS += -pg
 CPPFLAGS += -Wall -g -O0 -rdynamic
-CC     = g++
+libs = -ldl -lgmp
+out = nonameproxy
+
+CXX     = g++
+
+#WIN32
+#CPPFLAGS = -Wall -O0 -g -static
+#CXX=i586-mingw32msvc-g++
+#LD=i586-mingw32msvc-ld
+#AR=i586-mingw32msvc-ar
+#RC=i586-mingw32msvc-windres
+#libs = -lgmp -lws2_32
+#out = nonameproxy.exe
 
 objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
 		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
@@ -17,7 +30,7 @@ sharedobjects = channelmanager.so console.so debug.so info.so
 all: nonameproxy
 
 nonameproxy: $(objects)
-	$(CC)  $(CPPFLAGS) -ldl -lgmp -o nonameproxy $(objects)
+	$(CXX)  $(CPPFLAGS) -o $(out) $(objects) $(libs)
 
 main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h loginstate.h \
 		messagefactory.h messagelist.h networkmessage.h rsa.h server.h tibiacrypt.h \
@@ -34,7 +47,7 @@ rsa.o: rsa.cpp rsa.h
 connectionmanager.o: connectionmanager.cpp connectionmanager.h connection.h idmanager.h
 
 networkmessage.o: networkmessage.cpp networkmessage.h connection.h tibiacrypt.h tibiatypes.h \
-		  	timer.h
+			timer.h
 
 server.o: server.cpp server.h connection.h
 
