@@ -33,14 +33,6 @@
  * struct timeval is defined in both sys/time.h and time.h
  ****************************************************************************/
 
-#ifdef WIN32
-struct timezone 
-{
-        int tz_minuteswest; /* minutes W of Greenwich */
-        int  tz_dsttime;     /* type of dst correction */
-};
-#endif
-
 class Timer
 {
         public:

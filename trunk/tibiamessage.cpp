@@ -1996,7 +1996,8 @@ void GSMUseItem::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                         /* i think i know how the protocol works
                          * this is just a test to be sure */
                         if (_index->getVal () != _pos->y ()) {
-                                printf ("useitem: index != container id\n");
+                                printf ("useitem: index %d != container id %d\n",
+                                        _index->getVal (), _pos->y ());
                         }
                         _type = container;
                 } else {

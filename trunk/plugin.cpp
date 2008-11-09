@@ -18,9 +18,7 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *****************************************************************************/
 
-#ifdef WIN32
-        /* do windows stuff here */
-#else
+#ifndef WIN32
         #include <dlfcn.h>
 #endif
 
@@ -48,7 +46,24 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
         }
         _loaded = true;
 #ifdef WIN32
-        /* do windows stuff here */
+        if ((_handle = LoadLibrary (path.c_str ())) == NULL) {
+                printf ("plugin error: could not open plugin: errno %d\n", 
+                        GetLastError ());
+                return false;
+        }
+        if ((_load = (loadfunc) GetProcAddress (_handle, "load")) == NULL) {
+                printf ("plugin error: could not resolve symbol \"load\"\n");
+                return false;
+        }
+        if ((_unload = (unloadfunc) GetProcAddress (_handle, "unload")) == NULL) {
+                printf ("plugin error: could not resolve symbol \"unload\"\n");
+                return false;
+        }
+        if ((_name = (namefunc) GetProcAddress (_handle, "name")) == NULL) {
+                printf ("plugin error: could not resolve symbol \"name\"\n");
+                return false;
+        }
+                
 #else
         if ((_handle = dlopen (path.c_str (), RTLD_NOW)) == NULL) {
                 
@@ -67,11 +82,11 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
                 printf ("plugin error: could not resolve symbol \"name\"\n");
                 return false;
         }
+#endif
         _load (pluginId, client);
         _client = client;
         _pluginId = pluginId;
         return true;
-#endif
 }
         
 bool Plugin::unload ()
@@ -101,14 +116,18 @@ bool Plugin::unload ()
                 
 
 #ifdef WIN32
-        /* do windows stuff here */
+        if (FreeLibrary (_handle) != 0) {
+                printf ("plugin error: could not unload %s\n", 
+                        name ().c_str ());
+                return false;
+        }
 #else
         if (dlclose (_handle) != 0) {
                 printf ("plugin error: %s\n", dlerror());
                 return false;
         }
-        return true;
 #endif
+        return true;
 }
 
 const std::string& Plugin::name ()

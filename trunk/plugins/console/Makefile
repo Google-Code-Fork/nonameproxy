@@ -3,7 +3,15 @@
 #CPPFLAGS = -Wall -02 -rdynamic
 CPPFLAGS += -pg
 CPPFLAGS += -I../.. -Wall -g -O0 -rdynamic
-CC     = g++
+CXX     = g++
+
+#CPPFLAGS = -I../.. -Wall -O0 -g -static -LBUILD_DLL
+#CXX=i586-mingw32msvc-g++
+#LD=i586-mingw32msvc-ld
+#AR=i586-mingw32msvc-ar
+#RC=i586-mingw32msvc-windres
+#libs = -lgmp -lws2_32
+
 
 objects = console.o 
 
@@ -12,7 +20,7 @@ objects = console.o
 all: clean console
 
 console: $(objects)
-	$(CC)  $(CPPFLAGS)  -shared -o console.so $(objects)
+	$(CXX)  $(CPPFLAGS)  -shared -o console.so $(objects)
 
 console.o : console.cpp console.h 
 

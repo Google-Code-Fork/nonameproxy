@@ -23,6 +23,8 @@
 #ifndef __INVENTORY_STATE_H
 #define __INVENTORY_STATE_H
 
+#define MAX_CONTAINER 16
+
 #include <string>
 #include <vector>
 #include <map>
@@ -59,7 +61,7 @@ class Container
 
                 /* the item id of the container
                  * were not interested in the x byte */
-                uint32_t getItemId ();
+                uint32_t getItemId () const;
 
                 bool insertThing (const Thing& thing, uint32_t index);
                 bool removeThing (uint32_t index);
@@ -93,7 +95,7 @@ class InventoryState
 
                 void            showSlots ();
         private:
-                Container       _containers[16];
+                Container       _containers[MAX_CONTAINER];
                 Thing*          _slots[SLOT_LAST];
 };
 #endif

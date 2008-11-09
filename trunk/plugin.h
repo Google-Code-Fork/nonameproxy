@@ -25,6 +25,10 @@
 #include <string>
 #include <set>
 
+#ifdef WIN32
+        #include <windows.h>
+#endif
+
 class Client;
 
 typedef const std::string& (*namefunc) ();
@@ -80,6 +84,7 @@ class Plugin
 
         private:
 #ifdef WIN32
+                HINSTANCE _handle;
 #else
                 void* _handle;
 #endif

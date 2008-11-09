@@ -33,7 +33,7 @@
 #include "networkmessage.h"
 
 #ifdef WIN32
-#define NETWORK_ERROR(str)      if (WSAGetLastError () != EWOULDBLOCK) { \
+#define NETWORK_ERROR(str)      if (WSAGetLastError () != EAGAIN) { \
                                         printf (str); \
                                         printf (": error no %d\n", \
                                                         WSAGetLastError ()); \
@@ -92,7 +92,11 @@ bool Connection::closeConnection ()
 
 int32_t Connection::_get (void* buf, int32_t len)
 {
+#ifdef WIN32
+        int32_t n = recv (connsock, (char*)buf, len, 0);
+#else
         int32_t n = recv (connsock, buf, len, 0);
+#endif
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
                 NETWORK_ERROR ("recv error get");
@@ -102,7 +106,11 @@ int32_t Connection::_get (void* buf, int32_t len)
 
 int32_t Connection::_peek (void* buf, int32_t len)
 {
+#ifdef WIN32
+        int32_t n = recv (connsock, (char*)buf, len, MSG_PEEK);
+#else
         int32_t n = recv (connsock, buf, len, MSG_PEEK);
+#endif
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
                 NETWORK_ERROR ("recv error peek");
@@ -110,9 +118,13 @@ int32_t Connection::_peek (void* buf, int32_t len)
         return n;
 }
 
-int32_t Connection::_put (void* buf, int32_t len)
+int32_t Connection::_put (const void* buf, int32_t len)
 {
+#ifdef WIN32
+        int32_t n = send (connsock, (const char*)buf, len, 0);
+#else
         int32_t n = send (connsock, buf, len, 0);
+#endif
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
                 NETWORK_ERROR ("send error");
@@ -122,7 +134,11 @@ int32_t Connection::_put (void* buf, int32_t len)
 
 int32_t Connection::_close ()
 {
+#ifdef WIN32
+        int32_t n = closesocket (connsock);
+#else
         int32_t n = close (connsock);
+#endif
         if (n != 0) {
                 NETWORK_ERROR ("close error");
         }
@@ -295,7 +311,7 @@ bool Connection::connectTo (const char* host, uint16_t port)
         struct hostent* he = gethostbyname (host);
         if (he == NULL) {
 #ifdef WIN32
-                printf ("gethostbyname error: %d\n", WSAGetLasteError ());
+                printf ("gethostbyname error: %d\n", WSAGetLastError ());
 #else
                 herror ("gethostbyname error");
 #endif
@@ -330,8 +346,8 @@ bool Connection::_connectTo (struct sockaddr_in hostaddr)
                 return false;
         }
 #ifdef WIN32
-        uint32_t notzero = 1;
-        if (iocntlsocket (connsock, FIONBIO, &notzero) == SOCKET_ERROR) {
+        u_long notzero = 1;
+        if (ioctlsocket (connsock, FIONBIO, &notzero) == SOCKET_ERROR) {
                 NETWORK_ERROR ("iocntlsocket error");
                 return false;
         }

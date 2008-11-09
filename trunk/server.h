@@ -21,6 +21,10 @@
 #ifndef __SERVER_H
 #define __SERVER_H
 
+#ifdef WIN32
+        #include <winsock2.h>
+#endif
+
 #include <stdint.h>
 
 class Connection;
@@ -35,6 +39,7 @@ class Server
                 bool shutdown ();
         private:
                 #ifdef WIN32
+                SOCKET mastersock;
                 #else
                 int32_t mastersock;
                 #endif

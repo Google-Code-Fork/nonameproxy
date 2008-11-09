@@ -85,6 +85,16 @@ bool Container::hasParent () const
         return _hasparent;
 }
 
+uint32_t Container::getItemId () const
+{
+        return _itemid;
+}
+
+uint32_t Container::getCapacity () const
+{
+        return _capacity;
+}
+
 uint32_t Container::getThingCount () const
 {
         return _things.size ();
@@ -184,6 +194,16 @@ bool Container::removeThing (uint32_t index)
 }
 
 Thing& Container::getThing (uint32_t index) 
+{
+        if (!(index < getThingCount ())) {
+                printf ("getThing error: thing %d out of bounds\n", index);
+                show ();
+                *((uint32_t*)NULL) = 0;
+        }
+        return *_things[index];
+}
+
+const Thing& Container::getThing (uint32_t index) const 
 {
         if (!(index < getThingCount ())) {
                 printf ("getThing error: thing %d out of bounds\n", index);

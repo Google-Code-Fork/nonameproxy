@@ -18,9 +18,7 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *****************************************************************************/
 
-#ifdef WIN32
-        #include <winsock2.h>
-#else
+#ifndef WIN32
         #include <sys/socket.h>
         #include <sys/types.h>
         #include <netinet/in.h>
@@ -97,8 +95,8 @@ Connection* Server::acceptConnection ()
                 return NULL;
         }
         #ifdef WIN32 
-        uint32_t notzero = 1;
-        if (iocntlsocket (connsock, FIONBIO, &notzero) == SOCKET_ERROR) {
+        u_long notzero = 1;
+        if (ioctlsocket (connsock, FIONBIO, &notzero) == SOCKET_ERROR) {
                 NETWORK_ERROR ("iocntlsocket error");
                 return false;
         }
