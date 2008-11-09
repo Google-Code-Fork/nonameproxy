@@ -61,6 +61,12 @@ class Client
 
                 TibiaCrypt*     crypt;
 
+                /* some plugins will require them to reconize when they are
+                 * in a particular select cycle. For example, if multiple
+                 * hooks are set and we only want at most one to be called
+                 * in a single cycle. Cycle ids loop every 4294967296 cycles */
+                uint32_t getCycle ();
+
                 /* these functions are wrappers for plugin management 
                  * functions accessable from external plugins */
 
@@ -123,6 +129,7 @@ class Client
 
                 PluginManager*          pluginManager;
 
+                uint32_t                _cycle;
                 uint32_t                _consoleId;
 };
 #endif
