@@ -59,7 +59,7 @@ Client::Client (LoginState* ls)
                                            recvPHM, connMgr, this);
 
         _consoleId = 0;
-
+        _cycle = 0;
 }        
 
 Client::~Client ()
@@ -107,6 +107,7 @@ bool Client::runLogin (Connection* acceptedConn)
          * Although this is less than ideal, it should work */
         NetworkMessage* msg;
         while (serverConn->isConnected () && clientConn->isConnected ()) {
+                _cycle ++;
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
@@ -203,6 +204,7 @@ bool Client::runGame (Connection* acceptedConn)
          * recv a packet from the client */
         NetworkMessage* msg;
         while (clientConn->isConnected ()) {
+                _cycle ++;
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
@@ -252,6 +254,7 @@ bool Client::runGame (Connection* acceptedConn)
 
         /* and finally the main loop */
         while (serverConn->isConnected () || clientConn->isConnected ()) {
+                _cycle ++;
                 connMgr->selectConnections (125);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
@@ -483,5 +486,10 @@ void Client::sendToServer (GSMessageList& msgs)
 uint32_t Client::getConsoleId ()
 {
         return _consoleId;
+}
+
+uint32_t Client::getCycle ()
+{
+        return _cycle;
 }
 
