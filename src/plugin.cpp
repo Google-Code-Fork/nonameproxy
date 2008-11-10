@@ -44,7 +44,6 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
                 printf ("plugin load error: plugin already loaded\n");
                 return false;
         }
-        _loaded = true;
 #ifdef WIN32
         if ((_handle = LoadLibrary (path.c_str ())) == NULL) {
                 printf ("plugin error: could not open plugin: errno %d\n", 
@@ -83,6 +82,7 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
                 return false;
         }
 #endif
+        _loaded = true;
         _load (pluginId, client);
         _client = client;
         _pluginId = pluginId;
@@ -99,6 +99,9 @@ bool Plugin::unload ()
         _unload ();
 
         /* now we do the dirty work if the plugin was to lazy */
+        if (_recipricantId != 0) {
+                _client->deleteRecipricant (_pluginId, _recipricantId);
+        }
         IdSet::iterator i;
         for (i = _rrhooks.begin (); i != _rrhooks.end (); ++ i) {
                 _client->deleteRecvReadHook (_pluginId, (*i));
@@ -113,6 +116,7 @@ bool Plugin::unload ()
                 _client->deleteSendWriteHook (_pluginId, (*i));
         }
         /* TODO add connection cleanum */
+        /* TODO add packet hooks */
                 
 
 #ifdef WIN32

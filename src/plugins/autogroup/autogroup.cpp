@@ -29,10 +29,12 @@ Args AutoGroupRecipricant::func (const Args& args)
                 } else if (*i == "none") {
                         ret.push_back (group.no_ids ());
                 } else if (*i == "add") {
+                        i ++;
                         for (; i != args.end (); ++ i) {
                                 ret.push_back (group.add_id (*i));
                         }
                 } else if (*i == "remove") {
+                        i ++;
                         for (; i != args.end (); ++ i) {
                                 ret.push_back (group.remove_id (*i));
                         }

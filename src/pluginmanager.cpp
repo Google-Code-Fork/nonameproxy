@@ -55,15 +55,35 @@ uint32_t PluginManager::addPlugin (const std::string& path)
         uint32_t id = ids->newId ();
 
         Plugin* p = new Plugin ();
+
         /* we have to add the id before calling load */
-        /* TODO add protection from loading a plugin multiple times */
         plist.insert (std::pair<uint32_t, Plugin*> (id, p));
         if (p->load (id, path, _client)) {
+                /* the plugin is already loaded so we must count to 2 */
+                uint32_t count = 0;
+                const std::string& name = p->name ();
+                PluginList::iterator i;
+                for (i = plist.begin (); i != plist.end (); ++ i) {
+                        if (name == (*i).second->name ()) {
+                                count ++;
+                        }
+                }
+                        
+                if (count > 1) {
+                        printf ("plugin manager error: ");
+                        printf ("plugin already loaded\n");
+                        p->unload ();
+                        plist.erase (id);
+                        ids->recycleId (id);
+                        delete p;
+                        return 0;
+                }
                 return id;
         } else {
                 plist.erase (id);
                 ids->recycleId (id);
                 printf ("plugin manager error: could not load plugin\n");
+                delete p;
                 return 0;
         }
 }
@@ -76,6 +96,25 @@ uint32_t PluginManager::addFakein (const std::string& name)
         /* we have to add the id before calling load */
         plist.insert (std::pair<uint32_t, Plugin*> (id, p));
         if (p->load (id, "", _client)) {
+                /* the plugin is already loaded so we must count to 2 */
+                uint32_t count = 0;
+                const std::string& name = p->name ();
+                PluginList::iterator i;
+                for (i = plist.begin (); i != plist.end (); ++ i) {
+                        if (name == (*i).second->name ()) {
+                                count ++;
+                        }
+                }
+                        
+                if (count > 1) {
+                        printf ("fakein manager error: ");
+                        printf ("fakein already loaded\n");
+                        p->unload ();
+                        plist.erase (id);
+                        ids->recycleId (id);
+                        delete p;
+                        return 0;
+                }
                 return id;
         } else {
                 plist.erase (id);
