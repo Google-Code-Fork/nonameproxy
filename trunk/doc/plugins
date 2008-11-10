@@ -1,0 +1,46 @@
+The way plugins will work are as follows
+
+1) Plugin ids
+        a plugin id is what the primary id of the plugin. This will be a dynamic
+        number assigned when the plugin is loaded.
+
+2) Plugin Management
+        between the plugin and the actual proxy will be a plugin management layer.
+        But first lets define what a plugin should be able to do:
+                a) Add an arbitrary number of hooks
+                b) Add one recipricant to the messanger
+                c) Add an arbitrary number of connections to the connection manager.
+
+        In order for to manager the plugins each client will have a 
+        plugin manager
+        We dont want to directly expose the clients management layers to the
+        so the client will have several add<whatever> functions.
+        When these functions are called, in addition to adding whatever to the
+        whatever manager, the plugin manager will also record the id associated
+        with whatever.
+
+        One way to think about hooks, recipricants, and connections are
+        as system resources, when the plugin is unloaded we want to be able to
+        reclaim those resources without relying on the plugin to clean up after
+        itself
+        
+3) The standard interface
+        Plugins will interface with the proxy mainly through the use of hooks
+        and the messaging system, however there are 3 required functions that
+        each plugin must have, making up the interface for plugins
+                a) const std::string& name ();
+                b) void load (uint32_t pluginId, Client* client)
+                c) void unload ();
+        it should be pretty obvious what these do:
+
+        name simply returns the name of the plugin. This function will be called
+        first, and if the plugin name is already in use the plugin wont be loaded
+
+        load takes a pointer to the client and places the plugins hooks and
+        other resources. The pluginId will be needed for loading resources
+
+        unload is the plugins chance to play nice and remove its resources and
+        free its memory. Ofcourse it really doesnt matter, as the plugin
+        management layer will delete the resources, and the operating system
+        will free any memory once the plugin is unloaded
+        
