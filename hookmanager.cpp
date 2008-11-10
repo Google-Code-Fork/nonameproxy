@@ -54,8 +54,12 @@ uint32_t HookManager::addReadHook (uint8_t id, ReadHook* hook) {
         }
 
         uint32_t hid = ids->newId ();
+#ifdef DEBUG_HOOK
+        printf ("addReadHook: added hid=%d id=%d\n", hid, id);
+#endif
         rLookup.insert (std::pair<uint32_t, uint32_t> (hid, id));
         rHooks[id].insert (std::pair<uint32_t, ReadHook*> (hid, hook));
+
         return hid;
 }
 
@@ -80,6 +84,11 @@ uint32_t HookManager::addWriteHook (uint8_t id, WriteHook* hook)
 
 void HookManager::deleteReadHook (uint32_t hid)
 {
+
+#ifdef DEBUG_HOOK
+        printf ("deleteReadHook: deleteing hid=%d\n", hid);
+#endif
+
         HookMap::iterator i1 = rLookup.find (hid);
         if (i1 == rLookup.end ()) {
                 printf ("hookmanager error: delete: non existant hook\n");
@@ -87,13 +96,19 @@ void HookManager::deleteReadHook (uint32_t hid)
         }
         uint32_t mid = (*i1).second;
 
+#ifdef DEBUG_HOOK
+        printf ("deleteReadHook: deleteing hid=%d id=%d\n", hid, mid);
+#endif
+
         RHookList::iterator i2 = rHooks[mid].find (hid);
         if (i2 == rHooks[mid].end ()) {
-                printf ("hookmanager error: delete: concurrency error. \n\
-                         This is really bad. Its not your fault but let \
-                         know if it happens.\n");
+                printf ("hookmanager error: delete: concurrency error. \n");
+                printf ("This is really bad. Its not your fault but let me");
+                printf ("know if it happens.\n");
+                printf ("hid = %d\n mid = %d\n", hid, mid);
                 return;
         }
+        rLookup.erase (i1);
         rHooks[mid].erase (i2);
         delete (*i2).second;
         ids->recycleId (hid);

@@ -1,7 +1,8 @@
 # Makefile for nonameproxy
 
 #Linux
-#CPPFLAGS = -Wall -02 -rdynamic
+#CPPFLAGS += -Wall -02 -rdynamic
+#CPPFLAGS += -DDEBUG_HOOK
 CPPFLAGS += -pg
 CPPFLAGS += -Wall -g -O0 -rdynamic
 libs = -ldl -lgmp
@@ -25,7 +26,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
 		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o
 
-sharedobjects = channelmanager.so console.so debug.so info.so
+sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.so
 
 all: nonameproxy
 
@@ -124,7 +125,12 @@ console.so:
 debug.so:
 	make -C ./plugins/debug/
 	
-
 info.so:
 	make -C ./plugins/info/
+	
+autogroup.so:
+	make -C ./plugins/autogroup/
+	
+test.so:
+	make -C ./plugins/test/
 	

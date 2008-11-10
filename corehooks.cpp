@@ -450,7 +450,6 @@ void GRHTileRemove::func (TibiaMessage* tm, Client* client)
  **********************************************************************/
 void GRHCreatureMove::func (TibiaMessage* tm, Client* client)
 {
-        //tm->show ();
         GRMCreatureMove* cm = (GRMCreatureMove*)tm;
         MapState* map = client->gstate->map;
 
@@ -468,15 +467,23 @@ void GRHCreatureMove::func (TibiaMessage* tm, Client* client)
         Tile& fromTile = map->getTile (tp.toPos (from));
         Tile& toTile = map->getTile (tp.toPos (to));
 
-        //fromTile.show ();
-        //toTile.show ();
-
-        //map->showCreatureMap (0, 7);
+#ifdef DEBUG_CREATURE_MOVE
+        tm->show ();
+        fromTile.show ();
+        toTile.show ();
+        map->showCreatureMap (0, 7);
+#endif
 
         Thing& thing = fromTile.getThing (stack);
         if (thing.getType () != Thing::t_creature) {
                 printf ("GRHCreatureMove error: no creature at %d %d %d %d\n",
                         from.x (), from.y (), from.z (), stack);
+
+                tm->show ();
+                fromTile.show ();
+                toTile.show ();
+                map->showCreatureMap (0, 7);
+
                 *((uint32_t*)NULL) = 0;
                 return;
         }
