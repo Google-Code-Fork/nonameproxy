@@ -1,5 +1,5 @@
-#ifndef __CHANNEL_MANAGER_H
-#define __CHANNEL_MANAGER_H
+#ifndef __CONSOLE
+#define __CONSOLE
 
 #include <string>
 #include <stdint.h>
