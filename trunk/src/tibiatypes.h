@@ -623,7 +623,7 @@ class TItemOutfit : public TOutfit
 {
         public:
                 TItemOutfit (NetworkMessage* msg, DatReader* dat);
-                TItemOutfit (const TThing& item);
+                TItemOutfit (uint16_t itemid);
                 TItemOutfit (const TItemOutfit& clone);
                 virtual ~TItemOutfit ();
 
@@ -637,7 +637,7 @@ class TItemOutfit : public TOutfit
                 void get (NetworkMessage* msg, DatReader* dat);
                 
                 TWord16* _lookType;
-                TThing*  _item;
+                TWord16* _itemid;
 };
 
 class TCharOutfit : public TOutfit

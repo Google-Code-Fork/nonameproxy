@@ -1368,24 +1368,22 @@ TItemOutfit::TItemOutfit (NetworkMessage* msg, DatReader* dat)
         get (msg, dat);
 }
 
-TItemOutfit::TItemOutfit (const TThing& item)
+TItemOutfit::TItemOutfit (uint16_t itemid)
 {
         _lookType = new TWord16 ((uint16_t)0x0000);
-        TThingFactory tf;
-        _item = tf.cloneThing (item);
+        _itemid = new TWord16 (itemid);
 }
 
 TItemOutfit::TItemOutfit (const TItemOutfit& clone)
 {
         _lookType = new TWord16 (*clone._lookType);
-        TThingFactory tf;
-        _item = tf.cloneThing (*clone._item);
+        _itemid = new TWord16 (*clone._itemid);
 }
 
 TItemOutfit::~TItemOutfit ()
 {
         delete _lookType;
-        delete _item;
+        delete _itemid;
 }
 
 TOutfit::OutfitType TItemOutfit::getType () const
@@ -1396,31 +1394,23 @@ TOutfit::OutfitType TItemOutfit::getType () const
 void TItemOutfit::put (NetworkMessage* msg) const
 {
         _lookType->put (msg);
-        _item->put (msg);
+        _itemid->put (msg);
 }
 
 void TItemOutfit::show () const
 {
-        printf ("TItemOutfit {"); _item->show (); printf ("}\n");
+        printf ("TItemOutfit {"); _itemid->show (); printf ("}\n");
 }
 
 uint16_t TItemOutfit::getItemId () const
 {
-        if (_item->getType () == TThing::item) {
-                return ((TItem*)_item)->getItemId ();
-        } else if (_item->getType () == TThing::xitem) {
-                return ((TXItem*)_item)->getItemId ();
-        } else {
-                printf ("TItemOutfit error: _item is a creature\n");
-                return 0;
-        }
+        return _itemid->getVal ();
 }
 
 void TItemOutfit::get (NetworkMessage* msg, DatReader* dat)
 {
         _lookType = new TWord16 (msg);
-        TThingFactory tf (msg, dat);
-        _item = tf.getThing ();
+        _itemid = new TWord16 (msg);
 }
 
 //TCharOutfit
