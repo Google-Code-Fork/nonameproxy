@@ -20,9 +20,12 @@
 
 #include <stdio.h>
 #include "messenger.h"
+#include "client.h"
+#include "pluginmanager.h"
 
-Messenger::Messenger ()
+Messenger::Messenger (Client* client)
 {
+        _client = client;
         ids = new IdManager (100);
 }
 
@@ -65,14 +68,14 @@ Args Messenger::sendMessage (uint32_t rid, const std::string& msg)
                 printf ("messenger send error: recipricant does not exist\n");
                 return Args ();
         } else {
-                ArgsParser ap (msg);
+                ArgsParser ap (msg, _client);
                 return (*i).second->func (ap.getArgs ());
         }
 }
 
 Args Messenger::broadcastMessage (const std::string& msg)
 {
-        ArgsParser ap (msg);
+        ArgsParser ap (msg, _client);
         const Args& args = ap.getArgs ();
         for (RecipricantList::iterator i; i != rlist.end (); ++ i) {
                 return (*i).second->func (args);
@@ -84,8 +87,10 @@ Args Messenger::broadcastMessage (const std::string& msg)
  * ArgsParser
  * i agree, its ugly :(
  *****************************************************************/
-ArgsParser::ArgsParser (const std::string& msg) : _msg (msg)
+ArgsParser::ArgsParser (const std::string& msg, Client* client) : _msg (msg)
 {
+        _client = client;
+
         i = _msg.begin ();
 
         start = 0;
@@ -98,6 +103,52 @@ ArgsParser::ArgsParser (const std::string& msg) : _msg (msg)
 
 bool ArgsParser::addToken ()
 {
+        if (i == _msg.end ()) {
+                return false;
+        }
+
+        std::string token;
+        /* back ticks get substituted for their console output */
+        if (*i == '`' && !quotes) {
+                /* get rid of first tick */
+                start ++;
+                length --;
+                while (i != _msg.end ()) {
+                        i ++;
+                        length ++;
+                        if (*i == '`') {
+                                break;
+                        }
+                }
+                std::string tmp;
+                if (i == _msg.end ()) {
+                        printf ("argsparser warning: unterminated `\n");
+                        tmp = _msg.substr (start, length);
+                } else {
+                        i ++;
+                        tmp = _msg.substr (start, length);
+                        length ++;
+                }
+
+                start += length;
+                length = 0;
+
+                /* now we get the console output */
+                Args output = _client->broadcastMessage (tmp);
+
+                if (output.size () != 0) {
+                        token = output.front ();
+                        Args::iterator ii = output.begin ();
+                        ii ++;
+                        for (; ii != output.end (); ++ ii) {
+                                token += " ";
+                                token += *ii;
+                        }
+                }
+                Args::iterator ii = output.begin ();
+                args.push_back (token);
+                return true;
+        }
 
         /* skip white space */
         while (i != _msg.end ()) {
@@ -110,13 +161,19 @@ bool ArgsParser::addToken ()
                 return false;
         }
 
-        std::string token;
         do {
                 excape = false;
                 while (i != _msg.end ()) 
                 {
-                        if ((isspace (*i) && !quotes) || *i == '\'' || *i == '\\') {
-                                break;
+                        if ((isspace (*i) && !quotes) || *i == '\'' || *i == '\\' 
+                                || (*i == '`' && !quotes)) 
+                        {
+                                if (*i == '`') {
+                                        /* we don't want to add an empty string */
+                                        return true;
+                                } else {
+                                        break;
+                                }
                         }
                         length ++;
                         i ++;
@@ -148,6 +205,9 @@ bool ArgsParser::addToken ()
                         quotes = !quotes;
                         i ++;
                         excape = true;
+                }
+                if (*i == '`' && !quotes) {
+                        break;
                 }
         } while ((quotes || excape) && i != _msg.end ());
         if (quotes) {

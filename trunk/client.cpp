@@ -37,7 +37,7 @@ Client::Client (LoginState* ls)
         lstate = ls;
         gstate = new GameState ();
         dat = new DatReader ();
-        messenger = new Messenger ();
+        messenger = new Messenger (this);
 
         serverConn = NULL;
         clientConn = NULL;

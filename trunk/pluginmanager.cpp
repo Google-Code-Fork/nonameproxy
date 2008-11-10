@@ -130,7 +130,7 @@ Args PluginManager::sendMessage (uint32_t pid, const std::string& msg)
 
 Args PluginManager::broadcastMessage (const std::string& msg)
 {
-        ArgsParser ap (msg);
+        ArgsParser ap (msg, _client);
         const Args& args = ap.getArgs ();
 
         if (args.size () == 0) {

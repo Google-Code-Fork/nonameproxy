@@ -45,10 +45,13 @@ typedef std::list<Arg> Args;
  *      a\'b d\\e               -> |a'b|d\e| 
  ***************************************************************************/
 
+class Client;
+class PluginManager;
+
 class ArgsParser
 {
         public:
-                ArgsParser (const std::string& msg);
+                ArgsParser (const std::string& msg, Client* client);
                 const Args& getArgs ();
         private:
                 bool addToken ();
@@ -61,6 +64,8 @@ class ArgsParser
                 uint32_t length;
                 bool quotes;
                 bool excape;
+
+                Client* _client;
 };
 
 class Recipricant
@@ -75,7 +80,7 @@ typedef std::map<uint32_t, Recipricant*> RecipricantList;
 class Messenger
 {
         public:
-                Messenger ();
+                Messenger (Client* client);
                 virtual ~Messenger ();
 
                 /* Add hook returns a unique id for the hook just added */
@@ -88,6 +93,7 @@ class Messenger
         private:
                 RecipricantList rlist;
                 IdManager* ids;
+                Client* _client;
 };
 
 #endif
