@@ -26,7 +26,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
 		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o
 
-sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.so
+sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.so watch.so
 
 all: nonameproxy
 
@@ -133,4 +133,7 @@ autogroup.so:
 	
 test.so:
 	make -C ./plugins/test/
+	
+watch.so:
+	make -C ./plugins/watch/
 	
