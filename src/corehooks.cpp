@@ -504,7 +504,7 @@ void GRHCreatureMove::func (TibiaMessage* tm, Client* client)
         }
 
         fromTile.removeThing (stack);
-        toTile.addThing (creature, client->dat);
+        toTile.addThing (creature, client->dat, true);
 }
 
 /**********************************************************************

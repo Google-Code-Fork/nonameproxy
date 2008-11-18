@@ -1,22 +1,37 @@
 # Makefile for nonameproxy
 
-#CPPFLAGS = -Wall -02 -rdynamic
-CPPFLAGS += -pg
-CPPFLAGS += -I../.. -Wall -g -O0 -rdynamic
-CC     = g++
+#CXXFLAGS = -Wall -02 -rdynamic
+CXXFLAGS += -pg
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXX = g++
 
-objects = map.o localmap.o
+objects = map.o 
 
 # to make plugins easy we always do a clean build
 
 all: clean map
 
 map: $(objects)
-	$(CC)  $(CPPFLAGS)  -shared -o map.so $(objects)
+	$(CXX)  $(CXXFLAGS)  -shared -o map.so $(objects)
 
 map.o : map.cpp map.h 
 
-localmap.o : localmap.cpp localmap.h map.h
-
 clean:
-	rm -f map.so $(objects)
+	rm -f map.dll map.so $(objects)
+
+###################################################################
+#WINDOWS STUFF
+###################################################################
+windows: CXXFLAGS = -Wall -O0 -I../..
+windows: CXX=i586-mingw32msvc-g++
+windows: LD=i586-mingw32msvc-ld
+windows: AR=i586-mingw32msvc-ar
+windows: RC=i586-mingw32msvc-windres
+windows: libs=../../nonameproxy.dll
+
+windows: clean map.dll
+
+map.dll: CXXFLAGS += -DBUILD_DLL
+map.dll: $(objects)
+	$(CXX) $(CXXFLAGS) -shared -o map.dll $(objects) $(libs)
+

@@ -2717,7 +2717,7 @@ TShopList::TShopList (NetworkMessage* msg, DatReader* dat)
 }
 
 
-TShopList::TShopList (uint8_t nitems)
+TShopList::TShopList ()
 {
         _nitems = new TWord8 ((uint8_t)0);
         _it = _items.begin ();
@@ -2940,7 +2940,7 @@ TShopSellList::TShopSellList (NetworkMessage* msg, DatReader* dat)
 }
 
 
-TShopSellList::TShopSellList (uint8_t nitems)
+TShopSellList::TShopSellList ()
 {
         _nitems = new TWord8 ((uint8_t)0);
         _it = _items.begin ();
@@ -3127,7 +3127,7 @@ TOutfitList::TOutfitList (NetworkMessage* msg)
 }
 
 
-TOutfitList::TOutfitList (uint8_t nitems)
+TOutfitList::TOutfitList ()
 {
         _nitems = new TWord8 ((uint8_t)0);
         _it = _outfits.begin ();
@@ -3552,7 +3552,7 @@ TSubQuestList::TSubQuestList (NetworkMessage* msg)
 }
 
 
-TSubQuestList::TSubQuestList (uint8_t nsubquests)
+TSubQuestList::TSubQuestList ()
 {
         _nsubquests = new TWord8 ((uint8_t)0);
         _it = _subquests.begin ();
@@ -3758,7 +3758,7 @@ TChannelList::TChannelList (NetworkMessage* msg)
 }
 
 
-TChannelList::TChannelList (uint8_t nchannels)
+TChannelList::TChannelList ()
 {
         _nchannels = new TWord8 ((uint8_t)0);
         _it = _channels.begin ();
@@ -3906,7 +3906,7 @@ TDirectionList::TDirectionList (NetworkMessage* msg)
 }
 
 
-TDirectionList::TDirectionList (uint8_t ndirections)
+TDirectionList::TDirectionList ()
 {
         _ndirections = new TWord8 ((uint8_t)0);
         _it = _directions.begin ();

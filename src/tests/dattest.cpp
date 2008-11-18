@@ -4,8 +4,10 @@
 int main ()
 {
         DatReader* dat = new DatReader ();
-        for (int i = 0; i < dat->getNIds (); i ++) {
-                dat->getItemData (i + 100)->show ();
+
+        uint32_t itemid;
+        while (scanf ("%d", &itemid)) {
+                dat->getItemData (itemid).show ();
         }
         delete dat;
         return 0;

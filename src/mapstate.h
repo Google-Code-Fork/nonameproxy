@@ -49,6 +49,8 @@ class Tile
                 void show () const;
 
                 void clear ();
+
+                bool hasGround () const;
                 uint32_t getThingCount () const;
 
                 bool insertThing (const Thing& thing, uint32_t stackpos,
@@ -60,6 +62,9 @@ class Tile
                 Thing& getThing (uint32_t stackpos);
                 const Thing& getThing (uint32_t stackpos) const;
 
+                bool hasBlocking (DatReader* dat) const;
+                
+                uint32_t getWalkCost (DatReader* dat) const;
         protected:
                 /* c ++ sucks, therefore i cant initialize an array of tiles
                  * so ive had to add a setMap function to pass the mapstate* */
