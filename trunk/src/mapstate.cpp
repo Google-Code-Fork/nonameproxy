@@ -70,6 +70,11 @@ uint32_t Tile::getThingCount () const
         return _things.size () + (_ground ? 1 : 0);
 }
 
+bool Tile::hasGround () const
+{
+        return _ground;
+}
+
 bool Tile::insertThing (const Thing& thing, uint32_t stackpos, DatReader* dat)
 {
         if (getThingCount () == 10) {
@@ -258,14 +263,79 @@ Thing& Tile::getThing (uint32_t stackpos)
                 *((uint32_t*)NULL) = 0;
         }
         uint32_t i = stackpos;
-        if (_ground) {
-                if (stackpos == 0) {
+        if (stackpos == 0) {
+                if (!_ground) {
                         printf ("getThing error: ground is null\n");
-                        return *_ground;
                 }
+                return *_ground;
         }
         i --;
         return *_things[i];
+}
+
+const Thing& Tile::getThing (uint32_t stackpos) const 
+{
+        if (!(stackpos < getThingCount ())) {
+                printf ("getThing error: thing %d out of bounds\n", stackpos);
+                show ();
+                *((uint32_t*)NULL) = 0;
+        }
+        uint32_t i = stackpos;
+        if (stackpos == 0) {
+                if (!_ground) {
+                        printf ("getThing error: ground is null\n");
+                }
+                return *_ground;
+        }
+        i --;
+        return *_things[i];
+}
+
+bool Tile::hasBlocking (DatReader* dat) const
+{
+        uint32_t nthings = getThingCount ();
+
+        if (!hasGround ()) {
+                return true;
+        }
+        for (uint32_t i = 0; i < nthings; i ++) {
+                const Thing& thing = getThing (i);
+                uint32_t itemid;
+                if (thing.getType () == Thing::t_creature) {
+                        return true;
+                }
+                if (thing.getType () == Thing::t_item) {
+                        itemid = ((Item&)thing).getItemId ();
+                } else if (thing.getType () == Thing::t_xitem) {
+                        itemid = ((XItem&)thing).getItemId ();
+                } else {
+                        printf ("hasBlocking error: funny thing type\n");
+                        return true;
+                }
+                const ThingData& data = dat->getItemData (itemid);
+                if (data.isBlocking () || data.isPathBlocking ()) {
+                        return true;
+                }
+        }
+        return false;
+}
+                        
+uint32_t Tile::getWalkCost (DatReader* dat) const
+{
+        if (hasBlocking (dat)) {
+                return 0;
+        }
+        const Thing& thing = getThing (0);
+        uint32_t itemid;
+        if (thing.getType () == Thing::t_item) {
+                itemid = ((Item&)thing).getItemId ();
+        } else if (thing.getType () == Thing::t_xitem) {
+                itemid = ((XItem&)thing).getItemId ();
+        } else {
+                printf ("getWalkCost error: funny thing type\n");
+                return true;
+        }
+        return dat->getItemData (itemid).getSpeed ();
 }
 
 /* this type of functionality will probably eventually be implemnted

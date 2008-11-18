@@ -1101,7 +1101,7 @@ class TShopList
                 TShopList (NetworkMessage* msg, DatReader* dat);
                 //if this constructor is used it is expected that the user will use
                 //manipulation functions to add things
-                TShopList (uint8_t nitems);
+                TShopList ();
                 TShopList (const TShopList& clone);
                 virtual ~TShopList ();
 
@@ -1177,7 +1177,7 @@ class TShopSellList
                 TShopSellList (NetworkMessage* msg, DatReader* dat);
                 //if this constructor is used it is expected that the user will use
                 //manipulation functions to add things
-                TShopSellList (uint8_t nitems);
+                TShopSellList ();
                 TShopSellList (const TShopSellList& clone);
                 virtual ~TShopSellList ();
 
@@ -1252,7 +1252,7 @@ class TOutfitList
                 TOutfitList (NetworkMessage* msg);
                 //if this constructor is used it is expected that the user will use
                 //manipulation functions to add things
-                TOutfitList (uint8_t nitems);
+                TOutfitList ();
                 TOutfitList (const TOutfitList& clone);
                 virtual ~TOutfitList ();
 
@@ -1398,7 +1398,7 @@ class TSubQuestList
                 TSubQuestList (NetworkMessage* msg);
                 //if this constructor is used it is expected that the user will use
                 //manipulation functions to add things
-                TSubQuestList (uint8_t nsubquests);
+                TSubQuestList ();
                 TSubQuestList (const TSubQuestList& clone);
                 virtual ~TSubQuestList ();
 
@@ -1469,7 +1469,7 @@ class TChannelList
                 TChannelList (NetworkMessage* msg);
                 //if this constructor is used it is expected that the user will use
                 //manipulation functions to add things
-                TChannelList (uint8_t nchannels);
+                TChannelList ();
                 TChannelList (const TChannelList& clone);
                 virtual ~TChannelList ();
 
@@ -1515,7 +1515,7 @@ class TDirectionList
                 TDirectionList (NetworkMessage* msg);
                 //if this constructor is used it is expected that the user will use
                 //manipulation functions to add things
-                TDirectionList (uint8_t ndirections);
+                TDirectionList ();
                 TDirectionList (const TDirectionList& clone);
                 virtual ~TDirectionList ();
 

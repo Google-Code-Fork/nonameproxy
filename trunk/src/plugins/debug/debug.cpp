@@ -242,7 +242,7 @@ std::string Debug::send_off (const std::string& mid)
                 return "debug: error message id out of range";
         }
         if (_sendHooks[m] != 0) {
-                _client->deleteSendReadHook (_pluginId, _recvHooks[m]);
+                _client->deleteSendReadHook (_pluginId, _sendHooks[m]);
                 _sendHooks[m] = 0;
                 return "debug: success!";
         } else {

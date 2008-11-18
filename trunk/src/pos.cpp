@@ -14,3 +14,15 @@ Pos::Pos (uint32_t _x, uint32_t _y, uint32_t _z)
         z = _z;
 }
 
+const bool Pos::operator== (const Pos& a) const
+{
+        if (x == a.x && a.y == y) {
+                return true;
+        } else {
+                return false;
+        }
+}
+const bool Pos::operator!= (const Pos& a) const
+{
+        return ! operator== (a);
+}

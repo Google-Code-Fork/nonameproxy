@@ -1,23 +1,17 @@
 # Makefile for nonameproxy
 
 #Linux
-#CPPFLAGS += -Wall -02 -rdynamic
-#CPPFLAGS += -DDEBUG_HOOK
-CPPFLAGS += -pg
-CPPFLAGS += -Wall -g -O0 -rdynamic
+#CXXFLAGS += -Wall -02 -rdynamic
+#CXXFLAGS += -DDEBUG_HOOK
+CXXFLAGS += -pg
+CXXFLAGS += -Wall -g -O0 -rdynamic
 libs = -ldl -lgmp
 out = nonameproxy
 
-CXX     = g++
+CXX  = g++
 
-#WIN32
-#CPPFLAGS = -Wall -O0 -g -static
-#CXX=i586-mingw32msvc-g++
-#LD=i586-mingw32msvc-ld
-#AR=i586-mingw32msvc-ar
-#RC=i586-mingw32msvc-windres
-#libs = -lgmp -lws2_32
-#out = nonameproxy.exe
+#used for passing target to dlls
+plugintarget = 
 
 objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
 		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
@@ -31,7 +25,7 @@ sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.
 all: nonameproxy
 
 nonameproxy: $(objects)
-	$(CXX)  $(CPPFLAGS) -o $(out) $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -o $(out) $(objects) $(libs)
 
 main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h loginstate.h \
 		messagefactory.h messagelist.h networkmessage.h rsa.h server.h tibiacrypt.h \
@@ -112,28 +106,55 @@ packethookmanager.o: packethookmanager.cpp packethookmanager.h packethook.h netw
 typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h thing.h
 
 clean:
-	rm -f nonameproxy $(objects)
+	rm -f nonameproxy nonameproxy.exe *.dll $(objects) 
 
 plugins: $(sharedobjects)
 
 channelmanager.so:
-	make -C ./plugins/channelmanager/
+	make $(plugintarget) -C ./plugins/channelmanager/
 	
 console.so:
-	make -C ./plugins/console/
+	make $(plugintarget) -C ./plugins/console/
 	
 debug.so:
-	make -C ./plugins/debug/
+	make $(plugintarget) -C ./plugins/debug/
 	
 info.so:
-	make -C ./plugins/info/
+	make $(plugintarget) -C ./plugins/info/
 	
 autogroup.so:
-	make -C ./plugins/autogroup/
+	make $(plugintarget) -C ./plugins/autogroup/
 	
 test.so:
-	make -C ./plugins/test/
+	make $(plugintarget) -C ./plugins/test/
 	
 watch.so:
-	make -C ./plugins/watch/
+	make $(plugintarget) -C ./plugins/watch/
 	
+###################################################################
+#WINDOWS STUFF
+###################################################################
+windows: CXXFLAGS = -Wall -O0
+windows: CXX=i586-mingw32msvc-g++
+windows: LD=i586-mingw32msvc-ld
+windows: AR=i586-mingw32msvc-ar
+windows: RC=i586-mingw32msvc-windres
+windows: libs = -lgmp -lws2_32
+windows: out = nonameproxy.exe
+windows: objects = connection.o connectionmanager.o corehooks.o gamestate.o loginstate.o \
+		messagefactory.o messagelist.o networkmessage.o rsa.o server.o \
+		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
+		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
+		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
+		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o
+
+windows: nonameproxy.dll main.cpp
+	$(CXX) $(CXXFLAGS) -o $(out) main.cpp nonameproxy.dll
+
+nonameproxy.dll: CXXFLAGS += -DBUILD_DLL
+nonameproxy.dll: $(objects)
+	$(CXX) $(CXXFLAGS) -shared -static -o nonameproxy.dll $(objects) $(libs)
+
+winplugins: plugintarget = windows
+winplugins: plugins
+

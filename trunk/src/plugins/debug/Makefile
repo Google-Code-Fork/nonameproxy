@@ -1,18 +1,9 @@
 # Makefile for nonameproxy
 
-#CPPFLAGS = -Wall -02 -rdynamic
-CPPFLAGS += -pg
-CPPFLAGS += -I../.. -Wall -g -O0 -rdynamic
-CXX     = g++
-libs = 
-
-#CPPFLAGS = -I../.. -Wall -O0 -g -static -LBUILD_DLL
-#CXX=i586-mingw32msvc-g++
-#LD=i586-mingw32msvc-ld
-#AR=i586-mingw32msvc-ar
-#RC=i586-mingw32msvc-windres
-#libs = -lgmp -lws2_32
-
+#CXXFLAGS = -Wall -02 -rdynamic
+CXXFLAGS += -pg
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXX = g++
 
 objects = debug.o 
 
@@ -21,9 +12,26 @@ objects = debug.o
 all: clean debug
 
 debug: $(objects)
-	$(CXX)  $(CPPFLAGS)  -shared -o debug.so $(objects)
+	$(CXX)  $(CXXFLAGS)  -shared -o debug.so $(objects)
 
 debug.o : debug.cpp debug.h 
 
 clean:
-	rm -f debug.so $(objects)
+	rm -f debug.dll debug.so $(objects)
+
+###################################################################
+#WINDOWS STUFF
+###################################################################
+windows: CXXFLAGS = -Wall -O0 -I../..
+windows: CXX=i586-mingw32msvc-g++
+windows: LD=i586-mingw32msvc-ld
+windows: AR=i586-mingw32msvc-ar
+windows: RC=i586-mingw32msvc-windres
+windows: libs=../../nonameproxy.dll
+
+windows: clean debug.dll
+
+debug.dll: CXXFLAGS += -DBUILD_DLL
+debug.dll: $(objects)
+	$(CXX) $(CXXFLAGS) -shared -o debug.dll $(objects) $(libs)
+

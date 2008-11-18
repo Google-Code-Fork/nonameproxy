@@ -1,9 +1,9 @@
 # Makefile for nonameproxy
 
-#CPPFLAGS = -Wall -02 -rdynamic
-CPPFLAGS += -pg
-CPPFLAGS += -I../.. -Wall -g -O0 -rdynamic
-CC     = g++
+#CXXFLAGS = -Wall -02 -rdynamic
+CXXFLAGS += -pg
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXX = g++
 
 objects = info.o 
 
@@ -12,9 +12,26 @@ objects = info.o
 all: clean info
 
 info: $(objects)
-	$(CC)  $(CPPFLAGS)  -shared -o info.so $(objects)
+	$(CXX)  $(CXXFLAGS)  -shared -o info.so $(objects)
 
 info.o : info.cpp info.h 
 
 clean:
-	rm -f info.so $(objects)
+	rm -f info.dll info.so $(objects)
+
+###################################################################
+#WINDOWS STUFF
+###################################################################
+windows: CXXFLAGS = -Wall -O0 -I../..
+windows: CXX=i586-mingw32msvc-g++
+windows: LD=i586-mingw32msvc-ld
+windows: AR=i586-mingw32msvc-ar
+windows: RC=i586-mingw32msvc-windres
+windows: libs=../../nonameproxy.dll
+
+windows: clean info.dll
+
+info.dll: CXXFLAGS += -DBUILD_DLL
+info.dll: $(objects)
+	$(CXX) $(CXXFLAGS) -shared -o info.dll $(objects) $(libs)
+
