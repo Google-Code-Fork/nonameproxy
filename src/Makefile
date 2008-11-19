@@ -20,7 +20,8 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
 		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o
 
-sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.so watch.so
+sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.so watch.so \
+		action.so
 
 all: nonameproxy
 
@@ -46,7 +47,7 @@ networkmessage.o: networkmessage.cpp networkmessage.h connection.h tibiacrypt.h 
 
 server.o: server.cpp server.h connection.h
 
-connection.o: connection.cpp connection.h server.h
+connection.o: connection.cpp connection.h server.h timer.h
 
 messagefactory.o: messagefactory.cpp messagefactory.cpp tibiamessage.h \
 		tibiatypes.h networkmessage.h enums.h
@@ -110,6 +111,9 @@ clean:
 
 plugins: $(sharedobjects)
 
+action.so:
+	make $(plugintarget) -C ./plugins/action/
+	
 channelmanager.so:
 	make $(plugintarget) -C ./plugins/channelmanager/
 	
@@ -134,7 +138,7 @@ watch.so:
 ###################################################################
 #WINDOWS STUFF
 ###################################################################
-windows: CXXFLAGS = -Wall -O0
+windows: CXXFLAGS = -Wall -O2
 windows: CXX=i586-mingw32msvc-g++
 windows: LD=i586-mingw32msvc-ld
 windows: AR=i586-mingw32msvc-ar

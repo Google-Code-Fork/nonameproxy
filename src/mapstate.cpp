@@ -291,7 +291,7 @@ const Thing& Tile::getThing (uint32_t stackpos) const
         return *_things[i];
 }
 
-bool Tile::hasBlocking (DatReader* dat) const
+bool Tile::hasBlocking (DatReader* dat, bool ignoreCreatures /*=false*/) const
 {
         uint32_t nthings = getThingCount ();
 
@@ -301,7 +301,7 @@ bool Tile::hasBlocking (DatReader* dat) const
         for (uint32_t i = 0; i < nthings; i ++) {
                 const Thing& thing = getThing (i);
                 uint32_t itemid;
-                if (thing.getType () == Thing::t_creature) {
+                if (thing.getType () == Thing::t_creature && !ignoreCreatures) {
                         return true;
                 }
                 if (thing.getType () == Thing::t_item) {
@@ -320,9 +320,9 @@ bool Tile::hasBlocking (DatReader* dat) const
         return false;
 }
                         
-uint32_t Tile::getWalkCost (DatReader* dat) const
+uint32_t Tile::getWalkCost (DatReader* dat, bool ignoreCreatures) const
 {
-        if (hasBlocking (dat)) {
+        if (hasBlocking (dat, ignoreCreatures)) {
                 return 0;
         }
         const Thing& thing = getThing (0);

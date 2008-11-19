@@ -22,7 +22,15 @@ const bool Pos::operator== (const Pos& a) const
                 return false;
         }
 }
+
 const bool Pos::operator!= (const Pos& a) const
 {
         return ! operator== (a);
 }
+
+const bool Pos::operator< (const Pos& a) const
+{
+        Pos tmp = *this;
+        return POS_2_INDEX (tmp) < POS_2_INDEX (a);
+}
+

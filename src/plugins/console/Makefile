@@ -22,7 +22,7 @@ clean:
 ###################################################################
 #WINDOWS STUFF
 ###################################################################
-windows: CXXFLAGS = -Wall -O0 -I../..
+windows: CXXFLAGS = -Wall -O2 -I../..
 windows: CXX=i586-mingw32msvc-g++
 windows: LD=i586-mingw32msvc-ld
 windows: AR=i586-mingw32msvc-ar
