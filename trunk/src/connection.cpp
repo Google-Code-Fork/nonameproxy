@@ -31,6 +31,7 @@
 
 #include "connection.h"
 #include "networkmessage.h"
+#include "timer.h"
 
 #ifdef WIN32
 #define NETWORK_ERROR(str)      if (WSAGetLastError () != EAGAIN) { \
@@ -52,6 +53,11 @@ Connection::Connection ()
         readBuffer = NULL;
         writeBuffer = NULL;
         writeMsg = NULL;
+
+        Timer timer;
+        if (timer.gettimeofday (&_lastSend, NULL)) {
+                printf ("connection error: failed to init gettimeofday\n");
+        }
 }
 
 Connection::~Connection ()
@@ -229,7 +235,20 @@ SOCKET Connection::query_fd (fd_set& readfds, fd_set& writefds,
                 FD_SET (connsock, &readfds);
 
                 if (!putQueue.empty ()) {
-                        FD_SET (connsock, &writefds);
+                        Timer timer;
+                        struct timeval tv;
+                        if (timer.gettimeofday (&tv, NULL)) {
+                                printf ("connection error: gettimeofday\n");
+                        }
+
+                        int32_t sdiff = tv.tv_sec - _lastSend.tv_sec;
+                        int32_t udiff = tv.tv_usec - _lastSend.tv_usec;
+
+                        int64_t mdiff = sdiff * 1000 + udiff / 1000;
+                        if (mdiff >= 125) {
+                                FD_SET (connsock, &writefds);
+                                _lastSend = tv;
+                        }
                 }
 
                 FD_SET (connsock, &errfds);
@@ -269,7 +288,20 @@ int32_t Connection::query_fd (fd_set& readfds, fd_set& writefds,
 
                 //we only want to write msgQueue is not empty
                 if (!putQueue.empty ()) {
-                        FD_SET (connsock, &writefds);
+                        Timer timer;
+                        struct timeval tv;
+                        if (timer.gettimeofday (&tv, NULL)) {
+                                printf ("connection error: gettimeofday\n");
+                        }
+
+                        int32_t sdiff = tv.tv_sec - _lastSend.tv_sec;
+                        int32_t udiff = tv.tv_usec - _lastSend.tv_usec;
+
+                        int64_t mdiff = sdiff * 1000 + udiff / 1000;
+                        if (mdiff >= 125) {
+                                FD_SET (connsock, &writefds);
+                                _lastSend = tv;
+                        }
                 }
 
                 //we should probably know about errors as well

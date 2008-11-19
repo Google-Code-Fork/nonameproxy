@@ -28,7 +28,7 @@
 #include <stdint.h>
 #include <list>
 
-//#include "server.h"
+#include "timer.h"
 
 class NetworkMessage;
 
@@ -80,6 +80,8 @@ class Connection
                 int32_t _peek  (void* buf, int32_t len);
                 int32_t _put   (const void* buf, int32_t len);
                 int32_t _close ();
+
+                struct timeval _lastSend;
 
                 void _putMsg ();
                 NetworkMessage* _getMsg ();

@@ -19,6 +19,7 @@ class Pos
 
                 const bool operator== (const Pos& a) const;
                 const bool operator!= (const Pos& a) const;
+                const bool operator<  (const Pos& a) const;
 };
 
 #endif

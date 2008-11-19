@@ -27,6 +27,8 @@
 #define MAP_Y 14 
 #define MAP_Z 8
 
+#define MAP_MAX_FLOOR 16
+
 #include <string>
 #include <vector>
 #include <map>
@@ -62,9 +64,11 @@ class Tile
                 Thing& getThing (uint32_t stackpos);
                 const Thing& getThing (uint32_t stackpos) const;
 
-                bool hasBlocking (DatReader* dat) const;
+                bool hasBlocking (DatReader* dat, 
+                                  bool ignoreCreatures = false) const;
                 
-                uint32_t getWalkCost (DatReader* dat) const;
+                uint32_t getWalkCost (DatReader* dat,
+                                      bool ignoreCreatures = false) const;
         protected:
                 /* c ++ sucks, therefore i cant initialize an array of tiles
                  * so ive had to add a setMap function to pass the mapstate* */
