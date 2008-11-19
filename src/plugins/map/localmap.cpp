@@ -81,8 +81,8 @@ bool LocalMap::walk ()
                 return false;
         }
 
-        uint32_t m[14][18];
-        i_makeMap (curPos, _to, m);
+        uint32_t (*m)[18];
+        m = i_makeMap (curPos, _to);
 
         Path* path = findPath (start, end, m);
 
@@ -155,13 +155,13 @@ uint32_t LocalMap::calcPathCost (const Pos& from, const Pos& to)
                 return false;
         }
 
-        uint32_t m[14][18];
-        i_makeMap (from, to, m, true);
+        uint32_t (*m)[18];
+        m = i_makeMap (from, to, true);
 
         Path* path = findPath (start, end, m);
 
         if (path == NULL) {
-                return 0;
+                return UINT_MAX;
         }
         
         uint32_t cost = 0;
@@ -222,9 +222,26 @@ bool LocalMap::set_target (const Pos& pos)
 }
         
         
-void LocalMap::i_makeMap (const Pos& from, const Pos& to, uint32_t m[][18],
-                          bool ignoreCreatures /*=false*/)
+uint32_t (*LocalMap::i_makeMap (const Pos& from, const Pos& to,
+                          bool ignoreCreatures /*=false*/))[MAP_X]
 {
+        uint32_t (*m)[MAP_X];
+
+        uint32_t curCycle = _client->getCycle ();
+        if (ignoreCreatures) {
+                m = _nc_map;
+                if (_nc_cycle == curCycle) {
+                        return m;
+                }
+                _nc_cycle = curCycle;
+        } else {
+                m = _c_map;
+                if (_c_cycle == curCycle) {
+                        return m;
+                }
+                _c_cycle = curCycle;
+        }
+
         MapState* map = _client->gstate->map;
         const Pos& curPos = map->getCurPos ();
 
@@ -256,13 +273,13 @@ void LocalMap::i_makeMap (const Pos& from, const Pos& to, uint32_t m[][18],
          || !(0 <= start.y && start.y < 14))
         {
                 printf ("i_makeMap error start out of bounds\n");
-                return;
+                return m;
         }
         if (!(0 <= end.x && end.x < 18) 
          || !(0 <= end.y && end.y < 14))
         {
                 printf ("i_makeMap error end out of bounds\n");
-                return;
+                return m;
         }
         if (m[start.y][start.x] == 0) {
                 m[start.y][start.x] = MIN_COST;
@@ -282,6 +299,8 @@ void LocalMap::i_makeMap (const Pos& from, const Pos& to, uint32_t m[][18],
                 printf ("\n");
         }
         printf ("\n");
+
+        return m;
 }
         
 Pos LocalMap::i_globalToLocal (const Pos& pos)
@@ -294,6 +313,9 @@ void LocalMap::i_load (uint32_t pluginId, Client* client)
 {
         _client = client;
         _pluginId = pluginId;
+
+        _c_cycle = _client->getCycle ();
+        _nc_cycle = _client->getCycle ();
 
         _movehooks[0] = _client->addRecvReadHook (_pluginId, GRM_MAP_NORTH_ID,
                                                         new MoveHook);

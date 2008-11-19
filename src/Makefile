@@ -18,7 +18,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
 		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
-		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o
+		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o wsastartup.o
 
 sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.so watch.so \
 		action.so
@@ -30,7 +30,7 @@ nonameproxy: $(objects)
 
 main.o : main.cpp connection.h connectionmanager.h corehooks.h gamestate.h loginstate.h \
 		messagefactory.h messagelist.h networkmessage.h rsa.h server.h tibiacrypt.h \
-		tibiamessage.h tibiatypes.h xtea.h
+		tibiamessage.h tibiatypes.h xtea.h wsastartup.h
 
 tibiamessage.o: tibiamessage.cpp tibiamessage.h tibiatypes.h enums.h
 
@@ -106,6 +106,8 @@ packethookmanager.o: packethookmanager.cpp packethookmanager.h packethook.h netw
 
 typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h thing.h
 
+wsastartup.o: wsastartup.cpp wsastartup.h
+
 clean:
 	rm -f nonameproxy nonameproxy.exe *.dll $(objects) 
 
@@ -150,7 +152,7 @@ windows: objects = connection.o connectionmanager.o corehooks.o gamestate.o logi
 		tibiacrypt.o tibiamessage.o tibiatypes.o xtea.o client.o hookmanager.o \
 		accountstate.o charstate.o safefile.o datreader.o mapstate.o adler32.o \
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
-		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o
+		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o wsastartup.o
 
 windows: nonameproxy.dll main.cpp
 	$(CXX) $(CXXFLAGS) -o $(out) main.cpp nonameproxy.dll
