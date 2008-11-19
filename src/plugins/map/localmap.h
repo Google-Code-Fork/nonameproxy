@@ -12,12 +12,6 @@
 
 #define MAX_MOVE_HOOK 4
 
-class MoveHook : public ReadHook
-{
-        public:
-                virtual void func (TibiaMessage* tm, Client* client);
-};
-
 class LocalMap
 {
         public:
@@ -38,12 +32,15 @@ class LocalMap
                 /* stops by setting target to players pos */
                 void stop ();
 
+                uint32_t calcPathCost (const Pos& from, const Pos& to);
+
                 void i_load (uint32_t pluginId, Client* client);
                 void i_unload ();
 
         private:
                 Pos i_globalToLocal (const Pos& pos);
-                void i_makeMap (uint32_t m[][18]);
+                void i_makeMap (const Pos& from, const Pos& to, 
+                                uint32_t m[][18], bool ignoreCreatures = false);
                 void i_move (direction_t dir);
 
                 Pos             _to;

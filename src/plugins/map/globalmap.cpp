@@ -7,7 +7,7 @@
 #include <set>
 #include <list>
 
-#include "localmap.h"
+#include "globalmap.h"
 #include "map.h"
 #include "enums.h"
 
@@ -18,279 +18,220 @@
 
 #define MIN_COST 100
 
-typedef std::list<Pos> NodeList;
-typedef std::map<uint32_t, NodeList> NodeMap;
-typedef std::pair<uint32_t, NodeList> ListPair;
-typedef std::set<Pos, bool (*) (const Pos&, const Pos&)> NodeSet;
-typedef std::list<direction_t> Path;
-
 class MoveHook : public ReadHook
 {
         public:
                 virtual void func (TibiaMessage* tm, Client* client);
 };
 
+class Node {};
 
-Path* findPath (Pos start, Pos end, uint32_t[][18]);
 
-void MoveHook::func (TibiaMessage* tm, Client* client)
+typedef Node*                           YNode;
+
+typedef std::pair<uint32_t, YNode>      XNodePair;
+typedef std::map<uint32_t, YNode>       XNode;
+
+typedef std::pair<uint32_t, XNode>      ZNodePair;
+typedef std::map<uint32_t, XNode>       ZNode;
+typedef ZNode                           NodeGraph[MAP_MAX_FLOOR];
+
+typedef std::pair<Pos, uint32_t>        EdgePair;
+typedef std::map<Pos, uint32_t>         EdgeMap;
+
+typedef std::pair<Pos, EdgeMap>         AdjacencyPair;
+typedef std::map<Pos, EdgeMap>          AdjacencyMap;
+
+typedef std::list<Pos>                  PosList;
+
+class MapGraph
 {
-        map.local.kick ();
+        public:
+                bool addNode (const Pos& pos, Node* node);
+                bool deleteNode (const Pos& pos);
+
+                bool addEdge (const Pos& p1, const Pos& p2, uint32_t cost);
+                bool deleteEdge (const Pos& p1, const Pos& p2);
+
+                uint32_t getRange (const Pos& p1, const Pos& p2, PosList& nodes);
+
+                const EdgeMap& getEdges (const Pos& pos);
+
+                void show ();
+
+        private:
+                NodeGraph       _graph;
+                AdjacencyMap    _edges;
+};
+
+bool MapGraph::addNode (const Pos& pos, Node* node)
+{
+        ZNode& Z = _graph[pos.z];
+        ZNode::iterator zi = Z.find (pos.x);
+        if (zi == Z.end ()) {
+                std::pair<ZNode::iterator, bool> res;
+                res = Z.insert (ZNodePair (pos.x, XNode ()));
+                if (res.second == false) {
+                        printf ("addNode error: XNode insert failed\n");
+                        return false;
+                }
+                zi = res.first;
+        }
+        
+        XNode& X = (*zi).second;
+        if (X.count (pos.y) != 0) {
+                printf ("addNode error: pos already exists\n");
+                return false;
+        }
+
+        X.insert (XNodePair (pos.y, node));
+        return true;
 }
 
-LocalMap::LocalMap ()
+bool MapGraph::deleteNode (const Pos& pos)
 {
-        for (uint32_t i = 0; i < MAX_MOVE_HOOK; i ++) {
+        ZNode& Z = _graph[pos.z];
+        ZNode::iterator zi = Z.find (pos.x);
+        if (zi == Z.end ()) {
+                printf ("deleteNode error: pos doesnt exist\n");
+                return false;
+        }
+
+        XNode& X = (*zi).second;
+        XNode::iterator xi = X.find (pos.y);
+        if (xi == X.end ()) {
+                printf ("deleteNode error: pos doesnt exist\n");
+                return false;
+        }
+
+        /* note we need a copy here as deleteEdge will modify the original */
+        const EdgeMap& edges = getEdges (pos);
+        EdgeMap::const_iterator i;
+        for (i = edges.begin (); i != edges.end (); ++ i) {
+                deleteEdge ((*i).first, pos);
+        }
+
+        delete (*xi).second;
+        X.erase (xi);
+        if (X.size () == 0) {
+                Z.erase (zi);
+        }
+        return true;
+}
+
+bool MapGraph::addEdge (const Pos& p1, const Pos& p2, uint32_t cost)
+{
+        AdjacencyMap::iterator i1 = _edges.find (p1);
+        AdjacencyMap::iterator i2 = _edges.find (p2);
+        if (i1 == _edges.end ()) {
+                std::pair<AdjacencyMap::iterator, bool> res;
+                res = _edges.insert (AdjacencyPair (p1, EdgeMap ()));
+                if (res.second == false) {
+                        printf ("addEdge error: p1 insert failed\n");
+                        return false;
+                }
+                i1 = res.first;
+        }
+        if (i2 == _edges.end ()) {
+                std::pair<AdjacencyMap::iterator, bool> res;
+                res = _edges.insert (AdjacencyPair (p2, EdgeMap ()));
+                if (res.second == false) {
+                        printf ("addEdge error: p2 insert failed\n");
+                        return false;
+                }
+                i2 = res.first;
+        }
+        (*i1).second.insert (EdgePair (p2, cost));
+        (*i2).second.insert (EdgePair (p1, cost));
+        return true;
+}
+
+bool MapGraph::deleteEdge (const Pos& p1, const Pos& p2)
+{
+        if (p1 == p2) {
+                return true;
+        }
+        AdjacencyMap::iterator i1 = _edges.find (p1);
+        AdjacencyMap::iterator i2 = _edges.find (p2);
+        if (i2 == _edges.end ()) {
+                printf ("deleteEdge error: p1 doesnt exist\n");
+                return false;
+        }
+        if (i2 == _edges.end ()) {
+                printf ("deleteEdge error: p2 doesnt exist\n");
+                return false;
+        }
+        if ((*i1).second.erase (p2) == 0) {
+                printf ("deleteEdge error: p1 -> p2 failed\n");
+                return false;
+        }
+        if ((*i1).second.size () == 0) {
+                _edges.erase (i1);
+        }
+        if ((*i2).second.erase (p1) == 0) {
+                printf ("deleteEdge error: p2 -> p1 failed\n");
+                return false;
+        }
+        if ((*i2).second.size () == 0) {
+                _edges.erase (i2);
+        }
+        return true;
+}
+
+const EdgeMap& MapGraph::getEdges (const Pos& pos)
+{
+        AdjacencyMap::iterator i = _edges.find (pos);
+        if (i == _edges.end ()) {
+                printf ("getEdges error: pos doesnt exist\n");
+                return *((EdgeMap*)NULL);
+        }
+        return (*i).second;
+}
+        
+void MapGraph::show ()
+{
+        printf ("Vertices\n");
+        for (uint32_t z = 0; z != MAP_MAX_FLOOR; z ++) {
+                if(_graph[z].size () == 0) {
+                        continue;
+                }
+                printf ("z = %d\n", z);
+                ZNode::iterator x;
+                for (x = _graph[z].begin (); x != _graph[z].end (); ++ x) {
+                        printf ("\tx = %d\n", (*x).first);
+                        const XNode& X = (*x).second;
+                        XNode::const_iterator y;
+                        for (y = X.begin (); y != X.end (); ++ y) {
+                                printf ("\t\ty = %d\n", (*y).first);
+                        }
+                }
+        }
+
+        printf ("Edges\n");
+        AdjacencyMap::iterator e;
+        for (e = _edges.begin (); e != _edges.end (); ++ e) {
+                Pos k = (*e).first;
+                printf ("(%d,%d,%d):", k.x, k.y, k.z);
+                
+                const EdgeMap& connections = (*e).second;
+                EdgeMap::const_iterator i;
+                for (i = connections.begin (); i != connections.end (); ++ i) {
+                        Pos p = (*i).first;
+                        printf (" (%d,%d,%d)", p.x, p.y, p.z);
+                }
+                printf ("\n");
+        }
+}
+
+GlobalMap::GlobalMap ()
+{
+        for (uint32_t i = 0; i != MAX_MOVE_HOOK; i ++) {
                 _movehooks[i] = 0;
         }
 }
 
-bool LocalMap::at_target ()
-{
-        if (_client->gstate->map->getCurPos () == _to) {
-                return true;
-        } else {
-                return false;
-        }
-}
-
-bool LocalMap::kick ()
-{
-        const Pos& curPos = _client->gstate->map->getCurPos ();
-        if (curPos == _to) {
-                return true;
-        }
-        if (curPos == _tmpTo) {
-                return walk ();
-        }
-        return true;
-}
-
-bool LocalMap::walk ()
-{
-        MapState* map = _client->gstate->map;
-        const Pos& curPos = map->getCurPos ();
-
-        Pos start = i_globalToLocal (curPos);
-        Pos end = i_globalToLocal (_to); 
-        /* quick check to make sure target in range to prevent crashing */
-        if (!(0 <= end.x && end.x < 18) 
-         || !(0 <= end.y && end.y < 14))
-        {
-                printf ("map walk error: end out of bounds\n");
-                return false;
-        }
-
-        uint32_t m[14][18];
-        i_makeMap (curPos, _to, m);
-
-        Path* path = findPath (start, end, m);
-
-        if (path == NULL) {
-                return false;
-        }
-        
-        _tmpTo = curPos;
-        uint32_t count = 0;
-        TDirectionList* tPath = new TDirectionList ();
-        Path::iterator i;
-        for (i = path->begin (); i != path->end (); ++ i) {
-                if (count == 10) {
-                        break;
-                }
-                count ++;
-
-                direction_t dir = *i;
-                tPath->add (dir);
-
-                /* follow the path to find the new tmpTo */
-                if (dir == DIRECTION_SE 
-                 || dir == DIRECTION_EAST 
-                 || dir == DIRECTION_NE) 
-                {
-                        _tmpTo.x ++;
-                } else if (dir == DIRECTION_SW 
-                        || dir == DIRECTION_WEST
-                        || dir == DIRECTION_NW) 
-                {
-                        _tmpTo.x --;
-                }
-                if (dir == DIRECTION_NE
-                 || dir == DIRECTION_NORTH
-                 || dir == DIRECTION_NW)
-                {
-                        _tmpTo.y --;
-                } else if (dir == DIRECTION_SE
-                        || dir == DIRECTION_SOUTH
-                        || dir == DIRECTION_SW)
-                {
-                        _tmpTo.y ++;
-                }
-        }
-
-        GSMessageList gsml;
-        gsml.add (new GSMAutoWalk (tPath));
-        _client->sendToServer (gsml);
-
-        delete path;
-        return true;
-}
-
-uint32_t LocalMap::calcPathCost (const Pos& from, const Pos& to)
-{
-        Pos start = i_globalToLocal (from);
-        Pos end = i_globalToLocal (to); 
-        /* quick check to make sure target in range to prevent crashing */
-        if (!(0 <= start.x && start.x < 18) 
-         || !(0 <= start.y && start.y < 14))
-        {
-                printf ("map walk error: start out of bounds\n");
-                return false;
-        }
-
-        if (!(0 <= end.x && end.x < 18) 
-         || !(0 <= end.y && end.y < 14))
-        {
-                printf ("map walk error: end out of bounds\n");
-                return false;
-        }
-
-        uint32_t m[14][18];
-        i_makeMap (from, to, m, true);
-
-        Path* path = findPath (start, end, m);
-
-        if (path == NULL) {
-                return 0;
-        }
-        
-        uint32_t cost = 0;
-        Path::iterator i;
-        for (i = path->begin (); i != path->end (); ++ i) {
-                direction_t dir = *i;
-                if (dir == DIRECTION_SE 
-                 || dir == DIRECTION_EAST 
-                 || dir == DIRECTION_NE) 
-                {
-                        start.x ++;
-                } else if (dir == DIRECTION_SW 
-                        || dir == DIRECTION_WEST
-                        || dir == DIRECTION_NW) 
-                {
-                        start.x --;
-                }
-                if (dir == DIRECTION_NE
-                 || dir == DIRECTION_NORTH
-                 || dir == DIRECTION_NW)
-                {
-                        start.y --;
-                } else if (dir == DIRECTION_SE
-                        || dir == DIRECTION_SOUTH
-                        || dir == DIRECTION_SW)
-                {
-                        start.y ++;
-                }
-                cost += m[start.y][start.x];
-                printf ("%d\n", cost);
-        }
-
-        delete path;
-        return cost;
-}
-
-bool LocalMap::set_target (uint32_t x, uint32_t y, uint32_t z)
-{
-        MapState* map = _client->gstate->map;
-        const Pos& curPos = map->getCurPos ();
-        if (!(curPos.x - 8 <= x && x <= curPos.x + 9)
-         || !(curPos.y - 6 <= y && y <= curPos.y + 7))
-        {
-                printf ("map set_target error: local target out of bounds\n");
-                return false;
-        } else if (z != curPos.z) {
-                printf ("map set_target error: local z != curPos.z\n");
-                return false;
-        }
-        _to = Pos (x, y, z);
-        _tmpTo = curPos;
-        return true;
-}
-
-bool LocalMap::set_target (const Pos& pos)
-{
-        return set_target (pos.x, pos.y, pos.z);
-}
-        
-        
-void LocalMap::i_makeMap (const Pos& from, const Pos& to, uint32_t m[][18],
-                          bool ignoreCreatures /*=false*/)
-{
-        MapState* map = _client->gstate->map;
-        const Pos& curPos = map->getCurPos ();
-
-        uint32_t miny = curPos.y - 6;
-        uint32_t maxy = curPos.y + 7;
-        uint32_t minx = curPos.x - 8;
-        uint32_t maxx = curPos.x + 9;
-        uint32_t z = curPos.z;
-
-        uint32_t my = 0;
-        uint32_t mx = 0;
-
-        my = 0;
-        for (uint32_t y = miny; y <= maxy; y ++) {
-                mx = 0;
-                for (uint32_t x = minx; x <= maxx; x ++) {
-                        const Tile& tile = map->getTile (x, y, z);
-                        m[my][mx] = tile.getWalkCost (_client->dat, 
-                                                      ignoreCreatures);
-                        mx ++;
-                }
-                my ++;
-        }
-        /* we take for granted that start and end are open */
-        Pos start = i_globalToLocal (to);
-        Pos end = i_globalToLocal (from);
-
-        if (!(0 <= start.x && start.x < 18) 
-         || !(0 <= start.y && start.y < 14))
-        {
-                printf ("i_makeMap error start out of bounds\n");
-                return;
-        }
-        if (!(0 <= end.x && end.x < 18) 
-         || !(0 <= end.y && end.y < 14))
-        {
-                printf ("i_makeMap error end out of bounds\n");
-                return;
-        }
-        if (m[start.y][start.x] == 0) {
-                m[start.y][start.x] = MIN_COST;
-        }
-        if (m[end.y][end.x] == 0) {
-                m[end.y][end.x] = MIN_COST;
-        }
-
-        for (uint32_t y = 0; y < 14; y ++) {
-                for (uint32_t x = 0; x < 18; x ++) {
-                        if (m[y][x] == 0) {
-                                printf ("   ");
-                        } else {
-                                printf ("%d", m[y][x]);
-                        }
-                }
-                printf ("\n");
-        }
-        printf ("\n");
-}
-        
-Pos LocalMap::i_globalToLocal (const Pos& pos)
-{
-        const Pos& curPos = _client->gstate->map->getCurPos ();
-        return Pos (pos.x - curPos.x + 8, pos.y - curPos.y + 6, pos.z);
-}
-
-void LocalMap::i_load (uint32_t pluginId, Client* client)
+/*
+void GlobalMap::i_load (uint32_t pluginId, Client* client)
 {
         _client = client;
         _pluginId = pluginId;
@@ -305,17 +246,39 @@ void LocalMap::i_load (uint32_t pluginId, Client* client)
                                                         new MoveHook);
 }
 
-void LocalMap::i_unload ()
+void GlobalMap::i_unload ()
 {
         for (uint32_t i = 0; i != MAX_MOVE_HOOK; i ++) {
                 _client->deleteRecvReadHook (_pluginId, _movehooks[i]);
         }
 }
+*/
+#if 1
+int32_t main (int32_t argc, char** argv)
+{
+        MapGraph mapgraph;
+        mapgraph.addNode (Pos (1,2,3), NULL);
+        mapgraph.addNode (Pos (2,2,3), NULL);
+        mapgraph.addNode (Pos (3,2,3), NULL);
+        mapgraph.addNode (Pos (2,3,3), NULL);
+        mapgraph.addNode (Pos (3,4,3), NULL);
+
+        mapgraph.addEdge (Pos (1,2,3), Pos (2,2,3), 0);
+        mapgraph.addEdge (Pos (2,3,3), Pos (3,4,3), 0);
+        mapgraph.addEdge (Pos (1,2,3), Pos (3,4,3), 0);
+
+        mapgraph.show ();
+        mapgraph.deleteNode (Pos (1,2,3));
+        mapgraph.show ();
+        return 0;
+}
+#endif
 
 /******************************************************************
  * A* stuff
  ******************************************************************/
 
+#if 0
 bool poscomp (const Pos& p1, const Pos& p2)
 {
         return POS_2_INDEX (p1) < POS_2_INDEX (p2);
@@ -598,4 +561,6 @@ Path* findPath (Pos start, Pos end, uint32_t m[][18])
         }
         return NULL;
 }
+#endif
+
         
