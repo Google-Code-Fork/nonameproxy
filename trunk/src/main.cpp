@@ -19,16 +19,19 @@
  *****************************************************************************/
 
 #include <stdint.h>
-//#include <sys/select.h>
-//#include <unistd.h>
 
 #include "server.h"
 #include "connection.h"
 #include "client.h"
 #include "loginstate.h"
 
-int main (uint32_t argc, char** argv)
+#include "wsastartup.h"
+
+int main (int32_t argc, char** argv)
 {
+        /* does nothing under non-windows */
+        iWSAStartup ();
+
         Client* test;
 
         Server* loginServer = new Server ();

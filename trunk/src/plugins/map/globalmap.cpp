@@ -31,7 +31,7 @@ GlobalMap::GlobalMap ()
         }
 }
 
-/*
+
 void GlobalMap::i_load (uint32_t pluginId, Client* client)
 {
         _client = client;
@@ -53,7 +53,7 @@ void GlobalMap::i_unload ()
                 _client->deleteRecvReadHook (_pluginId, _movehooks[i]);
         }
 }
-*/
+
 
 /******************************************************************
  * A* stuff

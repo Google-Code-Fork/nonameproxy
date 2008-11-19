@@ -39,11 +39,23 @@ class LocalMap
 
         private:
                 Pos i_globalToLocal (const Pos& pos);
-                void i_makeMap (const Pos& from, const Pos& to, 
-                                uint32_t m[][18], bool ignoreCreatures = false);
+
+                /* can you believe this is the syntax for returning
+                 * multi dimensional arrays ?!?! */
+                uint32_t (*i_makeMap (const Pos& from, const Pos& to, 
+                                bool ignoreCreatures = false))[MAP_X];
                 void i_move (direction_t dir);
 
                 Pos             _to;
+
+                /* in order to avoid creating a map each time we need it
+                 * we update it each cycle. note there are two maps, one
+                 * for creatures ond one for no creatures */
+                uint32_t _c_cycle;
+                uint32_t _nc_cycle;
+
+                uint32_t _c_map[MAP_Y][MAP_X];
+                uint32_t _nc_map[MAP_Y][MAP_X];
 
                 /* we can send 10 moves at a time to the server
                  * so we must split the journey using tmpTo */

@@ -1,6 +1,10 @@
 #include <stdio.h>
 
 #include "mapgraph.h"
+
+#define MIN(x,y) ((x) < (y) ? (x) : (y))
+#define MAN(x,y) ((x) > (y) ? (x) : (y))
+
 class Node {};
 
 
@@ -127,7 +131,33 @@ const EdgeMap& MapGraph::getEdges (const Pos& pos)
         }
         return (*i).second;
 }
-        
+
+uint32_t MapGraph::getRange (const Pos& p1, const Pos& p2, PosList& nodes)
+{
+        uint32_t minz = MIN (p1.z, p2.z);
+        uint32_t maxz = MAN (p1.z, p2.z);
+
+        uint32_t minx = MIN (p1.x, p2.x);
+        uint32_t maxx = MAN (p1.x, p2.x);
+
+        uint32_t miny = MIN (p1.y, p2.y);
+        uint32_t maxy = MAN (p1.y, p2.y);
+
+        for (uint32_t z = minz; z != maxz; z ++) {
+                ZNode::iterator x    = _graph[z].lower_bound (minx);
+                ZNode::iterator xend = _graph[z].upper_bound (maxx);
+                for (; x != xend; ++ x) {
+                        XNode& X = (*x).second;
+                        XNode::iterator y    = X.lower_bound (miny);
+                        XNode::iterator yend = X.upper_bound (maxy);
+                        for (; y != yend; ++ y) {
+                                nodes.push_back (Pos (x->first, y->first, z));
+                        }
+                }
+        }
+        return nodes.size ();
+}
+
 void MapGraph::show ()
 {
         printf ("Vertices\n");
