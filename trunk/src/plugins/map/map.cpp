@@ -20,7 +20,7 @@ Args MapRecipricant::func (const Args& args)
         Args ret;
         i ++;
         if (args.size () > 1) {
-                if (*i == "walk") {
+                if (*i == "walk" && args.size () == 2) {
                         map.local.walk ();
                 } else if (*i == "set" && args.size () == 5) {
                         i ++;
@@ -34,6 +34,25 @@ Args MapRecipricant::func (const Args& args)
                         uint32_t z = strtol ((*i).c_str (), NULL, 0);
                         map.local.set_target (x, y, z);
                         ret.push_back (out);
+                } else if (*i == "cost" && args.size () == 8) {
+                        i ++;
+                        uint32_t x, y, z;
+
+                        x = strtol ((*i).c_str (), NULL, 0); i ++;
+                        y = strtol ((*i).c_str (), NULL, 0); i ++;
+                        z = strtol ((*i).c_str (), NULL, 0); i ++;
+                        Pos start (x, y, z);
+
+                        x = strtol ((*i).c_str (), NULL, 0); i ++;
+                        y = strtol ((*i).c_str (), NULL, 0); i ++;
+                        z = strtol ((*i).c_str (), NULL, 0); i ++;
+                        Pos end (x, y, z);
+
+                        uint32_t cost = map.local.calcPathCost (start, end);
+
+                        char tmp[BUFFER_SIZE];
+                        snprintf (tmp, BUFFER_SIZE, "%d", cost);
+                        ret.push_back (tmp);
                 }
         } else {
                 return map.usage ();
