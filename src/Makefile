@@ -21,7 +21,7 @@ objects = main.o connection.o connectionmanager.o corehooks.o gamestate.o logins
 		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o wsastartup.o
 
 sharedobjects = channelmanager.so console.so debug.so info.so autogroup.so test.so watch.so \
-		action.so
+		action.so dummy.so
 
 all: nonameproxy
 
@@ -137,10 +137,13 @@ test.so:
 watch.so:
 	make $(plugintarget) -C ./plugins/watch/
 	
+dummy.so:
+	make $(plugintarget) -C ./plugins/dummy/
+	
 ###################################################################
 #WINDOWS STUFF
 ###################################################################
-windows: CXXFLAGS = -Wall -O2
+windows: CXXFLAGS = -Wall -O0 -g
 windows: CXX=i586-mingw32msvc-g++
 windows: LD=i586-mingw32msvc-ld
 windows: AR=i586-mingw32msvc-ar
