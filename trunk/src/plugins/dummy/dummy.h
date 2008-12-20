@@ -9,14 +9,18 @@
 #include "messenger.h"
 #include "hook.h"
 
+/* the hook that will replace the speak messages */
 class ChickenHook : public WriteHook
 {
-        virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
+        public:
+                virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
 };
 
-class TestRecipricant : public Recipricant
+/* the recipricant for communicating with core */
+class ChickenRecipricant : public Recipricant
 {
-        virtual void func (const Args& args);
+        public:
+                virtual Args func (const Args& args);
 };
 
 extern "C"
