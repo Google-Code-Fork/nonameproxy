@@ -9839,6 +9839,7 @@ void GRMSpeak::get (NetworkMessage* msg, GameState* gs, DatReader* dat)
                 _pos = new TPos (msg);
                 _channelid = NULL;
         } else if (t == SPEAK_CHANNEL_Y
+                || t == SPEAK_CHANNEL_W
                 || t == SPEAK_CHANNEL_R1
                 || t == SPEAK_CHANNEL_R2
                 || t == SPEAK_CHANNEL_O)

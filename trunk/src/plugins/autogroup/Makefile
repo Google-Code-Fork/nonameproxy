@@ -2,7 +2,7 @@
 
 #CXXFLAGS = -Wall -02 -rdynamic
 CXXFLAGS += -pg
-CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
 objects = autogroup.o 
@@ -33,5 +33,4 @@ windows: clean autogroup.dll
 
 autogroup.dll: CXXFLAGS += -DBUILD_DLL
 autogroup.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -o autogroup.dll $(objects) $(libs)
-
+	$(CXX) $(CXXFLAGS) -shared --enable-runtime-pseudo-reloc -o autogroup.dll $(objects) $(libs)

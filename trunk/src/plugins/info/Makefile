@@ -2,7 +2,7 @@
 
 #CXXFLAGS = -Wall -02 -rdynamic
 CXXFLAGS += -pg
-CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
 objects = info.o 
@@ -33,5 +33,5 @@ windows: clean info.dll
 
 info.dll: CXXFLAGS += -DBUILD_DLL
 info.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -o info.dll $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -shared --enable-runtime-pseudo-reloc -o info.dll $(objects) $(libs)
 

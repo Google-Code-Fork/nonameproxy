@@ -2,7 +2,7 @@
 
 #CXXFLAGS = -Wall -02 -rdynamic
 CXXFLAGS += -pg
-CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
 objects = map.o localmap.o globalmap.o mapgraph.o
@@ -40,5 +40,5 @@ windows: clean map.dll
 
 map.dll: CXXFLAGS += -DBUILD_DLL
 map.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -o map.dll $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -shared --enable-runtime-pseudo-reloc -o map.dll $(objects) $(libs)
 

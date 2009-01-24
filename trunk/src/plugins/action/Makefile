@@ -2,7 +2,7 @@
 
 #CXXFLAGS = -Wall -02 -rdynamic
 CXXFLAGS += -pg
-CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
 objects = action.o 
@@ -33,5 +33,5 @@ windows: clean action.dll
 
 action.dll: CXXFLAGS += -DBUILD_DLL
 action.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -o action.dll $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -shared --enable-runtime-pseudo-reloc -o action.dll $(objects) $(libs)
 
