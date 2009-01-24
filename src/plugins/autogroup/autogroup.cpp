@@ -308,11 +308,16 @@ void AutoGroup::i_load (uint32_t pluginId, Client* client)
 
 void AutoGroup::i_unload ()
 {
+        printf ("blah1\n");
         _client->deleteRecvReadHook (_pluginId, _addhookid);
+        printf ("blah2\n");
         _client->deleteRecvReadHook (_pluginId, _openhookid);
+        printf ("blah3\n");
         _client->deleteRecvReadHook (_pluginId, _updatehookid);
+        printf ("blah4\n");
 
         _client->deleteRecipricant (_pluginId, _rid);
+        printf ("blah5\n");
 }
 
 const std::string& AutoGroup::i_name ()
@@ -327,7 +332,9 @@ void load (uint32_t id, Client* _client)
 
 void unload ()
 {
+        printf ("yeah1\n");
         group.i_unload ();
+        printf ("yeah2\n");
 }
 
 const std::string& name ()

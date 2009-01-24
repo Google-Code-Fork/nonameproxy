@@ -109,7 +109,7 @@ typeparser.o: typeparser.cpp typeparser.h gamestate.h tibiatypes.h thing.h
 wsastartup.o: wsastartup.cpp wsastartup.h
 
 clean:
-	rm -f nonameproxy nonameproxy.exe *.dll $(objects) 
+	rm -f nonameproxy nonameproxy.exe *.dll $(objects)
 
 plugins: $(sharedobjects)
 
@@ -140,6 +140,9 @@ watch.so:
 dummy.so:
 	make $(plugintarget) -C ./plugins/dummy/
 	
+cleanplugins: plugintarget = clean
+cleanplugins: $(sharedobjects)
+
 ###################################################################
 #WINDOWS STUFF
 ###################################################################
@@ -157,12 +160,14 @@ windows: objects = connection.o connectionmanager.o corehooks.o gamestate.o logi
 		idmanager.o messenger.o plugin.o pluginmanager.o timer.o corerecipricant.o \
 		pos.o thing.o packethookmanager.o typeparser.o inventorystate.o wsastartup.o
 
-windows: nonameproxy.dll main.cpp
-	$(CXX) $(CXXFLAGS) -o $(out) main.cpp nonameproxy.dll
+#windows: nonameproxy.dll main.cpp
+#	$(CXX) $(CXXFLAGS) -o $(out) main.cpp nonameproxy.dll
+windows: $(objects) main.cpp
+	$(CXX) $(CXXFLAGS) -static -o $(out) main.cpp  $(objects) $(libs)
 
 nonameproxy.dll: CXXFLAGS += -DBUILD_DLL
 nonameproxy.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -static -o nonameproxy.dll $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -shared  -static --enable-runtime-pseudo-reloc -o nonameproxy.dll $(objects) $(libs)
 
 winplugins: plugintarget = windows
 winplugins: plugins

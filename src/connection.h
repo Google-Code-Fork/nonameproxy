@@ -23,6 +23,8 @@
 
 #ifdef WIN32
         #include <winsock2.h>
+#else
+        #include <sys/select.h>
 #endif
 
 #include <stdint.h>

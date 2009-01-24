@@ -2,7 +2,7 @@
 
 #CXXFLAGS = -Wall -02 -rdynamic
 CXXFLAGS += -pg
-CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
 objects = channelmanager.o 
@@ -33,5 +33,5 @@ windows: clean channelmanager.dll
 
 channelmanager.dll: CXXFLAGS += -DBUILD_DLL
 channelmanager.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -o channelmanager.dll $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -shared --enable-runtime-pseudo-reloc -o channelmanager.dll $(objects) $(libs)
 

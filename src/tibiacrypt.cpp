@@ -19,6 +19,8 @@
  *****************************************************************************/
 
 #include <stdio.h>
+#include <string.h>
+
 #include "rsa.h"
 #include "networkmessage.h"
 #include "tibiacrypt.h"

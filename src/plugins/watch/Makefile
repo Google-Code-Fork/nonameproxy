@@ -2,7 +2,7 @@
 
 #CXXFLAGS = -Wall -02 -rdynamic
 CXXFLAGS += -pg
-CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
 objects = watch.o 
@@ -33,5 +33,5 @@ windows: clean watch.dll
 
 watch.dll: CXXFLAGS += -DBUILD_DLL
 watch.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -o watch.dll $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -shared --enable-runtime-pseudo-reloc -o watch.dll $(objects) $(libs)
 

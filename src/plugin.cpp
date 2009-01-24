@@ -96,7 +96,9 @@ bool Plugin::unload ()
                 return false;
         }
         _loaded = false;
+        printf ("yay1\n");
         _unload ();
+        printf ("yay2\n");
 
         /* now we do the dirty work if the plugin was to lazy */
         if (_recipricantId != 0) {
@@ -120,6 +122,7 @@ bool Plugin::unload ()
                 
 
 #ifdef WIN32
+        printf ("yay\n");
         if (FreeLibrary (_handle) != 0) {
                 printf ("plugin error: could not unload %s\n", 
                         name ().c_str ());

@@ -2,7 +2,7 @@
 
 #CXXFLAGS = -Wall -02 -rdynamic
 CXXFLAGS += -pg
-CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic
+CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
 objects = debug.o 
@@ -34,5 +34,5 @@ windows: clean debug.dll
 
 debug.dll: CXXFLAGS += -DBUILD_DLL
 debug.dll: $(objects)
-	$(CXX) $(CXXFLAGS) -shared -o debug.dll $(objects) $(libs)
+	$(CXX) $(CXXFLAGS) -shared --enable-runtime-pseudo-reloc -o debug.dll $(objects) $(libs)
 
