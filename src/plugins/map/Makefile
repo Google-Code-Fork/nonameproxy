@@ -5,26 +5,33 @@ CXXFLAGS += -pg
 CXXFLAGS += -I../.. -Wall -g -O0 -rdynamic -fPIC
 CXX = g++
 
-objects = map.o localmap.o globalmap.o mapgraph.o
+objects = map.o localmap.o globalmap.o mapgraph.o astar.o
 
 # to make plugins easy we always do a clean build
 
 all: clean map
 
+tests: $(objects) graphtest
+
+graphtest: mapgraphtest.cpp mapgraph.h astar.h mapgraph.o astar.o
+	$(CXX) $(CXXFLAGS) -o graphtest mapgraphtest.cpp mapgraph.o astar.o ../../pos.o
+	
 map: $(objects)
 	$(CXX)  $(CXXFLAGS)  -shared -o map.so $(objects)
 
 map.o : map.cpp map.h 
 
+astar.o: astar.cpp astar.h
+
 localmap.o : localmap.cpp localmap.h map.h
 
 globalmap.o : globalmap.cpp globalmap.h map.h mapgraph.h
 
-mapgraph.o : mapgraph.cpp mapgraph.h
+mapgraph.o : mapgraph.cpp mapgraph.h astar.h
 
 
 clean:
-	rm -f map.dll map.so $(objects)
+	rm -f map.dll map.so graphtest $(objects)
 
 ###################################################################
 #WINDOWS STUFF
