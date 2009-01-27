@@ -63,17 +63,34 @@ void ConnectionManager::selectConnections (uint32_t timeout)
 
         int32_t max_fd = 0;
         int32_t new_fd;
+
+        uint32_t selectRequest;
         
 
         for (ConnectionList::iterator c = connections.begin();
                 c != connections.end(); ++c) {
                 new_fd = (*c).second->query_fd (readfds, writefds, errfds);
+                /**
+                 * Connections can request to shorten the timeout if they are
+                 * not ready to send now, but know when they will be ready to
+                 * send next
+                 */
+                selectRequest = (*c).second->getSelectRequest ();
+                if (selectRequest != 0 
+                 && (selectRequest < timeout || timeout == 0)) 
+                {
+                        timeout = selectRequest;
+                }
                 max_fd = MAX (new_fd, max_fd);
         }
 
-        tv.tv_sec = timeout / 1000;
-        tv.tv_usec = (timeout % 1000) * 1000;
-        select (max_fd + 1, &readfds, &writefds, &errfds, &tv);
+        if (timeout != 0) {
+                tv.tv_sec = timeout / 1000;
+                tv.tv_usec = (timeout % 1000) * 1000;
+                select (max_fd + 1, &readfds, &writefds, &errfds, &tv);
+        } else {
+                select (max_fd + 1, &readfds, &writefds, &errfds, NULL);
+        }
 
         for (ConnectionList::iterator c = connections.begin();
                 c != connections.end(); ++c) {

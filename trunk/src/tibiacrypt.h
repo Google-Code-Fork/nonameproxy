@@ -21,6 +21,8 @@
 #ifndef __TIBIA_CRYPT_H
 #define __TIBIA_CRYPT_H
 
+#include <stdint.h>
+
 class RSA;
 class XTEA;
 class NetworkMessage;
