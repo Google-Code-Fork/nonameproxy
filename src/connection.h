@@ -49,6 +49,8 @@ class Connection
 
                 bool isConnected ();
 
+                uint32_t getSelectRequest ();
+
                 //all these functions do is simply access the msgQueues
                 void putMsg (NetworkMessage* msg);
                 //if a network message is ready getMsg will return a
@@ -89,26 +91,28 @@ class Connection
                 NetworkMessage* _getMsg ();
 
                 #ifdef WIN32
-                SOCKET connsock;
+                SOCKET _connsock;
                 #else
-                int32_t connsock;
+                int32_t _connsock;
                 #endif
-                uint32_t connIP;
-                uint16_t connport;
+                uint32_t _connIP;
+                uint16_t _connport;
 
                 bool _isConnected;
 
-                uint16_t readPos;
-                uint16_t readLen;
-                uint8_t* readBuffer;
+                uint32_t _readPos;
+                uint32_t _readLen;
+                uint8_t* _readBuffer;
 
-                NetworkMessage* writeMsg;
-                uint16_t writePos;
-                uint16_t writeLen;
-                uint8_t* writeBuffer;
+                NetworkMessage* _writeMsg;
+                uint32_t _writePos;
+                uint32_t _writeLen;
+                uint8_t* _writeBuffer;
 
-                MsgQueue getQueue;
-                MsgQueue putQueue;
+                MsgQueue _getQueue;
+                MsgQueue _putQueue;
+
+                uint32_t _selectRequest;
 };
 
 #endif

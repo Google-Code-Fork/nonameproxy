@@ -33,6 +33,8 @@
 #include "networkmessage.h"
 #include "timer.h"
 
+#define SEND_RATE 125
+
 #ifdef WIN32
 #define NETWORK_ERROR(str)      if (WSAGetLastError () != EAGAIN) { \
                                         printf (str); \
@@ -48,11 +50,13 @@
 Connection::Connection ()
 {
         _isConnected = false;
-        readPos = 0;
-        writePos = 0;
-        readBuffer = NULL;
-        writeBuffer = NULL;
-        writeMsg = NULL;
+        _readPos = 0;
+        _writePos = 0;
+        _readBuffer = NULL;
+        _writeBuffer = NULL;
+        _writeMsg = NULL;
+
+        _selectRequest = 0;
 
         Timer timer;
         if (timer.gettimeofday (&_lastSend, NULL)) {
@@ -70,11 +74,16 @@ bool Connection::isConnected ()
         return _isConnected;
 }
 
+uint32_t Connection::getSelectRequest ()
+{
+        return _selectRequest;
+}
+
 NetworkMessage* Connection::getMsg ()
 {
-        if (!getQueue.empty ()) {
-                NetworkMessage* ret = getQueue.front ();
-                getQueue.pop_front ();
+        if (!_getQueue.empty ()) {
+                NetworkMessage* ret = _getQueue.front ();
+                _getQueue.pop_front ();
                 return ret;
         } else {
                 return NULL;
@@ -83,7 +92,7 @@ NetworkMessage* Connection::getMsg ()
 
 void Connection::putMsg (NetworkMessage* msg)
 {
-        putQueue.push_back (msg);
+        _putQueue.push_back (msg);
 }
 
 bool Connection::closeConnection ()
@@ -99,9 +108,9 @@ bool Connection::closeConnection ()
 int32_t Connection::_get (void* buf, int32_t len)
 {
 #ifdef WIN32
-        int32_t n = recv (connsock, (char*)buf, len, 0);
+        int32_t n = recv (_connsock, (char*)buf, len, 0);
 #else
-        int32_t n = recv (connsock, buf, len, 0);
+        int32_t n = recv (_connsock, buf, len, 0);
 #endif
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
@@ -113,9 +122,9 @@ int32_t Connection::_get (void* buf, int32_t len)
 int32_t Connection::_peek (void* buf, int32_t len)
 {
 #ifdef WIN32
-        int32_t n = recv (connsock, (char*)buf, len, MSG_PEEK);
+        int32_t n = recv (_connsock, (char*)buf, len, MSG_PEEK);
 #else
-        int32_t n = recv (connsock, buf, len, MSG_PEEK);
+        int32_t n = recv (_connsock, buf, len, MSG_PEEK);
 #endif
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
@@ -127,9 +136,9 @@ int32_t Connection::_peek (void* buf, int32_t len)
 int32_t Connection::_put (const void* buf, int32_t len)
 {
 #ifdef WIN32
-        int32_t n = send (connsock, (const char*)buf, len, 0);
+        int32_t n = send (_connsock, (const char*)buf, len, 0);
 #else
-        int32_t n = send (connsock, buf, len, 0);
+        int32_t n = send (_connsock, buf, len, 0);
 #endif
         if (n == -1) {
                 //this could be an error, or it could just be EAGAIN
@@ -141,9 +150,9 @@ int32_t Connection::_put (const void* buf, int32_t len)
 int32_t Connection::_close ()
 {
 #ifdef WIN32
-        int32_t n = closesocket (connsock);
+        int32_t n = closesocket (_connsock);
 #else
-        int32_t n = close (connsock);
+        int32_t n = close (_connsock);
 #endif
         if (n != 0) {
                 NETWORK_ERROR ("close error");
@@ -154,7 +163,7 @@ int32_t Connection::_close ()
 NetworkMessage* Connection::_getMsg ()
 {
         //printf ("starting read\n");
-        if (readPos == 0) {
+        if (_readPos == 0) {
                 //printf ("reading header\n");
                 uint16_t msgSize;
                 int32_t n = _peek (&msgSize, 2);
@@ -163,32 +172,31 @@ NetworkMessage* Connection::_getMsg ()
                         closeConnection ();
                 } else if (n == 2) {
                         //we can read the header and allocate the buffer
-                        readLen = msgSize + 2;
-                        readBuffer = new uint8_t[readLen];
-                        if (_get (readBuffer, 2) == 2) {
-                                readPos += 2;
+                        _readLen = msgSize + 2;
+                        _readBuffer = new uint8_t[_readLen];
+                        if (_get (_readBuffer, 2) == 2) {
+                                _readPos += 2;
                                 return _getMsg ();
                         } else {
                                 //in theory we should never get here
-                                delete[] readBuffer;
-                                readBuffer = NULL;
+                                delete[] _readBuffer;
+                                _readBuffer = NULL;
                                 printf ("recv error: This shouldnt happen");
                                 printf ("please inform us if it does\n");
                         }
                 }
         } else {
-                int16_t n = _get (&readBuffer[readPos], readLen - readPos);
+                int32_t n = _get (&_readBuffer[_readPos], _readLen - _readPos);
                 if (n == 0) {
                         closeConnection ();
                 } else if (n != -1) {
-                        readPos += n;
+                        _readPos += n;
                 }
-                //printf ("partial read %d, readpos = %d, readlen = %d\n", n, readPos, readLen);
-                if (readPos == readLen) {
+                if (_readPos == _readLen) {
                         NetworkMessage* ret;
-                        ret = new NetworkMessage (readLen, readBuffer);
-                        readPos = 0;
-                        readBuffer = NULL;
+                        ret = new NetworkMessage (_readLen, _readBuffer);
+                        _readPos = 0;
+                        _readBuffer = NULL;
                         return ret;
                 }
         }
@@ -197,30 +205,42 @@ NetworkMessage* Connection::_getMsg ()
 
 void Connection::_putMsg ()
 {
-        if (writeMsg == NULL) {
-                if (!putQueue.empty ()) {
-                        writeMsg = putQueue.front ();
-                        putQueue.pop_front ();
+        if (_writeMsg == NULL) {
+                if (!_putQueue.empty ()) {
+                        _writeMsg = _putQueue.front ();
+                        _putQueue.pop_front ();
 
-                        writeBuffer = writeMsg->getBuffer ();
-                        writeLen = *(uint16_t*)writeBuffer + 2;
-                        writePos = 0;
+                        _writeBuffer = _writeMsg->getBuffer ();
+                        _writeLen = *(uint16_t*)_writeBuffer + 2;
+                        _writePos = 0;
                         _putMsg ();
                 }
-        /*} else if (writeLen == writePos) {
-                delete writeMsg;
-                writeMsg = NULL;
-                writePos = 0;
-                writeBuffer = NULL;*/
+        /*} else if (_writeLen == _writePos) {
+                delete _writeMsg;
+                _writeMsg = NULL;
+                _writePos = 0;
+                _writeBuffer = NULL;*/
         } else {
-                int16_t n = _put (&writeBuffer[writePos], writeLen - writePos);
+                int32_t n = _put (&_writeBuffer[_writePos], _writeLen - _writePos);
                 if (n != -1) {
-                        writePos += n;
-                        if (writeLen == writePos) {
-                                delete writeMsg;
-                                writeMsg = NULL;
-                                writePos = 0;
-                                writeBuffer = NULL;
+                        _writePos += n;
+                        if (_writeLen == _writePos) {
+                                delete _writeMsg;
+                                _writeMsg = NULL;
+                                _writePos = 0;
+                                _writeBuffer = NULL;
+
+                                /**
+                                 * Update the last send time so we know
+                                 * not to send another packet until it
+                                 * is safe to doso without flooding the
+                                 * server
+                                 */
+                                Timer timer;
+                                if (timer.gettimeofday (&_lastSend, NULL)) {
+                                        printf ("connection error: ");
+                                        printf ("gettimeofday\n");
+                                }
                         }
                 }
         }
@@ -230,11 +250,12 @@ void Connection::_putMsg ()
 SOCKET Connection::query_fd (fd_set& readfds, fd_set& writefds,
         fd_set& errfds)
 {
+        _selectRequest == 0;
         if (_isConnected) {
                 //we always try to recv
-                FD_SET (connsock, &readfds);
+                FD_SET (_connsock, &readfds);
 
-                if (!putQueue.empty ()) {
+                if (!_putQueue.empty () || _writeBuffer) {
                         Timer timer;
                         struct timeval tv;
                         if (timer.gettimeofday (&tv, NULL)) {
@@ -245,29 +266,30 @@ SOCKET Connection::query_fd (fd_set& readfds, fd_set& writefds,
                         int32_t udiff = tv.tv_usec - _lastSend.tv_usec;
 
                         int64_t mdiff = sdiff * 1000 + udiff / 1000;
-                        if (mdiff >= 125) {
-                                FD_SET (connsock, &writefds);
-                                _lastSend = tv;
+                        if (mdiff >= SEND_RATE) {
+                                FD_SET (_connsock, &writefds);
+                        } else {
+                                _selectRequest = SEND_RATE - mdiff;
                         }
                 }
 
-                FD_SET (connsock, &errfds);
+                FD_SET (_connsock, &errfds);
         }
-        return connsock;
+        return _connsock;
 }
 
 //this function takes the result of select and responds accordingly
 void Connection::tell_fd (fd_set& readfds, fd_set& writefds,
         fd_set& errfds)
 {
-        if (FD_ISSET (connsock, &readfds)) {
+        if (FD_ISSET (_connsock, &readfds)) {
                 NetworkMessage* msg = _getMsg ();
                 if (msg != NULL) {
-                        getQueue.push_back (msg);
+                        _getQueue.push_back (msg);
                 }
         }
-        if (FD_ISSET (connsock, &writefds)) {
-                if (!putQueue.empty ()) {
+        if (FD_ISSET (_connsock, &writefds)) {
+                if (!_putQueue.empty ()) {
                         _putMsg ();
                 }
         }
@@ -282,12 +304,13 @@ void Connection::tell_fd (fd_set& readfds, fd_set& writefds,
 int32_t Connection::query_fd (fd_set& readfds, fd_set& writefds,
         fd_set& errfds)
 {
+        _selectRequest = 0;
         if (_isConnected) {
                 //we always try to recv
-                FD_SET (connsock, &readfds);
+                FD_SET (_connsock, &readfds);
 
                 //we only want to write msgQueue is not empty
-                if (!putQueue.empty ()) {
+                if (!_putQueue.empty () || _writeBuffer) {
                         Timer timer;
                         struct timeval tv;
                         if (timer.gettimeofday (&tv, NULL)) {
@@ -298,39 +321,41 @@ int32_t Connection::query_fd (fd_set& readfds, fd_set& writefds,
                         int32_t udiff = tv.tv_usec - _lastSend.tv_usec;
 
                         int64_t mdiff = sdiff * 1000 + udiff / 1000;
-                        if (mdiff >= 125) {
-                                FD_SET (connsock, &writefds);
-                                _lastSend = tv;
+                        /* TODO look into mdiff == 0 */
+                        if (mdiff >= SEND_RATE) {
+                                FD_SET (_connsock, &writefds);
+                        } else {
+                                _selectRequest = SEND_RATE - mdiff;
                         }
                 }
 
                 //we should probably know about errors as well
-                FD_SET (connsock, &errfds);
+                FD_SET (_connsock, &errfds);
 
-                //printf ("quer %d %d %d %d\n", connsock,
-                //        FD_ISSET (connsock, &readfds),
-                //        FD_ISSET (connsock, &writefds),
-                //        FD_ISSET (connsock, &errfds));
+                //printf ("quer %d %d %d %d\n", _connsock,
+                //        FD_ISSET (_connsock, &readfds),
+                //        FD_ISSET (_connsock, &writefds),
+                //        FD_ISSET (_connsock, &errfds));
         }
-        return connsock;
+        return _connsock;
 }
 
 //this function takes the result of select and responds accordingly
 void Connection::tell_fd (fd_set& readfds, fd_set& writefds,
         fd_set& errfds)
 {
-        //printf ("tell %d %d %d %d\n", connsock,
-        //        FD_ISSET (connsock, &readfds),
-        //        FD_ISSET (connsock, &writefds),
-        //        FD_ISSET (connsock, &errfds));
-        if (FD_ISSET (connsock, &readfds)) {
+        //printf ("tell %d %d %d %d\n", _connsock,
+        //        FD_ISSET (_connsock, &readfds),
+        //        FD_ISSET (_connsock, &writefds),
+        //        FD_ISSET (_connsock, &errfds));
+        if (FD_ISSET (_connsock, &readfds)) {
                 NetworkMessage* msg = _getMsg ();
                 if (msg != NULL) {
-                        getQueue.push_back (msg);
+                        _getQueue.push_back (msg);
                 }
         }
-        if (FD_ISSET (connsock, &writefds)) {
-                if (!putQueue.empty ()) {
+        if (FD_ISSET (_connsock, &writefds)) {
+                if (!_putQueue.empty () || _writeBuffer) {
                         _putMsg ();
                 }
         }
@@ -368,23 +393,23 @@ bool Connection::connectTo (uint32_t ip, uint16_t port)
 
 bool Connection::_connectTo (struct sockaddr_in hostaddr)
 {
-        if ((connsock = socket (AF_INET, SOCK_STREAM, NULL)) == -1) {
+        if ((_connsock = socket (AF_INET, SOCK_STREAM, NULL)) == -1) {
                 NETWORK_ERROR ("socket error");
                 return false;
         }
         uint32_t sin_size = sizeof (hostaddr);
-        if (connect (connsock, (struct sockaddr*)&hostaddr, sin_size) == -1) {
+        if (connect (_connsock, (struct sockaddr*)&hostaddr, sin_size) == -1) {
                 NETWORK_ERROR ("connect error");
                 return false;
         }
 #ifdef WIN32
         u_long notzero = 1;
-        if (ioctlsocket (connsock, FIONBIO, &notzero) == SOCKET_ERROR) {
+        if (ioctlsocket (_connsock, FIONBIO, &notzero) == SOCKET_ERROR) {
                 NETWORK_ERROR ("iocntlsocket error");
                 return false;
         }
 #else
-        if (fcntl (connsock, F_SETFL, O_NONBLOCK) == -1) {
+        if (fcntl (_connsock, F_SETFL, O_NONBLOCK) == -1) {
                 NETWORK_ERROR ("fcntl error");
                 return false;
         }
@@ -399,7 +424,7 @@ void Connection::setSocket (SOCKET socket)
         //it is the responsibility of the calling function to ensure
         //socket is connected
         _isConnected = true;
-        connsock = socket;
+        _connsock = socket;
 }
 #else
 void Connection::setSocket (int32_t socket)
@@ -407,13 +432,13 @@ void Connection::setSocket (int32_t socket)
         //it is the responsibility of the calling function to ensure
         //socket is connected
         _isConnected = true;
-        connsock = socket;
+        _connsock = socket;
 }
 #endif
 
 void Connection::setInfo (uint32_t ip, uint16_t port)
 {
-        connIP = ip;
-        connport = port;
+        _connIP = ip;
+        _connport = port;
 }
 

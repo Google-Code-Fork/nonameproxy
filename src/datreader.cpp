@@ -423,13 +423,13 @@ void ThingData::parseOp (SafeFile* datfile, uint8_t op)
                 case 0x06: //isCorpse
                         _thingFlags |= f_isCorpse;
                         break;
-                case 0x07: //isUseable
+                case 0x07: //isUsable
                         _thingFlags |= f_isUsable;
                         break;
                 case 0x08: //isRune
                         _thingFlags |= f_isRune;
                         break;
-                case 0x09: //isWriteable
+                case 0x09: //isWritable
                         _thingFlags |= f_isWritable;
                         datfile->read (&_writeLimit, 2);
                         break;
@@ -472,8 +472,8 @@ void ThingData::parseOp (SafeFile* datfile, uint8_t op)
                         break;
                 case 0x16: //isLightSource
                         _thingFlags |= f_isLightSource;
-                        datfile->read (&_lightColor, 2);
                         datfile->read (&_lightRadius, 2);
+                        datfile->read (&_lightColor, 2);
                         break;
                 case 0x18: //isFloorChange
                         _thingFlags |= f_isFloorChange;

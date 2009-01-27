@@ -31,6 +31,7 @@
 #include "enums.h"
 
 #define CONN_TIMEOUT 5000
+#define SELECT_SLEEP 0
 
 Client::Client (LoginState* ls)
 {
@@ -108,7 +109,7 @@ bool Client::runLogin (Connection* acceptedConn)
         NetworkMessage* msg;
         while (serverConn->isConnected () && clientConn->isConnected ()) {
                 _cycle ++;
-                connMgr->selectConnections (125);
+                connMgr->selectConnections (SELECT_SLEEP);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
                         LSMessageList* lsml = new LSMessageList (msg, gstate, dat);
@@ -158,7 +159,7 @@ bool Client::runLogin (Connection* acceptedConn)
 
         /* this is a dodgy hack to flush the msg left
          * over from the break statement */
-        connMgr->selectConnections (125);
+        connMgr->selectConnections (SELECT_SLEEP);
 
         return true;
 }
@@ -205,7 +206,7 @@ bool Client::runGame (Connection* acceptedConn)
         NetworkMessage* msg;
         while (clientConn->isConnected ()) {
                 _cycle ++;
-                connMgr->selectConnections (125);
+                connMgr->selectConnections (SELECT_SLEEP);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
                         GSMessageList* gsml = new GSMessageList (msg, gstate, dat);
@@ -255,7 +256,7 @@ bool Client::runGame (Connection* acceptedConn)
         /* and finally the main loop */
         while (serverConn->isConnected () || clientConn->isConnected ()) {
                 _cycle ++;
-                connMgr->selectConnections (125);
+                connMgr->selectConnections (SELECT_SLEEP);
                 if ((msg = clientConn->getMsg ()) != NULL) {
                         crypt->decrypt (msg);
                         sendPHM->hookPrePacket (*msg);
