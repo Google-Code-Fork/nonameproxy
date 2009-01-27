@@ -1,16 +1,62 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "mapgraph.h"
 
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 #define MAN(x,y) ((x) > (y) ? (x) : (y))
 
-class Node {};
-
-
-bool MapGraph::addNode (const Pos& pos, Node* node)
+GraphNode::GraphNode (const Pos &pos)
 {
-        ZNode& Z = _graph[pos.z];
+        _pos = pos;
+}
+
+GraphNode::~GraphNode ()
+{
+}
+
+const Pos& GraphNode::getPos ()
+{
+        return _pos;
+}
+
+void GraphNode::show ()
+{
+        printf ("(%d,%d,%d)\n", _pos.x, _pos.y, _pos.z);
+}
+
+MapGraph::~MapGraph ()
+{
+        /*TODO massive cleanup */
+}
+
+uint32_t MapGraph::getHScore (Node *n, Node *goal)
+{
+        const Pos &npos = ((GraphNode *)n)->getPos ();
+        const Pos &gpos = ((GraphNode *)goal)->getPos ();
+
+        return abs (npos.x - gpos.x) + 
+               abs (npos.y - gpos.y) + 
+               abs (npos.z - gpos.z);
+}
+
+void MapGraph::getAdjacentNodes (Node *n, NodeCostList &ns)
+{
+        const EdgeMap &edges = getEdges (((GraphNode *)n)->getPos ());
+        EdgeMap::const_iterator i;
+        for (i = edges.begin (); i != edges.end (); ++ i) {
+                GraphNode *add = getNode ((*i).first);
+                if (add == NULL) {
+                        printf ("getAdjacentNodes error: ");
+                        printf ("edge exists but node does not\n");
+                }
+                ns.push_back (NodeCost (add, (*i).second));
+        }
+}
+
+bool MapGraph::addNode (const Pos &pos, GraphNode *node)
+{
+        ZNode &Z = _graph[pos.z];
         ZNode::iterator zi = Z.find (pos.x);
         if (zi == Z.end ()) {
                 std::pair<ZNode::iterator, bool> res;
@@ -22,7 +68,7 @@ bool MapGraph::addNode (const Pos& pos, Node* node)
                 zi = res.first;
         }
         
-        XNode& X = (*zi).second;
+        XNode &X = (*zi).second;
         if (X.count (pos.y) != 0) {
                 printf ("addNode error: pos already exists\n");
                 return false;
@@ -32,16 +78,16 @@ bool MapGraph::addNode (const Pos& pos, Node* node)
         return true;
 }
 
-bool MapGraph::deleteNode (const Pos& pos)
+bool MapGraph::deleteNode (const Pos &pos)
 {
-        ZNode& Z = _graph[pos.z];
+        ZNode &Z = _graph[pos.z];
         ZNode::iterator zi = Z.find (pos.x);
         if (zi == Z.end ()) {
                 printf ("deleteNode error: pos doesnt exist\n");
                 return false;
         }
 
-        XNode& X = (*zi).second;
+        XNode &X = (*zi).second;
         XNode::iterator xi = X.find (pos.y);
         if (xi == X.end ()) {
                 printf ("deleteNode error: pos doesnt exist\n");
@@ -49,7 +95,7 @@ bool MapGraph::deleteNode (const Pos& pos)
         }
 
         /* note we need a copy here as deleteEdge will modify the original */
-        const EdgeMap& edges = getEdges (pos);
+        const EdgeMap &edges = getEdges (pos);
         EdgeMap::const_iterator i;
         for (i = edges.begin (); i != edges.end (); ++ i) {
                 deleteEdge ((*i).first, pos);
@@ -63,7 +109,24 @@ bool MapGraph::deleteNode (const Pos& pos)
         return true;
 }
 
-bool MapGraph::addEdge (const Pos& p1, const Pos& p2, uint32_t cost)
+GraphNode *MapGraph::getNode (const Pos &pos)
+{
+        ZNode &Z = _graph[pos.z];
+        ZNode::iterator zi = Z.find (pos.x);
+        if (zi == Z.end ()) {
+                return NULL;
+        }
+
+        XNode &X = (*zi).second;
+        XNode::iterator xi = X.find (pos.y);
+        if (xi == X.end ()) {
+                return NULL;
+        }
+
+        return (*xi).second;
+}
+
+bool MapGraph::addEdge (const Pos &p1, const Pos &p2, uint32_t cost)
 {
         AdjacencyMap::iterator i1 = _edges.find (p1);
         AdjacencyMap::iterator i2 = _edges.find (p2);
@@ -90,7 +153,7 @@ bool MapGraph::addEdge (const Pos& p1, const Pos& p2, uint32_t cost)
         return true;
 }
 
-bool MapGraph::deleteEdge (const Pos& p1, const Pos& p2)
+bool MapGraph::deleteEdge (const Pos &p1, const Pos &p2)
 {
         if (p1 == p2) {
                 return true;
@@ -122,17 +185,16 @@ bool MapGraph::deleteEdge (const Pos& p1, const Pos& p2)
         return true;
 }
 
-const EdgeMap& MapGraph::getEdges (const Pos& pos)
+const EdgeMap &MapGraph::getEdges (const Pos &pos)
 {
         AdjacencyMap::iterator i = _edges.find (pos);
         if (i == _edges.end ()) {
                 printf ("getEdges error: pos doesnt exist\n");
-                return *((EdgeMap*)NULL);
         }
         return (*i).second;
 }
 
-uint32_t MapGraph::getRange (const Pos& p1, const Pos& p2, PosList& nodes)
+uint32_t MapGraph::getRange (const Pos &p1, const Pos &p2, PosList &nodes)
 {
         uint32_t minz = MIN (p1.z, p2.z);
         uint32_t maxz = MAN (p1.z, p2.z);
@@ -147,7 +209,7 @@ uint32_t MapGraph::getRange (const Pos& p1, const Pos& p2, PosList& nodes)
                 ZNode::iterator x    = _graph[z].lower_bound (minx);
                 ZNode::iterator xend = _graph[z].upper_bound (maxx);
                 for (; x != xend; ++ x) {
-                        XNode& X = (*x).second;
+                        XNode &X = (*x).second;
                         XNode::iterator y    = X.lower_bound (miny);
                         XNode::iterator yend = X.upper_bound (maxy);
                         for (; y != yend; ++ y) {
@@ -169,7 +231,7 @@ void MapGraph::show ()
                 ZNode::iterator x;
                 for (x = _graph[z].begin (); x != _graph[z].end (); ++ x) {
                         printf ("\tx = %d\n", (*x).first);
-                        const XNode& X = (*x).second;
+                        const XNode &X = (*x).second;
                         XNode::const_iterator y;
                         for (y = X.begin (); y != X.end (); ++ y) {
                                 printf ("\t\ty = %d\n", (*y).first);
@@ -183,11 +245,11 @@ void MapGraph::show ()
                 Pos k = (*e).first;
                 printf ("(%d,%d,%d):", k.x, k.y, k.z);
                 
-                const EdgeMap& connections = (*e).second;
+                const EdgeMap &connections = (*e).second;
                 EdgeMap::const_iterator i;
                 for (i = connections.begin (); i != connections.end (); ++ i) {
                         Pos p = (*i).first;
-                        printf (" (%d,%d,%d)", p.x, p.y, p.z);
+                        printf (" (%d,%d,%d;%d)", p.x, p.y, p.z, (*i).second);
                 }
                 printf ("\n");
         }

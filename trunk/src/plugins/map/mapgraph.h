@@ -7,11 +7,12 @@
 #include <list>
 
 #include "pos.h"
+#include "astar.h"
 #include "mapstate.h"
 
-class Node;
+class GraphNode;
 
-typedef Node*                           YNode;
+typedef GraphNode *                     YNode;
 
 typedef std::pair<uint32_t, YNode>      XNodePair;
 typedef std::map<uint32_t, YNode>       XNode;
@@ -28,18 +29,36 @@ typedef std::map<Pos, EdgeMap>          AdjacencyMap;
 
 typedef std::list<Pos>                  PosList;
 
-class MapGraph
+class GraphNode : public Node
 {
         public:
-                bool addNode (const Pos& pos, Node* node);
-                bool deleteNode (const Pos& pos);
+                GraphNode (const Pos &pos);
+                virtual ~GraphNode ();
+                const Pos &getPos ();
 
-                bool addEdge (const Pos& p1, const Pos& p2, uint32_t cost);
-                bool deleteEdge (const Pos& p1, const Pos& p2);
+                void show ();
+        private:
+                Pos _pos;
+};
 
-                uint32_t getRange (const Pos& p1, const Pos& p2, PosList& nodes);
+class MapGraph : public AStar
+{
+        public:
+                virtual ~MapGraph ();
 
-                const EdgeMap& getEdges (const Pos& pos);
+                virtual uint32_t getHScore (Node *n, Node *goal);
+                virtual void getAdjacentNodes (Node *n, NodeCostList &ns);
+
+                bool addNode (const Pos &pos, GraphNode *node);
+                bool deleteNode (const Pos &pos);
+                GraphNode *getNode (const Pos &pos);
+
+                bool addEdge (const Pos &p1, const Pos &p2, uint32_t cost);
+                bool deleteEdge (const Pos &p1, const Pos &p2);
+
+                uint32_t getRange (const Pos &p1, const Pos &p2, PosList &nodes);
+
+                const EdgeMap& getEdges (const Pos &pos);
 
                 void show ();
 
