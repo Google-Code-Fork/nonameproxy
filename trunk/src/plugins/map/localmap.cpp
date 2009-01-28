@@ -24,25 +24,10 @@ typedef std::pair<uint32_t, NodeList> ListPair;
 typedef std::set<Pos, bool (*) (const Pos&, const Pos&)> NodeSet;
 typedef std::list<direction_t> Path;
 
-class MoveHook : public ReadHook
-{
-        public:
-                virtual void func (TibiaMessage* tm, Client* client);
-};
-
-
 Path* findPath (Pos start, Pos end, uint32_t[][18]);
-
-void MoveHook::func (TibiaMessage* tm, Client* client)
-{
-        map.local.kick ();
-}
 
 LocalMap::LocalMap ()
 {
-        for (uint32_t i = 0; i < MAX_MOVE_HOOK; i ++) {
-                _movehooks[i] = 0;
-        }
         _walking = false;
 }
 
@@ -336,22 +321,10 @@ void LocalMap::i_load (uint32_t pluginId, Client* client)
 
         _c_cycle = _client->getCycle ();
         _nc_cycle = _client->getCycle ();
-
-        _movehooks[0] = _client->addRecvReadHook (_pluginId, GRM_MAP_NORTH_ID,
-                                                        new MoveHook);
-        _movehooks[1] = _client->addRecvReadHook (_pluginId, GRM_MAP_EAST_ID,
-                                                        new MoveHook);
-        _movehooks[2] = _client->addRecvReadHook (_pluginId, GRM_MAP_SOUTH_ID,
-                                                        new MoveHook);
-        _movehooks[3] = _client->addRecvReadHook (_pluginId, GRM_MAP_WEST_ID,
-                                                        new MoveHook);
 }
 
 void LocalMap::i_unload ()
 {
-        for (uint32_t i = 0; i != MAX_MOVE_HOOK; i ++) {
-                _client->deleteRecvReadHook (_pluginId, _movehooks[i]);
-        }
 }
 
 /******************************************************************

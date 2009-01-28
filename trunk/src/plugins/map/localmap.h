@@ -12,8 +12,6 @@
 #include "client.h"
 #include "pos.h"
 
-#define MAX_MOVE_HOOK 4
-
 class LocalMap
 {
         public:
@@ -67,7 +65,6 @@ class LocalMap
                  * so we need a way of turning the walker off */
                 bool            _walking;
 
-                uint32_t        _movehooks[MAX_MOVE_HOOK];
                 uint32_t        _pluginId;
                 Client*         _client;
 };

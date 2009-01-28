@@ -39,11 +39,15 @@ class GlobalMap
 
                 void stop ();
 
+                uint32_t calcPathCost (const Pos &from, const Pos &to);
+
                 void i_load (uint32_t pluginId, Client* client);
                 void i_unload ();
 
                 LocalMap local;
         private:
+                bool            _walking;
+
                 MapGraph        _globalMap;
 
                 uint32_t        _movehooks[MAX_MOVE_HOOK];
