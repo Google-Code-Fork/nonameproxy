@@ -4,18 +4,22 @@
 #if 1
 #include "test.h"
 
+/* we need a different exit status to denote a test error */
+#define TEST_ERROR 2
+
 Test test;
 
-Args TestRecipricant::func (const Args& args)
+int32_t TestRecipricant::func (const Args &args, Args &out)
 {
-        Args ret;
-
         if (args.size () < 1) {
-                ret.push_back ("2");
+                out.push_back ("not enough arguements");
+        } else if (args.size () == 2) {
+                /* one special case if there are no args the test is false */
+                return PLUGIN_FAILURE;
         } else {
-                return test.test (args);
+                return test.test (args, out);
         }
-        return ret;
+        return TEST_ERROR;
 }
 #else
 
@@ -27,9 +31,9 @@ typedef std::list<Arg> Args;
 
 #endif
 
-static bool isInt (const std::string& n)
+static bool isInt (const std::string &n)
 {
-        char* endptr = NULL;
+        char *endptr = NULL;
         strtol (n.c_str (), &endptr, 0);
         if (*endptr == '\0') {
                 return true;
@@ -56,21 +60,21 @@ struct node
         expr_t type;
         std::string val;
 
-        node* left;
-        node* right;
+        node *left;
+        node *right;
 };
 
-static node* parse_expr_obinary (const Args& args, Args::const_iterator& i);
-static node* parse_expr_abinary (const Args& args, Args::const_iterator& i);
-static node* parse_expr_unary (const Args& args, Args::const_iterator& i);
-static node* parse_str_binary (const Args& args, Args::const_iterator& i);
-static node* parse_num_binary (const Args& args, Args::const_iterator& i);
-static node* parse_str_unary (const Args& args, Args::const_iterator& i);
-static node* parse_basic (const Args& args, Args::const_iterator& i);
+static node *parse_expr_obinary (const Args &args, Args::const_iterator &i);
+static node *parse_expr_abinary (const Args &args, Args::const_iterator &i);
+static node *parse_expr_unary (const Args &args, Args::const_iterator &i);
+static node *parse_str_binary (const Args &args, Args::const_iterator &i);
+static node *parse_num_binary (const Args &args, Args::const_iterator &i);
+static node *parse_str_unary (const Args &args, Args::const_iterator &i);
+static node *parse_basic (const Args &args, Args::const_iterator &i);
 
-static node* make_node (expr_t type, const std::string& val)
+static node *make_node (expr_t type, const std::string &val)
 {
-        node* n = new node;
+        node *n = new node;
         n->type = type;
         n->val = val;
 
@@ -79,21 +83,21 @@ static node* make_node (expr_t type, const std::string& val)
         return n;
 }
 
-static node* parse_expr (const Args& args, Args::const_iterator& i)
+static node *parse_expr (const Args &args, Args::const_iterator &i)
 {
         return parse_expr_obinary (args, i);
 }
 
-static node* parse_expr_obinary (const Args& args, Args::const_iterator& i)
+static node *parse_expr_obinary (const Args &args, Args::const_iterator &i)
 {
         if (i == args.end ()) {
                 return NULL;
         }
 
-        node* left = parse_expr_abinary (args, i);
+        node *left = parse_expr_abinary (args, i);
 
         if (*i == "-o" ) {
-                node* ret = make_node (e_ebinary, *i);
+                node *ret = make_node (e_ebinary, *i);
                 i ++;
                 ret->left = left;
                 ret->right = parse_expr_obinary (args, i);
@@ -102,16 +106,16 @@ static node* parse_expr_obinary (const Args& args, Args::const_iterator& i)
         return left;
 }
         
-static node* parse_expr_abinary (const Args& args, Args::const_iterator& i)
+static node *parse_expr_abinary (const Args &args, Args::const_iterator &i)
 {
         if (i == args.end ()) {
                 return NULL;
         }
 
-        node* left = parse_expr_unary (args, i);
+        node *left = parse_expr_unary (args, i);
 
         if (*i == "-a" ) {
-                node* ret = make_node (e_ebinary, *i);
+                node *ret = make_node (e_ebinary, *i);
                 i ++;
                 ret->left = left;
                 ret->right = parse_expr_abinary (args, i);
@@ -120,14 +124,14 @@ static node* parse_expr_abinary (const Args& args, Args::const_iterator& i)
         return left;
 }
         
-static node* parse_expr_unary (const Args& args, Args::const_iterator& i)
+static node *parse_expr_unary (const Args &args, Args::const_iterator &i)
 {
         if (i == args.end ()) {
                 return NULL;
         }
 
         if (*i == "!") {
-                node* ret = make_node (e_eunary, *i);
+                node *ret = make_node (e_eunary, *i);
                 i ++;
                 ret->right = parse_expr_unary (args, i);
                 return ret;
@@ -135,16 +139,16 @@ static node* parse_expr_unary (const Args& args, Args::const_iterator& i)
         return parse_str_binary (args, i);
 }
         
-static node* parse_str_binary (const Args& args, Args::const_iterator& i)
+static node *parse_str_binary (const Args &args, Args::const_iterator &i)
 {
         if (i == args.end ()) {
                 return NULL;
         }
 
-        node* left = parse_num_binary (args, i);
+        node *left = parse_num_binary (args, i);
 
         if (*i == "==" || *i == "!=" ) {
-                node* ret = make_node (e_sbinary, *i);
+                node *ret = make_node (e_sbinary, *i);
                 i ++;
                 ret->left = left;
                 ret->right = parse_str_binary (args, i);
@@ -153,17 +157,17 @@ static node* parse_str_binary (const Args& args, Args::const_iterator& i)
         return left;
 }
         
-static node* parse_num_binary (const Args& args, Args::const_iterator& i)
+static node *parse_num_binary (const Args &args, Args::const_iterator &i)
 {
         if (i == args.end ()) {
                 return NULL;
         }
 
-        node* left = parse_str_unary (args, i);
+        node *left = parse_str_unary (args, i);
 
         if (*i == "-eq" || *i == "-ge" || *i == "-gt" 
          || *i == "-le" || *i == "-lt" || *i == "-ne" ) {
-                node* ret = make_node (e_nbinary, *i);
+                node *ret = make_node (e_nbinary, *i);
                 i ++;
                 ret->left = left;
                 ret->right = parse_num_binary (args, i);
@@ -172,14 +176,14 @@ static node* parse_num_binary (const Args& args, Args::const_iterator& i)
         return left;
 }
         
-static node* parse_str_unary (const Args& args, Args::const_iterator& i)
+static node *parse_str_unary (const Args &args, Args::const_iterator &i)
 {
         if (i == args.end ()) {
                 return NULL;
         }
 
         if (*i == "-n" || *i == "-z") {
-                node* ret = make_node (e_sunary, *i);
+                node *ret = make_node (e_sunary, *i);
                 i ++;
                 ret->right = parse_str_unary (args, i);
                 return ret;
@@ -187,7 +191,7 @@ static node* parse_str_unary (const Args& args, Args::const_iterator& i)
         return parse_basic (args, i);
 }
 
-static node* parse_basic (const Args& args, Args::const_iterator& i)
+static node *parse_basic (const Args &args, Args::const_iterator &i)
 {
         if (i == args.end ()) {
                 return NULL;
@@ -195,7 +199,7 @@ static node* parse_basic (const Args& args, Args::const_iterator& i)
 
         if (*i == "(") {
                 i ++;
-                node* ret = parse_expr_obinary (args, i);
+                node *ret = parse_expr_obinary (args, i);
 
                 if (i == args.end ()) {
                         delete ret;
@@ -204,7 +208,7 @@ static node* parse_basic (const Args& args, Args::const_iterator& i)
                 i ++; 
                 return ret;
         }
-        node* ret;
+        node *ret;
         if (isInt (*i)) {
                 ret = make_node (e_int, *i);
         } else {
@@ -214,7 +218,7 @@ static node* parse_basic (const Args& args, Args::const_iterator& i)
         return ret; 
 }
 
-expr_t check_expr (node* n, Args& error)
+expr_t check_expr (node *n, Args &error)
 {
         if (n == NULL) return e_invalid;
 
@@ -268,7 +272,7 @@ expr_t check_expr (node* n, Args& error)
         }
 }
 
-bool eval_expr (node* n) {
+bool eval_expr (node *n) {
         if (n->type == e_ebinary) {
                 if (n->val == "-a") {
                         return eval_expr (n->left) && eval_expr (n->right);
@@ -324,7 +328,7 @@ bool eval_expr (node* n) {
         }
 }
 
-void show_node (node* n)
+void show_node (node *n)
 {
         if (n == NULL) return;
 
@@ -340,7 +344,7 @@ void show_node (node* n)
         printf (")");
 }
 
-void delete_node (node* n)
+void delete_node (node *n)
 {
         if (n == NULL) return;
 
@@ -352,7 +356,7 @@ void delete_node (node* n)
 
 #if 0
 /* for debugging purposes */
-int main (int argc, char** argv)
+int main (int argc, char* *argv)
 {
         Args test;
 
@@ -361,7 +365,7 @@ int main (int argc, char** argv)
         }
 
         Args::const_iterator i = test.begin ();
-        node* n = parse_expr (test, i);
+        node *n = parse_expr (test, i);
         show_node (n);
         printf ("\n");
 
@@ -378,28 +382,33 @@ int main (int argc, char** argv)
         return 0;
 }
 #else
-Args Test::test (const Args& args)
+/**
+ * Test is a bit different, the exit status depends on the result of the
+ * expression
+ */
+int32_t Test::test (const Args &args, Args &out)
 {
         Args::const_iterator i = args.begin ();
         i ++;
-        node* n = parse_expr (args, i);
+        node *n = parse_expr (args, i);
 
-        Args ret;
-        if (check_expr (n, ret) == e_invalid) {
-                ret.push_front ("2");        
-                return ret;
+        int32_t ret;
+
+        if (check_expr (n, out) == e_invalid) {
+                out.push_front ("invalid expression");        
+                return TEST_ERROR;
         } else {
                 if (eval_expr (n)) {
-                        ret.push_back ("1");
+                        ret = PLUGIN_SUCCESS;
                 } else {
-                        ret.push_back ("0");
+                        ret = PLUGIN_FAILURE;
                 }
         }
         delete_node (n);
         return ret;
 }
 
-void Test::i_load (uint32_t pluginId, Client* client)
+void Test::i_load (uint32_t pluginId, Client *client)
 {
         _name = "test";
         _pluginId = pluginId;
@@ -413,12 +422,12 @@ void Test::i_unload ()
         _client->deleteRecipricant (_pluginId, _rid);
 }
 
-const std::string& Test::i_name ()
+const std::string &Test::i_name ()
 {
         return _name;
 }
 
-void load (uint32_t id, Client* _client)
+void load (uint32_t id, Client *_client)
 {
         test.i_load (id, _client);
 }
@@ -428,7 +437,7 @@ void unload ()
         test.i_unload ();
 }
 
-const std::string& name ()
+const std::string &name ()
 {
         return test.i_name ();
 }

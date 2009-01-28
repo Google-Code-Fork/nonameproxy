@@ -23,16 +23,16 @@
 class InfoRecipricant : public Recipricant
 {
         public:
-                virtual Args func (const Args& args);
+                virtual int32_t func (const Args &args, Args &out);
 };
 
 class Info
 {
         public:
 
-                Args usage ();
+                int32_t usage (Args &out);
 
-                Args getTable ();
+                int32_t getTable (Args &out);
                 std::string getTibiaId ();
                 std::string getReportErrors ();
                 std::string getHp ();
@@ -76,7 +76,7 @@ class Info
 
                 void iload (uint32_t pluginId, Client* client);
                 void iunload ();
-                const std::string& iname ();
+                const std::string &iname ();
 
         private:
                 uint32_t i_calcLvlXp (uint32_t lvl);
@@ -84,7 +84,7 @@ class Info
 
 
                 uint32_t _pluginId;
-                Client*  _client;
+                Client  *_client;
 
                 uint32_t _rid;
 
@@ -93,9 +93,9 @@ class Info
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

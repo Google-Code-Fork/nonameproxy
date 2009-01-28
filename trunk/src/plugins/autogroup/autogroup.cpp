@@ -6,45 +6,45 @@
 
 AutoGroup group;
 
-Args AutoGroupRecipricant::func (const Args& args)
+int32_t AutoGroupRecipricant::func (const Args& args, Args &out)
 {
         Args::const_iterator i = args.begin ();
         if (args.size () == 1) {
                 if (*i == "autogroup") {
-                        return group.usage ();
+                        return group.usage (out);
                 } else {
                         printf ("info error: got wrong message\n");
-                        return Args ();
+                        return PLUGIN_FAILURE;
                 }
         }
-        Args ret;
+
         i ++;
         if (args.size () > 1) {
                 if (*i == "list") {
-                        return group.list_containers ();
+                        return group.list_containers (out);
                 } else if (*i == "ids") {
-                        return group.list_ids ();
+                        return group.list_ids (out);
                 } else if (*i == "all") {
-                        ret.push_back (group.all_ids ());
+                        out.push_back (group.all_ids ());
                 } else if (*i == "none") {
-                        ret.push_back (group.no_ids ());
+                        out.push_back (group.no_ids ());
                 } else if (*i == "add") {
                         i ++;
                         for (; i != args.end (); ++ i) {
-                                ret.push_back (group.add_id (*i));
+                                out.push_back (group.add_id (*i));
                         }
                 } else if (*i == "remove") {
                         i ++;
                         for (; i != args.end (); ++ i) {
-                                ret.push_back (group.remove_id (*i));
+                                out.push_back (group.remove_id (*i));
                         }
                 } else {
-                        return group.usage ();
+                        return group.usage (out);
                 }
         } else {
-                return group.usage ();
+                return group.usage (out);
         }
-        return ret;
+        return PLUGIN_FAILURE;
 }
 
 void ContainerAddHook::func (TibiaMessage* tm, Client* client)
@@ -123,37 +123,34 @@ bool AutoGroup::isSet (uint32_t cid)
         }
 }
 
-Args AutoGroup::usage ()
+int32_t AutoGroup::usage (Args &out)
 {
-        Args ret;
-        ret.push_back ("autogroup list");
-        ret.push_back ("autogroup ids");
-        ret.push_back ("autogroup add x y z");
-        ret.push_back ("autogroup remove x y z");
-        ret.push_back ("autogroup all");
-        ret.push_back ("autogroup none");
-        return ret;
+        out.push_back ("autogroup list");
+        out.push_back ("autogroup ids");
+        out.push_back ("autogroup add x y z");
+        out.push_back ("autogroup remove x y z");
+        out.push_back ("autogroup all");
+        out.push_back ("autogroup none");
+        return PLUGIN_FAILURE;
 }
 
-Args AutoGroup::list_ids ()
+int32_t AutoGroup::list_ids (Args &out)
 {
-        Args ret;
         char tmp[BUFFER_SIZE];
         if (_cids.size () == 0) {
-                ret.push_back ("none");
+                out.push_back ("none");
         } else {
                 CidSet::iterator i;
                 for (i = _cids.begin (); i != _cids.end (); ++ i) {
                         snprintf (tmp, BUFFER_SIZE, "%d", *i);
-                        ret.push_back (tmp);
+                        out.push_back (tmp);
                 }
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
-Args AutoGroup::list_containers ()
+int32_t AutoGroup::list_containers (Args &out)
 {
-        Args ret;
         char tmp[BUFFER_SIZE];
         InventoryState* inventory = _client->gstate->inventory;
 
@@ -167,13 +164,13 @@ Args AutoGroup::list_containers ()
                                   c.getCapacity (),
                                   c.getThingCount ()
                                  );
-                        ret.push_back (tmp);
+                        out.push_back (tmp);
                 }
         }
-        if (ret.size () == 0) {
-                ret.push_back ("no open containers");
+        if (out.size () == 0) {
+                out.push_back ("no open containers");
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
 std::string AutoGroup::all_ids ()

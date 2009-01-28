@@ -72,10 +72,13 @@ class Client
 
                 uint32_t getPluginByName (const std::string& msg);
 
-                Args sendMessage (uint32_t pid, const std::string& msg);
+                int32_t sendMessage (uint32_t pid, const std::string& msg);
+                int32_t sendMessage (uint32_t pid, const std::string& msg,
+                                     Args &out);
 
                 /* sends a message to the plugin whos name is the first arg */
-                Args broadcastMessage (const std::string& msg);
+                int32_t broadcastMessage (const std::string& msg);
+                int32_t broadcastMessage (const std::string& msg, Args &out);
 
                 uint32_t addRecvReadHook (uint32_t pid, uint8_t id,
                                                         ReadHook* hook);

@@ -6,103 +6,102 @@
 
 Info info;
 
-Args InfoRecipricant::func (const Args& args)
+int32_t InfoRecipricant::func (const Args& args, Args &out)
 {
         Args::const_iterator i = args.begin ();
         if (args.size () == 1) {
                 if (*i == "info") {
-                        return info.getTable ();
+                        return info.getTable (out);
                 } else {
                         printf ("info error: got wrong message\n");
-                        return Args ();
+                        return PLUGIN_FAILURE;
                 }
         }
-        Args ret;
         i ++;
         for (; i != args.end (); i ++) {
                 if (*i == "tibiaid") {
-                        ret.push_back (info.getTibiaId ());
+                        out.push_back (info.getTibiaId ());
                 } else if (*i == "reporterrors") {
-                        ret.push_back (info.getReportErrors ());
+                        out.push_back (info.getReportErrors ());
                 } else if (*i == "hp") {
-                        ret.push_back (info.getHp ());
+                        out.push_back (info.getHp ());
                 } else if (*i == "hpmax") {
-                        ret.push_back (info.getHpMax ());
+                        out.push_back (info.getHpMax ());
                 } else if (*i == "capacity") {
-                        ret.push_back (info.getCapacity ());
+                        out.push_back (info.getCapacity ());
                 } else if (*i == "experience") {
-                        ret.push_back (info.getExperience ());
+                        out.push_back (info.getExperience ());
                 } else if (*i == "level") {
-                        ret.push_back (info.getLevel ());
+                        out.push_back (info.getLevel ());
                 } else if (*i == "levelpercent") {
-                        ret.push_back (info.getLevelPercent ());
+                        out.push_back (info.getLevelPercent ());
                 } else if (*i == "mana") {
-                        ret.push_back (info.getMana ());
+                        out.push_back (info.getMana ());
                 } else if (*i == "manamax") {
-                        ret.push_back (info.getManaMax ());
+                        out.push_back (info.getManaMax ());
                 } else if (*i == "magiclevel") {
-                        ret.push_back (info.getMagicLevel ());
+                        out.push_back (info.getMagicLevel ());
                 } else if (*i == "magiclevelpercent") {
-                        ret.push_back (info.getMagicLevelPercent ());
+                        out.push_back (info.getMagicLevelPercent ());
                 } else if (*i == "soul") {
-                        ret.push_back (info.getSoul ());
+                        out.push_back (info.getSoul ());
                 } else if (*i == "stamina") {
-                        ret.push_back (info.getStamina ());
+                        out.push_back (info.getStamina ());
                 } else if (*i == "fist") {
-                        ret.push_back (info.getFist ());
+                        out.push_back (info.getFist ());
                 } else if (*i == "fistpercent") {
-                        ret.push_back (info.getFistPercent ());
+                        out.push_back (info.getFistPercent ());
                 } else if (*i == "club") {
-                        ret.push_back (info.getClub ());
+                        out.push_back (info.getClub ());
                 } else if (*i == "clubpercent") {
-                        ret.push_back (info.getClubPercent ());
+                        out.push_back (info.getClubPercent ());
                 } else if (*i == "sword") {
-                        ret.push_back (info.getSword ());
+                        out.push_back (info.getSword ());
                 } else if (*i == "swordpercent") {
-                        ret.push_back (info.getSwordPercent ());
+                        out.push_back (info.getSwordPercent ());
                 } else if (*i == "axe") {
-                        ret.push_back (info.getAxe ());
+                        out.push_back (info.getAxe ());
                 } else if (*i == "axepercent") {
-                        ret.push_back (info.getAxePercent ());
+                        out.push_back (info.getAxePercent ());
                 } else if (*i == "distance") {
-                        ret.push_back (info.getDistance ());
+                        out.push_back (info.getDistance ());
                 } else if (*i == "distancepercent") {
-                        ret.push_back (info.getDistancePercent ());
+                        out.push_back (info.getDistancePercent ());
                 } else if (*i == "shield") {
-                        ret.push_back (info.getShield ());
+                        out.push_back (info.getShield ());
                 } else if (*i == "shieldpercent") {
-                        ret.push_back (info.getShieldPercent ());
+                        out.push_back (info.getShieldPercent ());
                 } else if (*i == "fishing") {
-                        ret.push_back (info.getFishing ());
+                        out.push_back (info.getFishing ());
                 } else if (*i == "fishingpercent") {
-                        ret.push_back (info.getFishingPercent ());
+                        out.push_back (info.getFishingPercent ());
                 } else if (*i == "poison") {
-                        ret.push_back (info.getIconPoison ());
+                        out.push_back (info.getIconPoison ());
                 } else if (*i == "burn") {
-                        ret.push_back (info.getIconBurn ());
+                        out.push_back (info.getIconBurn ());
                 } else if (*i == "energy") {
-                        ret.push_back (info.getIconEnergy ());
+                        out.push_back (info.getIconEnergy ());
                 } else if (*i == "drunk") {
-                        ret.push_back (info.getIconDrunk ());
+                        out.push_back (info.getIconDrunk ());
                 } else if (*i == "manashield") {
-                        ret.push_back (info.getIconManaShield ());
+                        out.push_back (info.getIconManaShield ());
                 } else if (*i == "paralyze") {
-                        ret.push_back (info.getIconParalyze ());
+                        out.push_back (info.getIconParalyze ());
                 } else if (*i == "haste") {
-                        ret.push_back (info.getIconHaste ());
+                        out.push_back (info.getIconHaste ());
                 } else if (*i == "swords") {
-                        ret.push_back (info.getIconSwords ());
+                        out.push_back (info.getIconSwords ());
                 } else if (*i == "drowning") {
-                        ret.push_back (info.getIconDrowning ());
+                        out.push_back (info.getIconDrowning ());
                 } else if (*i == "freezing") {
-                        ret.push_back (info.getIconFreezing ());
+                        out.push_back (info.getIconFreezing ());
                 } else if (*i == "dazzled") {
-                        ret.push_back (info.getIconDazzled ());
+                        out.push_back (info.getIconDazzled ());
                 } else if (*i == "cursed") {
-                        ret.push_back (info.getIconCursed ());
+                        out.push_back (info.getIconCursed ());
                 }
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
 uint32_t Info::i_calcLvlXp (uint32_t lvl)
@@ -112,9 +111,8 @@ uint32_t Info::i_calcLvlXp (uint32_t lvl)
         return (50 * l3 + 850 * lvl) / 3 - 100 * l2 - 200;
 }
 
-Args Info::getTable ()
+int32_t Info::getTable (Args &out)
 {
-        Args ret;
         char tmp[BUFFER_SIZE];
 
         /* level xp stuff */
@@ -124,10 +122,9 @@ Args Info::getTable ()
         uint32_t clvl = i_calcLvlXp (lvl);
         snprintf (tmp, BUFFER_SIZE, "lvl: %d xp: %d/%d %d%%", 
                 lvl, xp, nlvl, 100 - ((xp - clvl) * 100) / (nlvl - clvl));
-        ret.push_back (tmp);
-        
+        out.push_back (tmp);
 
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
 std::string Info::getTibiaId ()

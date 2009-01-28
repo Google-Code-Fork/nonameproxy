@@ -19,18 +19,18 @@ void SpeakHook::func (TibiaMessage* tm, Client* client)
         console.hookSpeak ((GSMSpeak*)tm, client);
 }
 
-Args ConsoleRecipricant::func (const Args& args)
+int32_t ConsoleRecipricant::func (const Args& args, Args &out)
 {
         Args::const_iterator i = args.begin ();
         if (args.size () < 2) {
-                return Args ();
+                return PLUGIN_FAILURE;
         }
         if ((*i) != "console") {
-                return Args ();
+                return PLUGIN_SUCCESS;
         }
         i ++;
         console.output (*i);
-        return Args ();
+        return PLUGIN_SUCCESS;
 }
 
 void Console::output (const std::string& msg)
@@ -78,10 +78,11 @@ void Console::hookSpeak (GSMSpeak* sp, Client* client)
                         
                         grml.add (consoleIn (msg));
 
-                        Args ret = _client->broadcastMessage (msg);
+                        Args out; 
+                        _client->broadcastMessage (msg, out);
 
                         Args::iterator i;
-                        for (i = ret.begin (); i != ret.end (); ++ i) {
+                        for (i = out.begin (); i != out.end (); ++ i) {
                                 grml.add (consoleOut (*i));
                         }
                         _client->sendToClient (grml);

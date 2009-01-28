@@ -60,27 +60,27 @@ void Messenger::deleteRecipricant (uint32_t rid)
         rlist.erase (rid);
 }
 
-Args Messenger::sendMessage (uint32_t rid, const std::string& msg)
+int32_t Messenger::sendMessage (uint32_t rid, const std::string& msg, Args &out)
 {
         RecipricantList::iterator i = rlist.find (rid);
 
         if (i == rlist.end ()) {
                 printf ("messenger send error: recipricant does not exist\n");
-                return Args ();
+                return PLUGIN_FAILURE;
         } else {
                 ArgsParser ap (msg, _client);
-                return (*i).second->func (ap.getArgs ());
+                return (*i).second->func (ap.getArgs (), out);
         }
 }
 
-Args Messenger::broadcastMessage (const std::string& msg)
+int32_t Messenger::broadcastMessage (const std::string& msg, Args &out)
 {
         ArgsParser ap (msg, _client);
         const Args& args = ap.getArgs ();
         for (RecipricantList::iterator i; i != rlist.end (); ++ i) {
-                return (*i).second->func (args);
+                return (*i).second->func (args, out);
         }
-        return Args ();
+        return PLUGIN_FAILURE;
 }
 
 /*****************************************************************
@@ -134,7 +134,10 @@ bool ArgsParser::addToken ()
                 length = 0;
 
                 /* now we get the console output */
-                Args output = _client->broadcastMessage (tmp);
+                Args output;
+                if (_client->broadcastMessage (tmp, output) == PLUGIN_FAILURE) {
+                        output = Args ();
+                }
 
                 if (output.size () != 0) {
                         token = output.front ();

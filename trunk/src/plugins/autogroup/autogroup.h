@@ -27,7 +27,7 @@
 class AutoGroupRecipricant : public Recipricant
 {
         public:
-                virtual Args func (const Args& args);
+                virtual int32_t func (const Args& args, Args &out);
 };
 
 class ContainerAddHook : public ReadHook
@@ -53,9 +53,9 @@ typedef std::set<uint32_t> CidSet;
 class AutoGroup
 {
         public:
-                Args usage ();
-                Args list_ids ();
-                Args list_containers ();
+                int32_t usage (Args &out);
+                int32_t list_ids (Args &out);
+                int32_t list_containers (Args &out);
 
                 std::string all_ids ();
                 std::string no_ids ();

@@ -364,14 +364,26 @@ uint32_t Client::getPluginByName (const std::string& msg)
         return pluginManager->getPluginByName (msg);
 }
 
-Args Client::sendMessage (uint32_t pid, const std::string& msg)
+int32_t Client::sendMessage (uint32_t pid, const std::string& msg)
 {
-        return pluginManager->sendMessage (pid, msg);
+        Args out;
+        return pluginManager->sendMessage (pid, msg, out);
 }
 
-Args Client::broadcastMessage (const std::string& msg)
+int32_t Client::sendMessage (uint32_t pid, const std::string& msg, Args &out)
 {
-        return pluginManager->broadcastMessage (msg);
+        return pluginManager->sendMessage (pid, msg, out);
+}
+
+int32_t Client::broadcastMessage (const std::string& msg, Args &out)
+{
+        return pluginManager->broadcastMessage (msg, out);
+}
+
+int32_t Client::broadcastMessage (const std::string& msg)
+{
+        Args out;
+        return pluginManager->broadcastMessage (msg, out);
 }
 
 uint32_t Client::addRecvReadHook (uint32_t pid, uint8_t id, ReadHook* hook)

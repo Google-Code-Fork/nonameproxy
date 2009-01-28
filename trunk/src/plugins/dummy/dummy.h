@@ -20,14 +20,14 @@ class ChickenHook : public WriteHook
 class ChickenRecipricant : public Recipricant
 {
         public:
-                virtual Args func (const Args& args);
+                virtual int32_t func (const Args &args, Args &out);
 };
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

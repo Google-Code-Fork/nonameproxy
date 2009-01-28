@@ -38,27 +38,27 @@
 
 class ChannelListHook : public WriteHook
 {
-        virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
+        virtual TibiaMessage *func (TibiaMessage *tm, Client *client);
 };
 
 class ChannelOpenHook : public WriteHook
 {
-        virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
+        virtual TibiaMessage *func (TibiaMessage *tm, Client *client);
 };
 
 class ChannelCloseHook : public WriteHook
 {
-        virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
+        virtual TibiaMessage *func (TibiaMessage *tm, Client *client);
 };
 
 class SpeakHook : public WriteHook
 {
-        virtual TibiaMessage* func (TibiaMessage* tm, Client* client);
+        virtual TibiaMessage *func (TibiaMessage *tm, Client *client);
 };
 
 class ChannelRecipricant : public Recipricant
 {
-        virtual Args func (const Args& args);
+        virtual int32_t func (const Args &args, Args &out);
 };
 
 typedef std::map<uint32_t, std::string> ChannelMap;
@@ -67,21 +67,21 @@ typedef std::set<uint32_t> ChannelSet;
 class ChannelManager
 {
         public:
-                void addChannel (const std::string& name, uint32_t id);
+                void addChannel (const std::string &name, uint32_t id);
                 void removeChannel (uint32_t id);
 
                 void blackListChannel (uint32_t id);
                 void whiteListChannel (uint32_t id);
 
-                GRMChannelList*  hookChannelList (GRMChannelList* cl, Client* client);
+                GRMChannelList * hookChannelList (GRMChannelList *cl, Client *client);
 
-                GSMChannelOpen*  hookChannelOpen (GSMChannelOpen* co, Client* client);
-                GSMChannelClose* hookChannelClose (GSMChannelClose* cc, Client* client);
-                GSMSpeak*        hookSpeak (GSMSpeak* co, Client* client);
+                GSMChannelOpen * hookChannelOpen (GSMChannelOpen *co, Client *client);
+                GSMChannelClose *hookChannelClose (GSMChannelClose *cc, Client *client);
+                GSMSpeak *       hookSpeak (GSMSpeak *co, Client *client);
 
-                void iload (uint32_t pluginId, Client* client);
+                void iload (uint32_t pluginId, Client *client);
                 void iunload ();
-                const std::string& iname ();
+                const std::string &iname ();
 
         private:
                 uint32_t _pluginId;
@@ -90,7 +90,7 @@ class ChannelManager
                 uint32_t _channelclose_hid;
                 uint32_t _speak_hid;
                 uint32_t _rid;
-                Client*  _client;
+                Client * _client;
                 std::string _name;
 
                 ChannelMap addList;
@@ -99,9 +99,9 @@ class ChannelManager
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

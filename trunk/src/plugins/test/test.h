@@ -57,32 +57,32 @@
 class TestRecipricant : public Recipricant
 {
         public:
-                virtual Args func (const Args& args);
+                virtual int32_t func (const Args &args, Args &out);
 };
 
 class Test
 {
         public:
-                Args test (const Args& args);
+                int32_t test (const Args &args, Args &out);
 
-                void i_load (uint32_t id, Client* client);
+                void i_load (uint32_t id, Client *client);
                 void i_unload ();
-                const std::string& i_name ();
+                const std::string &i_name ();
 
         private:
                 uint32_t        _pluginId;
                 uint32_t        _rid;
 
-                Client*         _client;
+                Client          *_client;
 
                 std::string     _name;
 };
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

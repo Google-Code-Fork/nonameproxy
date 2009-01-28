@@ -22,7 +22,7 @@
 class MapRecipricant : public Recipricant
 {
         public:
-                virtual Args func (const Args& args);
+                virtual int32_t func (const Args &args, Args &out);
 };
 
 /* set on all send messages which will cause the user to take control
@@ -31,7 +31,7 @@ class MapRecipricant : public Recipricant
 class StopHook : public ReadHook
 {
         public:
-                virtual void func (TibiaMessage* tm, Client* client);
+                virtual void func (TibiaMessage *tm, Client *client);
 };
 
 class Map
@@ -46,10 +46,10 @@ class Map
 
                 Map ();
 
-                Args usage ();
+                int32_t usage (Args &out);
 
                 /* used by recipricant */
-                std::string     r_set_state (const std::string& state);
+                std::string     r_set_state (const std::string &state);
                 std::string     r_get_state ();
 
                 /* if state is set twice in a cycle set_state returns false */
@@ -61,9 +61,9 @@ class Map
                 bool            enable_autodisable ();
                 bool            disable_autodisable ();
 
-                void i_load (uint32_t pluginId, Client* client);
+                void i_load (uint32_t pluginId, Client *client);
                 void i_unload ();
-                const std::string& i_name ();
+                const std::string &i_name ();
 
                 LocalMap        global;
                 
@@ -77,7 +77,7 @@ class Map
                 uint32_t        _pluginId;
                 uint32_t        _rid;
 
-                Client*         _client;
+                Client         *_client;
 
                 std::string     _name;
 };
@@ -86,9 +86,9 @@ extern Map map;
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

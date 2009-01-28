@@ -4,103 +4,103 @@
 
 ChannelManager chanMgr;
 
-TibiaMessage* ChannelListHook::func (TibiaMessage* tm, Client* client)
+TibiaMessage *ChannelListHook::func (TibiaMessage *tm, Client *client)
 {
         return chanMgr.hookChannelList ((GRMChannelList*)tm, client);
 }
 
-TibiaMessage* ChannelOpenHook::func (TibiaMessage* tm, Client* client)
+TibiaMessage *ChannelOpenHook::func (TibiaMessage *tm, Client *client)
 {
         return chanMgr.hookChannelOpen ((GSMChannelOpen*)tm, client);
 }
 
-TibiaMessage* ChannelCloseHook::func (TibiaMessage* tm, Client* client)
+TibiaMessage *ChannelCloseHook::func (TibiaMessage *tm, Client *client)
 {
         return chanMgr.hookChannelClose ((GSMChannelClose*)tm, client);
 }
 
-TibiaMessage* SpeakHook::func (TibiaMessage* tm, Client* client)
+TibiaMessage *SpeakHook::func (TibiaMessage *tm, Client *client)
 {
         return chanMgr.hookSpeak ((GSMSpeak*)tm, client);
 }
 
-Args ChannelRecipricant::func (const Args& args)
+int32_t ChannelRecipricant::func (const Args &args, Args &out)
 {
-        Args ret;
         Args::const_iterator i = args.begin ();
         if (args.size () < 2) {
-                ret.push_back ("channelmanager: usage");
-                ret.push_back ("channelmanager add channelname channelid");
-                ret.push_back ("channelmanager remove channelid");
-                ret.push_back ("channelmanager blacklist channelid");
-                ret.push_back ("channelmanager whitelist channelid");
-                return ret;
+                out.push_back ("channelmanager: usage");
+                out.push_back ("channelmanager add channelname channelid");
+                out.push_back ("channelmanager remove channelid");
+                out.push_back ("channelmanager blacklist channelid");
+                out.push_back ("channelmanager whitelist channelid");
+                return PLUGIN_FAILURE;
         }
         if ((*i) != "channelmanager") {
-                return ret;
+                return PLUGIN_FAILURE;
         }
         i ++;
         if ((*i) == "add") {
                 if (args.size () != 4) {
-                        ret.push_back ("channelmanager: add takes 4 args");
-                        return ret;
+                        out.push_back ("channelmanager: add takes 4 args");
+                        return PLUGIN_FAILURE;
                 }
                 i ++;
-                const std::string& name = *i;
+                const std::string &name = *i;
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        ret.push_back ("channelmanager: warning id out of range");
+                        out.push_back ("channelmanager: warning id out of range");
                         id %= 0xFFFF;
                 }
                 chanMgr.addChannel (name, id);
-                ret.push_back ("channelmanager: channel " + *i + " added");
+                out.push_back ("channelmanager: channel " + *i + " added");
         } else if ((*i) == "remove") {
                 if (args.size () != 3) {
-                        ret.push_back ("channelmanager: remove takes 3 args");
-                        return ret;
+                        out.push_back ("channelmanager: remove takes 3 args");
+                        return PLUGIN_FAILURE;
                 }
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        ret.push_back ("channelmanager: warning id out of range");
+                        out.push_back ("channelmanager: warning id out of range");
                         id %= 0xFFFF;
                 }
                 chanMgr.removeChannel (id);
-                ret.push_back ("channelmanager: channel " + *i + " removed");
+                out.push_back ("channelmanager: channel " + *i + " removed");
         } else if ((*i) == "blacklist") {
                 if (args.size () != 3) {
-                        ret.push_back ("channel manager: blacklist takes 3 args");
-                        return ret;
+                        out.push_back ("channel manager: blacklist takes 3 args");
+                        return PLUGIN_FAILURE;
                 }
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        ret.push_back ("channelmanager: warning id out of range\n");
+                        out.push_back ("channelmanager: warning id out of range\n");
                         id %= 0xFFFF;
                 }
                 chanMgr.blackListChannel (id);
-                ret.push_back ("channelmanager: channel " + *i + " blacklisted");
+                out.push_back ("channelmanager: channel " + *i + " blacklisted");
         } else if ((*i) == "whitelist") {
                 if (args.size () != 3) {
-                        ret.push_back ("channelmanager: whitelist takes 4 args");
-                        return ret;
+                        out.push_back ("channelmanager: whitelist takes 4 args");
+                        return PLUGIN_FAILURE;
                 }
                 i ++;
                 uint32_t id = atoi ((*i).c_str ());
                 if (id > 0xFFFF) {
-                        ret.push_back ("channelmanager: warning channel id out of range\n");
+                        out.push_back ("channelmanager: warning channel id out of range\n");
                         id %= 0xFFFF;
                 }
                 chanMgr.whiteListChannel (id);
-                ret.push_back ("channelmanager: channel " + *i + " whitelisted");
+                out.push_back ("channelmanager: channel " + *i + " whitelisted");
         } else {
-                ret.push_back ("channelmanager: unreconized command " + *i);
+                out.push_back ("channelmanager: unreconized command " + *i);
+                return PLUGIN_FAILURE;
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
-void ChannelManager::addChannel (const std::string& name, uint32_t id)
+void ChannelManager::addChannel (const std::string &name, uint32_t id)
 {
         if (addList.count (id) != 0) {
                 printf ("channelmanager add error: channel already added\n");
@@ -137,7 +137,7 @@ void ChannelManager::whiteListChannel (uint32_t id)
         }
 }
 
-GSMChannelOpen* ChannelManager::hookChannelOpen (GSMChannelOpen* co, Client* client)
+GSMChannelOpen *ChannelManager::hookChannelOpen (GSMChannelOpen *co, Client *client)
 {
         uint32_t channelId = co->getChannelId ();
         if (addList.count (channelId) != 0) {
@@ -147,7 +147,7 @@ GSMChannelOpen* ChannelManager::hookChannelOpen (GSMChannelOpen* co, Client* cli
         return co;
 }
 
-GSMChannelClose* ChannelManager::hookChannelClose (GSMChannelClose* cc, Client* client)
+GSMChannelClose *ChannelManager::hookChannelClose (GSMChannelClose *cc, Client *client)
 {
         uint32_t channelId = cc->getChannelId ();
         if (addList.count (channelId) != 0) {
@@ -157,7 +157,7 @@ GSMChannelClose* ChannelManager::hookChannelClose (GSMChannelClose* cc, Client* 
         return cc;
 }
 
-GSMSpeak* ChannelManager::hookSpeak (GSMSpeak* sp, Client* client)
+GSMSpeak *ChannelManager::hookSpeak (GSMSpeak *sp, Client *client)
 {
         if (sp->getSpeakType () == GSMSpeak::channel) {
                 uint32_t channelId = sp->getChannelId ();
@@ -169,10 +169,10 @@ GSMSpeak* ChannelManager::hookSpeak (GSMSpeak* sp, Client* client)
         return sp;
 }
 
-GRMChannelList* ChannelManager::hookChannelList (GRMChannelList* cl, Client* client)
+GRMChannelList *ChannelManager::hookChannelList (GRMChannelList *cl, Client *client)
 {
         /* copy the old channel list */
-        TChannelList* channels = new TChannelList (cl->getChannelList ());
+        TChannelList *channels = new TChannelList (cl->getChannelList ());
         channels->begin ();
         while (!channels->isEnd ()) {
                 uint32_t channelId = channels->getChannel ().getChannelId ();
@@ -189,7 +189,7 @@ GRMChannelList* ChannelManager::hookChannelList (GRMChannelList* cl, Client* cli
         return new GRMChannelList (channels);
 }
 
-void ChannelManager::iload (uint32_t pluginId, Client* client)
+void ChannelManager::iload (uint32_t pluginId, Client *client)
 {
         _name = "channelmanager";
         _pluginId = pluginId;
@@ -219,12 +219,12 @@ void ChannelManager::iunload ()
         _client->deleteRecipricant (_pluginId, _rid);
 }
 
-const std::string& ChannelManager::iname ()
+const std::string &ChannelManager::iname ()
 {
         return _name;
 }
 
-void load (uint32_t id, Client* client)
+void load (uint32_t id, Client *client)
 {
         chanMgr.iload (id, client);
 }
@@ -234,7 +234,7 @@ void unload ()
         chanMgr.iunload ();
 }
 
-const std::string& name ()
+const std::string &name ()
 {
         return chanMgr.iname ();
 }
