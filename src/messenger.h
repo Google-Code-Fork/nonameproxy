@@ -1,21 +1,21 @@
 /*****************************************************************************
- * noname proxy
+  *noname proxy
  *****************************************************************************
  *
  *****************************************************************************
- * This program is free software; you can redistribute it and*or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+  *This program is free software; you can redistribute it and*or
+  *modify it under the terms of the GNU General Public License
+  *as published by the Free Software Foundation; either version 2
+  *of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+  *This program is distributed in the hope that it will be useful,
+  *but WITHOUT ANY WARRANTY; without even the implied warranty of
+  *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  *GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  *You should have received a copy of the GNU General Public License
+  *along with this program; if not, write to the Free Software Foundation,
+  *Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *****************************************************************************/
 
 #ifndef __MESSENGER_H
@@ -26,6 +26,14 @@
 #include <string>
 
 #include "idmanager.h"
+
+/**
+ * define EXIT_FAILURE and EXIT_SUCCESS
+ * these are already defined so we use slightly different names
+ */
+
+#define PLUGIN_SUCCESS 0
+#define PLUGIN_FAILURE 1
 
 typedef std::string Arg;
 typedef std::list<Arg> Args;
@@ -51,13 +59,13 @@ class PluginManager;
 class ArgsParser
 {
         public:
-                ArgsParser (const std::string& msg, Client* client);
-                const Args& getArgs ();
+                ArgsParser (const std::string &msg, Client *client);
+                const Args &getArgs ();
         private:
                 bool addToken ();
 
                 Args args;
-                const std::string& _msg;
+                const std::string &_msg;
                 std::string::const_iterator i;
 
                 uint32_t start;
@@ -65,14 +73,14 @@ class ArgsParser
                 bool quotes;
                 bool excape;
 
-                Client* _client;
+                Client *_client;
 };
 
 class Recipricant
 {
         public:
                 virtual ~Recipricant () {};
-                virtual Args func (const Args& args) = 0;
+                virtual int32_t func (const Args &args, Args &out) = 0;
 };
 
 typedef std::map<uint32_t, Recipricant*> RecipricantList;
@@ -80,20 +88,21 @@ typedef std::map<uint32_t, Recipricant*> RecipricantList;
 class Messenger
 {
         public:
-                Messenger (Client* client);
+                Messenger (Client *client);
                 virtual ~Messenger ();
 
                 /* Add hook returns a unique id for the hook just added */
-                uint32_t addRecipricant    (Recipricant* recipricant);
+                uint32_t addRecipricant    (Recipricant *recipricant);
                 void     deleteRecipricant (uint32_t rid);
 
-                Args sendMessage (uint32_t rid, const std::string& msg);
-                Args broadcastMessage (const std::string& msg);
+                int32_t sendMessage (uint32_t rid, const std::string &msg,
+                                     Args &out);
+                int32_t broadcastMessage (const std::string &msg, Args &out);
 
         private:
                 RecipricantList rlist;
-                IdManager* ids;
-                Client* _client;
+                IdManager *ids;
+                Client *_client;
 };
 
 #endif

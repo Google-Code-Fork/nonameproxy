@@ -32,7 +32,7 @@
 #include "messenger.h"
 #include "connectionmanager.h"
 
-typedef std::map<uint32_t, Plugin*> PluginList;
+typedef std::map<uint32_t, Plugin *> PluginList;
 
 /* plugin manager doesnt know about client, this avoids circular dependancies */
 class Client;
@@ -40,52 +40,53 @@ class Client;
 class PluginManager
 {
         public:
-                PluginManager (Messenger* messenger,
-                               HookManager* sendhm,
-                               HookManager* recvhm,
-                               PacketHookManager* sendphm,
-                               PacketHookManager* recvphm,
-                               ConnectionManager* connMgr,
-                               Client* client);
+                PluginManager (Messenger *messenger,
+                               HookManager *sendhm,
+                               HookManager *recvhm,
+                               PacketHookManager *sendphm,
+                               PacketHookManager *recvphm,
+                               ConnectionManager *connMgr,
+                               Client *client);
 
                 virtual ~PluginManager ();
 
                 /* Add plugin returns a unique id for the hook just added */
-                uint32_t addPlugin    (const std::string& path);
+                uint32_t addPlugin    (const std::string &path);
                 bool     deletePlugin (uint32_t pid);
 
                 /* a hack to allow the core to add a recipricant */
-                uint32_t addFakein    (const std::string& name);
+                uint32_t addFakein    (const std::string &name);
 
-                uint32_t getPluginByName      (const std::string& name);
+                uint32_t getPluginByName      (const std::string &name);
 
                 /* Interfacing functions */
                 /* messageing functions */
-                Args sendMessage (uint32_t pid, const std::string& msg);
-                Args broadcastMessage (const std::string& msg);
+                int32_t sendMessage (uint32_t pid, const std::string &msg,
+                                     Args &out);
+                int32_t broadcastMessage (const std::string &msg, Args &out);
 
-                uint32_t addRecipricant (uint32_t pid, Recipricant* recipricant);
+                uint32_t addRecipricant (uint32_t pid, Recipricant *recipricant);
                 void     deleteRecipricant (uint32_t pid, uint32_t rid);
 
                 /* tibia message hooks */
                 uint32_t addRecvReadHook (uint32_t pid, uint8_t id,
-                                                        ReadHook* hook);
+                                                        ReadHook *hook);
                 uint32_t addRecvWriteHook (uint32_t pid, uint8_t id,
-                                                        WriteHook* hook);
+                                                        WriteHook *hook);
                 uint32_t addSendReadHook (uint32_t pid, uint8_t id,
-                                                        ReadHook* hook);
+                                                        ReadHook *hook);
                 uint32_t addSendWriteHook (uint32_t pid, uint8_t id,
-                                                        WriteHook* hook);
+                                                        WriteHook *hook);
                 void deleteRecvReadHook (uint32_t pid, uint32_t hid);
                 void deleteRecvWriteHook (uint32_t pid, uint32_t hid);
                 void deleteSendReadHook (uint32_t pid, uint32_t hid);
                 void deleteSendWriteHook (uint32_t pid, uint32_t hid);
 
                 /* packet hooks */
-                uint32_t addPreSendPacketHook (uint32_t pid, PacketHook* hook);
-                uint32_t addPostSendPacketHook (uint32_t pid, PacketHook* hook);
-                uint32_t addPreRecvPacketHook (uint32_t pid, PacketHook* hook);
-                uint32_t addPostRecvPacketHook (uint32_t pid, PacketHook* hook);
+                uint32_t addPreSendPacketHook (uint32_t pid, PacketHook *hook);
+                uint32_t addPostSendPacketHook (uint32_t pid, PacketHook *hook);
+                uint32_t addPreRecvPacketHook (uint32_t pid, PacketHook *hook);
+                uint32_t addPostRecvPacketHook (uint32_t pid, PacketHook *hook);
 
                 void deletePreSendPacketHook (uint32_t pid, uint32_t hid);
                 void deletePostSendPacketHook (uint32_t pid, uint32_t hid);
@@ -93,15 +94,15 @@ class PluginManager
                 void deletePostRecvPacketHook (uint32_t pid, uint32_t hid);
         private:
                 PluginList plist;
-                IdManager* ids;
+                IdManager *ids;
 
-                Messenger*              _messenger;
-                HookManager*            _sendhm;
-                HookManager*            _recvhm;
-                PacketHookManager*      _sendphm;
-                PacketHookManager*      _recvphm;
-                ConnectionManager*      _connMgr;
-                Client*                 _client;
+                Messenger               *_messenger;
+                HookManager             *_sendhm;
+                HookManager             *_recvhm;
+                PacketHookManager       *_sendphm;
+                PacketHookManager       *_recvphm;
+                ConnectionManager       *_connMgr;
+                Client                  *_client;
 };
 
 #endif

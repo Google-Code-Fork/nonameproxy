@@ -30,17 +30,17 @@ class Client;
 class CoreRecipricant : public Recipricant
 {
         public:
-                CoreRecipricant (Client* client);
-                virtual Args func (const Args& args);
+                CoreRecipricant (Client *client);
+                virtual int32_t func (const Args &args, Args &out);
         private:
-                Args loadPlugin (const Args& args, Args::const_iterator i,
-                                        uint32_t argc);
-                Args unloadPlugin (const Args& args, Args::const_iterator i,
-                                        uint32_t argc);
+                int32_t loadPlugin (const Args &args, Args &out, 
+                                    Args::const_iterator i, uint32_t argc);
+                int32_t unloadPlugin (const Args &args, Args &out,
+                                      Args::const_iterator i, uint32_t argc);
 
-                Args usage ();
+                int32_t usage (Args &out);
 
-                Client* _client;
+                Client *_client;
 };
 
 #endif

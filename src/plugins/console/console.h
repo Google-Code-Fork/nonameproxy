@@ -20,40 +20,40 @@
 
 class ChannelOpenHook : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        virtual void func (TibiaMessage *tm, Client *client);
 };
 
 class ChannelCloseHook : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        virtual void func (TibiaMessage *tm, Client *client);
 };
 
 class SpeakHook : public ReadHook
 {
-        virtual void func (TibiaMessage* tm, Client* client);
+        virtual void func (TibiaMessage *tm, Client *client);
 };
 
 class ConsoleRecipricant : public Recipricant
 {
-        virtual Args func (const Args& args);
+        virtual int32_t func (const Args &args, Args &out);
 };
 
 class Console
 {
         public:
-                void output (const std::string& msg);
+                void output (const std::string &msg);
 
-                void hookChannelOpen (GSMChannelOpen* co, Client* client);
-                void hookChannelClose (GSMChannelClose* cc, Client* client);
-                void hookSpeak (GSMSpeak* co, Client* client);
+                void hookChannelOpen (GSMChannelOpen *co, Client *client);
+                void hookChannelClose (GSMChannelClose *cc, Client *client);
+                void hookSpeak (GSMSpeak *co, Client *client);
 
-                void iload (uint32_t pluginId, Client* client);
+                void iload (uint32_t pluginId, Client *client);
                 void iunload ();
-                const std::string& iname ();
+                const std::string &iname ();
 
         private:
-                GRMSpeak* consoleIn (const std::string& msg);
-                GRMSpeak* consoleOut (const std::string& msg);
+                GRMSpeak *consoleIn (const std::string &msg);
+                GRMSpeak *consoleOut (const std::string &msg);
 
                 uint32_t _pluginId;
                 uint32_t _channelopen_hid;
@@ -61,7 +61,7 @@ class Console
                 uint32_t _speak_hid;
                 uint32_t _rid;
 
-                Client*  _client;
+                Client * _client;
                 std::string _name;
 
                 /* keep track of whether or not the console window is open */
@@ -71,9 +71,9 @@ class Console
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

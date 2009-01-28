@@ -6,43 +6,40 @@
 
 Watch watch;
 
-Args WatchRecipricant::func (const Args& args)
+int32_t WatchRecipricant::func (const Args& args, Args &out)
 {
         Args::const_iterator i = args.begin ();
         if (args.size () == 0) {
                 printf ("watch error: got emtpy message\n");
-                return Args ();
+                return PLUGIN_FAILURE;
         }
         if (args.size () == 1) {
                 if (*i == "watch") {
-                        return watch.usage ();
+                        return watch.usage (out);
                 } else {
                         printf ("watch error: got wrong message\n");
-                        return Args ();
-
+                        return PLUGIN_FAILURE;
                 }
         }
-        Args ret;
         i ++;
 
         if (*i == "list") {
                 i ++;
                 if (args.size () == 2) {
-                        printf ("yay\n");
-                        return watch.listAll ();
+                        return watch.listAll (out);
                 } else {
                         for (; i != args.end (); ++ i) {
                                 char* end;
                                 uint32_t id = strtol ((*i).c_str (), &end, 0);
                                 if (*end == '\0') {
-                                        ret.push_back (watch.list (id));
+                                        out.push_back (watch.list (id));
                                 }
                         }
                 }
         } else if (*i == "remove" && args.size () > 2) {
                 i ++;
                 if (*i == "all") {
-                        ret.push_back (watch.removeAll ());
+                        out.push_back (watch.removeAll ());
                 } else {
                         /* if we remove the ids in a random order the array
                          * size will change and ids will also change. to
@@ -60,32 +57,32 @@ Args WatchRecipricant::func (const Args& args)
                         ids.reverse ();
                         std::list<uint32_t>::iterator id;
                         for (id = ids.begin (); id != ids.end (); ++ id) {
-                                ret.push_back (watch.removeEntry (*id));
+                                out.push_back (watch.removeEntry (*id));
                         }
                 }
         } else if (*i == "enable" && args.size () > 2) {
                 i ++;
                 if (*i == "all") {
-                        ret.push_back (watch.enableAll ());
+                        out.push_back (watch.enableAll ());
                 } else {
                         for (; i != args.end (); ++ i) {
                                 char* end;
                                 uint32_t id = strtol ((*i).c_str (), &end, 0);
                                 if (*end == '\0') {
-                                        ret.push_back (watch.enableEntry (id));
+                                        out.push_back (watch.enableEntry (id));
                                 }
                         }
                 }
         } else if (*i == "disable" && args.size () > 2) {
                 i ++;
                 if (*i == "all") {
-                        ret.push_back (watch.disableAll ());
+                        out.push_back (watch.disableAll ());
                 } else {
                         for (; i != args.end (); ++ i) {
                                 char* end;
                                 uint32_t id = strtol ((*i).c_str (), &end, 0);
                                 if (*end == '\0') {
-                                        ret.push_back (watch.disableEntry (id));
+                                        out.push_back (watch.disableEntry (id));
                                 }
                         }
                 }
@@ -101,7 +98,7 @@ Args WatchRecipricant::func (const Args& args)
                 } else if (*i == "recv") {
                         type = RECV;
                 } else {
-                        return watch.usage ();
+                        return watch.usage (out);
                 }
 
                 i ++;
@@ -114,9 +111,9 @@ Args WatchRecipricant::func (const Args& args)
                                 entry->addMid (mid);
                         }
                 }
-                ret.push_back (watch.addEntry (entry));
+                out.push_back (watch.addEntry (entry));
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
 WatchHook::WatchHook (WEntry* entry)
@@ -130,12 +127,9 @@ void WatchHook::func (TibiaMessage* tm, Client* client)
                 return;
         }
         
-        Args output = client->broadcastMessage (_entry->getTest ());
+        int32_t exit_status = client->broadcastMessage (_entry->getTest ());
 
-        if (output.size () == 0) {
-                return;
-        }
-        if (output.front () == "1") {
+        if (exit_status == 0) {
                 client->broadcastMessage (_entry->getCommand ());
         }
 }
@@ -243,19 +237,18 @@ const HidSet& WEntry::getHids ()
         return _hids;
 }
 
-Args Watch::usage ()
+int32_t Watch::usage (Args &out)
 {
-        Args ret;
-        ret.push_back ("watch list");
-        ret.push_back ("watch list id [id2 id3 ...]");
-        ret.push_back ("watch 'test' 'command' [send|recv] mid [mid2 mid3 ...]");
-        ret.push_back ("watch remove [all|id [id2 id3 ...]");
-        ret.push_back ("watch enable [all|id [id2 id3 ...]");
-        ret.push_back ("watch disable [all|id [id2 id3 ...]");
-        return ret;
+        out.push_back ("watch list");
+        out.push_back ("watch list id [id2 id3 ...]");
+        out.push_back ("watch 'test' 'command' [send|recv] mid [mid2 mid3 ...]");
+        out.push_back ("watch remove [all|id [id2 id3 ...]");
+        out.push_back ("watch enable [all|id [id2 id3 ...]");
+        out.push_back ("watch disable [all|id [id2 id3 ...]");
+        return PLUGIN_FAILURE;
 }
 
-Args Watch::listAll ()
+int32_t Watch::listAll (Args &out)
 {
         Args ret;
         char tmp[BUFFER_SIZE];
@@ -264,10 +257,10 @@ Args Watch::listAll ()
         WEntryVector::iterator i;
         for (i = _entries.begin (); i != _entries.end (); ++ i) {
                 snprintf (tmp, BUFFER_SIZE, "%d: ", index);
-                ret.push_back (std::string(tmp) + (*i)->show ());
+                out.push_back (std::string(tmp) + (*i)->show ());
                 index ++;
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
 std::string Watch::list (uint32_t n)

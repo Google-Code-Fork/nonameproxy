@@ -30,19 +30,19 @@
 class ShowMessage : public ReadHook
 {
         public:
-                virtual void func (TibiaMessage* tm, Client* client);
+                virtual void func (TibiaMessage *tm, Client *client);
 };
 
 class ShowPacket : public PacketHook
 {
         public:
-                virtual void func (const NetworkMessage& msg);
+                virtual void func (const NetworkMessage &msg);
 };
 
 class DebugRecipricant : public Recipricant
 {
         public:
-                virtual Args func (const Args& args);
+                virtual int32_t func (const Args &args, Args &out);
 };
 
 class Debug
@@ -50,37 +50,37 @@ class Debug
         public:
                 Debug ();
 
-                Args usage ();
+                int32_t usage (Args &out);
 
                 std::string pre_send_on ();
                 std::string post_send_on ();
-                std::string send_on (const std::string& mid);
+                std::string send_on (const std::string &mid);
 
                 std::string pre_recv_on ();
                 std::string post_recv_on ();
-                std::string recv_on (const std::string& mid);
+                std::string recv_on (const std::string &mid);
 
                 std::string pre_send_off ();
                 std::string post_send_off ();
-                std::string send_off (const std::string& mid);
+                std::string send_off (const std::string &mid);
 
                 std::string pre_recv_off ();
                 std::string post_recv_off ();
-                std::string recv_off (const std::string& mid);
+                std::string recv_off (const std::string &mid);
 
                 std::string show_tile (uint32_t x, uint32_t y, uint32_t z);
                 std::string show_battlelist ();
                 
-                std::string show_container (const std::string& cid);
+                std::string show_container (const std::string &cid);
                 std::string show_inventory ();
 
-                void iload (uint32_t pluginId, Client* client);
+                void iload (uint32_t pluginId, Client *client);
                 void iunload ();
-                const std::string& iname ();
+                const std::string &iname ();
 
         private:
                 uint32_t _pluginId;
-                Client*  _client;
+                Client  *_client;
 
                 uint32_t _sendpre;
                 uint32_t _sendpost;
@@ -97,9 +97,9 @@ class Debug
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

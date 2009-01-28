@@ -21,71 +21,69 @@
 #include "corerecipricant.h"
 #include "client.h"
 
-CoreRecipricant::CoreRecipricant (Client* client)
+CoreRecipricant::CoreRecipricant (Client *client)
 {
         _client = client;
 }
 
-Args CoreRecipricant::func (const Args& args)
+int32_t CoreRecipricant::func (const Args &args, Args &out)
 {
         Args::const_iterator i = args.begin ();
         uint32_t argc = args.size ();
         if (argc > 2) {
                 i ++;
                 if (*i == "load") {
-                        return loadPlugin (args, i, argc);
+                        return loadPlugin (args, out, i, argc);
                 } else if (*i == "unload") {
-                        return unloadPlugin (args, i, argc);
+                        return unloadPlugin (args, out, i, argc);
                 }
         }
-        return usage ();
+        return usage (out);
 }
 
-Args CoreRecipricant::loadPlugin (const Args& args, Args::const_iterator i,
-                                  uint32_t argc)
+int32_t CoreRecipricant::loadPlugin (const Args &args, Args &out,
+                                     Args::const_iterator i, uint32_t argc)
 {
-        Args ret;
         if (argc < 3) {
-                ret.push_back ("core: load requires a path name");
-                return ret;
+                out.push_back ("core: load requires a path name");
+                return PLUGIN_FAILURE;
         }
         i ++;
         if (_client->pluginManager->addPlugin (*i) == 0) {
-                ret.push_back ("core: could not load " + *i);
-                return ret;
+                out.push_back ("core: could not load " + *i);
+                return PLUGIN_FAILURE;
         }
-        ret.push_back ("core: plugin " + *i + " successfully loaded");
-        return ret;
+        out.push_back ("core: plugin " + *i + " successfully loaded");
+        return PLUGIN_SUCCESS;
 }
                 
-Args CoreRecipricant::unloadPlugin (const Args& args, Args::const_iterator i,
-                                    uint32_t argc)
+int32_t CoreRecipricant::unloadPlugin (const Args &args, Args &out,
+                                       Args::const_iterator i, uint32_t argc)
 {
-        Args ret;
         if (argc < 3) {
-                ret.push_back ("core: unload requires a plugin name");
-                return ret;
+                out.push_back ("core: unload requires a plugin name");
+                return PLUGIN_FAILURE;
         }
         i ++;
         uint32_t pid = _client->getPluginByName (*i);
         if (pid == 0) {
-                ret.push_back ("core: could not find plugin " + *i);
-                return ret;
+                out.push_back ("core: could not find plugin " + *i);
+                return PLUGIN_FAILURE;
         }
         if (!_client->pluginManager->deletePlugin (pid)) {
-                ret.push_back ("core: could not unload plugin " + *i);
-                return ret;
+                out.push_back ("core: could not unload plugin " + *i);
+                return PLUGIN_FAILURE;
         }
-        ret.push_back ("core: " + *i + " successfully unloaded");
-        return ret;
+        out.push_back ("core: " + *i + " successfully unloaded");
+        return PLUGIN_SUCCESS;
 }
                 
-Args CoreRecipricant::usage ()
+int32_t CoreRecipricant::usage (Args &out)
 {
         Args ret;
-        ret.push_back ("core: usage");
-        ret.push_back ("load 'plugin path'");
-        ret.push_back ("unload 'plugin name'");
-        return ret;
+        out.push_back ("core: usage");
+        out.push_back ("load 'plugin path'");
+        out.push_back ("unload 'plugin name'");
+        return PLUGIN_FAILURE;
 }
 

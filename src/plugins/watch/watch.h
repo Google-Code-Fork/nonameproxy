@@ -32,7 +32,7 @@ class WEntry;
 class WatchRecipricant : public Recipricant
 {
         public:
-                virtual Args func (const Args& args);
+                virtual int32_t func (const Args &args, Args &out);
 };
 
 class WatchHook : public ReadHook
@@ -53,8 +53,8 @@ typedef std::set<uint32_t> HidSet;
 class WEntry
 {
         public:
-                WEntry (const std::string& test, 
-                        const std::string& command,
+                WEntry (const std::string &test, 
+                        const std::string &command,
                         uint32_t type
                        );
                 virtual ~WEntry () {}
@@ -69,14 +69,14 @@ class WEntry
                 bool disable ();
                 bool isEnabled ();
 
-                const std::string& getTest ();
-                const std::string& getCommand ();
+                const std::string &getTest ();
+                const std::string &getCommand ();
 
                 void addMid (uint32_t mid);
-                const MidSet& getMids ();
+                const MidSet &getMids ();
 
                 void addHid (uint32_t hid);
-                const HidSet& getHids ();
+                const HidSet &getHids ();
 
 
         private:
@@ -91,16 +91,16 @@ class WEntry
                 HidSet          _hids;
 };
 
-typedef std::vector<WEntry*> WEntryVector;
+typedef std::vector<WEntry *> WEntryVector;
 class Watch
 {
         public:
-                Args usage ();
+                int32_t usage (Args &out);
 
                 std::string list (uint32_t n);
-                Args listAll ();
+                int32_t listAll (Args &out);
 
-                std::string addEntry (WEntry* entry);
+                std::string addEntry (WEntry *entry);
 
                 std::string removeEntry (uint32_t n);
                 std::string enableEntry (uint32_t n);
@@ -112,9 +112,9 @@ class Watch
 
                 uint32_t getCycle ();
 
-                void i_load (uint32_t pluginId, Client* client);
+                void i_load (uint32_t pluginId, Client *client);
                 void i_unload ();
-                const std::string& i_name ();
+                const std::string &i_name ();
 
         private:
                 WEntryVector    _entries;
@@ -122,16 +122,16 @@ class Watch
                 uint32_t        _pluginId;
                 uint32_t        _rid;
 
-                Client*         _client;
+                Client          *_client;
 
                 std::string     _name;
 };
 
 extern "C"
 {
-        void load (uint32_t id, Client* client);
+        void load (uint32_t id, Client *client);
         void unload ();
-        const std::string& name ();
+        const std::string &name ();
 }
 
 #endif

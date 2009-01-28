@@ -14,15 +14,14 @@ void ShowPacket::func (const NetworkMessage& msg)
         msg.show ();
 }
 
-Args DebugRecipricant::func (const Args& args)
+int32_t DebugRecipricant::func (const Args& args, Args &out)
 {
-        Args ret;
         Args::const_iterator i = args.begin ();
         /* always four arguements, this makes things nice */
         if (args.size () >= 2) {
                 if ((*i) != "debug") {
                         printf ("debug got wrong message\n");
-                        return Args ();
+                        return PLUGIN_FAILURE;
                 }
                 i ++;
                 if ((*i) == "disp" && args.size () == 4) {
@@ -30,20 +29,20 @@ Args DebugRecipricant::func (const Args& args)
                         if ((*i) == "send") {
                                 i ++;
                                 if ((*i) == "pre") {
-                                        ret.push_back (debug.pre_send_on ());
+                                        out.push_back (debug.pre_send_on ());
                                 } else if ((*i) == "post") {
-                                        ret.push_back (debug.post_send_on ());
+                                        out.push_back (debug.post_send_on ());
                                 } else {
-                                        ret.push_back (debug.send_on (*i));
+                                        out.push_back (debug.send_on (*i));
                                 }
                         } else if ((*i) == "recv") {
                                 i ++;
                                 if ((*i) == "pre") {
-                                        ret.push_back (debug.pre_recv_on ());
+                                        out.push_back (debug.pre_recv_on ());
                                 } else if ((*i) == "post") {
-                                        ret.push_back (debug.post_recv_on ());
+                                        out.push_back (debug.post_recv_on ());
                                 } else {
-                                        ret.push_back (debug.recv_on (*i));
+                                        out.push_back (debug.recv_on (*i));
                                 }
                         }
                 } else if ((*i) == "undisp" && args.size () == 4) {
@@ -51,20 +50,20 @@ Args DebugRecipricant::func (const Args& args)
                         if ((*i) == "send") {
                                 i ++;
                                 if ((*i) == "pre") {
-                                        ret.push_back (debug.pre_send_off ());
+                                        out.push_back (debug.pre_send_off ());
                                 } else if ((*i) == "post") {
-                                        ret.push_back (debug.post_send_off ());
+                                        out.push_back (debug.post_send_off ());
                                 } else {
-                                        ret.push_back (debug.send_off (*i));
+                                        out.push_back (debug.send_off (*i));
                                 }
                         } else if ((*i) == "recv") {
                                 i ++;
                                 if ((*i) == "pre") {
-                                        ret.push_back (debug.pre_recv_off ());
+                                        out.push_back (debug.pre_recv_off ());
                                 } else if ((*i) == "post") {
-                                        ret.push_back (debug.post_recv_off ());
+                                        out.push_back (debug.post_recv_off ());
                                 } else {
-                                        ret.push_back (debug.recv_off (*i));
+                                        out.push_back (debug.recv_off (*i));
                                 }
                         }
                 } else if ((*i) == "show" && args.size () >= 3) {
@@ -76,34 +75,35 @@ Args DebugRecipricant::func (const Args& args)
                                 uint32_t y = strtol ((*i).c_str (), NULL, 0);
                                 i ++;
                                 uint32_t z = strtol ((*i).c_str (), NULL, 0);
-                                ret.push_back (debug.show_tile (x, y, z));
+                                out.push_back (debug.show_tile (x, y, z));
                         } else if ((*i) == "battlelist" && args.size () == 3) {
-                                ret.push_back (debug.show_battlelist ());
+                                out.push_back (debug.show_battlelist ());
                         } else if (((*i) == "inv" || (*i) == "inventory")
                                         && args.size () == 3) {
-                                ret.push_back (debug.show_inventory ());
+                                out.push_back (debug.show_inventory ());
                         } else if (((*i) == "cont" || (*i) == "container")
                                         && args.size () == 4)
                         {
                                 i ++;
-                                ret.push_back (debug.show_container (*i));
+                                out.push_back (debug.show_container (*i));
                         }
                 }
         } else {
-                return debug.usage ();
+                return debug.usage (out);
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
-Args Debug::usage ()
+int32_t Debug::usage (Args &out)
 {
-        Args ret;
-        ret.push_back ("debug: usage");
-        ret.push_back ("debug disp [send|recv] [pre|post|messageid]");
-        ret.push_back ("debug undisp [send|recv] [pre|post|messageid]");
-        ret.push_back ("debug show tile x y z");
-        ret.push_back ("debug show battlelist");
-        return ret;
+        out.push_back ("debug: usage");
+        out.push_back ("debug disp [send|recv] [pre|post|messageid]");
+        out.push_back ("debug undisp [send|recv] [pre|post|messageid]");
+        out.push_back ("debug show tile x y z");
+        out.push_back ("debug show battlelist");
+        out.push_back ("debug show inv[entory]");
+        out.push_back ("debug show cont[ainer] cid");
+        return PLUGIN_FAILURE;
 }
 
 Debug::Debug ()

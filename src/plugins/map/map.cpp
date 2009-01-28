@@ -6,34 +6,33 @@
 
 Map map;
 
-Args MapRecipricant::func (const Args& args)
+int32_t MapRecipricant::func (const Args &args, Args &out)
 {
         Args::const_iterator i = args.begin ();
         if (args.size () == 1) {
                 if (*i == "map") {
-                        return map.usage ();
+                        return map.usage (out);
                 } else {
                         printf ("info error: got wrong message\n");
-                        return Args ();
+                        return PLUGIN_FAILURE;
                 }
         }
-        Args ret;
         i ++;
         if (args.size () > 1) {
                 if (*i == "walk" && args.size () == 2) {
                         map.global.walk ();
                 } else if (*i == "set" && args.size () == 5) {
                         i ++;
-                        std::string out = "target = (" + *i + ",";
+                        std::string output = "target = (" + *i + ",";
                         uint32_t x = strtol ((*i).c_str (), NULL, 0);
                         i ++;
-                        out += (*i + ",");
+                        output += (*i + ",");
                         uint32_t y = strtol ((*i).c_str (), NULL, 0);
                         i ++;
-                        out += (*i + ")");
+                        output += (*i + ")");
                         uint32_t z = strtol ((*i).c_str (), NULL, 0);
                         map.global.set_target (x, y, z);
-                        ret.push_back (out);
+                        out.push_back (output);
                 } else if (*i == "cost" && args.size () == 8) {
                         i ++;
                         uint32_t x, y, z;
@@ -52,12 +51,12 @@ Args MapRecipricant::func (const Args& args)
 
                         char tmp[BUFFER_SIZE];
                         snprintf (tmp, BUFFER_SIZE, "%d", cost);
-                        ret.push_back (tmp);
+                        out.push_back (tmp);
                 }
         } else {
-                return map.usage ();
+                return map.usage (out);
         }
-        return ret;
+        return PLUGIN_SUCCESS;
 }
 
 void StopHook::func (TibiaMessage* tm, Client* client)
@@ -75,14 +74,15 @@ Map::Map ()
         _statecycle = 0;
 }
 
-Args Map::usage ()
+int32_t Map::usage (Args &out)
 {
-        Args ret;
-        ret.push_back ("map walk");
-        return ret;
+        out.push_back ("map walk");
+        out.push_back ("map set x y z");
+        out.push_back ("map cost x1 y1 z1 x2 y2 z2");
+        return PLUGIN_FAILURE;
 }
 
-std::string r_set_state (const std::string& state)
+std::string r_set_state (const std::string &state)
 {
         bool res;
         if (state == "pause") {
@@ -239,7 +239,7 @@ void Map::i_unload ()
         _client->deleteRecipricant (_pluginId, _rid);
 }
 
-const std::string& Map::i_name ()
+const std::string &Map::i_name ()
 {
         return _name;
 }
@@ -254,7 +254,7 @@ void unload ()
         map.i_unload ();
 }
 
-const std::string& name ()
+const std::string &name ()
 {
         return map.i_name ();
 }

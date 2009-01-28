@@ -21,13 +21,13 @@
 #include <stdio.h>
 #include "pluginmanager.h"
 
-PluginManager::PluginManager (Messenger* messenger,
-                              HookManager* sendhm,
-                              HookManager* recvhm,
-                              PacketHookManager* sendphm,
-                              PacketHookManager* recvphm,
-                              ConnectionManager* connMgr,
-                              Client* client)
+PluginManager::PluginManager (Messenger *messenger,
+                              HookManager *sendhm,
+                              HookManager *recvhm,
+                              PacketHookManager *sendphm,
+                              PacketHookManager *recvphm,
+                              ConnectionManager *connMgr,
+                              Client *client)
 {
         _client = client;
         _messenger = messenger;
@@ -50,18 +50,18 @@ PluginManager::~PluginManager ()
         delete ids;
 }
 
-uint32_t PluginManager::addPlugin (const std::string& path)
+uint32_t PluginManager::addPlugin (const std::string &path)
 {
         uint32_t id = ids->newId ();
 
-        Plugin* p = new Plugin ();
+        Plugin *p = new Plugin ();
 
         /* we have to add the id before calling load */
         plist.insert (std::pair<uint32_t, Plugin*> (id, p));
         if (p->load (id, path, _client)) {
                 /* the plugin is already loaded so we must count to 2 */
                 uint32_t count = 0;
-                const std::string& name = p->name ();
+                const std::string &name = p->name ();
                 PluginList::iterator i;
                 for (i = plist.begin (); i != plist.end (); ++ i) {
                         if (name == (*i).second->name ()) {
@@ -88,17 +88,17 @@ uint32_t PluginManager::addPlugin (const std::string& path)
         }
 }
 
-uint32_t PluginManager::addFakein (const std::string& name)
+uint32_t PluginManager::addFakein (const std::string &name)
 {
         uint32_t id = ids->newId ();
 
-        Fakein* p = new Fakein (name);
+        Fakein *p = new Fakein (name);
         /* we have to add the id before calling load */
         plist.insert (std::pair<uint32_t, Plugin*> (id, p));
         if (p->load (id, "", _client)) {
                 /* the plugin is already loaded so we must count to 2 */
                 uint32_t count = 0;
-                const std::string& name = p->name ();
+                const std::string &name = p->name ();
                 PluginList::iterator i;
                 for (i = plist.begin (); i != plist.end (); ++ i) {
                         if (name == (*i).second->name ()) {
@@ -139,7 +139,7 @@ bool PluginManager::deletePlugin (uint32_t pid)
         return true;
 }
 
-uint32_t PluginManager::getPluginByName (const std::string& name)
+uint32_t PluginManager::getPluginByName (const std::string &name)
 {
         for (PluginList::iterator i = plist.begin (); i != plist.end (); ++ i) {
                 if (name == (*i).second->name ()) {
@@ -150,44 +150,45 @@ uint32_t PluginManager::getPluginByName (const std::string& name)
 }
 
 /************************************************************************
- * These functions provide the medium for the plugins to operate through
- * Note: all these functions work in terms of plugin id, the one
- *       notable function is send message which hides the recipricant
- *       id from the outside
+  *These functions provide the medium for the plugins to operate through
+  *Note: all these functions work in terms of plugin id, the one
+  *      notable function is send message which hides the recipricant
+  *      id from the outside
  ************************************************************************/
 
-Args PluginManager::sendMessage (uint32_t pid, const std::string& msg)
+int32_t PluginManager::sendMessage (uint32_t pid, const std::string &msg,
+                                    Args &out)
 {
         PluginList::iterator i = plist.find (pid);
         if (i == plist.end ()) {
                 printf ("plugin manager: sendMessage: non existant plugin\n");
-                return Args ();
+                return PLUGIN_FAILURE;
         }
         uint32_t rid = (*i).second->getRecipricantId ();
-        return _messenger->sendMessage (rid, msg);
+        return _messenger->sendMessage (rid, msg, out);
 }
 
-Args PluginManager::broadcastMessage (const std::string& msg)
+int32_t PluginManager::broadcastMessage (const std::string &msg, Args &out)
 {
         ArgsParser ap (msg, _client);
-        const Args& args = ap.getArgs ();
+        const Args &args = ap.getArgs ();
 
         if (args.size () == 0) {
                 printf ("broadcast error: empty message\n");
-                return Args ();
+                return PLUGIN_FAILURE;
         }
         uint32_t pid = getPluginByName (args.front ());
         PluginList::iterator i = plist.find (pid);
         if (i == plist.end ()) {
                 /* a broadcast is allowed to fail */
-                return Args ();
+                return PLUGIN_FAILURE;
         }
         uint32_t rid = (*i).second->getRecipricantId ();
-        return _messenger->sendMessage (rid, msg);
+        return _messenger->sendMessage (rid, msg, out);
 }
 
 uint32_t PluginManager::addRecvReadHook (uint32_t pid, uint8_t id, 
-                                         ReadHook* hook)
+                                         ReadHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
@@ -201,7 +202,7 @@ uint32_t PluginManager::addRecvReadHook (uint32_t pid, uint8_t id,
 }
         
 uint32_t PluginManager::addRecvWriteHook (uint32_t pid, uint8_t id, 
-                                          WriteHook* hook)
+                                          WriteHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
@@ -215,7 +216,7 @@ uint32_t PluginManager::addRecvWriteHook (uint32_t pid, uint8_t id,
 }
         
 uint32_t PluginManager::addSendReadHook (uint32_t pid, uint8_t id, 
-                                         ReadHook* hook)
+                                         ReadHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
@@ -229,7 +230,7 @@ uint32_t PluginManager::addSendReadHook (uint32_t pid, uint8_t id,
 }
         
 uint32_t PluginManager::addSendWriteHook (uint32_t pid, uint8_t id, 
-                                          WriteHook* hook)
+                                          WriteHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
@@ -294,7 +295,7 @@ void PluginManager::deleteSendWriteHook (uint32_t pid, uint32_t hid)
         (*i).second->deleteSendWriteHookId (hid);
 }
 
-uint32_t PluginManager::addRecipricant (uint32_t pid, Recipricant* recipricant)
+uint32_t PluginManager::addRecipricant (uint32_t pid, Recipricant *recipricant)
 {
         PluginList::iterator i = plist.find (pid);
         if (i == plist.end ()) {
@@ -332,7 +333,7 @@ void PluginManager::deleteRecipricant (uint32_t pid, uint32_t rid)
         (*i).second->setRecipricantId (0);
 }
         
-uint32_t PluginManager::addPreSendPacketHook (uint32_t pid, PacketHook* hook)
+uint32_t PluginManager::addPreSendPacketHook (uint32_t pid, PacketHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
@@ -345,7 +346,7 @@ uint32_t PluginManager::addPreSendPacketHook (uint32_t pid, PacketHook* hook)
         return hid;
 }
         
-uint32_t PluginManager::addPostSendPacketHook (uint32_t pid, PacketHook* hook)
+uint32_t PluginManager::addPostSendPacketHook (uint32_t pid, PacketHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
@@ -358,7 +359,7 @@ uint32_t PluginManager::addPostSendPacketHook (uint32_t pid, PacketHook* hook)
         return hid;
 }
         
-uint32_t PluginManager::addPreRecvPacketHook (uint32_t pid, PacketHook* hook)
+uint32_t PluginManager::addPreRecvPacketHook (uint32_t pid, PacketHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
@@ -371,7 +372,7 @@ uint32_t PluginManager::addPreRecvPacketHook (uint32_t pid, PacketHook* hook)
         return hid;
 }
         
-uint32_t PluginManager::addPostRecvPacketHook (uint32_t pid, PacketHook* hook)
+uint32_t PluginManager::addPostRecvPacketHook (uint32_t pid, PacketHook *hook)
 {
         /* before we add the hook we make sure the plugin actually exists */
         PluginList::iterator i = plist.find (pid);
