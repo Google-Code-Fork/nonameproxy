@@ -21,7 +21,7 @@ Args MapRecipricant::func (const Args& args)
         i ++;
         if (args.size () > 1) {
                 if (*i == "walk" && args.size () == 2) {
-                        map.local.walk ();
+                        map.global.walk ();
                 } else if (*i == "set" && args.size () == 5) {
                         i ++;
                         std::string out = "target = (" + *i + ",";
@@ -32,7 +32,7 @@ Args MapRecipricant::func (const Args& args)
                         i ++;
                         out += (*i + ")");
                         uint32_t z = strtol ((*i).c_str (), NULL, 0);
-                        map.local.set_target (x, y, z);
+                        map.global.set_target (x, y, z);
                         ret.push_back (out);
                 } else if (*i == "cost" && args.size () == 8) {
                         i ++;
@@ -48,7 +48,7 @@ Args MapRecipricant::func (const Args& args)
                         z = strtol ((*i).c_str (), NULL, 0); i ++;
                         Pos end (x, y, z);
 
-                        uint32_t cost = map.local.calcPathCost (start, end);
+                        uint32_t cost = map.global.calcPathCost (start, end);
 
                         char tmp[BUFFER_SIZE];
                         snprintf (tmp, BUFFER_SIZE, "%d", cost);
@@ -122,6 +122,9 @@ bool Map::set_state (state_t state)
                 return false;
         } else {
                 _statecycle = cycle;
+                if (state == Map::s_stop || state == Map::s_pause) {
+                        global.stop ();
+                }
                 _state = state;
                 return true;
         }
@@ -214,6 +217,8 @@ bool Map::disable_autodisable ()
 
 void Map::i_load (uint32_t pluginId, Client* client)
 {
+        global.i_load (pluginId, client);
+
         _name = "map";
         _pluginId = pluginId;
         _client = client;
@@ -222,13 +227,11 @@ void Map::i_load (uint32_t pluginId, Client* client)
         enable_autodisable ();
 
         _rid = _client->addRecipricant (_pluginId, new MapRecipricant ());
-
-        local.i_load (pluginId, client);
 }
 
 void Map::i_unload ()
 {
-        local.i_unload ();
+        global.i_unload ();
 
         if (get_autodisable ()) {
                 disable_autodisable ();

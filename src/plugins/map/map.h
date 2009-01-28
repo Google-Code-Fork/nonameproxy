@@ -15,7 +15,7 @@
 #include "messenger.h"
 #include "tibiamessage.h"
 
-#include "localmap.h"
+#include "globalmap.h"
 
 #define MAX_STOP_HOOK 15
 
@@ -65,7 +65,7 @@ class Map
                 void i_unload ();
                 const std::string& i_name ();
 
-                LocalMap        local;
+                LocalMap        global;
                 
         private:
                 state_t         _state;

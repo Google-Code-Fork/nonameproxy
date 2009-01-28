@@ -43,6 +43,7 @@ LocalMap::LocalMap ()
         for (uint32_t i = 0; i < MAX_MOVE_HOOK; i ++) {
                 _movehooks[i] = 0;
         }
+        _walking = false;
 }
 
 bool LocalMap::at_target ()
@@ -54,8 +55,21 @@ bool LocalMap::at_target ()
         }
 }
 
+void LocalMap::stop ()
+{
+        if (_walking) {
+                GSMessageList gsml;
+                gsml.add (new GSMAutoWalkCancel ());
+                _client->sendToServer (gsml);
+        }
+        _walking = false;
+}
+
 bool LocalMap::kick ()
 {
+        if (!_walking) {
+                return false;
+        }
         const Pos& curPos = _client->gstate->map->getCurPos ();
         if (curPos == _to) {
                 return true;
@@ -68,6 +82,11 @@ bool LocalMap::kick ()
 
 bool LocalMap::walk ()
 {
+        if (at_target ()) {
+                _walking = false;
+        }
+        _walking = true;
+
         MapState* map = _client->gstate->map;
         const Pos& curPos = map->getCurPos ();
 
@@ -87,6 +106,7 @@ bool LocalMap::walk ()
         Path* path = findPath (start, end, m);
 
         if (path == NULL) {
+                _walking = false;
                 return false;
         }
         

@@ -10,7 +10,10 @@
  * on LocalMap to travel between these nodes.
  ***********************************************************************/
 
+#include <stdint.h>
+
 #include "mapgraph.h"
+#include "localmap.h"
 
 #include "hook.h"
 #include "client.h"
@@ -24,9 +27,22 @@ class GlobalMap
 
                 GlobalMap ();
 
+                bool set_target (uint32_t x, uint32_t y, uint32_t z);
+                bool set_target (const Pos &pos);
+
+                bool at_target ();
+
+                /* kick start the walker, checks if the kick is needed first*/
+                bool kick ();
+                /* start the walker */
+                bool walk ();
+
+                void stop ();
+
                 void i_load (uint32_t pluginId, Client* client);
                 void i_unload ();
 
+                LocalMap local;
         private:
                 MapGraph        _globalMap;
 
