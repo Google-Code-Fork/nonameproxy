@@ -6,6 +6,8 @@
  * into tibias memory
  ***********************************************************************/
 
+#include <stdint.h>
+
 #include "hook.h"
 #include "client.h"
 #include "pos.h"
@@ -26,10 +28,9 @@ class LocalMap
 
                 /* kick start the walker, checks if the kick is needed first*/
                 bool kick ();
-                /* force the walker to start */
+                /* start the walker */
                 bool walk ();
 
-                /* stops by setting target to players pos */
                 void stop ();
 
                 uint32_t calcPathCost (const Pos& from, const Pos& to);
@@ -45,6 +46,7 @@ class LocalMap
                 uint32_t (*i_makeMap (const Pos& from, const Pos& to, 
                                 bool ignoreCreatures = false))[MAP_X];
                 void i_move (direction_t dir);
+                void i_stop ();
 
                 Pos             _to;
 
@@ -60,6 +62,11 @@ class LocalMap
                 /* we can send 10 moves at a time to the server
                  * so we must split the journey using tmpTo */
                 Pos             _tmpTo;
+
+                /* we dont always want to have the auto walker walking 
+                 * so we need a way of turning the walker off */
+                bool            _walking;
+
                 uint32_t        _movehooks[MAX_MOVE_HOOK];
                 uint32_t        _pluginId;
                 Client*         _client;
