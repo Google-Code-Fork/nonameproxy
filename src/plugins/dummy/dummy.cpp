@@ -85,6 +85,7 @@ int32_t ChickenRecipricant::func (const Args &args, Args &out)
                         /* removing a hook is similar to setting the hook */
                         _client->deleteRecvWriteHook (_pluginId, _hookId);
                         out.push_back ("chicken hook off");
+                        _hookId = 0;
                 } else {
                         out.push_back ("chicken hook not on");
                 }
