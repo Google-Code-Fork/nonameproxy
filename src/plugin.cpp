@@ -62,6 +62,8 @@ bool Plugin::load (uint32_t pluginId, const std::string& path, Client* client)
                 printf ("plugin error: could not resolve symbol \"name\"\n");
                 return false;
         }
+
+        printf ("load: %p\n", _handle);
                 
 #else
         if ((_handle = dlopen (path.c_str (), RTLD_NOW)) == NULL) {
@@ -96,9 +98,7 @@ bool Plugin::unload ()
                 return false;
         }
         _loaded = false;
-        printf ("yay1\n");
         _unload ();
-        printf ("yay2\n");
 
         /* now we do the dirty work if the plugin was to lazy */
         if (_recipricantId != 0) {
@@ -122,12 +122,11 @@ bool Plugin::unload ()
                 
 
 #ifdef WIN32
-        printf ("yay\n");
-        if (FreeLibrary (_handle) != 0) {
-                printf ("plugin error: could not unload %s\n", 
-                        name ().c_str ());
+        if (FreeLibrary (_handle) == 0) {
+                printf ("plugin error: could not unload plugin\n");
                 return false;
         }
+
 #else
         if (dlclose (_handle) != 0) {
                 printf ("plugin error: %s\n", dlerror());
