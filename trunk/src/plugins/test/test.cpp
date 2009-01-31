@@ -13,7 +13,7 @@ int32_t TestRecipricant::func (const Args &args, Args &out)
 {
         if (args.size () < 1) {
                 out.push_back ("not enough arguements");
-        } else if (args.size () == 2) {
+        } else if (args.size () == 1) {
                 /* one special case if there are no args the test is false */
                 return PLUGIN_FAILURE;
         } else {

@@ -250,7 +250,7 @@ void Connection::_putMsg ()
 SOCKET Connection::query_fd (fd_set& readfds, fd_set& writefds,
         fd_set& errfds)
 {
-        _selectRequest == 0;
+        _selectRequest = 0;
         if (_isConnected) {
                 //we always try to recv
                 FD_SET (_connsock, &readfds);
