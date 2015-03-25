@@ -1,0 +1,1 @@
+Yet another cheat proxy, with an emphasis on modularity and typing of data.
